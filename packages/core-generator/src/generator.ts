@@ -127,6 +127,10 @@ export class Generator implements GeneratorAPI {
 
   SyntaxKind = SyntaxKind;
 
+  getPlatform(): string {
+    return 'base';
+  }
+
   processSourceFileName(name: string) {
     return name;
   }

@@ -53,11 +53,11 @@ export function generateComponents(generator: GeneratorAPI) {
   return stream;
 }
 
-export function compile(dir: string, outDir: string) {
+export function compile(dir: string, outDir: string, platform: 'vue' | 'react' | 'inferno' | 'angular') {
   if (fs.existsSync(outDir)) {
     deleteFolderRecursive(outDir);
   }
-  fs.mkdirSync(outDir);
+  fs.mkdirSync(outDir, { recursive: true });
   fs.readdirSync(dir, { withFileTypes: true })
     .filter(({ name }) => name.search(/.ts(x?)$/) >= 0)
     .forEach(({ name }) => {
@@ -67,7 +67,7 @@ export function compile(dir: string, outDir: string) {
         ts.ScriptTarget.ES2016,
         true,
       );
-      const factoryCode = generateFactoryCode(ts, source);
+      const factoryCode = generateFactoryCode(ts, source, platform);
       fs.writeFileSync(
         `${outDir}/${name.replace(path.extname(name), '.js')}`,
         factoryCode,
