@@ -32,7 +32,7 @@
     "@devextreme-generator/preact": "1.1.0",
     "@devextreme-generator/react": "1.1.0",
     "@devextreme-generator/vue": "1.1.0",
-    "@devextreme/vdom": "1.1.0",
+    "@devextreme/runtime": "1.1.0",
     "@types/gulp": "^4.0.6",
     "@types/mocha": "5.2.7",
     "@types/node": "^12.12.14",

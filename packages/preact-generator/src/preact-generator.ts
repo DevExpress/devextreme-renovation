@@ -116,6 +116,10 @@ export class PreactComponent extends ReactComponent {
     return 'RefObject';
   }
 
+  getPlatform() {
+    return 'preact';
+  }
+
   compilePortalComponentCore() {
     return `
     declare type PortalProps = {

@@ -1,0 +1,10 @@
+{
+    "name": "@devextreme/runtime/angular",
+    "version": "1.1.0",
+    "description": "DevExtreme angular common utils",
+    "author": "Developer Express Inc.",
+    "license": "SEE LICENSE IN LICENSE",
+    "main": "../dist/cjs/angular/index",
+    "module": "../dist/esm/angular/index",
+    "types": "../dist/esm/angular/index"
+  }

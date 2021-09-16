@@ -81,67 +81,74 @@ export class InfernoComponent<
   }
 }
 
+interface VDomCustomClassesData {
+  previous: string[];
+  removed: string[];
+  added: string[];
+}
+
+type ElementWithCustomClassesData = Element & {
+  dxClasses: VDomCustomClassesData;
+};
 export class InfernoWrapperComponent<
   P = Record<string, unknown>,
   S = Record<string, unknown>,
 > extends InfernoComponent<P, S> {
-  vDomElement: Element | null = null;
-
-  vDomPreviousClasses: string[] = [];
-
-  vDomRemovedClasses: string[] = [];
-
-  vDomAddedClasses: string[] = [];
+  vDomElement: ElementWithCustomClassesData | null = null;
 
   vDomUpdateClasses(): void {
-    const currentClasses = this.vDomElement?.className.length
-      ? this.vDomElement.className.split(' ')
+    const el = this.vDomElement as ElementWithCustomClassesData;
+    const currentClasses = el.className.length
+      ? el.className.split(' ')
       : [];
     const addedClasses = currentClasses.filter(
-      (className) => this.vDomPreviousClasses.indexOf(className) < 0,
+      (className) => el.dxClasses.previous.indexOf(className) < 0,
     );
-    const removedClasses = this.vDomPreviousClasses.filter(
-      (className) => currentClasses.indexOf(className) < 0,
+    const removedClasses = el.dxClasses.previous.filter(
+      (className: string): boolean => currentClasses.indexOf(className) < 0,
     );
 
-    addedClasses.forEach((value) => {
-      const indexInRemoved = this.vDomRemovedClasses.indexOf(value);
+    addedClasses.forEach((value: string): void => {
+      const indexInRemoved = el.dxClasses.removed.indexOf(value);
       if (indexInRemoved > -1) {
-        this.vDomRemovedClasses.splice(indexInRemoved, 1);
+        el.dxClasses.removed.splice(indexInRemoved, 1);
       } else {
-        this.vDomAddedClasses.push(value);
+        el.dxClasses.added.push(value);
       }
     });
 
-    removedClasses.forEach((value) => {
-      const indexInAdded = this.vDomAddedClasses.indexOf(value);
+    removedClasses.forEach((value: string): void => {
+      const indexInAdded = el.dxClasses.added.indexOf(value);
       if (indexInAdded > -1) {
-        this.vDomAddedClasses.splice(indexInAdded, 1);
+        el.dxClasses.added.splice(indexInAdded, 1);
       } else {
-        this.vDomRemovedClasses.push(value);
+        el.dxClasses.removed.push(value);
       }
     });
   }
 
   componentDidMount(): void {
     super.componentDidMount();
-
-    this.vDomElement = findDOMfromVNode(this.$LI, true);
-    this.vDomPreviousClasses = this.vDomElement?.className.length
-      ? this.vDomElement.className.split(' ')
+    const el = findDOMfromVNode(this.$LI, true) as ElementWithCustomClassesData;
+    this.vDomElement = el;
+    el.dxClasses = el.dxClasses || {
+      removed: [], added: [], previous: [],
+    };
+    el.dxClasses.previous = el?.className.length
+      ? el.className.split(' ')
       : [];
   }
 
   componentDidUpdate(): void {
     super.componentDidUpdate();
 
-    const element = this.vDomElement;
+    const el = this.vDomElement;
 
-    if (element !== null) {
-      this.vDomAddedClasses.forEach((className) => element.classList.add(className));
-      this.vDomRemovedClasses.forEach((className) => element.classList.remove(className));
-      this.vDomPreviousClasses = this.vDomElement?.className.length
-        ? this.vDomElement.className.split(' ')
+    if (el !== null) {
+      el.dxClasses.added.forEach((className: string): void => el.classList.add(className));
+      el.dxClasses.removed.forEach((className: string): void => el.classList.remove(className));
+      el.dxClasses.previous = el.className.length
+        ? el.className.split(' ')
         : [];
     }
   }

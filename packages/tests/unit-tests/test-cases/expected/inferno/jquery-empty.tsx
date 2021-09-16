@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 
 export declare type PropsType = {
   height?: number;
@@ -11,7 +11,7 @@ export declare type PropsType = {
 };
 const Props: PropsType = {};
 import { createElement as h } from "inferno-compat";
-import { createReRenderEffect } from "@devextreme/vdom";
+import { createReRenderEffect } from "@devextreme/runtime/inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
