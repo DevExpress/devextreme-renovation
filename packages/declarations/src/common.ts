@@ -2,7 +2,7 @@ import * as react from 'react';
 import { createPortal } from 'react-dom';
 
 export type DefaultOptionsRule<T> = {
-  device: any;
+  device?: any;
   options: Partial<T>;
 };
 
