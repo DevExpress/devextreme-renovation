@@ -165,7 +165,7 @@ function view(model: App) {
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
-      <RefParent />
+      <RefParent /> 
       <GetterCache />
     </div>
   );

@@ -1,5 +1,6 @@
 import { BaseClassMember, Method as BaseMethod, toStringOptions } from '@devextreme-generator/core';
-import { getLocalStateName } from './property';
+import { getLocalStateName, Property } from './property';
+import { GetAccessor } from './get-accessor';
 
 export function calculateMethodDependency(
   dependency: string[],
@@ -21,6 +22,22 @@ export function calculateMethodDependency(
 export class Method extends BaseMethod {
   filterDependencies(dependencies: string[]): string[] {
     return dependencies.filter((d) => d !== 'props');
+  }
+
+  reduceDependencies(
+    dependencies: (Method | Property | undefined)[],
+    options: toStringOptions,
+    startingArray: string[] = [],
+  ): string[] {
+    const depsReducer = (d: string[], p: Method | Property | undefined) => (p instanceof GetAccessor
+      ? d.concat(p?.getter())
+      : d.concat(
+        p!.getDependency({
+          ...options,
+          members: options.members.filter((p) => p !== this),
+        }),
+      ));
+    return dependencies.reduce(depsReducer, startingArray);
   }
 
   getDependency(options: toStringOptions) {

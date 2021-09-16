@@ -8,8 +8,8 @@ import {
 } from "@devextreme-generator/declarations";
 import ListItem from "./list-item";
 
-function view({ items, restAttributes, counter }: List) {
-  const firstList = items.map((item) =>
+function view({ itemsGetter, restAttributes, counter }: List) {
+  const firstList = itemsGetter.map((item) =>
     item !== null ? (
       <ListItem
         key={item.key}
@@ -26,7 +26,7 @@ function view({ items, restAttributes, counter }: List) {
     <div {...restAttributes}>
       {firstList}
 
-      {items.map((item, index) => (
+      {itemsGetter.map((item, index) => (
         <ListItem
           key={index}
           color={item.color || "green"}
@@ -36,7 +36,7 @@ function view({ items, restAttributes, counter }: List) {
         />
       ))}
 
-      {items.map(({ text, key, color, onClick, onReady }) => (
+      {itemsGetter.map(({ text, key, color, onClick, onReady }) => (
         <ListItem
           key={key}
           color={color || "blue"}
@@ -46,7 +46,7 @@ function view({ items, restAttributes, counter }: List) {
         />
       ))}
 
-      {items.map(({ text, key }) => {
+      {itemsGetter.map(({ text, key }) => {
         const value = `${key}: ${text} `;
         return value;
       })}
@@ -72,7 +72,7 @@ export class ListProps {
 export default class List extends JSXComponent(ListProps) {
   @InternalState() counter = 0;
 
-  get items() {
+  get itemsGetter() {
     return this.props.items.map((item) => {
       return {
         ...item,

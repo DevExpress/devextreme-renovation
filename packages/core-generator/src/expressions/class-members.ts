@@ -242,25 +242,32 @@ export class Method extends BaseClassMember {
     return dependencies;
   }
 
+  reduceDependencies(
+    dependencies: (Method | Property | undefined)[],
+    options: toStringOptions,
+    startingArray: string[] = [],
+  ): string[] {
+    const depsReducer = (d: string[], p: Method | Property | undefined) => d.concat(
+      p!.getDependency({
+        ...options,
+        members: options.members.filter((p) => p !== this),
+      }),
+    );
+    return dependencies.reduce(depsReducer, startingArray);
+  }
+
   getDependency(options: toStringOptions): string[] {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
       ?.getParameter('run')
       ?.valueOf();
-    const depsReducer = (d: string[], p: Method | Property | undefined) => d.concat(
-      p!.getDependency({
-        ...options,
-        members: members.filter((p) => p !== this),
-      }),
-    );
 
     let result: string[] = [];
     if (run === 'always') {
       result = this.filterDependencies(
-        members
-          .filter((m) => !(m instanceof Method))
-          .reduce(depsReducer, ['props']),
+        this.reduceDependencies(members
+          .filter((m) => !(m instanceof Method)), options, ['props']),
       );
     } else if (run !== 'once') {
       const dependency = this.body?.getDependency(options);
@@ -270,10 +277,12 @@ export class Method extends BaseClassMember {
         additionalDependency.push('props');
       }
 
-      result = [...new Set(dependency)]
-        .map((d) => members.find((p) => p._name.toString() === d))
-        .filter((d) => d)
-        .reduce(depsReducer, [])
+      result = this.reduceDependencies(
+        [...new Set(dependency)]
+          .map((d) => members.find((p) => p._name.toString() === d))
+          .filter((d) => d),
+        options,
+      )
         .concat(additionalDependency);
 
       if (additionalDependency.indexOf('props') > -1) {

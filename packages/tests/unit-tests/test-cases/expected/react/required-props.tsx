@@ -2,7 +2,7 @@ function view() {}
 
 export declare type WidgetInputType = {
   size: { width: number; height: number };
-  type: string;
+  typeProp: string;
 };
 const WidgetInput: WidgetInputType = {} as any as WidgetInputType;
 import {
@@ -34,14 +34,14 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   );
   const __type = useCallback(
     function __type(): string {
-      const { type } = props;
-      return type;
+      const { typeProp } = props;
+      return typeProp;
     },
-    [props.type]
+    [props.typeProp]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { size, type, ...restProps } = props;
+      const { size, typeProp, ...restProps } = props;
       return restProps;
     },
     [props]

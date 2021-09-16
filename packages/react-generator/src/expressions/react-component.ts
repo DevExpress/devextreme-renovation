@@ -32,6 +32,7 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
+  Method as BaseMethod,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -887,6 +888,58 @@ export class ReactComponent extends Component {
       : '';
   }
 
+  compileGettersAndMethods(): string {
+    const methods = this.listeners
+      .concat(this.methods)
+      .concat(
+        this.members.filter(
+          (m) => m.isApiMethod,
+        ) as Array<Method>,
+      );
+
+    const methodsWithDep = methods.map((m) => ({
+      method: m,
+      deps: m.getDependency({
+        members: this.members,
+        componentContext: SyntaxKind.ThisKeyword,
+      }).map((dep) => this.members.find(
+        (member) => member._name.toString() === dep.split('().')[0].replace('__', '').replace('()', ''),
+      )),
+      get level() {
+        const depsFromDeps: {
+          method: BaseMethod;
+          deps: (BaseMethod | BaseProperty | undefined)[];
+          level: number
+        }[] = methodsWithDep.filter(
+          (method) => this.deps.some((dep) => dep === method.method),
+        );
+        if (depsFromDeps.length === 0) {
+          return 0;
+        }
+        return Math.max(...depsFromDeps.map((dep) => dep.level)) + 1;
+      },
+    }));
+
+    const methodsWithDepLevelCounted = methodsWithDep.map((m) => ({
+      method: m.method,
+      deps: m.deps,
+      level: m.level,
+    })).sort((a, b) => (a.level - b.level));
+
+    const result = methodsWithDepLevelCounted.map((m) => m.method);
+
+    return result.map(
+      (m) => `const ${m.name
+      }=useCallback(${m.declaration(
+        this.getToStringOptions(),
+      )}, [${m.getDependency({
+        members: this.members,
+        componentContext: SyntaxKind.ThisKeyword,
+      })}]);`,
+    )
+      .join('\n');
+  }
+
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
 
@@ -920,23 +973,7 @@ export class ReactComponent extends Component {
     )
     .map((m) => m.toString(this.getToStringOptions()))
     .join(';\n')}
-                                          ${this.listeners
-    .concat(this.methods)
-    .concat(
-      this.members.filter(
-        (m) => m.isApiMethod,
-      ) as Array<Method>,
-    )
-    .map(
-      (m) => `const ${m.name
-      }=useCallback(${m.declaration(
-        this.getToStringOptions(),
-      )}, [${m.getDependency({
-        members: this.members,
-        componentContext: SyntaxKind.ThisKeyword,
-      })}]);`,
-    )
-    .join('\n')}
+                  ${this.compileGettersAndMethods()}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}

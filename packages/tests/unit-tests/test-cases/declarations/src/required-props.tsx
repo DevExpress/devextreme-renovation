@@ -14,7 +14,7 @@ class WidgetInput {
     height: number;
   };
 
-  @OneWay() type!: string;
+  @OneWay() typeProp!: string;
 }
 
 @Component({
@@ -22,14 +22,14 @@ class WidgetInput {
 })
 export default class Widget extends JSXComponent<
   WidgetInput,
-  "size" | "type"
+  "size" | "typeProp"
 >() {
   get getHeight(): number {
     return this.props.size.height;
   }
 
   get type(): string {
-    const { type } = this.props;
-    return type;
+    const { typeProp } = this.props;
+    return typeProp;
   }
 }

@@ -10,13 +10,14 @@ import {
 } from "@devextreme-generator/declarations";
 import ListItem, { ListItemProps } from "./list-item";
 
-function view({
-  items,
-  ListItemTemplate,
-  restAttributes,
-  counter,
-}: ListComponent) {
-  const firstList = items.map((item) =>
+function view(model: ListComponent) {
+  const {
+    itemsGetter,
+    restAttributes,
+    counter,
+  } = model;
+  const { ListItemTemplate } = model.props;
+  const firstList = itemsGetter.map((item) =>
     item !== null ? (
       <ListItemTemplate
         key={item.key}
@@ -33,7 +34,7 @@ function view({
     <div {...restAttributes}>
       {firstList}
 
-      {items.map((item, index) => (
+      {itemsGetter.map((item, index) => (
         <ListItemTemplate
           key={index}
           color={item.color || "green"}
@@ -43,7 +44,7 @@ function view({
         />
       ))}
 
-      {items.map(({ text, key, color, onClick, onReady }) => (
+      {itemsGetter.map(({ text, key, color, onClick, onReady }) => (
         <ListItemTemplate
           key={key}
           color={color || "blue"}
@@ -53,7 +54,7 @@ function view({
         />
       ))}
 
-      {items.map(({ text, key }) => {
+      {itemsGetter.map(({ text, key }) => {
         const value = `${key}: ${text} `;
         return value;
       })}
@@ -82,7 +83,7 @@ export class ListComponentProps {
 export default class ListComponent extends JSXComponent(ListComponentProps) {
   @InternalState() counter = 0;
 
-  get items() {
+  get itemsGetter() {
     return this.props.items.map((item) => {
       return {
         ...item,
@@ -106,7 +107,7 @@ export default class ListComponent extends JSXComponent(ListComponentProps) {
     };
   }
 
-  get ListItemTemplate() {
+  get ListItemTemplateGetter() {
     return this.props.ListItemTemplate;
   }
 }

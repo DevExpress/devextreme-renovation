@@ -116,6 +116,47 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
+  getConditionsFromDependencies(deps: string[], options?: toStringOptions): string[] {
+    const contextConsumers = this.members.map((member) => {
+      if (member.isConsumer) {
+        return {
+          name: member._name.toString(),
+          contextName: member?.decorators[0]?.expression?.arguments[0].toString(),
+        };
+      }
+      return undefined;
+    }).filter((contextConsumer) => contextConsumer) as Array<{
+      name: string, contextName: string
+    }>;
+    return deps.map((dep) => {
+      if (dep.indexOf('props.') === 0) {
+        const depName = dep.replace('props.', '');
+        return `this.props["${depName}"] !== nextProps["${depName}"]`;
+      }
+      if (dep.indexOf('state.') === 0) {
+        const depName = dep.replace('state.', '');
+        return `this.state["${depName}"] !== nextState["${depName}"]`;
+      }
+      if (dep === 'props' || dep === 'state') {
+        return `this.${dep} !== next${capitalizeFirstLetter(dep)}`;
+      }
+      const dependencyContext = contextConsumers.find(
+        (consumer) => consumer.name === dep,
+      )?.contextName;
+      if (dependencyContext) {
+        return `this.context["${dependencyContext}"] !== context["${dependencyContext}"]`;
+      }
+      if (options) {
+        const dependencyMember = options.members.find(
+          (member) => member.name.toString() === dep,
+        );
+        const memberDependencies = dependencyMember?.getDependency(options);
+        return memberDependencies ? this.getConditionsFromDependencies(memberDependencies, options).join('||') : 'false';
+      }
+      return 'false';
+    });
+  }
+
   compileGetterCache(componentWillUpdate_Statements: string[], options?:toStringOptions): string {
     const getters = this.members.filter(
       (m) => m instanceof GetAccessor && m.isMemorized(options),
@@ -139,35 +180,8 @@ export class InfernoComponent extends PreactComponent {
 
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
-        const contextConsumers = this.members.map((member) => {
-          if (member.isConsumer) {
-            return {
-              name: member._name.toString(),
-              contextName: member?.decorators[0]?.expression?.arguments[0].toString(),
-            };
-          }
-          return undefined;
-        }).filter((contextConsumer) => contextConsumer) as Array<{
-          name: string, contextName: string
-        }>;
         if (allDeps.length) {
-          const conditions = allDeps.map((dep) => {
-            if (dep.indexOf('props.') === 0) {
-              const depName = dep.replace('props.', '');
-              return `this.props["${depName}"] !== nextProps["${depName}"]`;
-            }
-            if (dep.indexOf('state.') === 0) {
-              const depName = dep.replace('state.', '');
-              return `this.state["${depName}"] !== nextState["${depName}"]`;
-            }
-            if (dep === 'props' || dep === 'state') {
-              return `this.${dep} !== next${capitalizeFirstLetter(dep)}`;
-            }
-            const dependencyContext = contextConsumers.find(
-              (consumer) => consumer.name === dep,
-            )?.contextName;
-            return dependencyContext ? `this.context["${dependencyContext}"] !== context["${dependencyContext}"]` : 'false';
-          });
+          const conditions = [...new Set(this.getConditionsFromDependencies(allDeps, options))];
           componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
             ${deleteCacheStatement}
           }`);

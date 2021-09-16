@@ -403,4 +403,8 @@ mocha.describe("vue-generation", function () {
   mocha.it("refs-as-attribute-helper", function () {
     this.testGenerator(this.test!.title);
   });
+
+  mocha.it("destructured-getters", function () {
+    this.testGenerator(this.test!.title);
+  });
 });

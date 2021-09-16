@@ -124,16 +124,24 @@ export class VariableDeclaration extends Expression {
   getDependency(options: toStringOptions) {
     if (this.initializer && typeof this.initializer !== 'string') {
       const initializerDependency = this.initializer.getDependency(options);
+      const initializerString = this.initializer.toString();
       if (
         this.name instanceof BindingPattern
         && this.initializer
           .toString()
           .startsWith(options?.componentContext || SyntaxKind.ThisKeyword)
       ) {
+        // debugger;
         if (this.name.hasRest()) {
           return initializerDependency;
         }
-        return this.name.getDependency(options);
+        if (initializerString === 'this.props' || initializerString === 'this') {
+          return this.name.getDependency(options);
+        }
+        if (this.name.type === 'object') {
+          const initName = this.initializer.toString(options);
+          return this.name.elements.map((el) => `${initName}.${el.name}`);
+        }
       }
       return initializerDependency;
     }

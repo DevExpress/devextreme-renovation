@@ -1,4 +1,4 @@
-import { GetAccessor as ReactGetAccessor } from '@devextreme-generator/react';
+import { GetAccessor as ReactGetAccessor, calculateMethodDependency } from '@devextreme-generator/react';
 import {
   toStringOptions, Identifier,
 } from '@devextreme-generator/core';
@@ -8,6 +8,13 @@ import { compileGetterCache } from '@devextreme-generator/angular';
 export class GetAccessor extends ReactGetAccessor {
   getter(componentContext?: string): string {
     return super.getter(componentContext).replace('()', '');
+  }
+
+  getDependency(options: toStringOptions): string[] {
+    return calculateMethodDependency(
+      super.baseGetDependency(options),
+      options.members,
+    );
   }
 
   toString(options?: toStringOptions): string {
