@@ -99,6 +99,18 @@ mocha.describe("vue-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("parent", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("child", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("between_props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("rest-styles", function () {
     this.testGenerator(this.test!.title);
   });
