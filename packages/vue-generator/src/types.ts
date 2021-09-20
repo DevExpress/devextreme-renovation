@@ -7,6 +7,7 @@ export declare type InitializedTemplateType = {
   initializer?: Expression | undefined;
   sourceProp?: string | undefined;
 };
+
 export interface toStringOptions extends BaseToStringOptions {
   initializedTemplate?: Array<InitializedTemplateType>;
 }
