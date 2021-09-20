@@ -1,8 +1,10 @@
 import CodeBlockWriter from 'code-block-writer';
+import { replaceDeclarationPath } from './utils/dependency';
 
 export function generateFactoryCode(
   ts: typeof import('typescript'),
   initialNode: import('typescript').Node,
+  platform: string,
 ) {
   const writer = new CodeBlockWriter({
     newLine: '\n',
@@ -3656,7 +3658,8 @@ export function generateFactoryCode(
         writeNodeText(node.importClause);
       }
       writer.write(',').newLine();
-      writeNodeText(node.moduleSpecifier);
+      const processedPath = replaceDeclarationPath(node.moduleSpecifier.getText(), platform);
+      writer.write(`ts.createStringLiteral(${processedPath})`);
     });
     writer.write(')');
   }

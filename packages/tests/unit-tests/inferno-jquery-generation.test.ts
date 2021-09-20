@@ -10,7 +10,8 @@ mocha.describe("inferno-generator: jQuery generation", function () {
   this.beforeAll(function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
-      `${__dirname}/test-cases/componentFactory`
+      `${__dirname}/test-cases/componentFactory/inferno`,
+      'inferno'
     );
 
     this.testGenerator = function (componentName: string) {

@@ -50,7 +50,8 @@ mocha.describe("vue-generation", function () {
   this.beforeAll(function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
-      `${__dirname}/test-cases/componentFactory`
+      `${__dirname}/test-cases/componentFactory/vue`,
+      'vue'
     );
     this.testGenerator = function (componentName: string) {
       generator.setContext({
@@ -99,6 +100,10 @@ mocha.describe("vue-generation", function () {
   });
 
   mocha.it("rest-styles", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("runtime-import", function () {
     this.testGenerator(this.test!.title);
   });
 

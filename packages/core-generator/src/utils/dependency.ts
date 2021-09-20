@@ -16,3 +16,7 @@ export function checkDependency(
 
   return properties.find((s) => dependency[s.name.toString()]);
 }
+
+const declarationsRegex = /(devextreme\/runtime\/)declarations/i;
+
+export const replaceDeclarationPath = (path: string, platform: string): string => path.replace(declarationsRegex, `$1${platform}`);
