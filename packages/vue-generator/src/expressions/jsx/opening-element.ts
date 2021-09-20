@@ -126,7 +126,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       && this.context.components[initializer.toString()] instanceof Component
       ? (this.context.components[initializer.toString()] as Component)
       : undefined;
-    
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'key',
     );
@@ -149,7 +148,11 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
             return `@${getEventName(a.name, initializerComponent.state)}="${
               templateProperty.name
             }Default.${a.name.toString(options)}"`;
-          })
+          }
+          return `:${a.name.toString()}=${
+            templateProperty.name
+          }Default.${a.name.toString(options)}`;
+        })
         .join(' ')}/>`
       : '';
     let body = componentTag;
