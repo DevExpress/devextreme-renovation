@@ -4,9 +4,8 @@ class ModelWidgetInput {
   @Input() value?: boolean;
   @Input() notValue?: boolean;
   @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
-  @Output() notValueChange: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() notValueChange: EventEmitter<boolean | undefined> =
+    new EventEmitter();
 }
 
 import {
