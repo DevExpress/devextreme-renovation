@@ -28,11 +28,10 @@ import { JsxElement } from './element';
 import { JsxChildExpression, JsxExpression } from './jsx-expression';
 import { JsxSpreadAttribute } from './spread-attribute';
 import { VueDirective } from './vue-directive';
-import { InitializedTemplateType, toStringOptions } from '../../types';
+import { toStringOptions } from '../../types';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
 import { PropertyAccess } from '../property-access';
 import { getEventName } from '../utils';
-import { VueComponentInput } from '../vue-component-input';
 
 const createFragment = (
   attributes: (JsxAttribute | JsxSpreadAttribute)[],
@@ -115,29 +114,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return tagName;
   }
 
-  findDefaultTemplateFromProp(
-    initializedTemplate: InitializedTemplateType[] | undefined,
-    initializer: Expression | undefined,
-  ): Component | undefined {
-    if (!initializedTemplate || !initializer) {
-      return undefined;
-    }
-    const templateIndex = initializedTemplate
-      ?.findIndex((el) => el.initializer?.toString() === initializer?.toString());
-    if (templateIndex === -1) {
-      return undefined;
-    }
-    const sourceProp = this.context?.components
-      ? Object.keys(this.context?.components).find((c) => (
-        this.context.components?.[c] as VueComponentInput).context?.components?.[initializer.toString()])
-      : undefined;
-    initializedTemplate[templateIndex].sourse = sourceProp;
-    return sourceProp
-      ? (this.context.components?.[sourceProp] as VueComponentInput)
-        .context.components?.[initializer.toString()] as Component
-      : undefined;
-  }
-
   compileTemplate(templateProperty: Property, options: toStringOptions) {
     const attributes = this.attributes.map((a) => a.getTemplateProp(options));
     const initializer = templateProperty.initializer;
@@ -150,9 +126,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       && this.context.components[initializer.toString()] instanceof Component
       ? (this.context.components[initializer.toString()] as Component)
       : undefined;
-    const initializerComponentFromProp = !initializerComponent
-      ? this.findDefaultTemplateFromProp(options.initializedTemplate, initializer)
-      : undefined;
+    
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'key',
     );
@@ -164,29 +138,18 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       };
     }
 
-    const componentTag = (initializerComponent || initializerComponentFromProp)
-      ? `<${initializerComponent
-        ? initializerComponent.name
-        : `${initializerComponentFromProp?.name}Default`} ${defaultAttrs
+    const componentTag = initializerComponent
+      ? `<${initializerComponent.name} ${defaultAttrs
         .map((a) => {
-          if (initializerComponent
-            ? initializerComponent.members.find(
-              (m) => m.isEvent && m.name === a.name.toString(),
-            )
-            : initializerComponentFromProp?.members.find(
+          if (
+            initializerComponent.members.find(
               (m) => m.isEvent && m.name === a.name.toString(),
             )
           ) {
-            return `@${getEventName(a.name, initializerComponent
-              ? initializerComponent.state
-              : initializerComponentFromProp?.state)}="${
+            return `@${getEventName(a.name, initializerComponent.state)}="${
               templateProperty.name
             }Default.${a.name.toString(options)}"`;
-          }
-          return `:${a.name.toString()}=${
-            templateProperty.name
-          }Default.${a.name.toString(options)}`;
-        })
+          })
         .join(' ')}/>`
       : '';
     let body = componentTag;
