@@ -4,7 +4,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
 }

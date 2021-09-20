@@ -9,7 +9,8 @@
     "packages/tests",
     "node_modules",
     "dist",
-    "packages/vdom/src/mocked" // Temporary ignored because lot of errors. Now we need just copy package with minimal changes.
+    "packages/runtime/inferno/mocked", // Temporary ignored because lot of errors. Now we need just copy package with minimal changes.
+    "packages/runtime/gulpfile.js"
   ],
   "parserOptions": {
     "project": ["./tsconfig.json", "./packages/*/tsconfig.json"]

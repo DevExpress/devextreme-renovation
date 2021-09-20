@@ -4,7 +4,7 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
   createContext,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 function view(model: Widget): any {
   return <span></span>;
 }

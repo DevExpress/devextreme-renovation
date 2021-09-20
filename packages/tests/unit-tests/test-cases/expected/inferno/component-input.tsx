@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 export const COMPONENT_INPUT_CLASS = "c3";
 function view(model: Widget) {
   return <div></div>;

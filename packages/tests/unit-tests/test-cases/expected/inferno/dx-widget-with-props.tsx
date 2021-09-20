@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 
 export declare type WidgetWithPropsInputType = {
   value: string;

@@ -21,7 +21,7 @@ export function compileCode(
     dirname: file.dirname,
     importedModules: file.importedModules,
   });
-  const codeFactory = generateFactoryCode(ts, source);
+  const codeFactory = generateFactoryCode(ts, source, generator.getPlatform());
 
   if (createFactoryOnly && generator.cache[file.path]) {
     generator.setContext(null);

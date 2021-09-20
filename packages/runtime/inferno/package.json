@@ -1,0 +1,13 @@
+{
+  "name": "@devextreme/runtime/inferno",
+  "version": "1.1.0",
+  "description": "DevExtreme virtual DOM common components",
+  "author": "Developer Express Inc.",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "../dist/cjs/inferno/index",
+  "module": "../dist/esm/inferno/index",
+  "types": "../dist/esm/inferno/index",
+  "dependencies": {
+    "inferno": "^7.4.6"
+  }
+}

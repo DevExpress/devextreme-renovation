@@ -46,7 +46,7 @@ export class InfernoComponent extends PreactComponent {
     }
 
     if (this.jQueryRegistered) {
-      imports.push('import { createReRenderEffect } from "@devextreme/vdom";');
+      imports.push('import { createReRenderEffect } from "@devextreme/runtime/inferno";');
     }
 
     if (coreImports.length) {
@@ -181,7 +181,7 @@ export class InfernoComponent extends PreactComponent {
   compileComponentWillUpdate(statements: string[], componentType: string): string {
     if (statements.length > 0) {
       const superStatement = componentType !== 'BaseInfernoComponent' ? 'super.componentWillUpdate();' : '';
-      return `componentWillUpdate(nextProps, nextState, context) {        
+      return `componentWillUpdate(nextProps, nextState, context) {
       ${superStatement}
       ${statements.join('\n')}
 }`;
@@ -379,7 +379,7 @@ export class InfernoComponent extends PreactComponent {
                 ${properties
     .map((p) => p.toString(this.getToStringOptions()))
     .join(';\n')}
-                  
+
                 constructor(props: ${propsType}) {
                     super(props);
                     ${this.compileStateInitializer()}
@@ -389,7 +389,7 @@ export class InfernoComponent extends PreactComponent {
                 ${this.compileInstance()};
 
                 ${this.compileEffects()}
-                
+
                 ${this.compileGetChildContext()}
 
                 ${this.effects
