@@ -26,7 +26,7 @@ import {
   VariableDeclaration,
   BindingElement,
   BindingPattern,
-  BaseFunction,
+  // BaseFunction,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -37,7 +37,7 @@ import { Parameter } from './functions/parameter';
 import { PropertyAccess } from './property-access';
 import { getEventName } from './utils';
 import { VueComponentInput } from './vue-component-input';
-import { InitializedTemplateType, toStringOptions } from '../types';
+import { toStringOptions } from '../types';
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -973,24 +973,6 @@ export class VueComponent extends Component {
     return '';
   }
 
-  getInitializedTemplates(): Array<InitializedTemplateType> {
-    return this.props.filter((m) => m.initializer
-      && m.isTemplate
-      && !(m.initializer instanceof BaseFunction)).map((m) => ({
-      propName: m.name,
-      defaultName: `${m.initializer?.toString()}Default`,
-      initializer: m.initializer,
-    }));
-  }
-
-  compileDefaultExactors(options: toStringOptions) {
-    return options.initializedTemplate
-      ? options.initializedTemplate
-        .filter((c) => c.sourceProp)
-        .map((c) => `const ${c.defaultName} = ${c.sourceProp}.${c.propName}.default()`).join('\n')
-      : '';
-  }
-
   getNestedExports(
     component: VueComponentInput,
     name: string,
@@ -1010,7 +992,6 @@ export class VueComponent extends Component {
       members: this.members,
       newComponentContext: '',
       isSVG: this.isSVGComponent,
-      initializedTemplate: this.getInitializedTemplates(),
     };
 
     this.compileTemplate(methods, options);
@@ -1039,7 +1020,6 @@ export class VueComponent extends Component {
 
     return `
           ${this.compileImports()}
-          ${this.compileDefaultExactors(options)}
           ${this.compileStyleNormalizer(options)}
           ${
   this.members.some((m) => m.isNested)
