@@ -2,7 +2,7 @@ const ts = require('gulp-typescript');
 const gulp = require('gulp');
 const replace = require('gulp-replace');
 const shell = require('gulp-shell');
-const platforms = ['angular', 'react', 'vue', 'inferno'];
+const platforms = ['angular', 'react', 'vue', 'inferno', 'declarations'];
 
 platforms.forEach(function(platform) {
   gulp.task(`copy-package-json-file.${platform}`, function() {

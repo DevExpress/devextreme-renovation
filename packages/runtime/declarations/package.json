@@ -1,0 +1,10 @@
+{
+    "name": "@devextreme/runtime/declarations",
+    "version": "1.1.0",
+    "description": "DevExtreme declarations module",
+    "author": "Developer Express Inc.",
+    "license": "SEE LICENSE IN LICENSE",
+    "main": "../dist/cjs/declarations/index",
+    "module": "../dist/esm/declarations/index",
+    "types": "../dist/esm/declarations/index"
+  }
