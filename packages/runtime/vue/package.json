@@ -4,7 +4,7 @@
     "description": "DevExtreme vue common utils",
     "author": "Developer Express Inc.",
     "license": "SEE LICENSE IN LICENSE",
-    "main": "../dist/vue/cjs/index",
-    "module": "../dist/vue/esm/index",
-    "types": "../dist/vue/esm/index"
+    "main": "../dist/csj/vue/index",
+    "module": "../dist/esm/vue/index",
+    "types": "../dist/esm/vue/index"
   }
