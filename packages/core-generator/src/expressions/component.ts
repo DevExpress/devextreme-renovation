@@ -250,7 +250,7 @@ export class Component extends Class implements Heritable {
 
     if (context.defaultOptionsImport) {
       context.defaultOptionsImport.add('convertRulesToOptions');
-      context.defaultOptionsImport.add('Rule');
+      context.defaultOptionsImport.add('DefaultOptionsRule');
     }
   }
 
@@ -302,7 +302,7 @@ export class Component extends Class implements Heritable {
         this.context.defaultOptionsModule,
       );
       imports.push(
-        `import {convertRulesToOptions, Rule} from "${relativePath}"`,
+        `import {convertRulesToOptions, DefaultOptionsRule} from "${relativePath}"`,
       );
     }
   }
@@ -325,7 +325,7 @@ export class Component extends Class implements Heritable {
 
   compileDefaultOptionRulesType() {
     const defaultOptionsTypeArgument = this.compileDefaultOptionsPropsType();
-    return `type ${this.compileDefaultOptionsRuleTypeName()} = Rule<${defaultOptionsTypeArgument}>;`;
+    return `type ${this.compileDefaultOptionsRuleTypeName()} = DefaultOptionsRule<${defaultOptionsTypeArgument}>;`;
   }
 
   compileDefaultOptionsMethod(
