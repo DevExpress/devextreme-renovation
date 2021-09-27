@@ -4,7 +4,7 @@
     "description": "DevExtreme react common utils",
     "author": "Developer Express Inc.",
     "license": "SEE LICENSE IN LICENSE",
-    "main": "../dist/react/cjs/index",
-    "module": "../dist/react/esm/index",
-    "types": "../dist/react/esm/index"
+    "main": "../dist/cjs/react/index",
+    "module": "../dist/esm/react/index",
+    "types": "../dist/esm/react/index"
   }
