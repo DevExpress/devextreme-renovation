@@ -10,6 +10,10 @@
     "pack": "npm run build && gulp npm.build && shx cp *.tgz package.tgz",
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
+  "peerDependencies": {
+    "@angular/core": "^8.0.0",
+    "vue": "^2.6.14"
+  },
   "dependencies": {
     "inferno": "^7.4.6",
     "inferno-compat": "^7.4.6",
@@ -19,11 +23,13 @@
   "devDependencies": {
     "shx": "^0.3.3",
     "typescript": "3.8",
+    "@angular/core": "^8.0.0",
     "gulp": "^4.0.2",
     "gulp-plumber": "^1.2.1",
     "gulp-replace": "^1.1.3",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-shell": "^0.8.0"
+    "gulp-shell": "^0.8.0",
+    "vue": "^2.6.14"
   }
 }

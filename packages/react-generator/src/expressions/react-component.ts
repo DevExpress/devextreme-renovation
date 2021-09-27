@@ -280,6 +280,9 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
+    if (this.isComponentWrapper()) {
+      imports.push("import ReactDOM from 'react-dom'");
+    }
 
     return imports;
   }
@@ -542,14 +545,30 @@ export class ReactComponent extends Component {
       : '';
   }
 
+  isComponentWrapper(): boolean {
+    return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
+  }
+
+  getTemplateRender(name: string): string {
+    return this.isComponentWrapper() ? `(data?) => {
+      const TemplateProp = props.${name};
+      if (typeof TemplateProp !== 'string') {
+        ReactDOM.render(
+          <React.Fragment><TemplateProp {...data} /></React.Fragment>,
+          data?.container || data
+        );
+      }}`
+      : `getTemplate(props.${name}, props.${getTemplatePropName(
+        name,
+        'render',
+      )}, props.${getTemplatePropName(name, 'component')})`;
+  }
+
   processTemplates(): string[] {
     return this.props
       .filter((p) => p.isTemplate)
       .map(
-        (t) => `${t.name}: getTemplate(props.${t.name}, props.${getTemplatePropName(
-          t.name,
-          'render',
-        )}, props.${getTemplatePropName(t.name, 'component')})`,
+        (t) => `${t.name}: ${this.getTemplateRender(t.name)}`,
       );
   }
 
@@ -864,19 +883,19 @@ export class ReactComponent extends Component {
           "zIndex",
           "zoom",
         ]);
-        
+
         const isNumeric = (value: string | number) => {
           if (typeof value === "number") return true;
           return !isNaN(Number(value));
         };
-        
+
         const getNumberStyleValue = (style: string, value: string | number) => {
           return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
         };
-        
+
         const normalizeStyles = (styles: unknown) => {
           if (!(styles instanceof Object)) return undefined;
-        
+
           return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
             result[key] = isNumeric(value)
               ? getNumberStyleValue(key, value)
