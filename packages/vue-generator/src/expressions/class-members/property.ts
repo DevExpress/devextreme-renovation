@@ -136,9 +136,10 @@ export class Property extends BaseProperty {
       if (this.isTemplate) {
         parts.push(`default(){
           return "${this.name}"
-        },${this.initializer && !(this.initializer instanceof BaseFunction) ? `defaultTemplate(){
-          return ${this.initializer?.toString()}
-        }` : ''}`);
+        }${this.initializer && !(this.initializer instanceof BaseFunction) ? `,
+          defaultTemplate(){
+              return ${this.initializer?.toString()}
+            }` : ''}`);
       } else if (this.initializer && type !== 'Function') {
         parts.push(`default(){
           return ${this.initializer.toString(options)}
