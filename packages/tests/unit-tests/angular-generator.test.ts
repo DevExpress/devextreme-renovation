@@ -1085,7 +1085,7 @@ mocha.describe("Angular generator", function () {
           ),
           removeSpaces(`
           <div >
-            <ng-container *ngIf="condition"> 
+            <ng-container *ngIf="condition">
               <ng-container *ngTemplateOutlet="var"></ng-container>
             </ng-container>
             <ng-container *ngIf="!(condition)">
@@ -1137,7 +1137,7 @@ mocha.describe("Angular generator", function () {
         ),
         removeSpaces(`
           <div >
-            <ng-container *ngIf="condition"> 
+            <ng-container *ngIf="condition">
               <ng-container *ngTemplateOutlet="var"></ng-container>
             </ng-container>
             <ng-container *ngIf="!(condition)">
@@ -1577,8 +1577,8 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(
               `<div>
-              <ng-template dynamicComponent 
-                *ngIf="condition" 
+              <ng-template dynamicComponent
+                *ngIf="condition"
                 [props]="{}"
                 [componentConstructor]="DynamicComponent"
                 let-DynamicComponent="DynamicComponent">
@@ -1674,7 +1674,7 @@ mocha.describe("Angular generator", function () {
           removeSpaces(element.toString(options)),
           removeSpaces(`<div>
             <ng-container *ngFor="let item of DynamicComponent; index as index">
-              <ng-template dynamicComponent 
+              <ng-template dynamicComponent
                 [props]="{prop:value}"
                 [componentConstructor]="item"
                 let-DynamicComponent="DynamicComponent"></ng-template>
@@ -6817,7 +6817,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
@@ -6831,7 +6831,10 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    constructor(private changeDetection: ChangeDetectorRef) {}
+                    constructor(
+                      private changeDetection: ChangeDetectorRef,
+                      private render: Renderer2,
+                      private viewContainerRef: ViewContainerRef) {}
                 }
 
                 @NgModule({
@@ -6906,9 +6909,9 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(component.toString()),
           getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
-                
+
                 ${component.decorator}
                 export default class BaseWidget extends Input {
                     get __restAttributes(): any{
@@ -6920,7 +6923,10 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    constructor(private changeDetection: ChangeDetectorRef) {
+                    constructor(
+                      private changeDetection: ChangeDetectorRef,
+                      private render: Renderer2,
+                      private viewContainerRef: ViewContainerRef) {
                       super();
                     }
                 }
@@ -7096,9 +7102,9 @@ mocha.describe("Angular generator", function () {
             getResult(`
                     type BaseWidgetOptionRule = Rule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = rules;
-                    export function defaultOptions(rule: BaseWidgetOptionRule) { 
+                    export function defaultOptions(rule: BaseWidgetOptionRule) {
                         __defaultOptionRules.push(rule);
-                        
+
                     }`)
           );
         }
@@ -7113,9 +7119,9 @@ mocha.describe("Angular generator", function () {
             getResult(`
                     type BaseWidgetOptionRule = Rule<Partial<BaseWidget>>;
                     const __defaultOptionRules:BaseWidgetOptionRule[] = [];
-                    export function defaultOptions(rule: BaseWidgetOptionRule) { 
+                    export function defaultOptions(rule: BaseWidgetOptionRule) {
                         __defaultOptionRules.push(rule);
-                        
+
                     }`)
           );
         }
@@ -7865,7 +7871,7 @@ mocha.describe("Angular generator", function () {
                         this.__destroyEffects[0] = this.__e()
                     }
                 }
-            
+
                 _updateEffects(){
                   if(this.__viewCheckedSubscribeEvent.length){
                     clearTimeout(this._effectTimeout);
@@ -8150,7 +8156,7 @@ mocha.describe("Angular generator", function () {
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"]
                             }
-                    
+
                             return this.__getterCache["name"]=( ():string[] => {
                                 return result;
                             })();
@@ -8258,7 +8264,7 @@ mocha.describe("Angular generator", function () {
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"];
                             }
-                    
+
                             return this.__getterCache["name"]=( ():'1'|{} => {
                                 return result;
                             })();
@@ -8280,7 +8286,7 @@ mocha.describe("Angular generator", function () {
                             if(this.__getterCache["name"]!==undefined){
                                 return this.__getterCache["name"]
                             }
-                    
+
                             return this.__getterCache["name"]=( ():{} => {
                                 return result;
                             })();
@@ -8315,7 +8321,7 @@ mocha.describe("Angular generator", function () {
                   [createDecorator(Decorators.Mutable)],
                   [],
                   new Identifier("someMutable")
-                )], 
+                )],
               isComponent:true
             }), "");
             assert.deepStrictEqual(ngOnChanges, []);
