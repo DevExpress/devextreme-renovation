@@ -2,6 +2,7 @@ import {
   capitalizeFirstLetter,
   compileType,
   Decorators,
+  Dependency,
   GeneratorContext,
   Identifier,
   toStringOptions,
@@ -106,7 +107,7 @@ export class Property extends BaseProperty {
     return super.toString(options);
   }
 
-  getDependency(): string[] {
+  getDependency(): Dependency[] {
     if (
       this.decorators.some(
         (d) => d.name === Decorators.OneWay
@@ -115,7 +116,7 @@ export class Property extends BaseProperty {
           || d.name === Decorators.Slot,
       )
     ) {
-      return [`props.${this.name}`];
+      return [new Dependency(`props.${this.name}`, [this])];
     }
     if (
       this.decorators.some(
@@ -129,20 +130,25 @@ export class Property extends BaseProperty {
       const scope = this.processComponentContext(this.scope);
       return this.questionOrExclamationToken === '?'
         ? [
-          `${scope}${this.name}${
-            scope ? this.questionOrExclamationToken : ''
-          }.current`,
+          new Dependency(
+            `${scope}${this.name}${
+              scope ? this.questionOrExclamationToken : ''
+            }.current`,
+            [this],
+          ),
         ]
         : [];
     }
     if (this.isState) {
-      return [`state.${this.name}`, `props.${this.name}`];
+      return [
+        new Dependency(`state.${this.name}`, [this]),
+        new Dependency(`props.${this.name}`, [this])];
     }
     if (this.isInternalState) {
-      return [`state.${this.name}`];
+      return [new Dependency(`state.${this.name}`, [this])];
     }
     if (this.isProvider || this.isConsumer || this.isMutable) {
-      return [`${this.name}`];
+      return [new Dependency(`${this.name}`, [this])];
     }
     throw `Can't parse property: ${this._name}`;
   }

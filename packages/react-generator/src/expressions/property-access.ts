@@ -11,6 +11,7 @@ import {
   processComponentContext,
   PropertyAssignment,
   SpreadAssignment,
+  Dependency,
 } from '@devextreme-generator/core';
 import {
   Property,
@@ -60,8 +61,8 @@ export class PropertyAccess extends BasePropertyAccess {
     return setState;
   }
 
-  getAssignmentDependency(_options?: toStringOptions) {
-    return [`${this.name}Change`];
+  getAssignmentDependency(_options?: toStringOptions): Dependency[] {
+    return [new Dependency(`${this.name}Change`)];
   }
 
   needToCreateAssignment(

@@ -2,6 +2,7 @@ import { Expression, SimpleExpression } from './base';
 import { Identifier } from './common';
 import { VariableExpression, toStringOptions } from '../types';
 import { ElementAccess, PropertyAccess } from './property-access';
+import { Dependency } from '..';
 
 export class BindingElement extends Expression {
   dotDotDotToken?: string;
@@ -33,11 +34,15 @@ export class BindingElement extends Expression {
     return `${key}${this.dotDotDotToken}${nameString}`;
   }
 
-  getDependency(_options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
+    let name = '';
     if (!this.propertyName) {
-      return [this.name.toString()];
+      name = this.name.toString();
+    } else {
+      name = this.propertyName.toString();
     }
-    return [this.propertyName.toString()];
+    const member = options.members.find((member) => member.name === name);
+    return [new Dependency(name, member ? [member] : [])];
   }
 }
 
@@ -89,10 +94,10 @@ export class BindingPattern extends Expression {
     this.elements.push(element);
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.elements
       .concat(this.removedElements)
-      .reduce((d: string[], e) => d.concat(e.getDependency(options)), []);
+      .reduce((d: Dependency[], e) => d.concat(e.getDependency(options)), []);
   }
 
   hasRest() {

@@ -104,7 +104,9 @@ export default class Widget extends WidgetInput {
   ngAfterViewInit() {
     this.__cachedObservables["propArray"] = this.propArray;
     this.__cachedObservables["internalArray"] = this.internalArray;
+    this.__cachedObservables["internalArray"] = this.internalArray;
     this.__cachedObservables["keys"] = this.keys;
+    this.__cachedObservables["propArray"] = this.propArray;
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(
         this.__effect(),

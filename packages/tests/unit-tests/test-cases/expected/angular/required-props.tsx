@@ -1,7 +1,7 @@
 import { Input } from "@angular/core";
 class WidgetInput {
   @Input() size!: { width: number; height: number };
-  @Input() typeProp!: string;
+  @Input() type!: string;
 }
 
 import {
@@ -27,15 +27,15 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["size", "typeProp"],
+  inputs: ["size", "type"],
 })
 export default class Widget extends WidgetInput {
   get __getHeight(): number {
     return this.size.height;
   }
   get __type(): string {
-    const { typeProp } = this;
-    return typeProp;
+    const { type } = this;
+    return type;
   }
   get __restAttributes(): any {
     return {};

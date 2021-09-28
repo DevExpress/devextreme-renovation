@@ -5,6 +5,7 @@ import {
 } from './base';
 import { toStringOptions } from '../types';
 import { Block } from './statements';
+import { Dependency } from '..';
 
 export class If extends ExpressionWithExpression {
   thenStatement: Expression;
@@ -30,7 +31,7 @@ export class If extends ExpressionWithExpression {
        ${elseStatement}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return super
       .getDependency(options)
       .concat(this.thenStatement.getDependency(options))
@@ -77,9 +78,9 @@ export class CaseClause extends ExpressionWithOptionalExpression {
         `;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.statements
-      .reduce((d: string[], s) => d.concat(s.getDependency(options)), [])
+      .reduce((d: Dependency[], s) => d.concat(s.getDependency(options)), [])
       .concat(super.getDependency(options));
   }
 }

@@ -48,7 +48,11 @@ export const DxWidget = {
   },
   watch: {
     p: ["__schedule_setupData", "__schedule_alwaysEffect"],
-    s_state: ["__schedule_setupData", "__schedule_alwaysEffect"],
+    s_state: [
+      "__schedule_setupData",
+      "__schedule_alwaysEffect",
+      "__schedule_alwaysEffect",
+    ],
     i: ["__schedule_setupData", "__schedule_alwaysEffect"],
     j: ["__schedule_alwaysEffect"],
     r: ["__schedule_alwaysEffect"],

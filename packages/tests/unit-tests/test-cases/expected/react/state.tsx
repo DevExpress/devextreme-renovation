@@ -62,8 +62,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
   const [__state_internalState, __state_setInternalState] = useState<number>(0);
-  const [__state_innerData, __state_setInnerData] =
-    useState<string | undefined>(undefined);
+  const [__state_innerData, __state_setInnerData] = useState<
+    string | undefined
+  >(undefined);
 
   const __updateState = useCallback(
     function __updateState(): any {
@@ -75,7 +76,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
           !(props.state1 !== undefined ? props.state1 : __state_state1)
         );
     },
-    [props.state1Change, props.state1, __state_state1]
+    [props.state1, __state_state1]
   );
   const __updateState2 = useCallback(
     function __updateState2(): any {
@@ -83,14 +84,14 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       __state_setState2((__state_state2) => (cur !== false ? false : true)),
         props.state2Change!(cur !== false ? false : true);
     },
-    [props.state2, __state_state2, props.state2Change]
+    [props.state2, __state_state2]
   );
-  const __updateState3 = useCallback(
-    function __updateState3(state: boolean): any {
-      __state_setState2((__state_state2) => state), props.state2Change!(state);
-    },
-    [props.state2Change]
-  );
+  const __updateState3 = useCallback(function __updateState3(
+    state: boolean
+  ): any {
+    __state_setState2((__state_state2) => state), props.state2Change!(state);
+  },
+  []);
   const __updateInnerState = useCallback(function __updateInnerState(
     state: number
   ): any {
@@ -103,13 +104,13 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     },
     [props.state1, __state_state1]
   );
-  const __stateChange = useCallback(
-    function __stateChange(stateProp?: boolean): any {
-      __state_setStateProp((__state_stateProp) => stateProp),
-        props.statePropChange!(stateProp);
-    },
-    [props.statePropChange]
-  );
+  const __stateChange = useCallback(function __stateChange(
+    stateProp?: boolean
+  ): any {
+    __state_setStateProp((__state_stateProp) => stateProp),
+      props.statePropChange!(stateProp);
+  },
+  []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {

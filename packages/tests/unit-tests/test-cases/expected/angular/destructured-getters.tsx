@@ -45,6 +45,27 @@ class Widget extends WidgetProps {
       return [stateField, propField];
     })());
   }
+  get __someObj2(): any {
+    return {
+      stateField: [this.someState, this.someProp],
+      propField: this.__newGetter,
+    };
+  }
+  get __arrayFromObj2(): (string | undefined)[] {
+    if (this.__getterCache["arrayFromObj2"] !== undefined) {
+      return this.__getterCache["arrayFromObj2"];
+    }
+    return (this.__getterCache["arrayFromObj2"] = ((): (
+      | string
+      | undefined
+    )[] => {
+      const { stateField } = this.__someObj2;
+      return [stateField];
+    })());
+  }
+  get __newGetter(): any {
+    return this.someProps2;
+  }
   get __arrayFromArr(): (string | undefined)[] {
     if (this.__getterCache["arrayFromArr"] !== undefined) {
       return this.__getterCache["arrayFromArr"];
@@ -91,6 +112,10 @@ class Widget extends WidgetProps {
   get __emptyMethod(): any {
     return "";
   }
+  __getValue(): any {
+    const { someProp } = this;
+    return someProp;
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -103,6 +128,7 @@ class Widget extends WidgetProps {
 
   __getterCache: {
     arrayFromObj?: (string | undefined)[];
+    arrayFromObj2?: (string | undefined)[];
     arrayFromArr?: (string | undefined)[];
     someMethod?: { stateField: string; propField: string };
     someMethod3?: { stateField: string; propField: string };

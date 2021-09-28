@@ -56,7 +56,7 @@ export const compileGetterCache = (
   ];
 };
 export class GetAccessor extends BaseGetAccessor {
-  get canBeDestructured() {
+  get canBeDestructured(): boolean {
     if (
       this.isEvent
       || this.isNested

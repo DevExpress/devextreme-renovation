@@ -4,7 +4,7 @@ const WidgetInput = {
     type: Object,
     required: true,
   },
-  typeProp: {
+  type: {
     type: String,
     required: true,
   },
@@ -30,14 +30,14 @@ export const DxWidget = {
       return this.size.height;
     },
     __type() {
-      const { typeProp } = this.props;
-      return typeProp;
+      const { type } = this.props;
+      return type;
     },
     __restAttributes() {
       return {};
     },
     props() {
-      return { size: this.size, typeProp: this.typeProp };
+      return { size: this.size, type: this.type };
     },
   },
   beforeCreate() {

@@ -1,6 +1,9 @@
 import { Decorators } from '../decorators';
 import { SyntaxKind } from '../syntaxKind';
-import { GeneratorContext, toStringOptions, TypeExpressionImports } from '../types';
+import {
+  GeneratorContext, toStringOptions, TypeExpressionImports,
+} from '../types';
+import { Dependency, dependencySet } from '../utils/dependency';
 import {
   calculateType,
   compileType,
@@ -159,8 +162,8 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(_options: toStringOptions) {
-    return [this.name];
+  getDependency(_options: toStringOptions): Dependency[] {
+    return [new Dependency(this.name, [this])];
   }
 
   get isPrivate() {
@@ -238,59 +241,66 @@ export class Method extends BaseClassMember {
     return `(${this.parameters})=>${this.body?.toString(options)}`;
   }
 
-  filterDependencies(dependencies: string[]): string[] {
+  filterDependencies(dependencies: Dependency[]): Dependency[] {
     return dependencies;
   }
 
   reduceDependencies(
-    dependencies: (Method | Property | undefined)[],
+    dependencies: Dependency[],
     options: toStringOptions,
-    startingArray: string[] = [],
-  ): string[] {
-    const depsReducer = (d: string[], p: Method | Property | undefined) => d.concat(
-      p!.getDependency({
+    startingArray: Dependency[] = [],
+  ): Dependency[] {
+    const reduceDependencies = dependencies
+      .reduce((arr: BaseClassMember[], dep) => arr.concat(dep.members), []);
+    const depsReducer = (d: Dependency[], p: BaseClassMember) => [
+      ...d,
+      ...(p!.getDependency({
         ...options,
-        members: options.members.filter((p) => p !== this),
-      }),
-    );
-    return dependencies.reduce(depsReducer, startingArray);
+        members: options.members.filter((m) => m.name !== this.name),
+      })),
+    ];
+    return reduceDependencies.reduce(depsReducer, startingArray);
   }
 
-  getDependency(options: toStringOptions): string[] {
+  getDependency(options: toStringOptions): Dependency[] {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
       ?.getParameter('run')
       ?.valueOf();
 
-    let result: string[] = [];
+    let result: Dependency[] = [];
+    const propsDependency = new Dependency('props', []);
     if (run === 'always') {
       result = this.filterDependencies(
         this.reduceDependencies(members
-          .filter((m) => !(m instanceof Method)), options, ['props']),
+          .filter((m) => !(m instanceof Method)).map((m) => new Dependency(m.name, [m])),
+        options,
+        [propsDependency]),
       );
     } else if (run !== 'once') {
-      const dependency = this.body?.getDependency(options);
+      const dependency = this.body?.getDependency(options) || [];
       const additionalDependency = [];
 
-      if (dependency?.find((d) => d === 'props')) {
-        additionalDependency.push('props');
+      if (dependency?.find((d) => d.name === 'props')) {
+        additionalDependency.push(propsDependency);
       }
-
+      const depSet = dependencySet(dependency);
+      // do we really need to reduce deps?
       result = this.reduceDependencies(
-        [...new Set(dependency)]
-          .map((d) => members.find((p) => p._name.toString() === d))
-          .filter((d) => d),
+        depSet,
+        // .map((d) => members.find((p) => p._name.toString() === d?.name))
+        // .filter((d) => d),
         options,
       )
         .concat(additionalDependency);
 
-      if (additionalDependency.indexOf('props') > -1) {
-        result = result.filter((d) => !d.startsWith('props.'));
+      if (additionalDependency.length) {
+        result = result.filter((d) => !d.name.startsWith('props.'));
       }
     }
 
-    return [...new Set(result)];
+    return dependencySet(result);
   }
 
   toString(options?: toStringOptions): string {
@@ -349,7 +359,9 @@ export class GetAccessor extends Method {
     }
     if (options) {
       const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
-      const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
+      const containMutableDep = this.getDependency(options)
+        .some((dep) => mutables?.includes(dep.name));
+      // remove name comparising to member
       return !containMutableDep
       && (isComplexType(this.type, contextTypes)
         || this.isProvider);

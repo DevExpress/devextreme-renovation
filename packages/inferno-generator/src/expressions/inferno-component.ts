@@ -151,7 +151,8 @@ export class InfernoComponent extends PreactComponent {
           (member) => member.name.toString() === dep,
         );
         const memberDependencies = dependencyMember?.getDependency(options);
-        return memberDependencies ? this.getConditionsFromDependencies(memberDependencies, options).join('||') : 'false';
+        return memberDependencies ? this.getConditionsFromDependencies(memberDependencies.map((d) => d.name), options).join('||') : 'false';
+        // rework name
       }
       return 'false';
     });
@@ -174,14 +175,18 @@ export class InfernoComponent extends PreactComponent {
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
         }).filter((dep) => {
-          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+          const depMember = this.getToStringOptions().members.find(
+            (member) => member.name === dep.name,
+          );
           return !depMember?.isMutable;
         });
 
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
         if (allDeps.length) {
-          const conditions = [...new Set(this.getConditionsFromDependencies(allDeps, options))];
+          const conditions = [...new Set(
+            this.getConditionsFromDependencies(allDeps.map((d) => d.name), options),
+          )];
           componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
             ${deleteCacheStatement}
           }`);
@@ -211,8 +216,9 @@ export class InfernoComponent extends PreactComponent {
         (e) => e.getDependency(this.getToStringOptions())
           .filter((dep) => {
             const depMember = this.getToStringOptions().members.find(
-              (member) => member.name === dep,
+              (member) => member.name === dep.name,
             );
+            // rework name
             return !depMember?.isMutable;
           })
           .map((d) => `this.${d}`)

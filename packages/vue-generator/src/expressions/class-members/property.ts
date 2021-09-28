@@ -16,6 +16,7 @@ import {
   StringLiteral,
   ObjectLiteral,
   NumericLiteral,
+  Dependency,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
 
@@ -223,9 +224,9 @@ export class Property extends BaseProperty {
     return super.canBeDestructured;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     if (this.isState) {
-      return [`${this.name}_state`];
+      return [new Dependency(`${this.name}_state`, [this])];
     }
     if (this.isMutable) {
       return [];

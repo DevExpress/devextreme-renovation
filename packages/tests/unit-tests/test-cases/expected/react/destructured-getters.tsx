@@ -29,11 +29,15 @@ interface Widget {
   someObj: any;
   objectFromDestructured: any;
   arrayFromObj: (string | undefined)[];
+  someObj2: any;
+  arrayFromObj2: (string | undefined)[];
+  newGetter: any;
   arrayFromArr: (string | undefined)[];
   someMethod: { stateField: string; propField: string };
   someMethod2: () => any;
   someMethod3: { stateField: string; propField: string };
   emptyMethod: any;
+  getValue: () => any;
   restAttributes: RestProps;
 }
 
@@ -47,9 +51,19 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [__state_someState, props.someProp]
     );
+    const __newGetter = useCallback(function __newGetter(): any {
+      return props.someProps2;
+    }, []);
     const __emptyMethod = useCallback(function __emptyMethod(): any {
       return "";
     }, []);
+    const __getValue = useCallback(
+      function __getValue(): any {
+        const { someProp } = props;
+        return someProp;
+      },
+      [props.someProp]
+    );
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { someProp, type, ...restProps } = props;
@@ -77,6 +91,15 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [__someObj().propField, __someObj().stateField]
     );
+    const __someObj2 = useCallback(
+      function __someObj2(): any {
+        return {
+          stateField: [__state_someState, props.someProp],
+          propField: __newGetter(),
+        };
+      },
+      [__state_someState, props.someProp, __newGetter()]
+    );
     const __someMethod2 = useCallback(
       function __someMethod2(): any {
         const state = __someObj().stateField;
@@ -90,6 +113,13 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
         return something;
       },
       [__someObj()]
+    );
+    const __arrayFromObj2 = useCallback(
+      function __arrayFromObj2(): (string | undefined)[] {
+        const { stateField } = __someObj2();
+        return [stateField];
+      },
+      [__someObj2().stateField]
     );
     const __arrayFromArr = useCallback(
       function __arrayFromArr(): (string | undefined)[] {

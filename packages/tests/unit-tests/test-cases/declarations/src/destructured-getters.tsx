@@ -24,10 +24,31 @@ class Widget extends JSXComponent(WidgetProps){
 		const {stateField , propField} = this.someObj
 		return {stateField, propField}
 	}
-
+	//[someObj.statefield, someObj.propField]
+	// ngOnChanges(changes){ if (["statefield", "propfield"] in changes) {this.gettercahce[]}}
+	// componentWillupdate
   get arrayFromObj(): (string|undefined)[] {
     const {stateField , propField} = this.someObj
 		return [stateField, propField]
+		// [someobj.statefield, someobj.propfield]
+  }
+
+  get someObj2() {
+	return {
+		stateField: [this.someState, this.props.someProp],
+		propField: this.newGetter
+	};
+	//[someState, someProp, newGetter]
+}
+  get arrayFromObj2(): (string|undefined)[] {
+    const {stateField} = this.someObj2
+		return [stateField]
+
+		// [someobj2]
+		// {name: this.someObj2.stateField, owner:}
+  }
+  get newGetter(){
+	  return this.props.someProps2
   }
 
   get arrayFromArr(): (string|undefined)[] {
@@ -55,4 +76,11 @@ class Widget extends JSXComponent(WidgetProps){
 	get emptyMethod() {
 		return ''
 	}
+	getValue() {
+		// const untrackedProps = this.props;
+		const { someProp } = this.props;
+		return someProp;
+		// There we have no dependecies [this.props.value], but have [this.props]
+		// Also we have excessive dependencies from TwoWay props
+	  }
 }

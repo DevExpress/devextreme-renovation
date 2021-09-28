@@ -903,8 +903,9 @@ export class ReactComponent extends Component {
         members: this.members,
         componentContext: SyntaxKind.ThisKeyword,
       }).map((dep) => this.members.find(
-        (member) => member._name.toString() === dep.split('().')[0].replace('__', '').replace('()', ''),
+        (member) => member._name.toString() === dep.name.split('().')[0].replace('__', '').replace('()', ''),
       )),
+      // rework this to get rid of names
       get level() {
         const depsFromDeps: {
           method: BaseMethod;

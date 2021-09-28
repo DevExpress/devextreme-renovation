@@ -36,6 +36,19 @@ export const DxWidget = {
       const { propField, stateField } = this.__someObj;
       return [stateField, propField];
     },
+    __someObj2() {
+      return {
+        stateField: [this.someState, this.someProp],
+        propField: this.__newGetter,
+      };
+    },
+    __arrayFromObj2() {
+      const { stateField } = this.__someObj2;
+      return [stateField];
+    },
+    __newGetter() {
+      return this.props.someProps2;
+    },
     __arrayFromArr() {
       const [stateField, propField] = this.__arrayFromObj;
       return [stateField, propField];
@@ -62,6 +75,10 @@ export const DxWidget = {
     __someMethod2() {
       const state = this.__someObj.stateField;
       const prop = this.__someObj.propField;
+    },
+    __getValue() {
+      const { someProp } = this.props;
+      return someProp;
     },
     changeState(newValue) {
       this.someState = newValue;

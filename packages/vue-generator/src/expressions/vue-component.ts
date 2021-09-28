@@ -671,10 +671,10 @@ export class VueComponent extends Component {
       }
 
       dependency
-        .filter((d) => d !== 'props')
+        .filter((d) => d.name !== 'props')
         .forEach((d) => {
-          watches[d] = watches[d] || [];
-          watches[d].push(`"${scheduleEffectName}"`);
+          watches[d.name] = watches[d.name] || [];
+          watches[d.name].push(`"${scheduleEffectName}"`);
         });
     });
 

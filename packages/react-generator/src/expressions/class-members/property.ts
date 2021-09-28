@@ -11,6 +11,7 @@ import {
   SyntaxKind,
   toStringOptions,
   TypeExpression,
+  Dependency,
 } from '@devextreme-generator/core';
 
 import {
@@ -169,9 +170,9 @@ export class Property extends BaseProperty {
     throw `Can't parse property: ${this._name}`;
   }
 
-  getDependency(_options: toStringOptions) {
+  getDependency(_options: toStringOptions): Dependency[] {
     if (this.isInternalState) {
-      return [getLocalStateName(this.name)];
+      return [new Dependency(getLocalStateName(this.name), [this])];
     }
     if (
       this.decorators.some(
@@ -181,7 +182,7 @@ export class Property extends BaseProperty {
           || d.name === Decorators.Slot,
       )
     ) {
-      return [getPropName(this.name)];
+      return [new Dependency(getPropName(this.name), [this])];
     }
     if (
       this.decorators.some(
@@ -194,17 +195,20 @@ export class Property extends BaseProperty {
     ) {
       const scope = this.processComponentContext(this.scope);
       return this.questionOrExclamationToken === '?'
-        ? [`${scope}${this.name.toString()}`]
+        ? [new Dependency(`${scope}${this.name.toString()}`, [this])]
         : [];
     }
     if (this.isState) {
-      return [getPropName(this.name), getLocalStateName(this.name)];
+      return [new Dependency(getPropName(this.name), [this]),
+        new Dependency(getLocalStateName(this.name), [this])];
     }
     if (this.isNested) {
-      return [getPropName(this.name), getPropName('children')];
+      return [
+        new Dependency(getPropName(this.name), [this]),
+        new Dependency(getPropName('children'), [])];
     }
     if (this.isProvider || this.isConsumer || this.isMutable) {
-      return [this.name];
+      return [new Dependency(this.name, [this])];
     }
     throw `Can't parse property: ${this._name}`;
   }

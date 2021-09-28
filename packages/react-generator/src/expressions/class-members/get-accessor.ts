@@ -1,9 +1,11 @@
 import {
+  BaseClassMember,
+  Dependency,
+  dependencySet,
   GetAccessor as BaseGetAccessor,
   toStringOptions,
 } from '@devextreme-generator/core';
-import { calculateMethodDependency, Method } from './method';
-import { Property } from './property';
+import { calculateMethodDependency } from './method';
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string): string {
@@ -11,35 +13,37 @@ export class GetAccessor extends BaseGetAccessor {
   }
 
   reduceDependencies(
-    dependencies: (Method | Property | undefined)[],
+    dependencies: Dependency[],
     options: toStringOptions,
-    startingArray: string[] = [],
-  ): string[] {
-    const depsReducer = (d: string[], p: Method | Property | undefined) => {
+    startingArray: Dependency[] = [],
+  ): Dependency[] {
+    const reduceDependencies = dependencies
+      .reduce((arr: BaseClassMember[], dep) => arr.concat(dep.members), []);
+    const depsReducer = (d: Dependency[], p: BaseClassMember) => {
       if (p instanceof GetAccessor) {
-        // debugger;
-        return d.concat(p.getter());
+        return d.concat(new Dependency(p.getter(), [p]));
       }
       return d.concat(
         p!.getDependency({
           ...options,
-          members: options.members.filter((p) => p !== this),
+          members: options.members.filter((p) => p.name !== this.name),
         }),
       );
     };
-    return dependencies.reduce(depsReducer, startingArray);
+    return reduceDependencies.reduce(depsReducer, startingArray);
   }
 
-  getDependency(options: toStringOptions): string[] {
-    const dependency = this.body?.getDependency(options);
-    const destructuredDependencies = [...new Set(dependency)].filter((d) => d.includes('().'));
+  getDependency(options: toStringOptions): Dependency[] {
+    const dependency = this.body?.getDependency(options) || [];
+    const destructuredDependencies = dependencySet(dependency).filter((d) => d.name.includes('().'));
+    // rework this ().
     return calculateMethodDependency(
       super.getDependency(options).concat(destructuredDependencies),
       options.members,
     );
   }
 
-  baseGetDependency(options: toStringOptions): string[] {
+  baseGetDependency(options: toStringOptions): Dependency[] {
     return calculateMethodDependency(
       super.getDependency(options),
       options.members,

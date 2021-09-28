@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/vdom";
+} from "@devextreme/runtime/inferno";
 
 export declare type WidgetPropsType = {
   someProp: string;
@@ -38,34 +38,23 @@ class Widget extends BaseInfernoComponent<any> {
     this.state = {
       someState: "",
     };
-    this.someMethod2 = this.someMethod2.bind(this);
-    this.changeState = this.changeState.bind(this);
   }
 
   someState!: string;
 
-  get someObj(): any {
-    return { stateField: this.state.someState, propField: this.props.someProp };
-  }
-  get someObj1(): any {
-    const { propField, stateField } = this.someObj;
-    return { stateField, propField };
-  }
-  get someMethod(): { stateField: string; propField: string } {
-    if (this.__getterCache["someMethod"] !== undefined) {
-      return this.__getterCache["someMethod"];
+  get someObj(): { stateField: string; propField: string } {
+    if (this.__getterCache["someObj"] !== undefined) {
+      return this.__getterCache["someObj"];
     }
-    return (this.__getterCache["someMethod"] = ((): {
+    return (this.__getterCache["someObj"] = ((): {
       stateField: string;
       propField: string;
     } => {
-      const { propField, stateField } = this.someObj1;
-      return { stateField, propField };
+      return {
+        stateField: this.state.someState,
+        propField: this.props.someProp,
+      };
     })());
-  }
-  someMethod2(): any {
-    const state = this.someObj.stateField;
-    const prop = this.someObj.propField;
   }
   get someMethod3(): { stateField: string; propField: string } {
     if (this.__getterCache["someMethod3"] !== undefined) {
@@ -79,21 +68,21 @@ class Widget extends BaseInfernoComponent<any> {
       return something;
     })());
   }
-  get emptyMethod(): any {
-    return "";
-  }
   get restAttributes(): RestProps {
     const { someProp, type, ...restProps } = this.props as any;
     return restProps;
   }
-  changeState(newValue: string): any {
-    this.setState((__state_argument: any) => ({ someState: newValue }));
-  }
   __getterCache: {
-    someMethod?: { stateField: string; propField: string };
+    someObj?: { stateField: string; propField: string };
     someMethod3?: { stateField: string; propField: string };
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
+    if (
+      this.state["someState"] !== nextState["someState"] ||
+      this.props["someProp"] !== nextProps["someProp"]
+    ) {
+      this.__getterCache["someObj"] = undefined;
+    }
     if (
       this.state["someState"] !== nextState["someState"] ||
       this.props["someProp"] !== nextProps["someProp"]

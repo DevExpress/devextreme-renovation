@@ -10,6 +10,7 @@ import { compileType } from '../utils/string';
 import { getProps } from './component';
 import { SyntaxKind } from '../syntaxKind';
 import { Property, Method } from './class-members';
+import { Dependency, ObjectLiteral, ReturnStatement } from '..';
 
 function getInitializer(expression?: Expression): Expression | undefined {
   if (expression instanceof AsExpression || expression instanceof Paren) {
@@ -77,8 +78,10 @@ export class VariableDeclaration extends Expression {
     ) {
       const dependency = this.name.getDependency(options);
       const members = getProps(options.members).filter(
-        (m) => !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0,
+        (m) => !m.canBeDestructured
+        && dependency.findIndex((dep) => dep.name === m._name.toString()) >= 0,
       );
+      // rework dep.name
 
       options.variables = {
         ...options.variables,
@@ -121,7 +124,7 @@ export class VariableDeclaration extends Expression {
     );
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     if (this.initializer && typeof this.initializer !== 'string') {
       const initializerDependency = this.initializer.getDependency(options);
       const initializerString = this.initializer.toString();
@@ -131,7 +134,6 @@ export class VariableDeclaration extends Expression {
           .toString()
           .startsWith(options?.componentContext || SyntaxKind.ThisKeyword)
       ) {
-        // debugger;
         if (this.name.hasRest()) {
           return initializerDependency;
         }
@@ -140,8 +142,24 @@ export class VariableDeclaration extends Expression {
         }
         if (this.name.type === 'object') {
           const initName = this.initializer.toString(options);
-          return this.name.elements.map((el) => `${initName}.${el.name}`);
+          const initMember = options.members.find((m) => m.name === initName); // toStringOptions ?
+          if (initMember instanceof Method) {
+            const returnStatements = initMember.body?.statements
+              .reduce(
+                (dependencies, s) => {
+                  if (s instanceof ReturnStatement && s?.expression instanceof ObjectLiteral) {
+                    dependencies.push(new Dependency('sas'));
+                  }
+                  return dependencies;
+                },
+                [] as Dependency[],
+              );
+            console.log(returnStatements);
+            return this.name.elements.map((el) => new Dependency(`${initName}.${el.name}`, []));
+          }
+          return this.name.elements.map((el) => new Dependency(`${initName}.${el.name}`, []));
         }
+        // check if type is array
       }
       return initializerDependency;
     }
@@ -195,9 +213,9 @@ export class VariableDeclarationList extends Expression {
     return `${this.flags} ${declarations}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.declarations.reduce(
-      (d: string[], p) => d.concat(p.getDependency(options)),
+      (d: Dependency[], p) => d.concat(p.getDependency(options)),
       [],
     );
   }
@@ -231,7 +249,7 @@ export class VariableStatement extends Expression {
       : '';
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.declarationList.getDependency(options);
   }
 

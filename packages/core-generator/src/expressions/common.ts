@@ -4,6 +4,7 @@ import { ExpressionWithExpression, Expression, SimpleExpression } from './base';
 import { TypeExpression } from './type';
 import { compileTypeParameters } from '../utils/string';
 import { StringLiteral } from './literal';
+import { Dependency } from '..';
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
@@ -36,7 +37,7 @@ export class Identifier extends SimpleExpression {
     return baseValue;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     const expression = getIdentifierExpressionFromVariable(this, options);
     if (expression) {
       return expression.getDependency(options);
@@ -97,8 +98,10 @@ export class Call extends ExpressionWithExpression {
     return this.compileDefaultToString(options);
   }
 
-  getDependency(options: toStringOptions) {
-    const argumentsDependency = this.argumentsArray.reduce((d: string[], a) => d.concat(a.getDependency(options)), []);
+  getDependency(options: toStringOptions): Dependency[] {
+    const argumentsDependency = this.argumentsArray.reduce(
+      (d: Dependency[], a) => d.concat(a.getDependency(options)), [],
+    );
     return super.getDependency(options).concat(argumentsDependency);
   }
 
