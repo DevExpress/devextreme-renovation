@@ -552,7 +552,7 @@ export class ReactComponent extends Component {
   getTemplateRender(name: string): string {
     return this.isComponentWrapper() ? `(data?) => {
       const TemplateProp = props.${name};
-      if (typeof TemplateProp !== 'string' && !(TemplateProp instanceof HTMLElement)) {
+      if (typeof TemplateProp !== 'string' && !(TemplateProp instanceof Element)) {
         const container = data.hasOwnProperty('container') ? data['container'] : data;
         ReactDOM.render(
           <React.Fragment><TemplateProp {...data} /></React.Fragment>,
