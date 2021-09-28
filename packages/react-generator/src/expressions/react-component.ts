@@ -530,7 +530,7 @@ export class ReactComponent extends Component {
   }
 
   compileTemplateGetter(): string {
-    return this.props.some((p) => p.isTemplate)
+    return this.props.some((p) => p.isTemplate && !this.isComponentWrapper())
       ? `
           const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
             (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp)) ||
@@ -553,9 +553,10 @@ export class ReactComponent extends Component {
     return this.isComponentWrapper() ? `(data?) => {
       const TemplateProp = props.${name};
       if (typeof TemplateProp !== 'string') {
+        const container = data.hasOwnProperty('container') ? data['container'] : data;
         ReactDOM.render(
           <React.Fragment><TemplateProp {...data} /></React.Fragment>,
-          data?.container || data
+          container
         );
       }}`
       : `getTemplate(props.${name}, props.${getTemplatePropName(
