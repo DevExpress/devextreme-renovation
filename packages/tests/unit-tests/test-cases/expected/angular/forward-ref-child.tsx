@@ -14,6 +14,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChild,
   ElementRef,
@@ -107,7 +109,11 @@ export default class RefOnChildrenChild extends Props {
     this.nullableRef?.(this.nullableRef__Ref__);
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
 }

@@ -1,14 +1,12 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
-  @Output() baseStatePropChange: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() baseStatePropChange: EventEmitter<boolean | undefined> =
+    new EventEmitter();
   @Input() modelStateProp?: boolean;
   @Input() value?: boolean;
-  @Output() modelStatePropChange: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() modelStatePropChange: EventEmitter<boolean | undefined> =
+    new EventEmitter();
   @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
 }
 
@@ -17,6 +15,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   forwardRef,
   HostListener,
@@ -39,7 +39,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class ModelWidget
   extends ModelWidgetInput
-  implements ControlValueAccessor {
+  implements ControlValueAccessor
+{
   get __restAttributes(): any {
     return {};
   }
@@ -68,7 +69,11 @@ export default class ModelWidget
   _baseStatePropChange: any;
   _modelStatePropChange: any;
   _valueChange: any;
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
     this._baseStatePropChange = (e: any) => {
       this.baseStatePropChange.emit(e);
@@ -87,6 +92,7 @@ export default class ModelWidget
 @NgModule({
   declarations: [ModelWidget],
   imports: [CommonModule],
+
   exports: [ModelWidget],
 })
 export class DxModelWidgetModule {}

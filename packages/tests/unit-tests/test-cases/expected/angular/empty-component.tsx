@@ -3,6 +3,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   Input,
 } from "@angular/core";
@@ -95,7 +97,11 @@ export default class Widget {
     });
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {}
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {}
 
   __processNgStyle(value: any) {
     return normalizeStyles(value);
