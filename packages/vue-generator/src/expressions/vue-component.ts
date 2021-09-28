@@ -1002,7 +1002,7 @@ export class VueComponent extends Component {
         .filter((c) => c.sourceProp)
         .forEach((c) => {
           components.push(c.defaultName);
-          Exactors.push(`const ${c.defaultName} = ${c.sourceProp}.${c.propName}.default()`);
+          Exactors.push(`const ${c.defaultName} = ${c.sourceProp}.${c.propName}.defaultTemplate()`);
         });
     }
     return Exactors.join('\n');

@@ -6,6 +6,9 @@ export const BetweenProps = {
     default() {
       return "childTemplate";
     },
+    defaultTemplate() {
+      return Child;
+    },
   },
 };
 </script>

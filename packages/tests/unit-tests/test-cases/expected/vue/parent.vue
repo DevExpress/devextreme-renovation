@@ -8,7 +8,7 @@
 </template>
 <script>
 import { BetweenProps } from "./between_props";
-const ChildDefault = BetweenProps.childTemplate.default();
+const ChildDefault = BetweenProps.childTemplate.defaultTemplate();
 
 export const DxParent = {
   name: "Parent",
