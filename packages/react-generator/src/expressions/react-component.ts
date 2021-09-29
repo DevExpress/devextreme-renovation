@@ -280,8 +280,8 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
-    if (this.isComponentWrapper()) {
-      imports.push("import ReactDOM from 'react-dom'");
+    if (this.props.some((p) => p.isTemplate)) {
+      imports.push(`import { ${this.isComponentWrapper() ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
     }
 
     return imports;
@@ -529,36 +529,12 @@ export class ReactComponent extends Component {
           }`;
   }
 
-  compileTemplateGetter(): string {
-    return this.props.some((p) => p.isTemplate && !this.isComponentWrapper())
-      ? `
-          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-            (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp)) ||
-              (RenderProp &&
-                ((props: any) =>
-                  RenderProp(
-                    ...("data" in props ? [props.data, props.index] : [props])
-                  ))) ||
-              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
-          );
-      `
-      : '';
-  }
-
   isComponentWrapper(): boolean {
     return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
   }
 
   getTemplateRender(name: string): string {
-    return this.isComponentWrapper() ? `(data?) => {
-      const TemplateProp = props.${name};
-      if (typeof TemplateProp !== 'string' && !(TemplateProp instanceof Element)) {
-        const container = data.hasOwnProperty('container') ? data['container'] : data;
-        ReactDOM.render(
-          <React.Fragment><TemplateProp {...data} /></React.Fragment>,
-          container
-        );
-      }}`
+    return this.isComponentWrapper() ? `getWrapperTemplate(props.${name})`
       : `getTemplate(props.${name}, props.${getTemplatePropName(
         name,
         'render',
@@ -908,8 +884,6 @@ export class ReactComponent extends Component {
   }
 
   toString(): string {
-    const getTemplateFunc = this.compileTemplateGetter();
-
     return `
               ${this.compileImports()}
               ${this.compileStyleNormalizer()}
@@ -922,7 +896,6 @@ export class ReactComponent extends Component {
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
-              ${getTemplateFunc}
               ${this.members.filter((m) => m.isApiMethod).length === 0
     ? `${this.modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
