@@ -986,23 +986,38 @@ export class VueComponent extends Component {
   }
 
   getInitializedTemplates(): Array<InitializedTemplateType> {
-    return this.props.filter((m) => m.initializer
-      && m.isTemplate
-      && !(m.initializer instanceof BaseFunction)).map((m) => ({
-      propName: m.name,
-      defaultName: `${m.initializer?.toString()}Default`,
-      initializer: m.initializer,
-    }));
+    const result: Array<InitializedTemplateType> = [];
+    this.props.forEach((p) => {
+      if (p.isTemplate
+        && this.context.components
+        && p.initializer
+        && !this.context.components?.[p.initializer.toString()]
+        && !(p.initializer instanceof BaseFunction)
+      ) {
+        const componentInput = Object.keys(this.context.components).find((c) => p.initializer && (
+          this.context.components?.[c] as VueComponentInput)
+          .context?.components?.[p.initializer.toString()]);
+        if (componentInput) {
+          result.push({
+            propName: p.name,
+            defaultName: `${p.initializer.toString()}Default`,
+            initializer: p.initializer,
+            componentInput,
+          });
+        }
+      }
+    });
+    return result;
   }
 
   compileDefaultExactors(options: toStringOptions, components: string[]):string {
     const Exactors: string[] = [];
-    if (options.initializedTemplate) {
-      options.initializedTemplate
-        .filter((c) => c.sourceProp)
+    if (options.initializedTemplates) {
+      options.initializedTemplates
+        .filter((c) => c.componentInput)
         .forEach((c) => {
           components.push(c.defaultName);
-          Exactors.push(`const ${c.defaultName} = ${c.sourceProp}.${c.propName}.defaultTemplate()`);
+          Exactors.push(`const ${c.defaultName} = ${c.componentInput}.${c.propName}.defaultTemplate()`);
         });
     }
     return Exactors.join('\n');
@@ -1015,7 +1030,7 @@ export class VueComponent extends Component {
       members: this.members,
       newComponentContext: '',
       isSVG: this.isSVGComponent,
-      initializedTemplate: this.getInitializedTemplates(),
+      initializedTemplates: this.getInitializedTemplates(),
     };
 
     this.compileTemplate(methods, options);

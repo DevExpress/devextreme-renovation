@@ -4,12 +4,12 @@ import { Expression, ExpressionWithTypeArguments as BaseExpressionWithTypeArgume
 export declare type InitializedTemplateType = {
   propName: string;
   defaultName: string;
-  initializer?: Expression | undefined;
-  sourceProp?: string | undefined;
+  initializer: Expression;
+  componentInput: string;
 };
 
 export interface toStringOptions extends BaseToStringOptions {
-  initializedTemplate?: Array<InitializedTemplateType>;
+  initializedTemplates?: Array<InitializedTemplateType>;
 }
 
 export class ExpressionWithTypeArguments extends BaseExpressionWithTypeArguments {
