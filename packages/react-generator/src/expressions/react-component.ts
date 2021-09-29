@@ -529,6 +529,10 @@ export class ReactComponent extends Component {
           }`;
   }
 
+  compileTemplateGetter(): string {
+    return '';
+  }
+
   isComponentWrapper(): boolean {
     return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
   }
@@ -884,6 +888,7 @@ export class ReactComponent extends Component {
   }
 
   toString(): string {
+    const getTemplateFunc = this.compileTemplateGetter();
     return `
               ${this.compileImports()}
               ${this.compileStyleNormalizer()}
@@ -896,6 +901,7 @@ export class ReactComponent extends Component {
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
+              ${getTemplateFunc}
               ${this.members.filter((m) => m.isApiMethod).length === 0
     ? `${this.modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
