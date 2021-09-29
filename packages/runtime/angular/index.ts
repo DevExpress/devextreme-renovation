@@ -9,10 +9,10 @@ export const renderTemplate = (
     $implicit: model.item,
     index: model.index,
   });
-  const container1 = model.container.get ? model.container.get(0) : model.container;
-  if (model.container) {
+  const container = model.container.get ? model.container.get(0) : model.container;
+  if (container) {
     childView.rootNodes.forEach((element) => {
-      component.renderer.appendChild(container1, element);
+      component.renderer.appendChild(container, element);
     });
   }
 };
