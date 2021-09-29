@@ -14,10 +14,10 @@ import {
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = Rule<Partial<WidgetInput>>;
+type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetInput>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
