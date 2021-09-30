@@ -1014,7 +1014,6 @@ export class VueComponent extends Component {
     const Exactors: string[] = [];
     if (options.initializedTemplates) {
       options.initializedTemplates
-        .filter((c) => c.componentInput)
         .forEach((c) => {
           components.push(c.defaultName);
           Exactors.push(`const ${c.defaultName} = ${c.componentInput}.${c.propName}.defaultTemplate()`);
