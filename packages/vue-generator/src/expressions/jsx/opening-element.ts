@@ -126,10 +126,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       && this.context.components[initializer.toString()] instanceof Component
       ? (this.context.components[initializer.toString()] as Component)
       : undefined;
-    const sourceProp = options.initializedTemplates
+    const componentInput = options.initializedTemplates
       ?.find((t) => t.initializer === initializer)?.componentInput;
-    const initializerComponentFromProp = !initializerComponent && sourceProp && initializer
-      ? ((this.context.components?.[sourceProp] as Component)
+    const initializerComponentFromProp = !initializerComponent && componentInput && initializer
+      ? ((this.context.components?.[componentInput] as Component)
         .context.components?.[initializer.toString()] as Component)
       : undefined;
     const keyAttribute = this.attributes.find(
