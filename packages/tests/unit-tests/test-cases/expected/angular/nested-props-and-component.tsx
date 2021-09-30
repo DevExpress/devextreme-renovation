@@ -54,6 +54,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ContentChildren,
   QueryList,
@@ -189,7 +191,11 @@ export default class UndefWidget extends WidgetProps {
 
   _someEvent: any;
   _twoWayPropChange: any;
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
     this._someEvent = (e: any) => {
       this.someEvent.emit(e);

@@ -6,5 +6,8 @@
     "license": "SEE LICENSE IN LICENSE",
     "main": "../dist/cjs/angular/index",
     "module": "../dist/esm/angular/index",
-    "types": "../dist/esm/angular/index"
+    "types": "../dist/esm/angular/index",
+    "peerDependencies": {
+      "@angular/core": "^8.0.0"
+    }
   }

@@ -4,9 +4,8 @@ class ModelWidgetInput {
   @Input() value?: boolean;
   @Input() notValue?: boolean;
   @Output() valueChange: EventEmitter<boolean | undefined> = new EventEmitter();
-  @Output() notValueChange: EventEmitter<
-    boolean | undefined
-  > = new EventEmitter();
+  @Output() notValueChange: EventEmitter<boolean | undefined> =
+    new EventEmitter();
 }
 
 import {
@@ -14,6 +13,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   forwardRef,
   HostListener,
@@ -36,7 +37,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class ModelWidget
   extends ModelWidgetInput
-  implements ControlValueAccessor {
+  implements ControlValueAccessor
+{
   get __restAttributes(): any {
     return {};
   }
@@ -68,7 +70,11 @@ export default class ModelWidget
 
   _valueChange: any;
   _notValueChange: any;
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
     this._valueChange = (e: any) => {
       this.valueChange.emit(e);
@@ -83,6 +89,7 @@ export default class ModelWidget
 @NgModule({
   declarations: [ModelWidget],
   imports: [CommonModule],
+
   exports: [ModelWidget],
 })
 export class DxModelWidgetModule {}
