@@ -271,7 +271,7 @@ export class Component extends Class implements Heritable {
           .some((p) => mutableMemberNames.indexOf(p.name.toString()) !== -1)
         ));
       if (parameterIntersectedMethods.length) {
-        throw new Error(`React does not support parameters intersection with class mutable members. Wrong methods: ${parameterIntersectedMethods.map((m) => m.name)}`);
+        throw new Error(`React does not support parameters intersection with class mutable members. ${this.name} wrong methods: ${parameterIntersectedMethods.map((m) => m.name)}`);
       }
     }
   }
