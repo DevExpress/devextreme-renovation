@@ -96,6 +96,11 @@ const WidgetPropsType = {
     default() {
       return "template";
     },
+    defaultTemplate() {
+      return typeof WidgetProps.template.default === "function"
+        ? WidgetProps.template.default()
+        : WidgetProps.template.default;
+    },
   },
   empty: {
     type: String,

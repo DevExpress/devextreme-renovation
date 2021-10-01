@@ -126,7 +126,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       && this.context.components[initializer.toString()] instanceof Component
       ? (this.context.components[initializer.toString()] as Component)
       : undefined;
-
+    const componentInput = options.initializedTemplates
+      ?.find((t) => t.initializer === initializer)?.componentInput;
+    const initializerComponentFromProp = !initializerComponent && componentInput && initializer
+      ? ((this.context.components?.[componentInput] as Component)
+        .context.components?.[initializer.toString()] as Component)
+      : undefined;
     const keyAttribute = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'key',
     );
@@ -138,15 +143,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       };
     }
 
-    const componentTag = initializerComponent
-      ? `<${initializerComponent.name} ${defaultAttrs
+    const componentTag = (initializerComponent || initializerComponentFromProp)
+      ? `<${initializerComponent
+        ? initializerComponent.name
+        : `${initializerComponentFromProp?.name}Default`} ${defaultAttrs
         .map((a) => {
-          if (
-            initializerComponent.members.find(
+          if (initializerComponent
+            ? initializerComponent.members.find(
+              (m) => m.isEvent && m.name === a.name.toString(),
+            )
+            : initializerComponentFromProp?.members.find(
               (m) => m.isEvent && m.name === a.name.toString(),
             )
           ) {
-            return `@${getEventName(a.name, initializerComponent.state)}="${
+            return `@${getEventName(a.name, initializerComponent
+              ? initializerComponent.state
+              : initializerComponentFromProp?.state)}="${
               templateProperty.name
             }Default.${a.name.toString(options)}"`;
           }
