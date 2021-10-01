@@ -4,6 +4,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   Input,
   ContentChildren,
@@ -96,7 +98,11 @@ export default class WithNested extends WithNestedInput {
     this._detectChanges();
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
   @Input() set rows(value: DxWithNestedRow[] | undefined) {

@@ -51,6 +51,7 @@ function view(model: Widget) {
 
 import * as React from "react";
 import { useCallback } from "react";
+import { getTemplate } from "@devextreme/runtime/react";
 
 declare type RestProps = {
   className?: string;
@@ -63,19 +64,6 @@ interface Widget {
   spreadGetter: { width: string; height: string };
   restAttributes: RestProps;
 }
-
-const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  (TemplateProp &&
-    (TemplateProp.defaultProps
-      ? (props: any) => <TemplateProp {...props} />
-      : TemplateProp)) ||
-  (RenderProp &&
-    ((props: any) =>
-      RenderProp(
-        ...("data" in props ? [props.data, props.index] : [props])
-      ))) ||
-  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
-
 export default function Widget(props: typeof Props & RestProps) {
   const __spreadGetter = useCallback(function __spreadGetter(): {
     width: string;
