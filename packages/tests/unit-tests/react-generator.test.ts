@@ -1853,9 +1853,9 @@ mocha.describe(
       );
       assert.deepEqual(
         this.propAccess.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["p1"]
+        [this.prop]
       );
     });
 
@@ -1878,9 +1878,9 @@ mocha.describe(
       );
       assert.deepEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["p1"]
+        [this.prop]
       );
     });
 
@@ -1922,7 +1922,7 @@ mocha.describe(
       );
       assert.deepEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
         ["props"]
       );
@@ -1937,9 +1937,9 @@ mocha.describe(
       );
       assert.deepEqual(
         this.stateAccess.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["s1"]
+        [this.state]
       );
     });
 
@@ -1962,24 +1962,24 @@ mocha.describe(
       );
       assert.deepEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["s1"]
+        [this.state]
       );
     });
 
     mocha.it("PropertyAccess. Internal State", function () {
-      assert.equal(
+      assert.strictEqual(
         this.internalStateAccess.toString({
           members: [this.state, this.prop, this.internalState],
         }),
-        ["__state_i1"]
+        "__state_i1"
       );
-      assert.deepEqual(
+      assert.deepStrictEqual(
         this.internalStateAccess.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["i1"]
+        [this.internalState]
       );
     });
 
@@ -2025,15 +2025,21 @@ mocha.describe(
         );
         assert.deepEqual(
           expression.getDependency({
-            members: [],
+            members: [this.state,
+              this.prop,
+              this.internalState,
+              this.stateChange,],
           }),
           ["s1Change"]
         );
         assert.deepEqual(
           expression.getAllDependency({
-            members: [],
+            members: [this.state,
+              this.prop,
+              this.internalState,
+              this.stateChange,],
           }),
-          ["s1"]
+          [this.state]
         );
       }
     );
@@ -2156,23 +2162,23 @@ mocha.describe(
         this.propAccess
       );
 
-      assert.equal(
+      assert.strictEqual(
         expression.toString({
           members: [this.state, this.prop, this.internalState],
         }),
         "(props.s1!==undefined?props.s1:__state_s1) === props.p1"
       );
-      assert.deepEqual(
+      assert.deepStrictEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["s1", "p1"]
+        [this.state, this.prop]
       );
-      assert.deepEqual(
+      assert.deepStrictEqual(
         expression.getAllDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["s1", "p1"]
+        [this.state, this.prop]
       );
     });
 
@@ -2298,11 +2304,11 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(
+        assert.deepStrictEqual(
           expression.getDependency({
-            members: [],
+            members: [this.prop, this.state],
           }),
-          ["p1", "s1"]
+          [this.prop, this.state]
         );
       }
     );
@@ -2325,12 +2331,18 @@ mocha.describe(
             generator.createIdentifier("props")
           )
         );
-
-        assert.deepEqual(
+        const heightMember = generator.createProperty(
+          [createDecorator("OneWay")],
+          [],
+          generator.createIdentifier("height"),
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("number")
+        );
+        assert.deepStrictEqual(
           expression.getDependency({
-            members: [],
+            members: [heightMember],
           }),
-          ["height"]
+          [heightMember]
         );
       }
     );
@@ -2447,13 +2459,16 @@ mocha.describe(
         )
       );
 
-      assert.deepEqual(
+      assert.deepStrictEqual(
         arrowFunction.getDependency({
-          members: [],
+          members: [this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,],
         }),
-        ["s1Change", "p1"]
+        ["s1Change", this.prop]
       );
-      assert.equal(
+      assert.strictEqual(
         getResult(
           arrowFunction.toString({
             members: [
@@ -2509,9 +2524,9 @@ mocha.describe(
       );
       assert.deepEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["p1", "s1"]
+        [this.prop, this.state]
       );
     });
 
@@ -2537,9 +2552,9 @@ mocha.describe(
         );
         assert.deepEqual(
           expression.getDependency({
-            members: [],
+            members: [this.state, this.prop, this.internalState],
           }),
-          ["p1", "s1", "i1"]
+          [this.prop, this.state, this.internalState]
         );
       }
     );
@@ -2564,13 +2579,14 @@ mocha.describe(
       );
       assert.deepEqual(
         expression.getDependency({
-          members: [],
+          members: [this.state, this.prop, this.internalState],
         }),
-        ["p1"]
+        [this.prop]
       );
     });
 
     mocha.it("Method should return dependency for all properties", function () {
+      //add similar tostring test
       const method = generator.createMethod(
         [],
         [],
@@ -2591,7 +2607,7 @@ mocha.describe(
           members: [this.internalState, this.state, this.prop],
           componentContext: generator.SyntaxKind.ThisKeyword,
         }),
-        ["props.p1", "__state_i1", "props.s1", "__state_s1"]
+        [this.prop, this.internalState, this.state]
       );
     });
 
@@ -2618,13 +2634,14 @@ mocha.describe(
             members: [this.state, this.prop],
             componentContext: generator.SyntaxKind.ThisKeyword,
           }),
-          ["props.p1"]
+          [this.prop]
         );
       }
     );
 
     mocha.it(
-      "Method should not include single props if there is props in dependency",
+      "Method should include single props if there is props in dependency",
+      // add tostring test with similar structure
       function () {
         const method = generator.createMethod(
           [],
@@ -2648,12 +2665,12 @@ mocha.describe(
           )
         );
 
-        assert.deepEqual(
+        assert.deepStrictEqual(
           method.getDependency({
             members: [this.internalState, this.state, this.prop],
             componentContext: generator.SyntaxKind.ThisKeyword,
           }),
-          ["__state_s1", "props"]
+          [this.prop, this.state, 'props']
         );
       }
     );
@@ -3120,25 +3137,7 @@ mocha.describe("ComponentInput", function () {
   });
 
   mocha.describe("Property. getters, getDependency", function () {
-    mocha.it(
-      "Property without decorators should be an internal state",
-      function () {
-        const property = generator.createProperty(
-          [],
-          undefined,
-          generator.createIdentifier("p"),
-          generator.SyntaxKind.QuestionToken
-        );
-
-        assert.strictEqual(property.getter(), "__state_p");
-        assert.deepEqual(
-          property.getDependency({
-            members: [],
-          }),
-          ["__state_p"]
-        );
-      }
-    );
+    
 
     mocha.it("Property with unknown decorator should throw error", function () {
       const property = generator.createProperty(
@@ -3241,6 +3240,27 @@ mocha.describe("ComponentInput", function () {
             "You can't use 'contentComponent' property. It'll be generated for 'contentTemplate' template property."
           );
         }
+      }
+    );
+  });
+  mocha.describe("Property. getters, getDependencyString", function () {
+    mocha.it(
+      "Property without decorators should be an internal state",
+      function () {
+        const property = generator.createProperty(
+          [],
+          undefined,
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken
+        );
+
+        assert.strictEqual(property.getter(), "__state_p");
+        assert.deepEqual(
+          property.getDependencyString({
+            members: [],
+          }),
+          ["__state_p"]
+        );
       }
     );
   });

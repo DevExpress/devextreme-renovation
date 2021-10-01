@@ -32,6 +32,7 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
+  Decorators,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -453,16 +454,34 @@ export class ReactComponent extends Component {
                       }
                   });`;
     }
+    const options = this.getToStringOptions();
+
     return (
       subscriptionsString
       + this.effects
         .map(
-          (e) => `useEffect(${e.arrowDeclaration(
-            this.getToStringOptions(),
-          )}, [${e.getDependency({
-            members: this.members,
-            componentContext: SyntaxKind.ThisKeyword,
-          })}])`,
+          (e) => {
+            let deps = e.getDependency({
+              members: this.members,
+              componentContext: SyntaxKind.ThisKeyword,
+            });
+            if (deps.indexOf('props') > -1) {
+              deps = deps.filter(
+                (d) => !(d instanceof BaseClassMember
+                    && getProps(this.members).includes(d as Property))
+                  || d._hasDecorator(Decorators.TwoWay),
+              );
+            }
+            const depNames = deps.reduce((arr: string[], dep) => {
+              if (dep instanceof BaseClassMember) {
+                return [...arr, ...dep.getDependencyString(options)];
+              }
+              return [...arr, dep];
+            }, []);
+            return `useEffect(${e.arrowDeclaration(
+              options,
+            )}, [${depNames}])`;
+          },
         )
         .join(';\n')
     );
@@ -928,13 +947,29 @@ export class ReactComponent extends Component {
       ) as Array<Method>,
     )
     .map(
-      (m) => `const ${m.name
-      }=useCallback(${m.declaration(
-        this.getToStringOptions(),
-      )}, [${m.getDependency({
-        members: this.members,
-        componentContext: SyntaxKind.ThisKeyword,
-      })}]);`,
+      (m) => {
+        let deps = m.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
+        if (deps.indexOf('props') > -1) {
+          deps = deps.filter(
+            (d) => !(d instanceof BaseClassMember
+                && getProps(this.members).includes(d as Property))
+              || d._hasDecorator(Decorators.TwoWay),
+          );
+        }
+        const depNames = deps.reduce((arr: string[], dep) => {
+          if (dep instanceof BaseClassMember) {
+            return [...arr, ...dep.getDependencyString(this.getToStringOptions())];
+          }
+          return [...arr, dep];
+        }, []);
+        return `const ${m.name
+        }=useCallback(${m.declaration(
+          this.getToStringOptions(),
+        )}, [${dep}]);`;
+      },
     )
     .join('\n')}
                   ${this.compileUseEffect()}
