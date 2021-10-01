@@ -26,7 +26,6 @@ import {
   VariableDeclaration,
   BindingElement,
   BindingPattern,
-  BaseFunction,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -992,7 +991,6 @@ export class VueComponent extends Component {
         && this.context.components
         && p.initializer
         && !this.context.components?.[p.initializer.toString()]
-        && !(p.initializer instanceof BaseFunction)
       ) {
         const componentInput = Object.keys(this.context.components).find((c) => p.initializer && (
           this.context.components?.[c] as VueComponentInput)
