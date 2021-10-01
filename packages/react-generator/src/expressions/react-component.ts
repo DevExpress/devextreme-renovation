@@ -968,7 +968,7 @@ export class ReactComponent extends Component {
         return `const ${m.name
         }=useCallback(${m.declaration(
           this.getToStringOptions(),
-        )}, [${dep}]);`;
+        )}, [${depNames}]);`;
       },
     )
     .join('\n')}

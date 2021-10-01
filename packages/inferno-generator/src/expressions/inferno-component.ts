@@ -129,7 +129,7 @@ export class InfernoComponent extends PreactComponent {
       ];
 
       getters.forEach((g) => {
-        const allDeps = g.getDependency({
+        const allDeps = g.getDependencyString({ // rework
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
         }).filter((dep) => {
@@ -194,7 +194,7 @@ export class InfernoComponent extends PreactComponent {
     const updateEffectsStatements: string[] = [];
     if (this.effects.length || this.jQueryRegistered) {
       const dependencies = this.effects.map(
-        (e) => e.getDependency(this.getToStringOptions())
+        (e) => e.getDependency(this.getToStringOptions())// rework
           .filter((dep) => {
             const depMember = this.getToStringOptions().members.find(
               (member) => member.name === dep,

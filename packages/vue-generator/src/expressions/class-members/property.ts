@@ -223,13 +223,13 @@ export class Property extends BaseProperty {
     return super.canBeDestructured;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependencyString(options: toStringOptions): string[] {
     if (this.isState) {
       return [`${this.name}_state`];
     }
     if (this.isMutable) {
       return [];
     }
-    return super.getDependency(options);
+    return super.getDependencyString(options);
   }
 }

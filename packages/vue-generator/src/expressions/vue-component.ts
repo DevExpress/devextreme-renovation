@@ -671,6 +671,7 @@ export class VueComponent extends Component {
       }
 
       dependency
+        .map((dep) => (dep instanceof BaseClassMember ? dep._name.toString() : dep))
         .filter((d) => d !== 'props')
         .forEach((d) => {
           watches[d] = watches[d] || [];

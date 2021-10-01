@@ -1,3 +1,4 @@
+import { Dependency } from '..';
 import { SyntaxKind } from '../syntaxKind';
 import { GeneratorContext, toStringOptions, VariableExpression } from '../types';
 import { containsPortalsInStatements, containsStyleInStatements } from '../utils/functions';
@@ -215,7 +216,7 @@ export class BaseFunction extends Expression {
     this.context = context;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.body.getDependency(options);
   }
 

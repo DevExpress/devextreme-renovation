@@ -1,10 +1,12 @@
-import { BaseClassMember, Method as BaseMethod, toStringOptions } from '@devextreme-generator/core';
+import {
+  BaseClassMember, Dependency, Method as BaseMethod, toStringOptions,
+} from '@devextreme-generator/core';
 import { getLocalStateName } from './property';
 
 export function calculateMethodDependency(
-  dependency: string[],
+  dependency: Dependency[],
   members: BaseClassMember[],
-): string[] {
+): Dependency[] {
   const twoWayProps = members.filter((m) => m.isState);
   if (twoWayProps.length && dependency.indexOf('props') !== -1) {
     return [
@@ -19,14 +21,18 @@ export function calculateMethodDependency(
 }
 
 export class Method extends BaseMethod {
-  filterDependencies(dependencies: string[]): string[] {
+  filterDependencies(dependencies: Dependency[]): Dependency[] {
     return dependencies.filter((d) => d !== 'props');
   }
 
-  getDependency(options: toStringOptions) {
-    return calculateMethodDependency(
+  getDependencyString(options: toStringOptions): string[] {
+    const dependencies = calculateMethodDependency(
       super.getDependency(options),
       options.members,
     );
+    return dependencies.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+      ? [...arr, ...dep.getDependencyString(options)]
+      : [...arr, dep]),
+    []);
   }
 }

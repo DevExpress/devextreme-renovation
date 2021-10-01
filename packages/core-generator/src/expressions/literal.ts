@@ -6,6 +6,7 @@ import {
 } from './property-assignment';
 import { Identifier } from './common';
 import { toStringOptions } from '../types';
+import { Dependency } from '..';
 
 export class StringLiteral extends SimpleExpression {
   quoteSymbol: string;
@@ -43,9 +44,9 @@ export class ArrayLiteral extends Expression {
     return `[${this.elements.map((e) => e.toString(options))}]`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.elements.reduce(
-      (d: string[], p) => d.concat(p.getDependency(options)),
+      (d: Dependency[], p) => d.concat(p.getDependency(options)),
       [],
     );
   }
@@ -110,9 +111,9 @@ export class ObjectLiteral extends Expression {
     return toObject(this);
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.properties.reduce(
-      (d: string[], p) => d.concat(p.getDependency(options)),
+      (d: Dependency[], p) => d.concat(p.getDependency(options)),
       [],
     );
   }
