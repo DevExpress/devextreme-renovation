@@ -27,6 +27,7 @@ import {
   BindingElement,
   BindingPattern,
   BaseFunction,
+  TypeReferenceNode,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -993,10 +994,19 @@ export class VueComponent extends Component {
         && p.initializer
         && !this.context.components?.[p.initializer.toString()]
       ) {
-        const componentInputInstance = (Object.values(this.context.components).find((component) => p.initializer
-          && (component as VueComponentInput).context.components?.[p.initializer.toString()]) as VueComponentInput);
+        if ((p.type instanceof TypeReferenceNode)
+          && (p.type as TypeReferenceNode).context.path !== this.context.path
+          && p.initializer instanceof BaseFunction) {
+          // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
+          throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
+        }
+        const componentInputInstance = (Object.values(this.context.components)
+          .find((component) => p.initializer
+          && (component as VueComponentInput).context
+            .components?.[p.initializer.toString()]) as VueComponentInput);
         if (componentInputInstance
-          && componentInputInstance.context.path !== this.context.path
+          && (p.type instanceof TypeReferenceNode)
+          && (p.type as TypeReferenceNode).context.path !== this.context.path
           && p.initializer instanceof BaseFunction) {
           // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
           throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
