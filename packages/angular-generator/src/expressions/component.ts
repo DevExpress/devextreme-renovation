@@ -1430,19 +1430,19 @@ export class AngularComponent extends Component {
         const kebabCase = (str: string) => {
           return str.replace(uppercasePattern, "-$&").toLowerCase();
         };
-        
+
         const isNumeric = (value: string | number) => {
           if (typeof value === "number") return true;
           return !isNaN(Number(value));
         };
-        
+
         const getNumberStyleValue = (style: string, value: string | number) => {
           return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
         };
-        
+
         const normalizeStyles = (styles: unknown) => {
           if (!(styles instanceof Object)) return undefined;
-        
+
           return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
             const kebabString = kebabCase(key);
             result[kebabString] = isNumeric(value)
@@ -1481,10 +1481,14 @@ export class AngularComponent extends Component {
     const coreImports: string[] = [
       'ChangeDetectionStrategy',
       'ChangeDetectorRef',
+      'ViewContainerRef',
+      'Renderer2',
       'ViewRef',
     ];
     const constructorArguments: string[] = [
       'private changeDetection: ChangeDetectorRef',
+      'private render: Renderer2',
+      'private viewContainerRef: ViewContainerRef',
     ];
 
     const cdkImports: string[] = [];
@@ -1643,7 +1647,7 @@ export class AngularComponent extends Component {
             ],
             ${
   entryComponents.length
-    ? `entryComponents: [ 
+    ? `entryComponents: [
               ${entryComponents.join(',\n')}
             ],`
     : ''

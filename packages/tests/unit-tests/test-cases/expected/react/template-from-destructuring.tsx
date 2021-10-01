@@ -13,6 +13,7 @@ export const viewFunction = ({ props }: TestComponent): any => {
 
 import * as React from "react";
 import { useCallback } from "react";
+import { getTemplate } from "@devextreme/runtime/react";
 
 declare type RestProps = {
   className?: string;
@@ -24,19 +25,6 @@ interface TestComponent {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
 }
-
-const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  (TemplateProp &&
-    (TemplateProp.defaultProps
-      ? (props: any) => <TemplateProp {...props} />
-      : TemplateProp)) ||
-  (RenderProp &&
-    ((props: any) =>
-      RenderProp(
-        ...("data" in props ? [props.data, props.index] : [props])
-      ))) ||
-  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
-
 export function TestComponent(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

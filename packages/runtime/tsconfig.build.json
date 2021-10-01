@@ -4,5 +4,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "typeRoots": ["node_modules/inferno"],
+    "jsx": "react",
   }
 }

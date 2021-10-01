@@ -8,6 +8,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChild,
   ComponentFactoryResolver,
@@ -129,7 +131,11 @@ export default class Widget extends WidgetProps {
     clearTimeout(this._effectTimeout);
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
   set _rendered(rendered: boolean) {

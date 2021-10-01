@@ -11,6 +11,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChild,
   ElementRef,
@@ -142,7 +144,11 @@ export default class RefOnChildrenParent extends Props {
     this._updateEffects();
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
   set _innerState(innerState: number) {
