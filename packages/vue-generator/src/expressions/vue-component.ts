@@ -26,6 +26,7 @@ import {
   VariableDeclaration,
   BindingElement,
   BindingPattern,
+  BaseFunction,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -992,15 +993,20 @@ export class VueComponent extends Component {
         && p.initializer
         && !this.context.components?.[p.initializer.toString()]
       ) {
-        const componentInput = Object.keys(this.context.components).find((c) => p.initializer && (
-          this.context.components?.[c] as VueComponentInput)
-          .context?.components?.[p.initializer.toString()]);
-        if (componentInput) {
+        const componentInputInstance = (Object.values(this.context.components).find((component) => p.initializer && 
+          (component as VueComponentInput).context.components?.[p.initializer.toString()]) as VueComponentInput);
+        if (componentInputInstance 
+          && componentInputInstance.context.path !== this.context.path 
+          && p.initializer instanceof BaseFunction) {
+          // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
+          throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
+        }
+        if (componentInputInstance) {
           result.push({
             propName: p.name,
             defaultName: `${p.initializer.toString()}Default`,
             initializer: p.initializer,
-            componentInput,
+            componentInput: componentInputInstance.name.toString(),
           });
         }
       }

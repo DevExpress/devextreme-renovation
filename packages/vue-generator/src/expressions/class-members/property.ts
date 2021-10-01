@@ -134,10 +134,6 @@ export class Property extends BaseProperty {
       || (this.isNested && this.name === '__defaultNestedValues')
     ) {
       if (this.isTemplate) {
-        if (this.initializer instanceof BaseFunction && options.initializedTemplates) {
-          // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
-          throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
-        }
         parts.push(`default(){
           return "${this.name}"
         }${this.initializer && !(this.initializer instanceof BaseFunction) ? `,
