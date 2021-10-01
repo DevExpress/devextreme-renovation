@@ -993,10 +993,10 @@ export class VueComponent extends Component {
         && p.initializer
         && !this.context.components?.[p.initializer.toString()]
       ) {
-        const componentInputInstance = (Object.values(this.context.components).find((component) => p.initializer && 
-          (component as VueComponentInput).context.components?.[p.initializer.toString()]) as VueComponentInput);
-        if (componentInputInstance 
-          && componentInputInstance.context.path !== this.context.path 
+        const componentInputInstance = (Object.values(this.context.components).find((component) => p.initializer
+          && (component as VueComponentInput).context.components?.[p.initializer.toString()]) as VueComponentInput);
+        if (componentInputInstance
+          && componentInputInstance.context.path !== this.context.path
           && p.initializer instanceof BaseFunction) {
           // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
           throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
