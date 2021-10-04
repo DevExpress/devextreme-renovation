@@ -16,4 +16,5 @@ export const renderTemplate = (
     });
   }
 };
-export const hasTemplate = (name: any, props: any, component?: any): boolean => !!props[name];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const hasTemplate = (name: any, props: any, _component?: any): boolean => !!props[name];

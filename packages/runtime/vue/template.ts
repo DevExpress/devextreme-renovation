@@ -31,4 +31,4 @@ export const renderTemplate = (template: any, model: any, component?: any): void
     placeholder,
   );
 };
-export const hasTemplate = (name: any, props: any, component?: any): boolean => !!component.$parent.$slots[name];
+export const hasTemplate = (name: any, _props: any, component?: any): boolean => !!component.$parent.$slots[name];
