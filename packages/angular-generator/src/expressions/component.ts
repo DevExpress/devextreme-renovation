@@ -109,7 +109,7 @@ function separateDependency(
 ): [Dependency[], Dependency[]] {
   const result: [Dependency[], Dependency[]] = [[], []];
   return allDependency.reduce((r, d) => {
-    if (internalState.find((m) => m.name.toString() === d)) {
+    if (internalState.find((m) => m === d)) {
       r[1].push(d);
     } else {
       r[0].push(d);
@@ -634,7 +634,7 @@ export class AngularComponent extends Component {
           );
           if (dependenciesWithoutContext.length) {
             conditionArray.push(
-              `[${dependenciesWithoutContext.map((d) => `"${d}"`).join(',')}].some(d=>${
+              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
               }[d])`,
             );
@@ -704,9 +704,8 @@ export class AngularComponent extends Component {
           allDeps,
           this.internalState,
         );
-        const iterableDeps = allDeps.filter((dep) => isTypeArray(
-          this.members.find((m) => m.name === dep)?.type,
-        ));
+        const iterableDeps = allDeps
+          .filter((dep) => dep instanceof BaseClassMember && isTypeArray(dep.type));
 
         const updateEffectMethod = `__schedule_${e._name}`;
         if (propsDependency.length || internalStateDependency.length) {
@@ -751,7 +750,7 @@ export class AngularComponent extends Component {
           const observableConditionArray = ['this.__destroyEffects.length'];
           observableConditionArray.push(
             `this.__checkObservables([${iterableDeps
-              .map((d) => `"${d}"`)
+              .map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`)
               .join(',')}])`,
           );
 
@@ -769,7 +768,7 @@ export class AngularComponent extends Component {
           ) as SetAccessor;
           if (setter) {
             if (
-              usedIterables.has(name)
+              usedIterables.has(dep)
               && !setter.body?.statements.some(
                 (expr) => expr.toString()
                   === `this.__cachedObservables["${name}"] = [...${name}];`,
@@ -830,8 +829,9 @@ export class AngularComponent extends Component {
           return isChanged;
         }`);
         usedIterables.forEach((i) => {
+          const iName = i instanceof BaseClassMember ? i._name.toString() : i;
           ngAfterViewInitStatements.push(
-            `this.__cachedObservables["${i}"] = this.${i}`,
+            `this.__cachedObservables["${iName}"] = this.${iName}`,
           );
         });
       }

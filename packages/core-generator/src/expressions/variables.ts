@@ -78,7 +78,7 @@ export class VariableDeclaration extends Expression {
     ) {
       const dependency = this.name.getDependency(options);
       const members = getProps(options.members).filter(
-        (m) => !m.canBeDestructured && dependency.indexOf(m._name.toString()) >= 0,
+        (m) => !m.canBeDestructured && dependency.indexOf(m) >= 0,
       );
 
       options.variables = {

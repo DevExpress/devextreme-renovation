@@ -43,8 +43,8 @@ import { CommonModule } from "@angular/common";
   ],
   outputs: ["onClick", "onSomething", "stringValueChange"],
   template: `<span
-    >{{(sizes ?? {width:0,height:0}).height
-    }}{{(sizes ?? {width:0,height:0}).width}}</span
+    >{{ (sizes ?? { width: 0, height: 0 }).height
+    }}{{ (sizes ?? { width: 0, height: 0 }).width }}</span
   >`,
 })
 export default class Widget extends WidgetInput {

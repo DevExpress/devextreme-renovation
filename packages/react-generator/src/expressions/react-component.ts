@@ -35,7 +35,7 @@ import {
   Decorators,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
-import { Method } from './class-members/method';
+import { calculateMethodDependency, Method } from './class-members/method';
 import { getPropName, Property } from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
@@ -956,9 +956,11 @@ export class ReactComponent extends Component {
           deps = deps.filter(
             (d) => !(d instanceof BaseClassMember
                 && getProps(this.members).includes(d as Property))
-              || d._hasDecorator(Decorators.TwoWay),
+              || d.isState,
           );
         }
+        deps = calculateMethodDependency(deps, this.members);
+        // rework closely
         const depNames = deps.reduce((arr: string[], dep) => {
           if (dep instanceof BaseClassMember) {
             return [...arr, ...dep.getDependencyString(this.getToStringOptions())];

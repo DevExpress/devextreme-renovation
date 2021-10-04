@@ -160,7 +160,7 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(_options: toStringOptions): Dependency[] {
+  getDependency(_options?: toStringOptions): Dependency[] {
     return [this];
   }
 
@@ -260,8 +260,8 @@ export class Method extends BaseClassMember {
           members: members.filter((p) => p !== this),
         })];
       }
-      // rework find member
-      return [...d, p];
+      const member = members.find((m) => m._name.toString() === p);
+      return [...d, member || p];
     };
 
     let result: Dependency[] = [];
