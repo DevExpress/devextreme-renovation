@@ -27,13 +27,13 @@ export function isJSXComponent(heritageClauses: HeritageClause[]) {
 export function getProps(members: BaseClassMember[]): Property[] {
   return members.filter((m) => m.decorators.find(
     (d) => d.name === Decorators.OneWay
-        || d.name === Decorators.TwoWay
-        || d.name === Decorators.Nested
-        || d.name === Decorators.Event
-        || d.name === Decorators.Template
-        || d.name === Decorators.Slot
-        || d.name === Decorators.ForwardRefProp
-        || d.name === Decorators.RefProp,
+      || d.name === Decorators.TwoWay
+      || d.name === Decorators.Nested
+      || d.name === Decorators.Event
+      || d.name === Decorators.Template
+      || d.name === Decorators.Slot
+      || d.name === Decorators.ForwardRefProp
+      || d.name === Decorators.RefProp,
   )) as Property[];
 }
 
@@ -143,11 +143,9 @@ export class Component extends Class implements Heritable {
       if (
         requiredProps.some((p) => !requiredPropsList.find((n) => p.name === n))
       ) {
-        warn(`${
-          this.name
+        warn(`${this.name
         } component declaration is not correct. Props have required properties. Include their keys to declaration
-          ${this.name} extends JSXComponent<${
-  this.heritageClauses[0].propsType
+          ${this.name} extends JSXComponent<${this.heritageClauses[0].propsType
 }, ${requiredProps.map((p) => `"${p.name}"`).join('|')}>
         `);
       }
@@ -265,13 +263,17 @@ export class Component extends Class implements Heritable {
     const mutableMemberNames = this.members.filter((m) => m.isMutable).map((m) => m.name);
     if (mutableMemberNames.length) {
       const parameterIntersectedMethods = this.members
-        .filter((m) => (
-          m instanceof Method
-        && m.parameters
-          .some((p) => mutableMemberNames.indexOf(p.name.toString()) !== -1)
-        ));
+        .filter((m) => {
+          if (m instanceof Method && m.body) {
+            const body = m.body.toString();
+            return m.parameters
+              .some((p) => mutableMemberNames.indexOf(p.name.toString()) !== -1 && body.indexOf(`this.${p.name.toString()}`) !== -1);
+          }
+          return false;
+        });
       if (parameterIntersectedMethods.length) {
-        throw new Error(`React does not support parameters intersection with class mutable members. ${this.name} wrong methods: ${parameterIntersectedMethods.map((m) => m.name)}`);
+        throw new Error(`React does not support parameters intersection with class mutable members.
+The "${this.name}" component wrong methods: ${parameterIntersectedMethods.map(({ name }) => `"${name}"`)}`);
       }
     }
   }

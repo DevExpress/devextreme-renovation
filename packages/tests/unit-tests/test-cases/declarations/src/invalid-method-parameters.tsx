@@ -17,8 +17,11 @@ import {
   export default class Widget {
     @Mutable() mutable = false;
   
-    @Method() updateMutable(mutable: boolean) {
+    @Method() wrongMutable(mutable: boolean) {
       this.mutable = mutable;
+    }
+    @Method() possibleMutable(mutable: boolean) {
+      if(mutable) return true;
     }
   }
   

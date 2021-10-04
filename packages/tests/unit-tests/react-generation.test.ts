@@ -358,9 +358,9 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
   
-  mocha.it.only("invalid-method-parameters", function () {
+  mocha.it("invalid-method-parameters", function () {
     assert.throws(
-       () => { debugger; this.testGenerator(this.test!.title) }, Error);
+       () => { this.testGenerator(this.test!.title) }, Error);
   });
 
   mocha.describe("Default option rules", function () {
