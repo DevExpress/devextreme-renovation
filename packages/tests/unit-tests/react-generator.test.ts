@@ -3354,7 +3354,7 @@ mocha.describe("Default_options", function () {
     }
   );
 
-  mocha.it("Add import convertRulesToOptions, Rule", function () {
+  mocha.it("Add import convertRulesToOptions, DefaultOptionsRule", function () {
     const importClause = generator.createImportDeclaration(
       undefined,
       undefined,
@@ -3384,7 +3384,7 @@ mocha.describe("Default_options", function () {
     assert.strictEqual(
       getResult(importClause.toString()),
       getResult(
-        `import defaultOptions, {convertRulesToOptions, Rule} from "../default_options"`
+        `import defaultOptions, {convertRulesToOptions, DefaultOptionsRule} from "../default_options"`
       )
     );
     assert.strictEqual(
@@ -3404,7 +3404,7 @@ mocha.describe("Default_options", function () {
         generator.createNamedImports([
           generator.createImportSpecifier(
             undefined,
-            generator.createIdentifier("Rule")
+            generator.createIdentifier("DefaultOptionsRule")
           ),
         ])
       ),
@@ -3430,7 +3430,7 @@ mocha.describe("Default_options", function () {
     assert.strictEqual(
       getResult(importClause.toString()),
       getResult(
-        `import defaultOptions, {convertRulesToOptions, Rule} from "../default_options"`
+        `import defaultOptions, {convertRulesToOptions, DefaultOptionsRule} from "../default_options"`
       )
     );
   });
@@ -3457,7 +3457,7 @@ mocha.describe("Default_options", function () {
       assert.strictEqual(
         getResult(component.compileImports()),
         getResult(
-          `import {convertRulesToOptions, Rule} from "../default_options"; import * as React from "react"; import { useCallback } from "react";`
+          `import {convertRulesToOptions, DefaultOptionsRule} from "../default_options"; import * as React from "react"; import { useCallback } from "react";`
         )
       );
     }

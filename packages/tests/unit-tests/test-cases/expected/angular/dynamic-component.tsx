@@ -13,12 +13,13 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChildren,
   EventEmitter,
   QueryList,
   Directive,
-  ViewContainerRef,
   TemplateRef,
   ComponentFactoryResolver,
   EmbeddedViewRef,
@@ -290,7 +291,11 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
   set _internalStateValue(internalStateValue: number) {

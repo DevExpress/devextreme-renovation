@@ -5,15 +5,17 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   convertRulesToOptions,
-  Rule,
+  DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
 
-type WidgetOptionRule = Rule<Partial<WidgetProps>>;
+type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetProps>>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [
   { device: true, options: {} },
@@ -38,12 +40,15 @@ export default class Widget extends WidgetProps {
     });
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
 
-    const defaultOptions = convertRulesToOptions<WidgetProps>(
-      __defaultOptionRules
-    );
+    const defaultOptions =
+      convertRulesToOptions<WidgetProps>(__defaultOptionRules);
     Object.keys(defaultOptions).forEach((option) => {
       (this as any)[option] = (defaultOptions as any)[option];
     });

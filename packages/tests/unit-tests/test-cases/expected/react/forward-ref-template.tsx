@@ -15,6 +15,7 @@ export declare type PropsType = {
 const Props: PropsType = {} as any as PropsType;
 import * as React from "react";
 import { useCallback, useEffect, useRef } from "react";
+import { getTemplate } from "@devextreme/runtime/react";
 
 declare type RestProps = {
   className?: string;
@@ -27,19 +28,6 @@ interface RefOnChildrenTemplate {
   child: any;
   restAttributes: RestProps;
 }
-
-const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  (TemplateProp &&
-    (TemplateProp.defaultProps
-      ? (props: any) => <TemplateProp {...props} />
-      : TemplateProp)) ||
-  (RenderProp &&
-    ((props: any) =>
-      RenderProp(
-        ...("data" in props ? [props.data, props.index] : [props])
-      ))) ||
-  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
-
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   const __child: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);

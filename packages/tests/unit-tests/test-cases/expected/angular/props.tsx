@@ -24,6 +24,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -82,7 +84,11 @@ export default class Widget extends WidgetInput {
   _onClick: any;
   _onSomething: any;
   _stringValueChange: any;
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
     this._onClick = (e: any) => {
       this.onClick.emit(e);

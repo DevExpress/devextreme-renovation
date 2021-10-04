@@ -26,6 +26,8 @@ import {
   VariableDeclaration,
   BindingElement,
   BindingPattern,
+  BaseFunction,
+  TypeReferenceNode,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -36,7 +38,7 @@ import { Parameter } from './functions/parameter';
 import { PropertyAccess } from './property-access';
 import { getEventName } from './utils';
 import { VueComponentInput } from './vue-component-input';
-import { toStringOptions } from '../types';
+import { InitializedTemplateType, toStringOptions } from '../types';
 
 export function getComponentListFromContext(context: GeneratorContext) {
   return Object.keys(context.components || {})
@@ -985,6 +987,56 @@ export class VueComponent extends Component {
     Dx${name}.defaultProps=__extractDefaultValues(${component.name})`;
   }
 
+  getInitializedTemplates(): Array<InitializedTemplateType> {
+    const result: Array<InitializedTemplateType> = [];
+    this.props.forEach((p) => {
+      if (p.isTemplate
+        && this.context.components
+        && p.initializer
+        && !this.context.components?.[p.initializer.toString()]
+      ) {
+        if ((p.type instanceof TypeReferenceNode)
+          && (p.type as TypeReferenceNode).context.path !== this.context.path
+          && p.initializer instanceof BaseFunction) {
+          // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
+          throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
+        }
+        const componentInputInstance = (Object.values(this.context.components)
+          .find((component) => p.initializer
+          && (component as VueComponentInput).context
+            .components?.[p.initializer.toString()]) as VueComponentInput);
+        if (componentInputInstance
+          && (p.type instanceof TypeReferenceNode)
+          && (p.type as TypeReferenceNode).context.path !== this.context.path
+          && p.initializer instanceof BaseFunction) {
+          // TODO  link to Card https://trello.com/c/hjjipgX8/2881-renovationvue
+          throw new Error('Template default as a function in isolated props object is not supported. Please contact with Renovation team ');
+        }
+        if (componentInputInstance) {
+          result.push({
+            propName: p.name,
+            defaultName: `${p.initializer.toString()}Default`,
+            initializer: p.initializer,
+            componentInput: componentInputInstance.name.toString(),
+          });
+        }
+      }
+    });
+    return result;
+  }
+
+  compileDefaultExactors(options: toStringOptions, components: string[]):string {
+    const Exactors: string[] = [];
+    if (options.initializedTemplates) {
+      options.initializedTemplates
+        .forEach((c) => {
+          components.push(c.defaultName);
+          Exactors.push(`const ${c.defaultName} = ${c.componentInput}.${c.propName}.defaultTemplate()`);
+        });
+    }
+    return Exactors.join('\n');
+  }
+
   toString() {
     const methods: string[] = [];
     const components: string[] = [];
@@ -992,6 +1044,7 @@ export class VueComponent extends Component {
       members: this.members,
       newComponentContext: '',
       isSVG: this.isSVGComponent,
+      initializedTemplates: this.getInitializedTemplates(),
     };
 
     this.compileTemplate(methods, options);
@@ -999,7 +1052,7 @@ export class VueComponent extends Component {
     const portalComponent = this.containsPortal()
       ? this.compilePortalComponent(components)
       : '';
-
+    const Exactors = this.compileDefaultExactors(options, components);
     const statements = [
       `name: "${this.name}"`,
       this.generateComponents(components),
@@ -1020,6 +1073,7 @@ export class VueComponent extends Component {
 
     return `
           ${this.compileImports()}
+          ${Exactors}
           ${this.compileStyleNormalizer(options)}
           ${
   this.members.some((m) => m.isNested)

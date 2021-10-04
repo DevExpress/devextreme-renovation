@@ -90,6 +90,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ContentChildren,
   QueryList,
@@ -162,7 +164,11 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
   @Input() set texts2(value: DxWidgetTexts2 | undefined) {

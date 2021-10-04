@@ -281,6 +281,9 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
+    if (this.props.some((p) => p.isTemplate)) {
+      imports.push(`import { ${this.isComponentWrapper() ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
+    }
 
     return imports;
   }
@@ -546,29 +549,26 @@ export class ReactComponent extends Component {
   }
 
   compileTemplateGetter(): string {
-    return this.props.some((p) => p.isTemplate)
-      ? `
-          const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-            (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp)) ||
-              (RenderProp &&
-                ((props: any) =>
-                  RenderProp(
-                    ...("data" in props ? [props.data, props.index] : [props])
-                  ))) ||
-              (ComponentProp && ((props: any) => <ComponentProp {...props} />))
-          );
-      `
-      : '';
+    return '';
+  }
+
+  isComponentWrapper(): boolean {
+    return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
+  }
+
+  getTemplateRender(name: string): string {
+    return this.isComponentWrapper() ? `getWrapperTemplate(props.${name})`
+      : `getTemplate(props.${name}, props.${getTemplatePropName(
+        name,
+        'render',
+      )}, props.${getTemplatePropName(name, 'component')})`;
   }
 
   processTemplates(): string[] {
     return this.props
       .filter((p) => p.isTemplate)
       .map(
-        (t) => `${t.name}: getTemplate(props.${t.name}, props.${getTemplatePropName(
-          t.name,
-          'render',
-        )}, props.${getTemplatePropName(t.name, 'component')})`,
+        (t) => `${t.name}: ${this.getTemplateRender(t.name)}`,
       );
   }
 
@@ -883,19 +883,19 @@ export class ReactComponent extends Component {
           "zIndex",
           "zoom",
         ]);
-        
+
         const isNumeric = (value: string | number) => {
           if (typeof value === "number") return true;
           return !isNaN(Number(value));
         };
-        
+
         const getNumberStyleValue = (style: string, value: string | number) => {
           return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
         };
-        
+
         const normalizeStyles = (styles: unknown) => {
           if (!(styles instanceof Object)) return undefined;
-        
+
           return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
             result[key] = isNumeric(value)
               ? getNumberStyleValue(key, value)
@@ -908,7 +908,6 @@ export class ReactComponent extends Component {
 
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
-
     return `
               ${this.compileImports()}
               ${this.compileStyleNormalizer()}

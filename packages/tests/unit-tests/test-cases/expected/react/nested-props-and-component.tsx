@@ -34,6 +34,7 @@ export const WidgetProps: WidgetPropsType = {
 };
 import * as React from "react";
 import { useState, useCallback } from "react";
+import { getTemplate } from "@devextreme/runtime/react";
 
 function __collectChildren(children: React.ReactNode): Record<string, any> {
   return (
@@ -87,19 +88,6 @@ interface UndefWidget {
   __getNestedNestedProp: typeof FakeNested[] | undefined;
   __getNestedAnotherNestedPropInit: typeof FakeNested[];
 }
-
-const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) =>
-  (TemplateProp &&
-    (TemplateProp.defaultProps
-      ? (props: any) => <TemplateProp {...props} />
-      : TemplateProp)) ||
-  (RenderProp &&
-    ((props: any) =>
-      RenderProp(
-        ...("data" in props ? [props.data, props.index] : [props])
-      ))) ||
-  (ComponentProp && ((props: any) => <ComponentProp {...props} />));
-
 export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   const [__state_twoWayProp, __state_setTwoWayProp] = useState<
     number | undefined

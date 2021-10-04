@@ -9,6 +9,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChild,
 } from "@angular/core";
@@ -35,7 +37,11 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     });
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
 }
