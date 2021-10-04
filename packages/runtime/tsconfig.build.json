@@ -3,6 +3,7 @@
   "include": ["angular/**/*", "react/**/*", "vue/**/*", "inferno/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
+    "skipLibCheck": true,
     "typeRoots": ["node_modules/inferno"],
     "jsx": "react",
   }
