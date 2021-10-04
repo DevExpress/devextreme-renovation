@@ -9,12 +9,13 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   ViewChildren,
   EventEmitter,
   QueryList,
   Directive,
-  ViewContainerRef,
   TemplateRef,
   ComponentFactoryResolver,
   EmbeddedViewRef,
@@ -104,9 +105,10 @@ export class DynamicComponentDirective {
       this.childView?.detectChanges();
       return;
     }
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
-      this.componentConstructor
-    );
+    const componentFactory =
+      this.componentFactoryResolver.resolveComponentFactory(
+        this.componentConstructor
+      );
     this.viewContainerRef.clear();
     const childView = this.renderChildView(model);
     const component = this.viewContainerRef.createComponent<any>(
@@ -182,7 +184,11 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
 
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
   }
 }

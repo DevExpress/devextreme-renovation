@@ -1,1 +1,1 @@
-export const renderTemplate = (): void => undefined;
+export * from './template';

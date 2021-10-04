@@ -11,6 +11,8 @@ import {
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
   ViewRef,
   forwardRef,
   HostListener,
@@ -101,7 +103,8 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
 })
 export default class InnerWidget
   extends InnerWidgetProps
-  implements ControlValueAccessor {
+  implements ControlValueAccessor
+{
   get __restAttributes(): any {
     return {};
   }
@@ -129,7 +132,11 @@ export default class InnerWidget
 
   _onSelect: any;
   _valueChange: any;
-  constructor(private changeDetection: ChangeDetectorRef) {
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     super();
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);

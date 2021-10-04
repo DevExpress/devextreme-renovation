@@ -15,7 +15,7 @@ platforms.forEach(function(platform) {
 
 gulp.task('compile.esm', function(done) {
   gulp
-    .src('./**/*.ts')
+    .src(['./**/*.ts', './**/*.tsx'])
     .pipe(ts('tsconfig.esm.build.json'))
     .pipe(gulp.dest('./dist/esm'))
   done();
@@ -23,7 +23,7 @@ gulp.task('compile.esm', function(done) {
 
 gulp.task('compile.cjs', function(done) {
   gulp
-    .src('./**/*.ts')
+    .src(['./**/*.ts', './**/*.tsx'])
     .pipe(ts('tsconfig.cjs.build.json'))
     .pipe(gulp.dest('./dist/cjs'))
   done();
