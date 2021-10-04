@@ -1,10 +1,11 @@
 import ReactDOM from 'react-dom';
 import * as React from 'react';
 
-export const renderTemplate = (template: any, model: any, component?: any): void => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const renderTemplate = (template: any, model: any, _component?: any): void => {
   template(model, model.container);
 };
-export const hasTemplate = (name: any, props: any, component?: any): boolean => !!props[name];
+export const hasTemplate = (name: any, props: any, _component?: any): boolean => !!props[name];
 export const getWrapperTemplate = (TemplateProp: any) => (data: any) => {
   if (typeof TemplateProp !== 'string' && !(TemplateProp instanceof Element)) {
     const container = data.container ? data.container : data;
