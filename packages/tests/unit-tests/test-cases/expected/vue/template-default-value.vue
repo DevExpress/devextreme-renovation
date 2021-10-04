@@ -44,6 +44,9 @@ export const TemplateDefaultValueProps = {
     default() {
       return "defaultCompTemplate";
     },
+    defaultTemplate() {
+      return WidgetWithProps;
+    },
   },
   defaultFuncTemplate: {
     type: String,

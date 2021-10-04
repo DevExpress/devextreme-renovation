@@ -49,6 +49,9 @@ export const ListInput = {
     default() {
       return "ListItem";
     },
+    defaultTemplate() {
+      return WidgetWithProps;
+    },
   },
 };
 export const DxList = {
