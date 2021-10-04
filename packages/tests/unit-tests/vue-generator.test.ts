@@ -995,17 +995,16 @@ mocha.describe("Vue-generator", function () {
 
       mocha.describe("Template", function () {
         mocha.it(
-          "Template props toString should return default value",
+          "Template props toString should return default value and do not return undefined",
           function () {
             const expression = generator.createProperty(
               [createDecorator("Template")],
               undefined,
               name,
               generator.SyntaxKind.QuestionToken,
-              generator.createKeywordTypeNode("boolean"),
-              generator.createTrue()
+              undefined,
+              undefined
             );
-
             assert.strictEqual(getAst(expression.toString({ members: [] })),
             getAst(`p: {
               type: String,
@@ -1015,7 +1014,32 @@ mocha.describe("Vue-generator", function () {
             }`));
           }
         );
+
+        mocha.it(
+          "Template props toString should return default value and default Template Object",
+          function () {
+            const expression = generator.createProperty(
+              [createDecorator("Template")],
+              undefined,
+              name,
+              generator.SyntaxKind.QuestionToken,
+              undefined,
+              generator.createIdentifier('Comp')
+            );
+            assert.strictEqual(getAst(expression.toString({ members: [] })),
+            getAst(`p: {
+              type: String,
+              default(){
+                return "p"
+              },
+              defaultTemplate(){
+                return Comp
+              }
+            }`));
+          }
+        );
       });
+      
     });
 
     mocha.describe("Internal state", function () {

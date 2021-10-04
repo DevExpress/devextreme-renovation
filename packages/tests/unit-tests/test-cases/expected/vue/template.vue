@@ -90,6 +90,9 @@ export const WidgetInput = {
     default() {
       return "componentTemplate";
     },
+    defaultTemplate() {
+      return WidgetWithProps;
+    },
   },
 };
 export const DxWidgetWithTemplate = {
