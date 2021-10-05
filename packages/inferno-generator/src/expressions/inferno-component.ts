@@ -193,7 +193,7 @@ export class InfernoComponent extends PreactComponent {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length || this.jQueryRegistered) {
-      const dependencies = this.effects.map(
+      const dependenciesString = this.effects.map(
         (e) => e.getDependency(this.getToStringOptions())// rework
           .filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true))
           .map((d) => {
@@ -203,11 +203,12 @@ export class InfernoComponent extends PreactComponent {
                 : `this.${d.getDependencyString()}`;
             }
             return `this.${d}`;
-          }),
+          })
+          .filter((d) => d !== 'this.'),
       );
 
       const create = this.effects.map((e, i) => {
-        const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];
+        const dependency = getEffectRunParameter(e) !== 'once' ? dependenciesString[i] : [];
         return `new InfernoEffect(this.${e.name}, [${dependency.join(',')}])`;
       });
 
@@ -225,7 +226,7 @@ export class InfernoComponent extends PreactComponent {
         const run = getEffectRunParameter(effect);
 
         if (run !== 'once') {
-          const dependency = dependencies[index];
+          const dependency = dependenciesString[index];
           result.push(
             `this._effects[${index}]?.update([${dependency.join(',')}])`,
           );
