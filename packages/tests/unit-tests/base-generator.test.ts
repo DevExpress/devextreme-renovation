@@ -1918,10 +1918,7 @@ mocha.describe("base-generator: expressions", function () {
             generator.createBlock([generator.createContinue()], true)
           );
           const props = ["i", "c", "ii"].map(name=>generator.createProperty([], [], new Identifier(name)))
-              console.log(expression.getDependency({
-                members: props,
-              }),
-              props)
+
           assert.deepEqual(
             expression.getDependency({
               members: props,

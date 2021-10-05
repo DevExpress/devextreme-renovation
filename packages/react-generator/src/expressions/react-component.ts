@@ -959,7 +959,6 @@ export class ReactComponent extends Component {
           );
         }
         deps = calculateMethodDependency(deps, this.members);
-        // rework closely
         const depNames = deps.reduce((arr: string[], dep) => {
           if (dep instanceof BaseClassMember) {
             return [...arr, ...dep.getDependencyString(this.getToStringOptions())];

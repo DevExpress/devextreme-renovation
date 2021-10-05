@@ -280,14 +280,9 @@ export class Method extends BaseClassMember {
       }
 
       result = [...new Set(dependency)]
-        // .map((d) => members.find((p) => p._name.toString() === d))
         .filter((d) => d)
         .reduce(depsReducer, [])
         .concat(additionalDependency);
-
-      // if (additionalDependency.indexOf('props') > -1) {
-      //   result = result.filter((d) => !d.startsWith('props.'));
-      // }
     }
 
     return [...new Set(result)];
