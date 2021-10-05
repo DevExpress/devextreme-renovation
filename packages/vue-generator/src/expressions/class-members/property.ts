@@ -230,7 +230,7 @@ export class Property extends BaseProperty {
 
   getDependency(options: toStringOptions): Dependency[] {
     if (this.isState) {
-      const stateMember = options.members.find((m) => m._name.toString() === `${this.name}_state`);
+      const stateMember = options.members.find((m) => m.name.toString() === `${this.name}_state`);
       return stateMember ? [stateMember] : [this];
     }
     return super.getDependency(options);
