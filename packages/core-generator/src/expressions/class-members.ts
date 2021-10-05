@@ -257,7 +257,7 @@ export class Method extends BaseClassMember {
       if (p instanceof BaseClassMember) {
         return [...d, ...p.getDependency({
           ...options,
-          members: members.filter((p) => p !== this),
+          members: members.filter((m) => m !== p),
         })];
       }
       const member = members.find((m) => m._name.toString() === p);

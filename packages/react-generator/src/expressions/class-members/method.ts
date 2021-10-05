@@ -29,7 +29,7 @@ export class Method extends BaseMethod {
     const dependencies = calculateMethodDependency(
       super.getDependency(options),
       options.members,
-    );
+    ).filter((dep) => dep !== this);
     return dependencies.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
       ? [...arr, ...dep.getDependencyString(options)]
       : [...arr, dep]),
