@@ -195,16 +195,21 @@ export class InfernoComponent extends PreactComponent {
     if (this.effects.length || this.jQueryRegistered) {
       const dependenciesString = this.effects.map(
         (e) => e.getDependency(this.getToStringOptions())
-          .filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true))
-          .map((d) => {
+          .reduce((arr: string[], d) => {
             if (d instanceof BaseClassMember) {
-              return d.isState
-                ? `this.state.${d._name}, this.props.${d._name}`
-                : `this.${d.getDependencyString()}`;
+              if (!d.isMutable) {
+                arr.push(
+                  d.isState
+                    ? `this.state.${d._name}, this.props.${d._name}`
+                    : `this.${d.getDependencyString()}`,
+                );
+              }
+
+              return arr;
             }
-            return `this.${d}`;
-          })
-          .filter((d) => d !== 'this.'),
+            arr.push(`this.${d}`);
+            return arr;
+          }, []),
       );
 
       const create = this.effects.map((e, i) => {

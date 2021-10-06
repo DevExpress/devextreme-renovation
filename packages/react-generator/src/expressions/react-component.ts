@@ -475,12 +475,10 @@ export class ReactComponent extends Component {
                   || d._hasDecorator(Decorators.TwoWay),
               );
             }
-            const depNames = deps.reduce((arr: string[], dep) => {
-              if (dep instanceof BaseClassMember) {
-                return [...arr, ...dep.getDependencyString(options)];
-              }
-              return [...arr, dep];
-            }, []);
+            const depNames = deps.reduce((arr: string[], dep) => ([
+              ...arr,
+              ...(dep instanceof BaseClassMember ? dep.getDependencyString(options) : dep),
+            ]), []);
             return `useEffect(${e.arrowDeclaration(
               options,
             )}, [${depNames}])`;
