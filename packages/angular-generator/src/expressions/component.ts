@@ -382,6 +382,19 @@ export class AngularComponent extends Component {
         ),
       ),
     );
+    members.map((m) => {
+      if (m instanceof GetAccessor) {
+        const memberWithTypes = m;
+        memberWithTypes.contextTypes = {
+          ...this.context.externalTypes,
+          ...this.context.externalInterfaces,
+          ...this.context.types,
+          ...this.context.interfaces,
+        };
+        return memberWithTypes;
+      }
+      return m;
+    });
 
     members = members.concat(
       members

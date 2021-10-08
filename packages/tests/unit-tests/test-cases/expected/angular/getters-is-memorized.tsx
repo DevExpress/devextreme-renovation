@@ -1,0 +1,106 @@
+import { Item as externalType } from "./globals-in-template";
+import { PropsI as externalInterface } from "./implements";
+
+import { Input } from "@angular/core";
+class WidgetProps {
+  @Input() someProp: string = "";
+  @Input() type?: string = "";
+}
+
+interface internalInterface {
+  field1: { a: string };
+  field2: number;
+  field3: number;
+}
+type internalType = { a: string };
+import {
+  Component,
+  NgModule,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  ViewContainerRef,
+  Renderer2,
+  ViewRef,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+
+@Component({
+  selector: "dx-widget",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  inputs: ["someProp", "type"],
+  template: `<div></div>`,
+})
+class Widget extends WidgetProps {
+  get __internalInterfaceGetter(): internalInterface {
+    if (this.__getterCache["internalInterfaceGetter"] !== undefined) {
+      return this.__getterCache["internalInterfaceGetter"];
+    }
+    return (this.__getterCache["internalInterfaceGetter"] =
+      ((): internalInterface => {
+        return { field1: { a: this.someProp }, field2: 2, field3: 3 };
+      })());
+  }
+  get __internalTypeGetter(): internalType {
+    if (this.__getterCache["internalTypeGetter"] !== undefined) {
+      return this.__getterCache["internalTypeGetter"];
+    }
+    return (this.__getterCache["internalTypeGetter"] = ((): internalType => {
+      return { a: "1" };
+    })());
+  }
+  get __externalInterfaceGetter(): externalInterface {
+    if (this.__getterCache["externalInterfaceGetter"] !== undefined) {
+      return this.__getterCache["externalInterfaceGetter"];
+    }
+    return (this.__getterCache["externalInterfaceGetter"] =
+      ((): externalInterface => {
+        return { p: "" };
+      })());
+  }
+  get __externalTypeGetter(): externalType {
+    if (this.__getterCache["externalTypeGetter"] !== undefined) {
+      return this.__getterCache["externalTypeGetter"];
+    }
+    return (this.__getterCache["externalTypeGetter"] = ((): externalType => {
+      return { text: "", key: 0 };
+    })());
+  }
+  get __restAttributes(): any {
+    return {};
+  }
+  _detectChanges(): void {
+    setTimeout(() => {
+      if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
+        this.changeDetection.detectChanges();
+    });
+  }
+
+  __getterCache: {
+    internalInterfaceGetter?: internalInterface;
+    internalTypeGetter?: internalType;
+    externalInterfaceGetter?: externalInterface;
+    externalTypeGetter?: externalType;
+  } = {};
+
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["someProp"].some((d) => changes[d])) {
+      this.__getterCache["internalInterfaceGetter"] = undefined;
+    }
+  }
+
+  constructor(
+    private changeDetection: ChangeDetectorRef,
+    private render: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
+    super();
+  }
+}
+@NgModule({
+  declarations: [Widget],
+  imports: [CommonModule],
+
+  exports: [Widget],
+})
+export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };
