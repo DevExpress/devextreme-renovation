@@ -8,7 +8,7 @@ import BaseProps from "./component-bindings-only";
 
 const view = (model: Widget) => <span />;
 
-interface PropsI {
+export interface PropsI {
   p: string;
 }
 
