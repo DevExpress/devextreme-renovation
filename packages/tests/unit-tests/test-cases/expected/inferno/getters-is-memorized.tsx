@@ -4,8 +4,10 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
-import { Item as externalType } from "./globals-in-template";
-import { PropsI as externalInterface } from "./implements";
+import {
+  InterfaceTemplateInput as externalInterface,
+  Options as externalType,
+} from "./types.d";
 
 export declare type WidgetPropsType = {
   someProp: string;
@@ -62,7 +64,7 @@ class Widget extends BaseInfernoComponent<any> {
     }
     return (this.__getterCache["externalInterfaceGetter"] =
       ((): externalInterface => {
-        return { p: "" };
+        return { inputInt: 2 };
       })());
   }
   get externalTypeGetter(): externalType {
@@ -70,7 +72,7 @@ class Widget extends BaseInfernoComponent<any> {
       return this.__getterCache["externalTypeGetter"];
     }
     return (this.__getterCache["externalTypeGetter"] = ((): externalType => {
-      return { text: "", key: 0 };
+      return { value: "" };
     })());
   }
   get restAttributes(): RestProps {

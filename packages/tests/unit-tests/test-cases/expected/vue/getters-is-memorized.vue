@@ -2,8 +2,6 @@
   <div></div>
 </template>
 <script>
-import { Item as externalType } from "./globals-in-template";
-import { PropsI as externalInterface } from "./implements";
 const WidgetProps = {
   someProp: {
     type: String,
@@ -29,10 +27,10 @@ export const DxWidget = {
       return { a: "1" };
     },
     __externalInterfaceGetter() {
-      return { p: "" };
+      return { inputInt: 2 };
     },
     __externalTypeGetter() {
-      return { text: "", key: 0 };
+      return { value: "" };
     },
     __restAttributes() {
       return {};

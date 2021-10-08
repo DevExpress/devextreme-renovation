@@ -1,5 +1,7 @@
-import { Item as externalType } from "./globals-in-template";
-import { PropsI as externalInterface } from "./implements";
+import {
+  InterfaceTemplateInput as externalInterface,
+  Options as externalType,
+} from "./types.d";
 
 export declare type WidgetPropsType = {
   someProp: string;
@@ -50,13 +52,13 @@ function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __externalInterfaceGetter = useCallback(
     function __externalInterfaceGetter(): externalInterface {
-      return { p: "" };
+      return { inputInt: 2 };
     },
     []
   );
   const __externalTypeGetter = useCallback(
     function __externalTypeGetter(): externalType {
-      return { text: "", key: 0 };
+      return { value: "" };
     },
     []
   );

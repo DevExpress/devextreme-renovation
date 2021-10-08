@@ -1,5 +1,7 @@
-import { Item as externalType } from "./globals-in-template";
-import { PropsI as externalInterface } from "./implements";
+import {
+  InterfaceTemplateInput as externalInterface,
+  Options as externalType,
+} from "./types.d";
 
 import { Input } from "@angular/core";
 class WidgetProps {
@@ -54,7 +56,7 @@ class Widget extends WidgetProps {
     }
     return (this.__getterCache["externalInterfaceGetter"] =
       ((): externalInterface => {
-        return { p: "" };
+        return { inputInt: 2 };
       })());
   }
   get __externalTypeGetter(): externalType {
@@ -62,7 +64,7 @@ class Widget extends WidgetProps {
       return this.__getterCache["externalTypeGetter"];
     }
     return (this.__getterCache["externalTypeGetter"] = ((): externalType => {
-      return { text: "", key: 0 };
+      return { value: "" };
     })());
   }
   get __restAttributes(): any {

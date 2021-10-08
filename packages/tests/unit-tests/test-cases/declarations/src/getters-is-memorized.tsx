@@ -1,6 +1,8 @@
 import { Component, JSXComponent, ComponentBindings, Method, OneWay, InternalState } from '@devextreme-generator/declarations';
-import { Item as externalType } from './globals-in-template'
-import { PropsI as externalInterface } from './implements'
+import { 
+	InterfaceTemplateInput as externalInterface,
+	Options as externalType,
+} from './types.d'
 @ComponentBindings()
 class WidgetProps {
   @OneWay() someProp: string =''
@@ -28,9 +30,9 @@ class Widget extends JSXComponent(WidgetProps){
 		return {a: '1'}
 	}
 	get externalInterfaceGetter(): externalInterface {
-		return {p: ''}
+		return {inputInt: 2}
 	}
 	get externalTypeGetter(): externalType {
-		return {text: '', key: 0}
+		return {value: ''}
 	}
 }
