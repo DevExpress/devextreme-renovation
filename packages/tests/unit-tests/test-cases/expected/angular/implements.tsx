@@ -1,5 +1,5 @@
 import BaseProps from "./component-bindings-only";
-interface PropsI {
+export interface PropsI {
   p: string;
 }
 

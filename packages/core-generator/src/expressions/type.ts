@@ -22,7 +22,7 @@ import {
   ImportSpecifier,
   NamedImports,
 } from './import';
-import { Class } from './class';
+import { Interface } from '..';
 
 export class TypeExpression extends Expression {}
 
@@ -484,14 +484,14 @@ export class TypeAliasDeclaration extends TypeExpression {
 
 export function isComplexType(
   type: TypeExpression | string,
-  contextTypes?:{ [name:string]: TypeExpression },
+  contextTypes?:{ [name:string]: TypeExpression | string },
 ): boolean {
   if (type instanceof UnionTypeNode) {
     return type.types.some((t) => isComplexType(t));
   }
   if (type instanceof TypeReferenceNode) {
     const contextType = contextTypes?.[type.typeName.toString()];
-    return contextType instanceof Class || isComplexType(contextType || '');
+    return isComplexType(contextType || '');
   }
   if (
     type instanceof FunctionTypeNode
@@ -501,6 +501,9 @@ export function isComplexType(
     || (type instanceof LiteralTypeNode && isComplexType(type.expression))
     || type.toString() === 'object'
   ) {
+    return true;
+  }
+  if (type instanceof Interface) {
     return true;
   }
   return false;

@@ -313,6 +313,8 @@ export class Method extends BaseClassMember {
 }
 
 export class GetAccessor extends Method {
+  contextTypes?: { [name: string]: TypeExpression | string };
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -337,7 +339,6 @@ export class GetAccessor extends Method {
   isMemorized(
     options?: toStringOptions,
     needToMemorizeProvider = true,
-    contextTypes?:{ [name:string]: TypeExpression },
   ): boolean {
     if (this.isProvider && !needToMemorizeProvider) {
       return false;
@@ -349,7 +350,7 @@ export class GetAccessor extends Method {
       const containMutableDep = depMembers
         .some((dep) => mutables?.includes(dep));
       return !containMutableDep
-      && (isComplexType(this.type, contextTypes)
+      && (isComplexType(this.type, this.contextTypes)
         || this.isProvider);
     }
     return false;
