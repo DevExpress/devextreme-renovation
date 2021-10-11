@@ -132,8 +132,9 @@ export class InfernoComponent extends PreactComponent {
         const allDeps = g.getDependencyString({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
-        }).filter((dep) => {
-          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+        }).filter((dependencyString) => {
+          const depMember = this.getToStringOptions().members
+            .find((member) => member.name === dependencyString);
           return !depMember?.isMutable;
         });
 
@@ -209,7 +210,7 @@ export class InfernoComponent extends PreactComponent {
             }
             arr.push(`this.${d}`);
             return arr;
-          }, []),
+          }, []).filter((string) => string !== 'this.'),
       );
 
       const create = this.effects.map((e, i) => {
