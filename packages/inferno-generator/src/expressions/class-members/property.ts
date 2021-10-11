@@ -106,7 +106,7 @@ export class Property extends BaseProperty {
     return super.toString(options);
   }
 
-  getDependency(): string[] {
+  getDependencyString(): string[] {
     if (
       this.decorators.some(
         (d) => d.name === Decorators.OneWay

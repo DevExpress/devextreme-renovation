@@ -2,6 +2,7 @@ import {
   capitalizeFirstLetter,
   compileType,
   Decorators,
+  Dependency,
   Expression,
   FunctionTypeNode,
   Identifier,
@@ -158,8 +159,8 @@ export class Property extends BaseProperty {
     return `${componentContext}${this.name}`;
   }
 
-  getDependency(_options: toStringOptions) {
-    return [this.name];
+  getDependency(_options: toStringOptions): Dependency[] {
+    return [this];
   }
 
   typeDeclaration(): string {

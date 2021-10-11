@@ -1,3 +1,4 @@
+import { Dependency } from '..';
 import { Decorators } from '../decorators';
 import { SyntaxKind } from '../syntaxKind';
 import { GeneratorContext, toStringOptions, TypeExpressionImports } from '../types';
@@ -159,8 +160,12 @@ export class BaseClassMember extends Expression {
     return this.name === this._name.toString();
   }
 
-  getDependency(_options: toStringOptions) {
-    return [this.name];
+  getDependency(_options?: toStringOptions): Dependency[] {
+    return [this];
+  }
+
+  getDependencyString(_options?: toStringOptions): string[] {
+    return [this._name.toString()];
   }
 
   get isPrivate() {
@@ -238,24 +243,28 @@ export class Method extends BaseClassMember {
     return `(${this.parameters})=>${this.body?.toString(options)}`;
   }
 
-  filterDependencies(dependencies: string[]): string[] {
+  filterDependencies(dependencies: Dependency[]): Dependency[] {
     return dependencies;
   }
 
-  getDependency(options: toStringOptions): string[] {
+  getDependency(options: toStringOptions): Dependency[] {
     const members = options.members;
     const run = this.decorators
       .find((d) => d.name === Decorators.Effect)
       ?.getParameter('run')
       ?.valueOf();
-    const depsReducer = (d: string[], p: Method | Property | undefined) => d.concat(
-      p!.getDependency({
-        ...options,
-        members: members.filter((p) => p !== this),
-      }),
-    );
+    const depsReducer = (d: Dependency[], p: Dependency) => {
+      if (p instanceof BaseClassMember) {
+        return [...d, ...p.getDependency({
+          ...options,
+          members: members.filter((m) => m !== p),
+        })];
+      }
+      const member = members.find((m) => m._name.toString() === p);
+      return [...d, member || p];
+    };
 
-    let result: string[] = [];
+    let result: Dependency[] = [];
     if (run === 'always') {
       result = this.filterDependencies(
         members
@@ -263,22 +272,17 @@ export class Method extends BaseClassMember {
           .reduce(depsReducer, ['props']),
       );
     } else if (run !== 'once') {
-      const dependency = this.body?.getDependency(options);
-      const additionalDependency = [];
+      const dependency = this.body?.getDependency(options) || [];
+      const additionalDependency: Dependency[] = [];
 
       if (dependency?.find((d) => d === 'props')) {
         additionalDependency.push('props');
       }
 
       result = [...new Set(dependency)]
-        .map((d) => members.find((p) => p._name.toString() === d))
         .filter((d) => d)
         .reduce(depsReducer, [])
         .concat(additionalDependency);
-
-      if (additionalDependency.indexOf('props') > -1) {
-        result = result.filter((d) => !d.startsWith('props.'));
-      }
     }
 
     return [...new Set(result)];
@@ -340,8 +344,11 @@ export class GetAccessor extends Method {
       return false;
     }
     if (options) {
-      const mutables = options?.members.filter((m) => m.isMutable).map((m) => m._name.toString());
-      const containMutableDep = this.getDependency(options).some((dep) => mutables?.includes(dep));
+      const mutables = options?.members.filter((m) => m.isMutable) as BaseClassMember[];
+      const depMembers = this.getDependency(options)
+        .filter((dep) => dep instanceof BaseClassMember) as BaseClassMember[];
+      const containMutableDep = depMembers
+        .some((dep) => mutables?.includes(dep));
       return !containMutableDep
       && (isComplexType(this.type, this.contextTypes)
         || this.isProvider);

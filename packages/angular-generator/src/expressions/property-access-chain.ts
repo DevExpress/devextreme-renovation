@@ -6,6 +6,7 @@ import {
   getMember,
   isProperty,
   Identifier,
+  Dependency,
 } from '@devextreme-generator/core';
 import { Property } from './class-members/property';
 import { PropertyAccess } from './property-access';
@@ -92,7 +93,7 @@ export class PropertyAccessChain extends BasePropertyAccessChain {
     return super.toString(options);
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return super
       .getDependency(options)
       .concat(this.name.getDependency(options));

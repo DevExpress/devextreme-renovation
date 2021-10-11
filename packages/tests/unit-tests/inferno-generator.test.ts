@@ -352,7 +352,7 @@ mocha.describe("Expressions", function () {
     });
   });
   mocha.describe("class-members/property", function () {
-    mocha.describe("getDependency", function () {
+    mocha.describe("getDependencyString", function () {
       mocha.it("@Ref() p?:string", function () {
         const expression = generator.createProperty(
           [createDecorator(Decorators.Ref)],
@@ -362,9 +362,8 @@ mocha.describe("Expressions", function () {
           generator.createKeywordTypeNode("string")
         );
 
-        assert.deepStrictEqual(expression.getDependency(), ["p.current"]);
+        assert.deepStrictEqual(expression.getDependencyString(), ["p.current"]);
       });
-
       mocha.it("@RefProp() p?:string", function () {
         const expression = generator.createProperty(
           [createDecorator(Decorators.RefProp)],
@@ -376,11 +375,10 @@ mocha.describe("Expressions", function () {
 
         expression.scope = "props";
 
-        assert.deepStrictEqual(expression.getDependency(), [
+        assert.deepStrictEqual(expression.getDependencyString(), [
           "props.p?.current",
         ]);
       });
-
       mocha.it("@Ref() p:string", function () {
         const expression = generator.createProperty(
           [createDecorator(Decorators.Ref)],
@@ -390,9 +388,8 @@ mocha.describe("Expressions", function () {
           generator.createKeywordTypeNode("string")
         );
 
-        assert.deepStrictEqual(expression.getDependency(), []);
+        assert.deepStrictEqual(expression.getDependencyString(), []);
       });
-
       mocha.it("with unknown decorator should throw exception", function () {
         const expression = generator.createProperty(
           [createDecorator("SomeName")],
@@ -404,11 +401,51 @@ mocha.describe("Expressions", function () {
 
         let error = null;
         try {
-          expression.getDependency();
+          expression.getDependencyString();
         } catch (e) {
           error = e;
         }
         assert.strictEqual(error, "Can't parse property: p");
+      });
+    });
+    mocha.describe("getDependency", function () {
+      mocha.it("@Ref() p?:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("string")
+        );
+
+        assert.deepStrictEqual(expression.getDependency(), [expression]);
+      });
+
+      
+      mocha.it("@RefProp() p?:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.RefProp)],
+          [],
+          generator.createIdentifier("p"),
+          generator.SyntaxKind.QuestionToken,
+          generator.createKeywordTypeNode("string")
+        );
+
+        expression.scope = "props";
+
+        assert.deepStrictEqual(expression.getDependency(), [expression]);
+      });
+
+      mocha.it("@Ref() p:string", function () {
+        const expression = generator.createProperty(
+          [createDecorator(Decorators.Ref)],
+          [],
+          generator.createIdentifier("p"),
+          undefined,
+          generator.createKeywordTypeNode("string")
+        );
+
+        assert.deepStrictEqual(expression.getDependency(), [expression]);
       });
     });
   });

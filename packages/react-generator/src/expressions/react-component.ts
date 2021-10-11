@@ -32,9 +32,10 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
+  Decorators,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
-import { Method } from './class-members/method';
+import { calculateMethodDependency, Method } from './class-members/method';
 import { getPropName, Property } from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
@@ -456,16 +457,31 @@ export class ReactComponent extends Component {
                       }
                   });`;
     }
+    const options = this.getToStringOptions();
+
     return (
       subscriptionsString
       + this.effects
         .map(
-          (e) => `useEffect(${e.arrowDeclaration(
-            this.getToStringOptions(),
-          )}, [${e.getDependency({
-            members: this.members,
-            componentContext: SyntaxKind.ThisKeyword,
-          })}])`,
+          (e) => {
+            let deps = e.getDependency({
+              members: this.members,
+              componentContext: SyntaxKind.ThisKeyword,
+            });
+            if (deps.indexOf('props') > -1) {
+              deps = deps.filter(
+                (d) => !(d instanceof BaseClassMember
+                    && getProps(this.members).includes(d as Property))
+                  || d._hasDecorator(Decorators.TwoWay),
+              );
+            }
+            const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+              ? [...arr, ...dep.getDependencyString(options)]
+              : [...arr, dep]), []);
+            return `useEffect(${e.arrowDeclaration(
+              options,
+            )}, [${depNames}])`;
+          },
         )
         .join(';\n')
     );
@@ -927,13 +943,28 @@ export class ReactComponent extends Component {
       ) as Array<Method>,
     )
     .map(
-      (m) => `const ${m.name
-      }=useCallback(${m.declaration(
-        this.getToStringOptions(),
-      )}, [${m.getDependency({
-        members: this.members,
-        componentContext: SyntaxKind.ThisKeyword,
-      })}]);`,
+      (m) => {
+        let deps = m.getDependency({
+          members: this.members,
+          componentContext: SyntaxKind.ThisKeyword,
+        });
+        if (deps.indexOf('props') > -1) {
+          deps = deps.filter(
+            (d) => !(d instanceof BaseClassMember
+                && getProps(this.members).includes(d as Property))
+              || d.isState,
+          );
+        }
+        deps = calculateMethodDependency(deps, this.members);
+        const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+          ? [...arr, ...dep.getDependencyString(this.getToStringOptions())]
+          : [...arr, dep]),
+        []);
+        return `const ${m.name
+        }=useCallback(${m.declaration(
+          this.getToStringOptions(),
+        )}, [${depNames}]);`;
+      },
     )
     .join('\n')}
                   ${this.compileUseEffect()}

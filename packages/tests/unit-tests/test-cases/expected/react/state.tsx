@@ -62,8 +62,9 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     props.stateProp !== undefined ? props.stateProp : props.defaultStateProp
   );
   const [__state_internalState, __state_setInternalState] = useState<number>(0);
-  const [__state_innerData, __state_setInnerData] =
-    useState<string | undefined>(undefined);
+  const [__state_innerData, __state_setInnerData] = useState<
+    string | undefined
+  >(undefined);
 
   const __updateState = useCallback(
     function __updateState(): any {
