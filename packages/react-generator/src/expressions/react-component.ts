@@ -475,10 +475,9 @@ export class ReactComponent extends Component {
                   || d._hasDecorator(Decorators.TwoWay),
               );
             }
-            const depNames = deps.reduce((arr: string[], dep) => ([
-              ...arr,
-              ...(dep instanceof BaseClassMember ? dep.getDependencyString(options) : dep),
-            ]), []);
+            const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+              ? [...arr, ...dep.getDependencyString(options)]
+              : [...arr, dep]), []);
             return `useEffect(${e.arrowDeclaration(
               options,
             )}, [${depNames}])`;
@@ -957,12 +956,10 @@ export class ReactComponent extends Component {
           );
         }
         deps = calculateMethodDependency(deps, this.members);
-        const depNames = deps.reduce((arr: string[], dep) => {
-          if (dep instanceof BaseClassMember) {
-            return [...arr, ...dep.getDependencyString(this.getToStringOptions())];
-          }
-          return [...arr, dep];
-        }, []);
+        const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+          ? [...arr, ...dep.getDependencyString(this.getToStringOptions())]
+          : [...arr, dep]),
+        []);
         return `const ${m.name
         }=useCallback(${m.declaration(
           this.getToStringOptions(),

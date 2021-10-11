@@ -15,10 +15,9 @@ export class GetAccessor extends BaseGetAccessor {
       super.getDependency(options),
       options.members,
     );
-    return dependencies.reduce((arr: string[], dep) => ([
-      ...arr,
-      ...(dep instanceof BaseClassMember ? dep.getDependencyString(options) : dep),
-    ]),
+    return dependencies.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+      ? [...arr, ...dep.getDependencyString(options)]
+      : [...arr, dep]),
     []);
   }
 }
