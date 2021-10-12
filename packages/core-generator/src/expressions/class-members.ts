@@ -247,12 +247,12 @@ export class Method extends BaseClassMember {
     return dependencies;
   }
 
-  getDependency(options: toStringOptions): Dependency[] {
+  reduceDependency(
+    dependencies: Dependency[],
+    options: toStringOptions,
+    startingDeps: Dependency[] = [],
+  ): Dependency[] {
     const members = options.members;
-    const run = this.decorators
-      .find((d) => d.name === Decorators.Effect)
-      ?.getParameter('run')
-      ?.valueOf();
     const depsReducer = (d: Dependency[], p: Dependency) => {
       if (p instanceof BaseClassMember) {
         return [...d, ...p.getDependency({
@@ -263,13 +263,25 @@ export class Method extends BaseClassMember {
       const member = members.find((m) => m._name.toString() === p);
       return [...d, member || p];
     };
+    return dependencies.reduce(depsReducer, startingDeps);
+  }
+
+  getDependency(options: toStringOptions): Dependency[] {
+    const members = options.members;
+    const run = this.decorators
+      .find((d) => d.name === Decorators.Effect)
+      ?.getParameter('run')
+      ?.valueOf();
 
     let result: Dependency[] = [];
     if (run === 'always') {
-      result = this.filterDependencies(
-        members
-          .filter((m) => !(m instanceof Method))
-          .reduce(depsReducer, ['props']),
+      result = this.reduceDependency(
+        this.filterDependencies(
+          members
+            .filter((m) => !(m instanceof Method)),
+        ),
+        options,
+        ['props'],
       );
     } else if (run !== 'once') {
       const dependency = this.body?.getDependency(options) || [];
@@ -279,9 +291,10 @@ export class Method extends BaseClassMember {
         additionalDependency.push('props');
       }
 
-      result = [...new Set(dependency)]
-        .filter((d) => d)
-        .reduce(depsReducer, [])
+      result = this.reduceDependency(
+        [...new Set(dependency)].filter((d) => d),
+        options,
+      )
         .concat(additionalDependency);
     }
 

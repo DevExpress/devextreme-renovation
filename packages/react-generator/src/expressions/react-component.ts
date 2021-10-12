@@ -2,6 +2,7 @@ import path from 'path';
 import {
   BaseClassMember,
   Property as BaseProperty,
+  Method as BaseMethod,
   Call,
   Identifier,
   Conditional,
@@ -32,10 +33,10 @@ import {
   processComponentContext,
   PropertyAssignment,
   ShorthandPropertyAssignment,
-  Decorators,
+  Dependency,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
-import { calculateMethodDependency, Method } from './class-members/method';
+import { Method, calculateMethodDependencyString } from './class-members/method';
 import { getPropName, Property } from './class-members/property';
 import { HeritageClause } from './heritage-clause';
 import { PropertyAccess } from './property-access';
@@ -464,20 +465,7 @@ export class ReactComponent extends Component {
       + this.effects
         .map(
           (e) => {
-            let deps = e.getDependency({
-              members: this.members,
-              componentContext: SyntaxKind.ThisKeyword,
-            });
-            if (deps.indexOf('props') > -1) {
-              deps = deps.filter(
-                (d) => !(d instanceof BaseClassMember
-                    && getProps(this.members).includes(d as Property))
-                  || d._hasDecorator(Decorators.TwoWay),
-              );
-            }
-            const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
-              ? [...arr, ...dep.getDependencyString(options)]
-              : [...arr, dep]), []);
+            const depNames = calculateMethodDependencyString(e, options);
             return `useEffect(${e.arrowDeclaration(
               options,
             )}, [${depNames}])`;
@@ -903,6 +891,55 @@ export class ReactComponent extends Component {
       : '';
   }
 
+  compileGettersAndMethods(): string {
+    const methods = this.listeners
+      .concat(this.methods)
+      .concat(
+        this.members.filter(
+          (m) => m.isApiMethod,
+        ) as Array<Method>,
+      );
+
+    const methodsWithDep = methods.map((m) => ({
+      method: m,
+      deps: m.getDependency({
+        members: this.members,
+        componentContext: SyntaxKind.ThisKeyword,
+      }),
+      // check if dep is two way
+      get level() {
+        const depsFromDeps: {
+          method: BaseMethod;
+          deps: Dependency[];
+          level: number
+        }[] = methodsWithDep.filter(
+          (method) => this.deps.some((dep) => dep === method.method),
+        );
+        if (depsFromDeps.length === 0) {
+          return 0;
+        }
+        return Math.max(...depsFromDeps.map((dep) => dep.level)) + 1;
+      },
+    }));
+
+    const methodsWithDepLevelCounted = methodsWithDep.map((m) => ({
+      method: m.method,
+      deps: m.deps,
+      level: m.level,
+    })).sort((a, b) => (a.level - b.level));
+
+    const result = methodsWithDepLevelCounted.map((m) => m.method);
+
+    return result.map(
+      (m) => {
+        const options = this.getToStringOptions();
+        const depNames = calculateMethodDependencyString(m, options);
+        return `const ${m.name} = useCallback(${m.declaration(options)}, [${depNames}]);`;
+      },
+    )
+      .join('\n');
+  }
+
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
     return `
@@ -935,38 +972,7 @@ export class ReactComponent extends Component {
     )
     .map((m) => m.toString(this.getToStringOptions()))
     .join(';\n')}
-                                          ${this.listeners
-    .concat(this.methods)
-    .concat(
-      this.members.filter(
-        (m) => m.isApiMethod,
-      ) as Array<Method>,
-    )
-    .map(
-      (m) => {
-        let deps = m.getDependency({
-          members: this.members,
-          componentContext: SyntaxKind.ThisKeyword,
-        });
-        if (deps.indexOf('props') > -1) {
-          deps = deps.filter(
-            (d) => !(d instanceof BaseClassMember
-                && getProps(this.members).includes(d as Property))
-              || d.isState,
-          );
-        }
-        deps = calculateMethodDependency(deps, this.members);
-        const depNames = deps.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
-          ? [...arr, ...dep.getDependencyString(this.getToStringOptions())]
-          : [...arr, dep]),
-        []);
-        return `const ${m.name
-        }=useCallback(${m.declaration(
-          this.getToStringOptions(),
-        )}, [${depNames}]);`;
-      },
-    )
-    .join('\n')}
+                  ${this.compileGettersAndMethods()}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}

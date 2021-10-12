@@ -52,7 +52,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
           0
         )}`;
       },
-      [props.prop1, props.prop2]
+      [props.prop1, __getHeight]
     );
 
     useImperativeHandle(

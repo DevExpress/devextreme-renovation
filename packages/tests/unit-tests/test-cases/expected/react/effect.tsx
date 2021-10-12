@@ -69,7 +69,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     );
     __state_setI((__state_i) => 15);
     return () => unsubscribe(id);
-  }, [props.p, props.s, __state_s, __state_i]);
+  }, [__getP, props.s, __state_s, __state_i]);
   useEffect(() => {
     const id = subscribe(
       __getP(),
@@ -82,16 +82,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   useEffect(() => {
     const id = subscribe(__getP(), 1, 2);
     return () => unsubscribe(id);
-  }, [
-    __state_i,
-    __state_j,
-    props.p,
-    props.r,
-    props.s,
-    __state_s,
-    props.defaultS,
-    props.sChange,
-  ]);
+  }, [props, __state_i, __state_j, __state_s]);
 
   return view({
     props: { ...props, s: props.s !== undefined ? props.s : __state_s },

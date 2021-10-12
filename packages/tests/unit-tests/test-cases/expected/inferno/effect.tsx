@@ -67,6 +67,7 @@ export default class Widget extends InfernoComponent<any> {
       ]),
       new InfernoEffect(this.onceEffect, []),
       new InfernoEffect(this.alwaysEffect, [
+        this.props,
         this.state.i,
         this.state.j,
         this.props.p,
@@ -86,6 +87,7 @@ export default class Widget extends InfernoComponent<any> {
       this.state.i,
     ]);
     this._effects[2]?.update([
+      this.props,
       this.state.i,
       this.state.j,
       this.props.p,
