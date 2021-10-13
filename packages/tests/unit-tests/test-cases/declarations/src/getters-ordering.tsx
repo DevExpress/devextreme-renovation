@@ -37,4 +37,8 @@ class Widget extends JSXComponent(WidgetProps){
     someEffect() {
       return ()=>(this.g7)
     }
+
+    get type() {
+        return this.props.type
+    }
 }

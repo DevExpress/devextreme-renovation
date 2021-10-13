@@ -83,6 +83,9 @@ class Widget extends InfernoComponent<any> {
       return [...this.g5, ...this.g4];
     })());
   }
+  get type(): any {
+    return this.props.type;
+  }
   get restAttributes(): RestProps {
     const { someProp, type, ...restProps } = this.props as any;
     return restProps;

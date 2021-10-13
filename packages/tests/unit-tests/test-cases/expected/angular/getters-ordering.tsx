@@ -60,6 +60,9 @@ class Widget extends WidgetProps {
   __someEffect(): any {
     return () => this.__g7;
   }
+  get __type(): any {
+    return this.type;
+  }
   get __restAttributes(): any {
     return {};
   }

@@ -26,6 +26,7 @@ interface Widget {
   g2: any;
   g4: (string | undefined)[];
   g6: (string | undefined)[];
+  type: any;
   restAttributes: RestProps;
 }
 
@@ -39,6 +40,12 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
     );
     const __g2 = useCallback(
       function __g2(): any {
+        return props.type;
+      },
+      [props.type]
+    );
+    const __type = useCallback(
+      function __type(): any {
         return props.type;
       },
       [props.type]

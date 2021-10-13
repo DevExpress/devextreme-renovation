@@ -139,12 +139,14 @@ export class PropertyAccess extends ExpressionWithExpression {
   getDependency(options: toStringOptions):Dependency[] {
     const expressionString = this.expression.toString();
     const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
-    if (
-      (expressionString === componentContext
-        && this.name.toString() !== 'props')
-      || expressionString === `${componentContext}.props`
-    ) {
+    if (expressionString === componentContext && this.name.toString() !== 'props') {
+    // check influence of componentContext
       const member = options.members.find((m) => m._name.toString() === this.name.toString());
+      return member ? [member] : [];
+    }
+    if (expressionString === `${componentContext}.props`) {
+      const props = getProps(options.members);
+      const member = props.find((m) => m._name.toString() === this.name.toString());
       return member ? [member] : [];
     }
     const dependency = this.expression.getDependency(options);

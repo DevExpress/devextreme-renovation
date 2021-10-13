@@ -38,6 +38,9 @@ export const DxWidget = {
     __g6() {
       return [...this.__g5, ...this.__g4];
     },
+    __type() {
+      return this.type;
+    },
     __restAttributes() {
       return {};
     },
