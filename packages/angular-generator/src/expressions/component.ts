@@ -30,6 +30,8 @@ import {
   StringLiteral,
   SyntaxKind,
 } from '@devextreme-generator/core';
+import { getRelativePath } from 'core-generator/dist/utils/path-utils';
+import path from 'path';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
 import { GetAccessor } from './class-members/get-accessor';
@@ -1454,6 +1456,53 @@ export class AngularComponent extends Component {
       : '';
   }
 
+  compileDefaultTemplateImports(
+    missedDefautTemplatesImports:
+    ({ module: string, name: string, path: string } | undefined)[][] | undefined,
+  ): string {
+    return missedDefautTemplatesImports
+      ? missedDefautTemplatesImports
+        .map((m) => m
+          .map((c) => {
+            if (c) {
+              return `import {${c.module}, ${c.name} } from '${c.path}';`;
+            }
+            return '';
+          })
+          .join(';')).join('\n') : '';
+  }
+
+  findMissedTemplates(decoratorToStringOptions: toStringOptions,
+    modules: string[],
+    entryComponents: string[]):
+    ({ module: string, name: string, path: string } | undefined)[][] | undefined {
+    return decoratorToStringOptions?.templateComponents
+      ?.map((c) => getProps(c.members)
+        .map((p) => {
+          const missedComponent = p.initializer && (c as AngularComponent)
+            .context.components?.[p.initializer.toString()] ? (c as AngularComponent)
+              .context.components?.[p.initializer.toString()] as AngularComponent : undefined;
+          if (this.context.dirname
+            && missedComponent
+            && missedComponent.context.path
+            && missedComponent.context.dirname
+          ) {
+            modules.push(missedComponent.module);
+            entryComponents.push(missedComponent.name);
+            const moduleParts = missedComponent.context.path.split(/(\/|\\)/);
+            const relativePath = getRelativePath(missedComponent.context.dirname,
+              this.context.dirname, moduleParts[moduleParts.length - 1]);
+            const importPath = relativePath.replace(path.extname(relativePath), '');
+            return {
+              module: missedComponent.module,
+              name: missedComponent.name,
+              path: importPath,
+            };
+          }
+          return undefined;
+        }));
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1558,9 +1607,16 @@ export class AngularComponent extends Component {
       importModules,
     );
 
+    const missedDefautTemplatesImports = this.findMissedTemplates(
+      decoratorToStringOptions,
+      modules,
+      entryComponents,
+    );
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
+        ${this.compileDefaultTemplateImports(missedDefautTemplatesImports)}
         ${this.compileStyleNormalizer(decoratorToStringOptions)}
         ${this.compileNestedComponents(nestedModules)}
         ${dynamicComponentDirective}
