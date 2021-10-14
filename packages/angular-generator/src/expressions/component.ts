@@ -1479,9 +1479,8 @@ export class AngularComponent extends Component {
           ) {
             modules.push(missedComponent.module);
             entryComponents.push(missedComponent.name);
-            const moduleParts = missedComponent.context.path.split(/(\/|\\)/);
             const relativePath = getRelativePath(missedComponent.context.dirname,
-              this.context.dirname, moduleParts[moduleParts.length - 1]);
+              this.context.dirname, path.basename(missedComponent.context.path));
             const importPath = relativePath.replace(path.extname(relativePath), '');
             return {
               module: missedComponent.module,

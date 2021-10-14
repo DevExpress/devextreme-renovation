@@ -1,8 +1,7 @@
-import {
-  TemplateComponent,
-  TemplateComponentProps,
-  DxTemplateComponentModule,
-} from "./template_component";
+import InnerWidget, {
+  InnerWidgetProps,
+  DxInnerWidgetModule,
+} from "./dx-inner-widget";
 import { Input, TemplateRef } from "@angular/core";
 export class InnerComponentProps {
   @Input() someTemplate: TemplateRef<any> | null = null;
@@ -46,8 +45,8 @@ export class InnerComponent extends InnerComponentProps {
 }
 @NgModule({
   declarations: [InnerComponent],
-  imports: [DxTemplateComponentModule, CommonModule],
-  entryComponents: [TemplateComponent],
+  imports: [DxInnerWidgetModule, CommonModule],
+  entryComponents: [InnerWidget],
   exports: [InnerComponent],
 })
 export class DxInnerComponentModule {}

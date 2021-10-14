@@ -49,19 +49,15 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("external_layout", function () {
+  mocha.it("external-layout", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("inner_layout", function () {
+  mocha.it("inner-layout", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("template_component", function () {
-    this.testGenerator(this.test!.title);
-  });
-
-  mocha.it("inner_component", function () {
+  mocha.it("inner-component", function () {
     this.testGenerator(this.test!.title);
   });
 

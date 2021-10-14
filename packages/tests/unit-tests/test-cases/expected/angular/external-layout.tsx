@@ -1,5 +1,5 @@
-import { InnerLayout, DxInnerLayoutModule } from "./inner_layout";
-import { InnerComponent, DxInnerComponentModule } from "./inner_component";
+import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
+import { InnerComponent, DxInnerComponentModule } from "./inner-component";
 import { Input } from "@angular/core";
 export class Props {
   @Input() prop: number = 0;
@@ -16,10 +16,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import {
-  DxTemplateComponentModule,
-  TemplateComponent,
-} from "./template_component";
+import { DxInnerWidgetModule, InnerWidget } from "./dx-inner-widget";
 
 @Component({
   selector: "dx-external-layout",
@@ -55,7 +52,7 @@ export class ExternalLayout extends Props {
     super();
   }
 
-  InnerComponentDefaults = { someTemplate: TemplateComponent };
+  InnerComponentDefaults = { someTemplate: InnerWidget };
 }
 @NgModule({
   declarations: [ExternalLayout],
@@ -63,9 +60,9 @@ export class ExternalLayout extends Props {
     DxInnerLayoutModule,
     DxInnerComponentModule,
     CommonModule,
-    DxTemplateComponentModule,
+    DxInnerWidgetModule,
   ],
-  entryComponents: [InnerLayout, InnerComponent, TemplateComponent],
+  entryComponents: [InnerLayout, InnerComponent, InnerWidget],
   exports: [ExternalLayout],
 })
 export class DxExternalLayoutModule {}

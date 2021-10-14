@@ -1,6 +1,11 @@
-import { Input } from "@angular/core";
-export class TemplateComponentProps {
-  @Input() props: number = 0;
+import {
+  InnerComponent,
+  InnerComponentProps,
+  DxInnerComponentModule,
+} from "./inner-component";
+import { Input, TemplateRef } from "@angular/core";
+export class InnerLayoutProps {
+  @Input() innerComponentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -15,12 +20,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-template-component",
+  selector: "dx-inner-layout",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["props"],
-  template: `<div>template_component</div>`,
+  inputs: ["innerComponentTemplate"],
+  template: `<div></div>`,
 })
-export class TemplateComponent extends TemplateComponentProps {
+export class InnerLayout extends InnerLayoutProps {
   get __restAttributes(): any {
     return {};
   }
@@ -40,11 +45,11 @@ export class TemplateComponent extends TemplateComponentProps {
   }
 }
 @NgModule({
-  declarations: [TemplateComponent],
-  imports: [CommonModule],
-
-  exports: [TemplateComponent],
+  declarations: [InnerLayout],
+  imports: [DxInnerComponentModule, CommonModule],
+  entryComponents: [InnerComponent],
+  exports: [InnerLayout],
 })
-export class DxTemplateComponentModule {}
-export { TemplateComponent as DxTemplateComponentComponent };
-export default TemplateComponent;
+export class DxInnerLayoutModule {}
+export { InnerLayout as DxInnerLayoutComponent };
+export default InnerLayout;

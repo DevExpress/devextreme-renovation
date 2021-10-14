@@ -5,19 +5,19 @@ import {
     JSXTemplate,
     Template,
   } from '@devextreme-generator/declarations';
-  import { InnerComponent, InnerComponentProps } from './inner_component';
+  import InnerWidget, {InnerWidgetProps} from './dx-inner-widget';
   
   export const viewFunction = (): JSX.Element => (
     <div />
   );
   
   @ComponentBindings()
-  export class InnerLayoutProps {
-    @Template() innerComponentTemplate: JSXTemplate<InnerComponentProps> = InnerComponent;
+  export class InnerComponentProps {
+    @Template() someTemplate: JSXTemplate<InnerWidgetProps> = InnerWidget;
   }
   
   @Component({
     defaultOptionRules: null,
     view: viewFunction,
   })
-  export class InnerLayout extends JSXComponent(InnerLayoutProps) {}
+  export class InnerComponent extends JSXComponent(InnerComponentProps) {}
