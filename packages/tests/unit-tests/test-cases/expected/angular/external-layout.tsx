@@ -16,7 +16,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { DxInnerWidgetModule, InnerWidget } from "./dx-inner-widget";
+import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
 
 @Component({
   selector: "dx-external-layout",

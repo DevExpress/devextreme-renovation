@@ -1448,14 +1448,15 @@ export class AngularComponent extends Component {
 
   compileDefaultTemplateImports(
     missedDefautTemplatesImports:
-    ({ module: string, name: string, path: string } | undefined)[][] | undefined,
+    ({ module: string, name: string, path: string, isDefault: boolean } | undefined)[][]
+    | undefined,
   ): string {
     return missedDefautTemplatesImports
       ? missedDefautTemplatesImports
         .map((m) => m
           .map((c) => {
             if (c) {
-              return `import {${c.module}, ${c.name} } from '${c.path}';`;
+              return `import ${c.isDefault ? `${c.name}, {` : `{ ${c.name},`} ${c.module}} from '${c.path}';`;
             }
             return '';
           })
@@ -1465,7 +1466,8 @@ export class AngularComponent extends Component {
   findMissedTemplates(decoratorToStringOptions: toStringOptions,
     modules: string[],
     entryComponents: string[]):
-    ({ module: string, name: string, path: string } | undefined)[][] | undefined {
+    ({ module: string, name: string, path: string, isDefault: boolean } | undefined)[][]
+    | undefined {
     return decoratorToStringOptions?.templateComponents
       ?.map((c) => getProps(c.members)
         .map((p) => {
@@ -1486,6 +1488,7 @@ export class AngularComponent extends Component {
               module: missedComponent.module,
               name: missedComponent.name,
               path: importPath,
+              isDefault: missedComponent.modifiers.includes('default'),
             };
           }
           return undefined;
