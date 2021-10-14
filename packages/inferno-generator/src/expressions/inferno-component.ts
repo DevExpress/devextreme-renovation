@@ -129,11 +129,12 @@ export class InfernoComponent extends PreactComponent {
       ];
 
       getters.forEach((g) => {
-        const allDeps = g.getDependency({
+        const allDeps = g.getDependencyString({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
-        }).filter((dep) => {
-          const depMember = this.getToStringOptions().members.find((member) => member.name === dep);
+        }).filter((dependencyString) => {
+          const depMember = this.getToStringOptions().members
+            .find((member) => member.name === dependencyString);
           return !depMember?.isMutable;
         });
 
@@ -193,20 +194,27 @@ export class InfernoComponent extends PreactComponent {
     const createEffectsStatements: string[] = [];
     const updateEffectsStatements: string[] = [];
     if (this.effects.length || this.jQueryRegistered) {
-      const dependencies = this.effects.map(
+      const dependenciesString = this.effects.map(
         (e) => e.getDependency(this.getToStringOptions())
-          .filter((dep) => {
-            const depMember = this.getToStringOptions().members.find(
-              (member) => member.name === dep,
-            );
-            return !depMember?.isMutable;
-          })
-          .map((d) => `this.${d}`)
-        ,
+          .reduce((arr: string[], d) => {
+            if (d instanceof BaseClassMember) {
+              if (!d.isMutable) {
+                arr.push(
+                  d.isState
+                    ? `this.state.${d._name}, this.props.${d._name}`
+                    : `this.${d.getDependencyString()}`,
+                );
+              }
+
+              return arr;
+            }
+            arr.push(`this.${d}`);
+            return arr;
+          }, []).filter((string) => string !== 'this.'),
       );
 
       const create = this.effects.map((e, i) => {
-        const dependency = getEffectRunParameter(e) !== 'once' ? dependencies[i] : [];
+        const dependency = getEffectRunParameter(e) !== 'once' ? dependenciesString[i] : [];
         return `new InfernoEffect(this.${e.name}, [${dependency.join(',')}])`;
       });
 
@@ -224,7 +232,7 @@ export class InfernoComponent extends PreactComponent {
         const run = getEffectRunParameter(effect);
 
         if (run !== 'once') {
-          const dependency = dependencies[index];
+          const dependency = dependenciesString[index];
           result.push(
             `this._effects[${index}]?.update([${dependency.join(',')}])`,
           );

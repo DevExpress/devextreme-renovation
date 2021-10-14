@@ -6,6 +6,7 @@ import { Property, Method } from './class-members';
 import { getProps } from './component';
 import { processComponentContext } from '../utils/string';
 import { BindingElement } from './binding-pattern';
+import { Dependency } from '..';
 
 export class ElementAccess extends ExpressionWithExpression {
   index: Expression;
@@ -28,7 +29,7 @@ export class ElementAccess extends ExpressionWithExpression {
     }[${this.index.toString(options)}]`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return super
       .getDependency(options)
       .concat(this.index.getDependency(options));
@@ -135,7 +136,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     return `this.${property.name}=${state}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions):Dependency[] {
     const expressionString = this.expression.toString();
     const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
     if (
@@ -143,7 +144,8 @@ export class PropertyAccess extends ExpressionWithExpression {
         && this.name.toString() !== 'props')
       || expressionString === `${componentContext}.props`
     ) {
-      return [this.name.toString()];
+      const member = options.members.find((m) => m._name.toString() === this.name.toString());
+      return member ? [member] : [];
     }
     const dependency = this.expression.getDependency(options);
     if (
@@ -155,7 +157,7 @@ export class PropertyAccess extends ExpressionWithExpression {
     return dependency;
   }
 
-  getAssignmentDependency(options: toStringOptions): string[] {
+  getAssignmentDependency(options: toStringOptions): Dependency[] {
     return this.getDependency(options);
   }
 
@@ -200,7 +202,7 @@ export class PropertyAccessChain extends ExpressionWithExpression {
     }${this.processName(options)}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return super
       .getDependency(options)
       .concat(this.name.getDependency(options));

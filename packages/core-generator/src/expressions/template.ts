@@ -1,5 +1,6 @@
 import { ExpressionWithExpression, Expression } from './base';
 import { toStringOptions } from '../types';
+import { Dependency } from '..';
 
 export class TemplateSpan extends ExpressionWithExpression {
   literal: string;
@@ -37,9 +38,9 @@ export class TemplateExpression extends Expression {
     return `\`${this.head}${templateSpansStrings.join('')}\``;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.templateSpans.reduce(
-      (d: string[], t) => d.concat(t.getDependency(options)),
+      (d: Dependency[], t) => d.concat(t.getDependency(options)),
       [],
     );
   }

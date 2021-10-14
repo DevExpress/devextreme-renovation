@@ -5,7 +5,7 @@ import {
 } from "./component-pass-two";
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
-type Item = { text: string; key: number };
+export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
 import { Input } from "@angular/core";
 export class WidgetProps {

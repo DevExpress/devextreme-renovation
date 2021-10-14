@@ -1915,7 +1915,7 @@ mocha.describe("Vue-generator", function () {
 
         assert.strictEqual(
           getAst(watch),
-          getAst(`watch: {
+          getAst(`watch: { 
                     p: ["__schedule_e"],
                     p2: ["__schedule_e"]
                 }`)

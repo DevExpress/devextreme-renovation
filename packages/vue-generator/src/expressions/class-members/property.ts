@@ -17,6 +17,7 @@ import {
   ObjectLiteral,
   NumericLiteral,
   BaseFunction,
+  Dependency,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
 
@@ -227,13 +228,22 @@ export class Property extends BaseProperty {
     return super.canBeDestructured;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
+    if (this.isState) {
+      const stateMember = options.members
+        .find(({ name }) => name === `${this.name}_state`);
+      return stateMember ? [stateMember] : [this];
+    }
+    return super.getDependency(options);
+  }
+
+  getDependencyString(options: toStringOptions): string[] {
     if (this.isState) {
       return [`${this.name}_state`];
     }
     if (this.isMutable) {
       return [];
     }
-    return super.getDependency(options);
+    return super.getDependencyString(options);
   }
 }

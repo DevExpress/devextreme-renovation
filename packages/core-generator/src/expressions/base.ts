@@ -1,3 +1,4 @@
+import { Dependency } from '..';
 import {
   GeneratorContext,
   IExpression,
@@ -6,7 +7,7 @@ import {
 } from '../types';
 
 export class Expression implements IExpression {
-  getDependency(_options: toStringOptions): string[] {
+  getDependency(_options: toStringOptions): Dependency[] {
     return [];
   }
 
@@ -14,7 +15,7 @@ export class Expression implements IExpression {
     return '';
   }
 
-  getAllDependency(options: toStringOptions) {
+  getAllDependency(options: toStringOptions): Dependency[] {
     return this.getDependency(options);
   }
 
@@ -52,7 +53,7 @@ export class ExpressionWithExpression extends Expression {
     return this.expression.toString(options);
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.expression.getDependency(options);
   }
 
@@ -77,7 +78,7 @@ export class ExpressionWithOptionalExpression extends Expression {
     return this.expression?.isJsx() || false;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return (this.expression && this.expression.getDependency(options)) || [];
   }
 }
