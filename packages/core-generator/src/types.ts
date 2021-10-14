@@ -6,13 +6,14 @@ import { Component } from './expressions/component';
 import { TypeExpression } from './expressions/type';
 import { Interface } from './expressions/interface';
 import { ComponentInput } from './expressions/component-input';
+import { Dependency } from '.';
 
 export type TypeExpressionImports = ImportDeclaration[];
 
 export interface IExpression {
-  getDependency(options: toStringOptions): string[];
+  getDependency(options: toStringOptions): Dependency[];
   toString(options?: toStringOptions): string;
-  getAllDependency(options: toStringOptions): string[];
+  getAllDependency(options: toStringOptions): Dependency[];
   isJsx(): boolean;
   getImports(context: GeneratorContext): TypeExpressionImports;
 }

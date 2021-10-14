@@ -57,7 +57,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       const b = definedObj.current!.value;
       const c = notDefinedObj.current?.value;
     },
-    [obj, notDefinedObj, definedObj]
+    [definedObj, notDefinedObj, obj]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

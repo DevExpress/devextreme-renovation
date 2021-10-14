@@ -28,6 +28,7 @@ import {
   BindingPattern,
   BaseFunction,
   TypeReferenceNode,
+  Dependency,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method } from './class-members/method';
@@ -659,10 +660,26 @@ export class VueComponent extends Component {
     const startMethodsLength = methods.length;
 
     this.effects.forEach((effect, index) => {
-      const dependency = effect.getDependency({
+      let dependency = effect.getDependency({
         members: this.members,
         componentContext: SyntaxKind.ThisKeyword,
       });
+      if (dependency.indexOf('props') > -1) {
+        const props = getProps(this.members);
+        dependency = dependency.filter(
+          (d) => !(d instanceof BaseClassMember
+              && props.includes(d as Property))
+            || d.isState,
+        );
+        dependency = dependency.reduce((arr: Dependency[], dep) => {
+          if (dep === 'props') {
+            arr.push(...props);
+          } else {
+            arr.push(dep);
+          }
+          return arr;
+        }, []);
+      }
 
       const scheduleEffectName = `__schedule_${effect._name}`;
 
@@ -673,6 +690,7 @@ export class VueComponent extends Component {
       }
 
       dependency
+        .map((dep) => (dep instanceof BaseClassMember ? dep._name.toString() : dep))
         .filter((d) => d !== 'props')
         .forEach((d) => {
           watches[d] = watches[d] || [];

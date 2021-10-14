@@ -5,6 +5,7 @@ import { Property } from './class-members';
 import { PropertyAccess } from './property-access';
 import { NonNullExpression } from './common';
 import { getMember } from '../utils/expressions';
+import { Dependency } from '..';
 
 const isShortOperator = (operator: string) => (
   operator === SyntaxKind.PlusEqualsToken
@@ -71,7 +72,7 @@ export class Binary extends Expression {
     } ${this.right.toString(options)}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     if (this.operator === SyntaxKind.EqualsToken) {
       if (
         this.left instanceof PropertyAccess
@@ -89,7 +90,7 @@ export class Binary extends Expression {
     return this.getAllDependency(options);
   }
 
-  getAllDependency(options: toStringOptions) {
+  getAllDependency(options: toStringOptions): Dependency[] {
     return this.left
       .getDependency(options)
       .concat(this.right.getDependency(options));
@@ -133,7 +134,7 @@ export class Prefix extends Expression {
     return `${this.operator}${this.operand.toString(options)}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return this.operand.getDependency(options);
   }
 }

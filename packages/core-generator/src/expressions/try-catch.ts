@@ -1,6 +1,7 @@
 import { Expression, ExpressionWithExpression } from './base';
 import { Block } from './statements';
 import { toStringOptions } from '../types';
+import { Dependency } from '..';
 
 export class Try extends ExpressionWithExpression {
   constructor(
@@ -11,7 +12,7 @@ export class Try extends ExpressionWithExpression {
     super(tryBlock);
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     return super
       .getDependency(options)
       .concat(this.catchClause ? this.catchClause.getDependency(options) : [])

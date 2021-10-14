@@ -1,4 +1,5 @@
 import {
+  BaseClassMember,
   GetAccessor as BaseGetAccessor,
   toStringOptions,
 } from '@devextreme-generator/core';
@@ -9,10 +10,14 @@ export class GetAccessor extends BaseGetAccessor {
     return `${super.getter(componentContext)}()`;
   }
 
-  getDependency(options: toStringOptions): string[] {
-    return calculateMethodDependency(
+  getDependencyString(options: toStringOptions): string[] {
+    const dependencies = calculateMethodDependency(
       super.getDependency(options),
       options.members,
     );
+    return dependencies.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+      ? [...arr, ...dep.getDependencyString(options)]
+      : [...arr, dep]),
+    []);
   }
 }

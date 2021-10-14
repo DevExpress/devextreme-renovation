@@ -10,7 +10,7 @@ import { WidgetTwo as ExternalComponent } from "./component-pass-two";
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 
-type Item = {
+export type Item = {
   text: string;
   key: number;
 };

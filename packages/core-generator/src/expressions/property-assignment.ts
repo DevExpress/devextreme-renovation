@@ -6,6 +6,7 @@ import {
 import { toStringOptions } from '../types';
 import { Identifier } from './common';
 import { ComputedPropertyName } from './property-access';
+import { Dependency } from '..';
 
 export class PropertyAssignment extends Expression {
   constructor(
@@ -22,7 +23,7 @@ export class PropertyAssignment extends Expression {
     return `${key}:${this.value.toString(options)}`;
   }
 
-  getDependency(options: toStringOptions) {
+  getDependency(options: toStringOptions): Dependency[] {
     const keyDependency = this.key instanceof ComputedPropertyName
       ? this.key.getDependency(options)
       : [];
