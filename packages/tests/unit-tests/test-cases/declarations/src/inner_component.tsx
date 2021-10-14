@@ -21,4 +21,3 @@ import {
     view: viewFunction,
   })
   export class InnerComponent extends JSXComponent(InnerComponentProps) {}
-  
