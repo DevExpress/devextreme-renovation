@@ -32,8 +32,8 @@ import {
   StringLiteral,
   SyntaxKind,
 } from '@devextreme-generator/core';
-import { getRelativePath } from '../../../core-generator/dist/utils/path-utils';
 import path from 'path';
+import { getRelativePath } from '../../../core-generator/dist/utils/path-utils';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
 import { GetAccessor } from './class-members/get-accessor';
