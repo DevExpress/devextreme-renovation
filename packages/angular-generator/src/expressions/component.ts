@@ -1,5 +1,6 @@
 import {
   ArrayLiteral,
+  BaseClassMember,
   BindingElement,
   BindingPattern,
   Block,
@@ -8,11 +9,13 @@ import {
   compileType,
   Component,
   Decorators,
+  Dependency,
   Expression,
   extractComplexType,
   FunctionTypeNode,
   GeneratorContext,
   getProps,
+  getRelativePath,
   getTemplate,
   HeritageClause,
   Identifier,
@@ -30,6 +33,7 @@ import {
   StringLiteral,
   SyntaxKind,
 } from '@devextreme-generator/core';
+import path from 'path';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
 import { GetAccessor } from './class-members/get-accessor';
@@ -102,12 +106,12 @@ export function compileCoreImports(
 }
 
 function separateDependency(
-  allDependency: string[],
+  allDependency: Dependency[],
   internalState: Property[],
-): [string[], string[]] {
-  const result: [string[], string[]] = [[], []];
+): [Dependency[], Dependency[]] {
+  const result: [Dependency[], Dependency[]] = [[], []];
   return allDependency.reduce((r, d) => {
-    if (internalState.find((m) => m.name.toString() === d)) {
+    if (internalState.find((m) => m === d)) {
       r[1].push(d);
     } else {
       r[0].push(d);
@@ -120,33 +124,20 @@ function separateDependency(
 function getDependencyFromViewExpression(
   expression: Expression,
   options: toStringOptions,
-): string[] {
-  const members = options.members;
+): Dependency[] {
+  const dependency = expression.getDependency(options)
+    .filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true));
 
-  const dependency = expression.getDependency(options).filter((dep) => {
-    const depMember = options?.members.find(
-      (member) => member.name === dep,
-    );
-    return !depMember?.isMutable;
-  });
-
-  const dependencyMembers = members.filter((m) => dependency.some((d) => d === m._name.toString()));
-
-  const methods = dependencyMembers.filter((m) => m instanceof Method);
+  const methods = dependency.filter((dep) => dep instanceof Method) as Method[];
 
   return methods.reduce(
-    (d: string[], m) => d.concat(
+    (d: Dependency[], m) => d.concat(
       m.getDependency({
         ...options,
         componentContext: SyntaxKind.ThisKeyword,
-      }).filter((dep) => {
-        const depMember = options?.members.find(
-          (member) => member.name === dep,
-        );
-        return !depMember?.isMutable;
-      }),
+      }).filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true)),
     ),
-    dependency.filter((d) => !methods.some((m) => m._name.toString() === d)),
+    dependency.filter((d) => !methods.some((m) => m === d)),
   );
 }
 
@@ -382,6 +373,19 @@ export class AngularComponent extends Component {
         ),
       ),
     );
+    members.map((m) => {
+      if (m instanceof GetAccessor) {
+        const memberWithTypes = m;
+        memberWithTypes.contextTypes = {
+          ...this.context.externalTypes,
+          ...this.context.externalInterfaces,
+          ...this.context.types,
+          ...this.context.interfaces,
+        };
+        return memberWithTypes;
+      }
+      return m;
+    });
 
     members = members.concat(
       members
@@ -626,12 +630,7 @@ export class AngularComponent extends Component {
         const allDeps = g.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
-        }).filter((dep) => {
-          const depMember = options?.members.find(
-            (member) => member.name === dep,
-          );
-          return !depMember?.isMutable;
-        });
+        }).filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true));
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
           this.internalState,
@@ -639,14 +638,10 @@ export class AngularComponent extends Component {
         const deleteCacheStatement = `this.__getterCache["${g._name.toString()}"] = undefined;`;
 
         if (propsDependency.length) {
-          const contextDependencies = propsDependency.reduce((acc, dep) => {
-            if (this.members.find(
-              (m) => m._name.toString() === dep && m.isConsumer,
-            )) {
-              acc.push(dep);
-            }
-            return acc;
-          }, [] as string[]);
+          const contextDependencies = propsDependency.reduce((acc, dep) => (
+            dep instanceof BaseClassMember && dep.isConsumer
+              ? [...acc, dep]
+              : acc), [] as Dependency[]);
           const conditionArray = [];
 
           const dependenciesWithoutContext = propsDependency.filter(
@@ -654,7 +649,7 @@ export class AngularComponent extends Component {
           );
           if (dependenciesWithoutContext.length) {
             conditionArray.push(
-              `[${dependenciesWithoutContext.map((d) => `"${d}"`).join(',')}].some(d=>${
+              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
               }[d])`,
             );
@@ -673,7 +668,8 @@ export class AngularComponent extends Component {
           }
         }
 
-        internalStateDependency.forEach((name) => {
+        internalStateDependency.forEach((dep) => {
+          const name = dep instanceof BaseClassMember ? dep._name.toString() : dep;
           const setter = this.members.find(
             (p) => p.name === `_${name}`,
           ) as SetAccessor;
@@ -701,7 +697,6 @@ export class AngularComponent extends Component {
     ngOnChanges: string[],
     ngAfterViewCheckedStatements: string[],
     ngDoCheckStatements: string[],
-    options?: toStringOptions,
   ): string {
     const effects = this.members.filter((m) => m.isEffect) as Method[];
     let hasInternalStateDependency = false;
@@ -719,19 +714,13 @@ export class AngularComponent extends Component {
         const allDeps = e.getDependency({
           members: this.members,
           componentContext: SyntaxKind.ThisKeyword,
-        }).filter((dep) => {
-          const depMember = options?.members.find(
-            (member) => member.name === dep,
-          );
-          return !depMember?.isMutable;
-        });
+        }).filter((dep) => (dep instanceof BaseClassMember ? !dep.isMutable : true));
         const [propsDependency, internalStateDependency] = separateDependency(
           allDeps,
           this.internalState,
         );
-        const iterableDeps = allDeps.filter((dep) => isTypeArray(
-          this.members.find((m) => m.name === dep)?.type,
-        ));
+        const iterableDeps = allDeps
+          .filter((dep) => dep instanceof BaseClassMember && isTypeArray(dep.type));
 
         const updateEffectMethod = `__schedule_${e._name}`;
         if (propsDependency.length || internalStateDependency.length) {
@@ -746,18 +735,22 @@ export class AngularComponent extends Component {
           const conditionArray = ['this.__destroyEffects.length'];
           if (propsDependency.indexOf('props') === -1) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d}"`).join(',')}].some(d=>${
+              `[${propsDependency.map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`).join(',')}].some(d=>${
                 ngOnChangesParameters[0]
               }[d])`,
             );
           }
 
-          const iterableProps = propsDependency.filter((dep) => isTypeArray(this.members.find((m) => m.name === dep)?.type));
+          const iterableProps = propsDependency
+            .filter((dep) => dep instanceof BaseClassMember && isTypeArray(dep.type));
           const assignments = iterableProps
             .map(
-              (p) => `if (${ngOnChangesParameters[0]}["${p}"]) {
-            this.__cachedObservables["${p}"] = [...${ngOnChangesParameters[0]}["${p}"].currentValue];
-          }`,
+              (p) => {
+                const pName = p instanceof BaseClassMember ? p._name.toString() : p;
+                return `if (${ngOnChangesParameters[0]}["${pName}"]) {
+            this.__cachedObservables["${pName}"] = [...${ngOnChangesParameters[0]}["${pName}"].currentValue];
+          }`;
+              },
             )
             .join('\n');
           ngOnChanges.push(`
@@ -772,7 +765,7 @@ export class AngularComponent extends Component {
           const observableConditionArray = ['this.__destroyEffects.length'];
           observableConditionArray.push(
             `this.__checkObservables([${iterableDeps
-              .map((d) => `"${d}"`)
+              .map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`)
               .join(',')}])`,
           );
 
@@ -783,13 +776,14 @@ export class AngularComponent extends Component {
           }`);
         }
 
-        internalStateDependency.forEach((name) => {
+        internalStateDependency.forEach((dep) => {
+          const name = dep instanceof BaseClassMember ? dep._name.toString() : dep;
           const setter = this.members.find(
             (p) => p.name === `_${name}`,
           ) as SetAccessor;
           if (setter) {
             if (
-              usedIterables.has(name)
+              usedIterables.has(dep)
               && !setter.body?.statements.some(
                 (expr) => expr.toString()
                   === `this.__cachedObservables["${name}"] = [...${name}];`,
@@ -850,8 +844,9 @@ export class AngularComponent extends Component {
           return isChanged;
         }`);
         usedIterables.forEach((i) => {
+          const iName = i instanceof BaseClassMember ? i._name.toString() : i;
           ngAfterViewInitStatements.push(
-            `this.__cachedObservables["${i}"] = this.${i}`,
+            `this.__cachedObservables["${iName}"] = this.${iName}`,
           );
         });
       }
@@ -894,7 +889,7 @@ export class AngularComponent extends Component {
         newComponentContext: this.viewModel ? '_viewModel' : '',
       };
       const expression = getTemplate(viewFunction, options);
-      const allDependency: string[] = [];
+      const allDependency: Dependency[] = [];
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
         const members = [];
@@ -902,10 +897,7 @@ export class AngularComponent extends Component {
         const statements = expression.getSpreadAttributes().map((o, i) => {
           const expressionString = o.expression.toString(options);
 
-          allDependency.push.apply(
-            allDependency,
-            getDependencyFromViewExpression(o.expression, options),
-          );
+          allDependency.push(...getDependencyFromViewExpression(o.expression, options));
 
           const refString = `${
             o.refExpression instanceof SimpleExpression
@@ -939,14 +931,13 @@ export class AngularComponent extends Component {
 
           const [propsDependency, internalStateDependency] = separateDependency(
             allDependency.filter(
-              (d) => !this.members.some(
-                (m) => m._name.toString() === d && m instanceof Method,
-              ),
+              (d) => !(d instanceof Method),
             ),
             this.members.filter((m) => m.isInternalState) as Property[],
           );
 
-          internalStateDependency.forEach((name) => {
+          internalStateDependency.forEach((dep) => {
+            const name = dep instanceof BaseClassMember ? dep._name.toString() : dep;
             const setter = this.members.find(
               (p) => p.name === `_${name}`,
             ) as SetAccessor;
@@ -964,7 +955,7 @@ export class AngularComponent extends Component {
 
           if (propsDependency.length) {
             ngOnChangesStatements.push(`if([${propsDependency
-              .map((d) => `"${d}"`)
+              .map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`)
               .join(',')}].some(d=>
               ${ngOnChangesParameters[0]}[d] && !${
   ngOnChangesParameters[0]
@@ -1327,11 +1318,12 @@ export class AngularComponent extends Component {
     argumentPattern: BindingPattern,
     options: toStringOptions,
     _spreadVar: BindingElement,
-  ) {
-    const propsNames = getProps(options.members).map((p) => p._name.toString());
-    const argNames = argumentPattern.getAllDependency(options);
-    const res = propsNames
-      .filter((p) => !argNames.includes(p))
+  ): Block {
+    const props = getProps(options.members);
+    const args = argumentPattern.getAllDependency(options);
+    const res = props
+      .filter((p) => !args.includes(p))
+      .map((r) => r._name.toString())
       .map(
         (r) => new PropertyAssignment(
           new Identifier(r),
@@ -1454,6 +1446,55 @@ export class AngularComponent extends Component {
       : '';
   }
 
+  compileDefaultTemplateImports(
+    missedDefautTemplatesImports:
+    ({ module: string, name: string, path: string, isDefault: boolean } | undefined)[][]
+    | undefined,
+  ): string {
+    return missedDefautTemplatesImports
+      ? missedDefautTemplatesImports
+        .map((m) => m
+          .map((c) => {
+            if (c) {
+              return `import ${c.isDefault ? `${c.name}, {` : `{ ${c.name},`} ${c.module}} from '${c.path}';`;
+            }
+            return '';
+          })
+          .join(';')).join('\n') : '';
+  }
+
+  findMissedTemplates(decoratorToStringOptions: toStringOptions,
+    modules: string[],
+    entryComponents: string[]):
+    ({ module: string, name: string, path: string, isDefault: boolean } | undefined)[][]
+    | undefined {
+    return decoratorToStringOptions?.templateComponents
+      ?.map((c) => getProps(c.members)
+        .map((p) => {
+          const missedComponent = p.initializer && (c as AngularComponent)
+            .context.components?.[p.initializer.toString()] ? (c as AngularComponent)
+              .context.components?.[p.initializer.toString()] as AngularComponent : undefined;
+          if (this.context.dirname
+            && missedComponent
+            && missedComponent.context.path
+            && missedComponent.context.dirname
+          ) {
+            modules.push(missedComponent.module);
+            entryComponents.push(missedComponent.name);
+            const relativePath = getRelativePath(missedComponent.context.dirname,
+              this.context.dirname, path.basename(missedComponent.context.path));
+            const importPath = relativePath.replace(path.extname(relativePath), '');
+            return {
+              module: missedComponent.module,
+              name: missedComponent.name,
+              path: importPath,
+              isDefault: missedComponent.modifiers.includes('default'),
+            };
+          }
+          return undefined;
+        }));
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1558,9 +1599,16 @@ export class AngularComponent extends Component {
       importModules,
     );
 
+    const missedDefautTemplatesImports = this.findMissedTemplates(
+      decoratorToStringOptions,
+      modules,
+      entryComponents,
+    );
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
+        ${this.compileDefaultTemplateImports(missedDefautTemplatesImports)}
         ${this.compileStyleNormalizer(decoratorToStringOptions)}
         ${this.compileNestedComponents(nestedModules)}
         ${dynamicComponentDirective}
@@ -1599,7 +1647,6 @@ export class AngularComponent extends Component {
     ngOnChangesStatements,
     ngAfterViewCheckedStatements,
     ngDoCheckStatements,
-    decoratorToStringOptions,
   )}
             ${this.compileGetterCache(ngOnChangesStatements,
     { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword },

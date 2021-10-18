@@ -50,10 +50,10 @@ export const DxWidget = {
     p: ["__schedule_setupData", "__schedule_alwaysEffect"],
     s_state: ["__schedule_setupData", "__schedule_alwaysEffect"],
     i: ["__schedule_setupData", "__schedule_alwaysEffect"],
-    j: ["__schedule_alwaysEffect"],
     r: ["__schedule_alwaysEffect"],
+    s: ["__schedule_alwaysEffect", "__s_watcher"],
     sChange: ["__schedule_alwaysEffect"],
-    s: ["__s_watcher"],
+    j: ["__schedule_alwaysEffect"],
   },
   methods: {
     __getP() {

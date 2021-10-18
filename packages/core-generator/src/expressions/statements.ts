@@ -1,5 +1,6 @@
 import { Expression, ExpressionWithOptionalExpression } from './base';
 import { toStringOptions } from '../types';
+import { Dependency } from '..';
 
 export class Block extends Expression {
   statements: Expression[];
@@ -18,8 +19,8 @@ export class Block extends Expression {
     }`;
   }
 
-  getDependency(options: toStringOptions) {
-    return this.statements.reduce((d: string[], s) => d.concat(s.getDependency(options)), []);
+  getDependency(options: toStringOptions): Dependency[] {
+    return this.statements.reduce((d: Dependency[], s) => d.concat(s.getDependency(options)), []);
   }
 
   isJsx() {
