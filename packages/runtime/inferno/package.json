@@ -7,7 +7,8 @@
   "main": "../dist/cjs/inferno/index",
   "module": "../dist/esm/inferno/index",
   "types": "../dist/esm/inferno/index",
-  "dependencies": {
-    "inferno": "^7.4.6"
+  "peerDependencies": {
+    "inferno": "^7.4.6",
+    "inferno-create-element": "^7.4.6"
   }
 }
