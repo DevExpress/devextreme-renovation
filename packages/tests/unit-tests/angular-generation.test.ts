@@ -49,6 +49,18 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("external-layout", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inner-layout", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("inner-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("abstract-class", function () {
     this.testGenerator(this.test!.title);
   });
