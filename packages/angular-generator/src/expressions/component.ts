@@ -1673,6 +1673,7 @@ export class AngularComponent extends Component {
   )}
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements)}
+            @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef;
             ${this.compileLifeCycle(
     'constructor',
     (constructorStatements.length || constructorArguments.length)
@@ -1685,6 +1686,7 @@ export class AngularComponent extends Component {
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
             ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}
         }
+    
         @NgModule({
             declarations: [${this.name}, ${nestedModules
   .concat(importModules)

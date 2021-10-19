@@ -99,7 +99,7 @@ export class Decorator extends BaseDecorator {
         if (template) {
           parameters.setProperty(
             'template',
-            new TemplateExpression(template, []),
+            new TemplateExpression(`<ng-template #widgetTemplate>${template}</ng-template>`, []),
           );
         }
       }
