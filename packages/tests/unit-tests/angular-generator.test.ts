@@ -1728,8 +1728,7 @@ mocha.describe("Angular generator", function () {
             members: [],
           })),
           removeSpaces(`
-            <g BaseWidget #basewidget1></g>
-            <ng-content *ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <g BaseWidget></g>
           `)
         );
       });
@@ -1775,10 +1774,9 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(`
             <div>
-              <g BaseWidget #basewidget1>
+              <g BaseWidget>
                 <svg:text [ngStyle]="__processNgStyle(styleValue)"></text>
               </g >
-              <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
             </div>`)
           );
 
@@ -1807,8 +1805,7 @@ mocha.describe("Angular generator", function () {
             members: [],
           })),
           removeSpaces(`
-            <g BaseWidget #basewidget1></g>
-            <ng-content *ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <g BaseWidget></g>
           `)
         );
       });
@@ -5962,7 +5959,7 @@ mocha.describe("Angular generator", function () {
 
         assert.strictEqual(
           decorator.toString(),
-          `@Component({template:\`<div ></div>\`})`
+          `@Component({template:\`<ng-template #widgetTemplate><div ></div></ng-template>\`})`
         );
       });
 
@@ -6018,10 +6015,9 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(
-            "@Component({template:`<div ></div>\n" +
-              "<ng-template #v1>" +
-              "<span ></span>" +
-              "</ng-template>" +
+            "@Component({template:`<ng-template#widgetTemplate><div>"+
+            "</div><ng-template#v1><span></span></ng-template>"+
+            "</ng-template>" +
               "`})"
           )
         );
@@ -6080,11 +6076,9 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(
-            "@Component({template:`<div ></div>\n" +
-              "<ng-template #v1>" +
-              "<span ></span>" +
-              "</ng-template>" +
-              "`})"
+            "@Component({template:`<ng-template#widgetTemplate>"+
+            "<div></div>"+
+            "<ng-template#v1><span></span></ng-template></ng-template>`})"
           )
         );
       });
@@ -6889,6 +6883,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
+                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,
@@ -6981,6 +6976,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
+                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,

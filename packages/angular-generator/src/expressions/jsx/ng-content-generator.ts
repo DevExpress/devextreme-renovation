@@ -1,4 +1,5 @@
 import {
+  Component,
   Identifier,
   JsxAttribute,
   JsxSpreadAttribute,
@@ -17,7 +18,7 @@ export function tryToGetContent(element: JsxOpeningElement): {
   let elementDirective = null;
   let content = '';
 
-  if (!isComponent) {
+  if (!isComponent || (isComponent as Component).isSVGComponent) {
     return { content, elementDirective };
   }
 
