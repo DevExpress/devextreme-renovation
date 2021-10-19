@@ -69,6 +69,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
   }
 
+  postProcess(): string {
+    return '';
+  }
+
   isPropsGetAccessor(
     member: Property | Method | undefined,
   ): member is IPropsGetAccessor {
@@ -437,6 +441,10 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
+  postProcess(): string {
+    return '';
+  }
+
   toString(options?: toStringOptions) {
     if (this.getTemplateProperty(options)) {
       return super.toString(options);

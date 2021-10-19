@@ -1,14 +1,19 @@
-import { AngularDirective, JsxAttribute, JsxOpeningElement } from '@devextreme-generator/angular';
-import { Identifier, SimpleExpression } from '@devextreme-generator/core';
+import {
+  Identifier,
+  JsxAttribute,
+  JsxSpreadAttribute,
+  SimpleExpression,
+} from '@devextreme-generator/core';
+import { AngularDirective } from './angular-directive';
+import type { JsxOpeningElement } from './jsx-opening-element';
 import { getUniqComponentName } from '../utils/uniq_name_generator';
 
-export const tryToGetContent = (element: JsxOpeningElement): {
+export function tryToGetContent(element: JsxOpeningElement): {
   content: string;
   elementDirective: AngularDirective | null;
-} => {
+} {
   const componentName = element.tagName.toString();
   const isComponent = element.context.components?.[componentName];
-  const { attributes } = element;
   let elementDirective = null;
   let content = '';
 
@@ -16,14 +21,14 @@ export const tryToGetContent = (element: JsxOpeningElement): {
     return { content, elementDirective };
   }
 
-  const refAttr = attributes.find((attr) => (attr as JsxAttribute).toString()[0] === '#');
-  let ref = refAttr?.toString().split('.').pop() as string;
+  const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
+  let ref = refAttr?.toString().split('.').pop();
 
-  if (ref === '') {
+  if (!ref) {
     ref = getUniqComponentName(componentName);
     elementDirective = new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression(''));
   }
 
   content = `<ng-content *ngTemplateOutlet="${ref}.widgetTemplate"></ng-content>`;
   return { content, elementDirective };
-};
+}

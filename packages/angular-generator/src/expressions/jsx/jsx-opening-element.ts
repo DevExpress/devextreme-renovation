@@ -41,7 +41,7 @@ import { JsxElement } from './elements';
 import { AngularComponent } from '../component';
 import { counter } from '../../counter';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
-import { getUniqComponentName } from '../utils/uniq_name_generator';
+import { process } from './element_post_processing';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -808,6 +808,10 @@ const VOID_ELEMENTS = [
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
+  postProcess(): string {
+    return process(this);
+  }
+
   toString(options?: toStringOptions) {
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
@@ -821,26 +825,8 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (elementString) {
       return elementString;
     }
-
-    let widgetInplace = '';
-    if (this.context.components?.[this.tagName.toString()]) {
-      let refAttr = '';
-
-      this.attributes.forEach((attr) => {
-        const attrName = (attr as JsxAttribute).toString();
-        if (attrName[0] === '#') {
-          refAttr = attrName.split('.').pop() as string;
-        }
-      });
-      if (refAttr === '') {
-        refAttr = getUniqComponentName(this.tagName.toString());
-        this.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
-      }
-      widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;
-    }
-
+    const addinitionalStr = this.postProcess();
     const openingElement = super.toString(options);
-
     const children: Expression[] = [
       ...this.getSlotsFromAttributes(options),
       ...this.getTemplatesFromAttributes(options),
@@ -857,7 +843,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         options,
         true,
       )}>
-        ${separatedChildren[1]}${widgetInplace}`;
+        ${separatedChildren[1]}${addinitionalStr}`;
     }
 
     const childrenString = children.map((c) => c.toString(options)).join('');
@@ -866,7 +852,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       this.tagName,
       options,
       true,
-    )}>${widgetInplace}`;
+    )}>${addinitionalStr}`;
   }
 
   clone() {

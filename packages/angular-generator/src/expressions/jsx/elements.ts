@@ -1,9 +1,6 @@
 import {
-  Identifier,
-  JsxAttribute,
   JsxElement as BaseJsxElement,
   JsxOpeningElement as BaseJsxOpeningElement,
-  SimpleExpression,
 } from '@devextreme-generator/core';
 import { JsxExpression } from './jsx-expression';
 import {
@@ -18,8 +15,7 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxSpreadAttributeMeta } from './spread-attribute';
 import { Property } from '../class-members/property';
-import { AngularDirective } from './angular-directive';
-import { getUniqComponentName } from '../utils/uniq_name_generator';
+import { process } from './element_post_processing';
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement
   || e instanceof JsxSelfClosingElement
@@ -59,24 +55,11 @@ export class JsxElement extends BaseJsxElement {
     return this.openingElement.tagName.toString() === 'Fragment';
   }
 
+  postProcess(): string {
+    return process(this.openingElement);
+  }
+
   toString(options?: toStringOptions): string {
-    let widgetInplace = '';
-    if (this.openingElement.context.components?.[this.openingElement.tagName.toString()]) {
-      let refAttr = '';
-
-      this.openingElement.attributes.forEach((attr) => {
-        const attrName = (attr as JsxAttribute).toString();
-        if (attrName[0] === '#') {
-          refAttr = attrName.split('.').pop() as string;
-        }
-      });
-      if (refAttr === '') {
-        refAttr = getUniqComponentName(this.openingElement.tagName.toString());
-        this.openingElement.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
-      }
-      widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;
-    }
-
     const elementString = this.openingElement.compileJsxElementsForVariable(
       options,
       this.children.slice(),
@@ -85,8 +68,8 @@ export class JsxElement extends BaseJsxElement {
       return elementString;
     }
 
+    const addinitionalStr = this.postProcess();
     const openingElementString = this.openingElement.toString(options);
-
     const hasSvgSlot = this.openingElement.component?.slots.some(
       (s) => s.isSvgSlot,
     );
@@ -136,10 +119,10 @@ export class JsxElement extends BaseJsxElement {
     );
 
     if (separatedChildren) {
-      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${widgetInplace}`;
+      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${addinitionalStr}`;
     }
 
-    return `${openingElementString}${childrenString}${closingElementString}${widgetInplace}`;
+    return `${openingElementString}${childrenString}${closingElementString}${addinitionalStr}`;
   }
 
   clone() {
