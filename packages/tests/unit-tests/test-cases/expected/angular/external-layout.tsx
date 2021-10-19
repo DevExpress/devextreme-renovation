@@ -22,16 +22,22 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   selector: "dx-external-layout",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
-  template: `<dx-inner-layout [innerComponentTemplate]="InnerComponent"
-    ><ng-template #InnerComponent let-someTemplate="someTemplate"
-      ><dx-inner-component
-        [someTemplate]="
-          someTemplate !== undefined
-            ? someTemplate
-            : InnerComponentDefaults.someTemplate
-        "
-      ></dx-inner-component></ng-template
-  ></dx-inner-layout>`,
+  template: `<dx-inner-layout
+      [innerComponentTemplate]="InnerComponent"
+      #innerlayout1
+      ><ng-template #InnerComponent let-someTemplate="someTemplate"
+        ><dx-inner-component
+          [someTemplate]="
+            someTemplate !== undefined
+              ? someTemplate
+              : InnerComponentDefaults.someTemplate
+          "
+          #innercomponent2
+        ></dx-inner-component
+        ><ng-content
+          *ngTemplateOutlet="innercomponent2.widgetTemplate"
+        ></ng-content></ng-template></dx-inner-layout
+    ><ng-content *ngTemplateOutlet="innerlayout1.widgetTemplate"></ng-content>`,
 })
 export class ExternalLayout extends Props {
   get __restAttributes(): any {

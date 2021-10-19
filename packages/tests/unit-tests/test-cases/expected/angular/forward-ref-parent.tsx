@@ -24,10 +24,12 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["nullableRef"],
   template: `<dx-ref-on-children-child
-    [childRef]="forwardRef_child"
-    [nullableRef]="forwardRef_nullableRef"
-    [state]="innerState"
-  ></dx-ref-on-children-child>`,
+      [childRef]="forwardRef_child"
+      [nullableRef]="forwardRef_nullableRef"
+      [state]="innerState"
+      #child22
+    ></dx-ref-on-children-child
+    ><ng-content *ngTemplateOutlet="child22.widgetTemplate"></ng-content>`,
 })
 export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;

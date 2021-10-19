@@ -31,7 +31,9 @@ import { CommonModule } from "@angular/common";
     >{{ state1
     }}<dx-model-widget
       (baseStatePropChange)="__stateChange($event)"
+      #basestate3
     ></dx-model-widget
+    ><ng-content *ngTemplateOutlet="basestate3.widgetTemplate"></ng-content
   ></div>`,
 })
 export default class Widget extends WidgetInput {

@@ -24,9 +24,13 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["templateProp", "componentTemplateProp"],
   template: `<dx-widget-with-template
-    [template]="templateProp"
-    [componentTemplate]="componentTemplateProp"
-  ></dx-widget-with-template>`,
+      [template]="templateProp"
+      [componentTemplate]="componentTemplateProp"
+      #widgetwithtemplate7
+    ></dx-widget-with-template
+    ><ng-content
+      *ngTemplateOutlet="widgetwithtemplate7.widgetTemplate"
+    ></ng-content>`,
 })
 export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   get __restAttributes(): any {

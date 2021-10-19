@@ -20,7 +20,8 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget-with-api-ref",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop1"],
-  template: `<dx-widget #baseRef [prop1]="prop1"></dx-widget>`,
+  template: `<dx-widget #baseRef [prop1]="prop1"></dx-widget
+    ><ng-content *ngTemplateOutlet="baseRef.widgetTemplate"></ng-content>`,
 })
 export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   @ViewChild("baseRef", { static: false }) baseRef?: BaseWidget;

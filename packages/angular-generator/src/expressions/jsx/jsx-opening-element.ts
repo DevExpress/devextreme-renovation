@@ -807,6 +807,8 @@ const VOID_ELEMENTS = [
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
+  static count = 0;
+
   toString(options?: toStringOptions) {
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
@@ -821,7 +823,25 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       return elementString;
     }
 
+    let widgetInplace = '';
+    if (this.context.components?.[this.tagName.toString()]) {
+      let refAttr = '';
+
+      this.attributes.forEach((attr) => {
+        const attrName = (attr as JsxAttribute).toString();
+        if (attrName[0] === '#') {
+          refAttr = attrName.split('.').pop() as string;
+        }
+      });
+      if (refAttr === '') {
+        refAttr = this.tagName.toString().toLowerCase() + (JsxSelfClosingElement.count += 1);
+        this.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
+      }
+      widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;
+    }
+
     const openingElement = super.toString(options);
+
     const children: Expression[] = [
       ...this.getSlotsFromAttributes(options),
       ...this.getTemplatesFromAttributes(options),
@@ -838,7 +858,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         options,
         true,
       )}>
-        ${separatedChildren[1]}`;
+        ${separatedChildren[1]}${widgetInplace}`;
     }
 
     const childrenString = children.map((c) => c.toString(options)).join('');
@@ -847,7 +867,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
       this.tagName,
       options,
       true,
-    )}>`;
+    )}>${widgetInplace}`;
   }
 
   clone() {

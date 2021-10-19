@@ -1,6 +1,9 @@
 import {
+  Identifier,
+  JsxAttribute,
   JsxElement as BaseJsxElement,
   JsxOpeningElement as BaseJsxOpeningElement,
+  SimpleExpression,
 } from '@devextreme-generator/core';
 import { JsxExpression } from './jsx-expression';
 import {
@@ -15,6 +18,7 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxSpreadAttributeMeta } from './spread-attribute';
 import { Property } from '../class-members/property';
+import { AngularDirective } from './angular-directive';
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement
   || e instanceof JsxSelfClosingElement
@@ -54,7 +58,24 @@ export class JsxElement extends BaseJsxElement {
     return this.openingElement.tagName.toString() === 'Fragment';
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
+    let widgetInplace = '';
+    if (this.openingElement.context.components?.[this.openingElement.tagName.toString()]) {
+      let refAttr = '';
+
+      this.openingElement.attributes.forEach((attr) => {
+        const attrName = (attr as JsxAttribute).toString();
+        if (attrName[0] === '#') {
+          refAttr = attrName.split('.').pop() as string;
+        }
+      });
+      if (refAttr === '') {
+        refAttr = this.openingElement.tagName.toString().toLowerCase() + (JsxSelfClosingElement.count += 1);
+        this.openingElement.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
+      }
+      widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;
+    }
+
     const elementString = this.openingElement.compileJsxElementsForVariable(
       options,
       this.children.slice(),
@@ -114,10 +135,10 @@ export class JsxElement extends BaseJsxElement {
     );
 
     if (separatedChildren) {
-      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}`;
+      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${widgetInplace}`;
     }
 
-    return `${openingElementString}${childrenString}${closingElementString}`;
+    return `${openingElementString}${childrenString}${closingElementString}${widgetInplace}`;
   }
 
   clone() {

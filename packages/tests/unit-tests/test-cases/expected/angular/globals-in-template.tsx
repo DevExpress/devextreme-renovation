@@ -28,7 +28,11 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["items"],
   template: `<div [class]="global_CLASS_NAME"
-    ><span [class]="global_CLASS_NAME"></span><dx-widget-two></dx-widget-two
+    ><span [class]="global_CLASS_NAME"></span
+    ><dx-widget-two #externalcomponent10></dx-widget-two
+    ><ng-content
+      *ngTemplateOutlet="externalcomponent10.widgetTemplate"
+    ></ng-content
     ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
       ><div></div></ng-container
   ></div>`,

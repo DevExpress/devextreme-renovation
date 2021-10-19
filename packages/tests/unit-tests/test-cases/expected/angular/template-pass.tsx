@@ -19,35 +19,42 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<dx-widget-with-template
-    [template]="CustomTemplate"
-    [componentTemplate]="InnerWidget"
-    [arrowTemplate]="__arrowTemplate__generated"
-    ><ng-template
-      #InnerWidget
-      let-selected="selected"
-      let-value="value"
-      let-onSelect="onSelect"
-      let-valueChange="valueChange"
-      ><dx-inner-widget
-        [selected]="selected"
-        [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-        (onSelect)="
-          (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
-            $event
-          )
-        "
-        (valueChange)="
-          (valueChange !== undefined
-            ? valueChange
-            : InnerWidgetDefaults.valueChange)($event)
-        "
-      ></dx-inner-widget></ng-template
-    ><ng-template #CustomTemplate let-text="text" let-value="value"
-      ><span>{{ text }}</span></ng-template
-    ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
-      ><div>{{ name }}</div></ng-template
-    ></dx-widget-with-template
-  >`,
+      [template]="CustomTemplate"
+      [componentTemplate]="InnerWidget"
+      [arrowTemplate]="__arrowTemplate__generated"
+      #widgetwithtemplate8
+      ><ng-template
+        #InnerWidget
+        let-selected="selected"
+        let-value="value"
+        let-onSelect="onSelect"
+        let-valueChange="valueChange"
+        ><dx-inner-widget
+          [selected]="selected"
+          [value]="value !== undefined ? value : InnerWidgetDefaults.value"
+          (onSelect)="
+            (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
+              $event
+            )
+          "
+          (valueChange)="
+            (valueChange !== undefined
+              ? valueChange
+              : InnerWidgetDefaults.valueChange)($event)
+          "
+          #innerwidget9
+        ></dx-inner-widget
+        ><ng-content
+          *ngTemplateOutlet="innerwidget9.widgetTemplate"
+        ></ng-content></ng-template
+      ><ng-template #CustomTemplate let-text="text" let-value="value"
+        ><span>{{ text }}</span></ng-template
+      ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
+        ><div>{{ name }}</div></ng-template
+      ></dx-widget-with-template
+    ><ng-content
+      *ngTemplateOutlet="widgetwithtemplate8.widgetTemplate"
+    ></ng-content>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {

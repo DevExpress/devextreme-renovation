@@ -27,7 +27,11 @@ import { CommonModule } from "@angular/common";
     ><dx-widget-with-ref-prop
       [parentRef]="divRefLink"
       [nullableRef]="nullableRef"
+      #widgetwithrefprop21
     ></dx-widget-with-ref-prop
+    ><ng-content
+      *ngTemplateOutlet="widgetwithrefprop21.widgetTemplate"
+    ></ng-content
   ></div>`,
 })
 export default class Widget extends WidgetInput {
