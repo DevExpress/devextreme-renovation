@@ -32,10 +32,10 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
               ? someTemplate
               : InnerComponentDefaults.someTemplate
           "
-          #innercomponent2
+          #innercomponent1
         ></dx-inner-component
         ><ng-content
-          *ngTemplateOutlet="innercomponent2.widgetTemplate"
+          *ngTemplateOutlet="innercomponent1.widgetTemplate"
         ></ng-content></ng-template></dx-inner-layout
     ><ng-content *ngTemplateOutlet="innerlayout1.widgetTemplate"></ng-content>`,
 })

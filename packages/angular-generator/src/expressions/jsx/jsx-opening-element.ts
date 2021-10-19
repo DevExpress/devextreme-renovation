@@ -41,6 +41,7 @@ import { JsxElement } from './elements';
 import { AngularComponent } from '../component';
 import { counter } from '../../counter';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
+import { getUniqComponentName } from '../utils/uniq_name_generator';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -807,8 +808,6 @@ const VOID_ELEMENTS = [
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
-  static count = 0;
-
   toString(options?: toStringOptions) {
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
@@ -834,7 +833,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
         }
       });
       if (refAttr === '') {
-        refAttr = this.tagName.toString().toLowerCase() + (JsxSelfClosingElement.count += 1);
+        refAttr = getUniqComponentName(this.tagName.toString());
         this.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
       }
       widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;

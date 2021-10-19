@@ -29,9 +29,9 @@ import { CommonModule } from "@angular/common";
   inputs: ["items"],
   template: `<div [class]="global_CLASS_NAME"
     ><span [class]="global_CLASS_NAME"></span
-    ><dx-widget-two #externalcomponent10></dx-widget-two
+    ><dx-widget-two #externalcomponent1></dx-widget-two
     ><ng-content
-      *ngTemplateOutlet="externalcomponent10.widgetTemplate"
+      *ngTemplateOutlet="externalcomponent1.widgetTemplate"
     ></ng-content
     ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
       ><div></div></ng-container

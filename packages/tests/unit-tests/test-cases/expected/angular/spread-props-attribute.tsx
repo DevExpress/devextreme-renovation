@@ -32,11 +32,11 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   inputs: ["visible", "value"],
   outputs: ["valueChange"],
   template: `<dx-inner-widget
-      #innerwidget6
+      #innerwidget1
       [value]="value"
       (valueChange)="_valueChange($event)"
     ></dx-inner-widget
-    ><ng-content *ngTemplateOutlet="innerwidget6.widgetTemplate"></ng-content>`,
+    ><ng-content *ngTemplateOutlet="innerwidget1.widgetTemplate"></ng-content>`,
 })
 export default class Widget
   extends WidgetInput

@@ -1,11 +1,8 @@
 <template>
   <div
     >{{ state1_state
-    }}<BaseState
-      @update:base-state-prop="__stateChange"
-      #basestate52
-    ></BaseState
-    ><ng-content *ngTemplateOutlet="basestate52.widgetTemplate"></ng-content
+    }}<BaseState @update:base-state-prop="__stateChange" #basestate1></BaseState
+    ><ng-content *ngTemplateOutlet="basestate1.widgetTemplate"></ng-content
   ></div>
 </template>
 <script>

@@ -27,9 +27,9 @@ import { CommonModule } from "@angular/common";
       [childRef]="forwardRef_child"
       [nullableRef]="forwardRef_nullableRef"
       [state]="innerState"
-      #child22
+      #child1
     ></dx-ref-on-children-child
-    ><ng-content *ngTemplateOutlet="child22.widgetTemplate"></ng-content>`,
+    ><ng-content *ngTemplateOutlet="child1.widgetTemplate"></ng-content>`,
 })
 export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;

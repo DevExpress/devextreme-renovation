@@ -19,6 +19,7 @@ import { toStringOptions } from '../../types';
 import { JsxSpreadAttributeMeta } from './spread-attribute';
 import { Property } from '../class-members/property';
 import { AngularDirective } from './angular-directive';
+import { getUniqComponentName } from '../utils/uniq_name_generator';
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement
   || e instanceof JsxSelfClosingElement
@@ -70,7 +71,7 @@ export class JsxElement extends BaseJsxElement {
         }
       });
       if (refAttr === '') {
-        refAttr = this.openingElement.tagName.toString().toLowerCase() + (JsxSelfClosingElement.count += 1);
+        refAttr = getUniqComponentName(this.openingElement.tagName.toString());
         this.openingElement.attributes.push(new AngularDirective(new Identifier(`#${refAttr}`), new SimpleExpression('')));
       }
       widgetInplace = `<ng-content *ngTemplateOutlet="${refAttr}.widgetTemplate"></ng-content>`;

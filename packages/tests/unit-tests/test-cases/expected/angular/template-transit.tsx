@@ -26,10 +26,10 @@ import { CommonModule } from "@angular/common";
   template: `<dx-widget-with-template
       [template]="templateProp"
       [componentTemplate]="componentTemplateProp"
-      #widgetwithtemplate7
+      #widgetwithtemplate1
     ></dx-widget-with-template
     ><ng-content
-      *ngTemplateOutlet="widgetwithtemplate7.widgetTemplate"
+      *ngTemplateOutlet="widgetwithtemplate1.widgetTemplate"
     ></ng-content>`,
 })
 export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
