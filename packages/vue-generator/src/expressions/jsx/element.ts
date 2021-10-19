@@ -5,6 +5,10 @@ import {
 import { JsxChildExpression } from './jsx-expression';
 
 export class JsxElement extends BaseJsxElement {
+  postProcess(): string {
+    return '';
+  }
+
   createChildJsxExpression(expression: AngularJsxExpression) {
     return new JsxChildExpression(expression);
   }

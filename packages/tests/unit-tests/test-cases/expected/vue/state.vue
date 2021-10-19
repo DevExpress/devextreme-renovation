@@ -1,8 +1,7 @@
 <template>
   <div
     >{{ state1_state
-    }}<BaseState @update:base-state-prop="__stateChange" #basestate1></BaseState
-    ><ng-content *ngTemplateOutlet="basestate1.widgetTemplate"></ng-content
+    }}<BaseState @update:base-state-prop="__stateChange"></BaseState
   ></div>
 </template>
 <script>

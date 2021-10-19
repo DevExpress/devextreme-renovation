@@ -3,7 +3,7 @@
   "name": "tests",
   "version": "1.1.0",
   "scripts": {
-    "test": "nyc mocha -r ts-node/register -r tsconfig-paths/register ./unit-tests/angular-generator.test.ts --timeout 30000",
+    "test": "nyc mocha -r ts-node/register -r tsconfig-paths/register ./unit-tests/*.test.ts --timeout 30000",
     "test:with-reporters": "nyc --reporter cobertura mocha -r ts-node/register -r tsconfig-paths/register ./unit-tests/*.test.ts --timeout 30000 --reporter mocha-junit-reporter --reporter-options mochaFile=./report/test-result.xml",
     "test:with-replace": "nyc mocha -r ts-node/register -r tsconfig-paths/register ./unit-tests/*.test.ts --timeout 30000 --replace",
     "test:testcafe": "npm run clear:screenshots && start-server-and-test testcafe:start-test-servers \"3000|3001\" testcafe",

@@ -7,9 +7,7 @@
       :forwardRefProp="
         forwardRefProp && forwardRefProp() ? forwardRefProp() : undefined
       "
-      #helperwidget1
     ></HelperWidget
-    ><ng-content *ngTemplateOutlet="helperwidget1.widgetTemplate"></ng-content
   ></div>
 </template>
 <script>

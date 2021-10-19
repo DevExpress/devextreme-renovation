@@ -441,10 +441,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 }
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
-  postProcess(): string {
-    return '';
-  }
-
   toString(options?: toStringOptions) {
     if (this.getTemplateProperty(options)) {
       return super.toString(options);
