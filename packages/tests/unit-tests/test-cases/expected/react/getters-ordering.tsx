@@ -1,15 +1,28 @@
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  gridCompatibility?: boolean;
+  pageIndex: number;
+  defaultPageIndex: number;
+  pageIndexChange?: (pageIndex: number) => void;
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
   type: "",
-};
+  gridCompatibility: true,
+  defaultPageIndex: 1,
+  pageIndexChange: () => {},
+} as any as WidgetPropsType;
 const view = () => <div></div>;
 
 import * as React from "react";
-import { useCallback, useEffect, useImperativeHandle, forwardRef } from "react";
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 
 export type WidgetRef = { g3: () => (string | undefined)[] };
 declare type RestProps = {
@@ -27,11 +40,17 @@ interface Widget {
   g4: (string | undefined)[];
   g6: (string | undefined)[];
   type: any;
+  pageIndexChange: (newPageIndex: number) => void;
+  someMethod: () => any;
   restAttributes: RestProps;
 }
 
 const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
   function widget(props: typeof WidgetProps & RestProps, ref) {
+    const [__state_pageIndex, __state_setPageIndex] = useState<number>(() =>
+      props.pageIndex !== undefined ? props.pageIndex : props.defaultPageIndex!
+    );
+
     const __g1 = useCallback(
       function __g1(): any {
         return props.someProp;
@@ -50,12 +69,39 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [props.type]
     );
+    const __pageIndexChange = useCallback(
+      function __pageIndexChange(newPageIndex: number): void {
+        if (props.gridCompatibility) {
+          __state_setPageIndex((__state_pageIndex) => newPageIndex + 1),
+            props.pageIndexChange!(newPageIndex + 1);
+        } else {
+          __state_setPageIndex((__state_pageIndex) => newPageIndex),
+            props.pageIndexChange!(newPageIndex);
+        }
+      },
+      [props.gridCompatibility, props.pageIndexChange]
+    );
+    const __someMethod = useCallback(function __someMethod(): any {
+      return undefined;
+    }, []);
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
-        const { someProp, type, ...restProps } = props;
+        const {
+          defaultPageIndex,
+          gridCompatibility,
+          pageIndex,
+          pageIndexChange,
+          someProp,
+          type,
+          ...restProps
+        } = {
+          ...props,
+          pageIndex:
+            props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
+        };
         return restProps;
       },
-      [props]
+      [props, __state_pageIndex]
     );
     const __g3 = useCallback(
       function __g3(): (string | undefined)[] {

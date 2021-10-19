@@ -9,11 +9,18 @@ import {
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  gridCompatibility?: boolean;
+  pageIndex: number;
+  defaultPageIndex: number;
+  pageIndexChange?: (pageIndex: number) => void;
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
   type: "",
-};
+  gridCompatibility: true,
+  defaultPageIndex: 1,
+  pageIndexChange: () => {},
+} as any as WidgetPropsType;
 const view = () => <div></div>;
 
 import { createElement as h } from "inferno-compat";
@@ -25,14 +32,22 @@ declare type RestProps = {
 };
 
 class Widget extends InfernoComponent<any> {
-  state = {};
+  state: { pageIndex: number };
+
   refs: any;
 
   constructor(props: any) {
     super(props);
-
+    this.state = {
+      pageIndex:
+        this.props.pageIndex !== undefined
+          ? this.props.pageIndex
+          : this.props.defaultPageIndex,
+    };
     this.g3 = this.g3.bind(this);
     this.someEffect = this.someEffect.bind(this);
+    this.pageIndexChange = this.pageIndexChange.bind(this);
+    this.someMethod = this.someMethod.bind(this);
   }
 
   createEffects() {
@@ -86,8 +101,46 @@ class Widget extends InfernoComponent<any> {
   get type(): any {
     return this.props.type;
   }
+  pageIndexChange(newPageIndex: number): void {
+    if (this.props.gridCompatibility) {
+      {
+        let __newValue;
+        this.setState((__state_argument: any) => {
+          __newValue = newPageIndex + 1;
+          return { pageIndex: __newValue };
+        });
+        this.props.pageIndexChange!(__newValue);
+      }
+    } else {
+      {
+        let __newValue;
+        this.setState((__state_argument: any) => {
+          __newValue = newPageIndex;
+          return { pageIndex: __newValue };
+        });
+        this.props.pageIndexChange!(__newValue);
+      }
+    }
+  }
+  someMethod(): any {
+    return undefined;
+  }
   get restAttributes(): RestProps {
-    const { someProp, type, ...restProps } = this.props as any;
+    const {
+      defaultPageIndex,
+      gridCompatibility,
+      pageIndex,
+      pageIndexChange,
+      someProp,
+      type,
+      ...restProps
+    } = {
+      ...this.props,
+      pageIndex:
+        this.props.pageIndex !== undefined
+          ? this.props.pageIndex
+          : this.state.pageIndex,
+    } as any;
     return restProps;
   }
   g3(): (string | undefined)[] {

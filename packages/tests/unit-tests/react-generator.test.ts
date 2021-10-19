@@ -2000,7 +2000,11 @@ mocha.describe(
         }),
         "(props.s1!==undefined?props.s1:__state_s1)"
       );
-      assert.deepEqual(expression.getAssignmentDependency(), ["s1Change"]);
+      
+      assert.deepEqual(
+        expression
+          .getAssignmentDependency({members: [this.state, this.prop, this.internalState, this.stateChange]}),
+        [this.stateChange]);
     });
 
     mocha.it(
@@ -2028,9 +2032,10 @@ mocha.describe(
             members: [this.state,
               this.prop,
               this.internalState,
-              this.stateChange,],
+              this.stateChange,
+            ],
           }),
-          ["s1Change"]
+          [this.stateChange]
         );
         assert.deepEqual(
           expression.getAllDependency({
@@ -2391,9 +2396,12 @@ mocha.describe(
 
       assert.deepEqual(
         arrowFunction.getDependency({
-          members: [],
+          members: [this.state,
+            this.prop,
+            this.internalState,
+            this.stateChange,],
         }),
-        ["s1Change"]
+        [this.stateChange]
       );
       assert.equal(
         getResult(
@@ -2466,7 +2474,7 @@ mocha.describe(
             this.internalState,
             this.stateChange,],
         }),
-        ["s1Change", this.prop]
+        [this.stateChange, this.prop]
       );
       assert.strictEqual(
         getResult(

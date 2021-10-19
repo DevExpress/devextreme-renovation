@@ -1,7 +1,10 @@
-import { Input } from "@angular/core";
+import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
+  @Input() gridCompatibility?: boolean = true;
+  @Input() pageIndex: number = 1;
+  @Output() pageIndexChange: EventEmitter<number> = new EventEmitter();
 }
 import {
   Component,
@@ -17,7 +20,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp", "type"],
+  inputs: ["someProp", "type", "gridCompatibility", "pageIndex"],
+  outputs: ["pageIndexChange"],
   template: `<div></div>`,
 })
 class Widget extends WidgetProps {
@@ -62,6 +66,16 @@ class Widget extends WidgetProps {
   }
   get __type(): any {
     return this.type;
+  }
+  __pageIndexChange(newPageIndex: number): void {
+    if (this.gridCompatibility) {
+      this._pageIndexChange((this.pageIndex = newPageIndex + 1));
+    } else {
+      this._pageIndexChange((this.pageIndex = newPageIndex));
+    }
+  }
+  __someMethod(): any {
+    return undefined;
   }
   get __restAttributes(): any {
     return {};
@@ -136,12 +150,17 @@ class Widget extends WidgetProps {
     this._updateEffects();
   }
 
+  _pageIndexChange: any;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    this._pageIndexChange = (e: any) => {
+      this.pageIndexChange.emit(e);
+      this._detectChanges();
+    };
   }
 }
 @NgModule({

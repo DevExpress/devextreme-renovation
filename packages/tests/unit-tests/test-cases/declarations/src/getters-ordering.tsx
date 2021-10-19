@@ -1,10 +1,11 @@
-import { Component, JSXComponent, ComponentBindings, Method, OneWay, Effect } from '@devextreme-generator/declarations';
+import { Component, JSXComponent, ComponentBindings, Method, OneWay, Effect, TwoWay } from '@devextreme-generator/declarations';
 
 @ComponentBindings()
 class WidgetProps {
     @OneWay() someProp: string =''
-	@OneWay() type?: string = '';
-
+	  @OneWay() type?: string = '';
+    @OneWay() gridCompatibility?: boolean = true;
+    @TwoWay() pageIndex = 1;
 }
 const view = ()=><div></div>
 @Component({view})
@@ -15,7 +16,7 @@ class Widget extends JSXComponent(WidgetProps){
     get g5(): (string|undefined)[]{
         return [...this.g3(), this.g2]      
     }
-	get g1(){
+	  get g1(){
         return this.props.someProp
     }
     get g2(){
@@ -40,5 +41,15 @@ class Widget extends JSXComponent(WidgetProps){
 
     get type() {
         return this.props.type
+    }
+    pageIndexChange(newPageIndex: number): void {
+        if (this.props.gridCompatibility) {
+          this.props.pageIndex = newPageIndex + 1;
+        } else {
+          this.props.pageIndex = newPageIndex;
+        }
+      }
+    someMethod(){
+      return undefined
     }
 }

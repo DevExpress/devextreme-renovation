@@ -15,10 +15,27 @@ const WidgetProps = {
       return "";
     },
   },
+  gridCompatibility: {
+    type: Boolean,
+    default() {
+      return true;
+    },
+  },
+  pageIndex: {
+    type: Number,
+    default() {
+      return 1;
+    },
+  },
 };
 export const DxWidget = {
   name: "Widget",
   props: WidgetProps,
+  data() {
+    return {
+      pageIndex_state: this.pageIndex,
+    };
+  },
   computed: {
     __g7() {
       return this.__g6;
@@ -45,19 +62,43 @@ export const DxWidget = {
       return {};
     },
     props() {
-      return { someProp: this.someProp, type: this.type };
+      return {
+        someProp: this.someProp,
+        type: this.type,
+        ...(this.gridCompatibility !== undefined && {
+          gridCompatibility: this.gridCompatibility,
+        }),
+        pageIndex: this.pageIndex_state,
+        pageIndexChange: this.pageIndexChange,
+      };
     },
   },
   watch: {
     someProp: ["__schedule_someEffect"],
     type: ["__schedule_someEffect"],
+    pageIndex: ["__pageIndex_watcher"],
   },
   methods: {
+    __pageIndexChange(newPageIndex) {
+      if (this.gridCompatibility) {
+        (this.pageIndex_state = newPageIndex + 1),
+          this.pageIndexChange(this.pageIndex_state);
+      } else {
+        (this.pageIndex_state = newPageIndex),
+          this.pageIndexChange(this.pageIndex_state);
+      }
+    },
+    __someMethod() {
+      return undefined;
+    },
     __someEffect() {
       return () => this.__g7;
     },
     g3() {
       return [this.__g1, this.__g2];
+    },
+    pageIndexChange(...args) {
+      this.$emit("update:page-index", ...args);
     },
     __schedule_someEffect() {
       this.__scheduleEffect(0, "__someEffect");
@@ -73,6 +114,9 @@ export const DxWidget = {
           () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
         );
       }
+    },
+    __pageIndex_watcher(s) {
+      this.pageIndex_state = s;
     },
   },
   created() {
