@@ -25,6 +25,7 @@ import { CommonModule } from "@angular/common";
   template: `<div></div>`,
 })
 class Widget extends WidgetProps {
+  someState: number = 0;
   get __g7(): any {
     return this.__g6;
   }
@@ -41,6 +42,9 @@ class Widget extends WidgetProps {
   }
   get __g2(): any {
     return this.type;
+  }
+  __factorial(n: number): number {
+    return n > 1 ? this.__factorial(n - 1) : 1;
   }
   g3(): (string | undefined)[] {
     return [this.__g1, this.__g2];
@@ -76,6 +80,12 @@ class Widget extends WidgetProps {
   }
   __someMethod(): any {
     return undefined;
+  }
+  __recursive1(): void {
+    this._someState = this.__recursive2();
+  }
+  __recursive2(): number {
+    return requestAnimationFrame(this.__recursive1);
   }
   get __restAttributes(): any {
     return {};
@@ -161,6 +171,10 @@ class Widget extends WidgetProps {
       this.pageIndexChange.emit(e);
       this._detectChanges();
     };
+  }
+  set _someState(someState: number) {
+    this.someState = someState;
+    this._detectChanges();
   }
 }
 @NgModule({

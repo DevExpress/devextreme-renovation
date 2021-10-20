@@ -899,42 +899,45 @@ export class ReactComponent extends Component {
           (m) => m.isApiMethod,
         ) as Array<Method>,
       );
-
+    const recursiveLevel = 10000;
     const methodsWithDep = methods.map((m) => ({
       method: m,
       deps: m.getDependency({
         members: this.members,
         componentContext: SyntaxKind.ThisKeyword,
       }),
-      // check if dep is two way
-      get level() {
+      level(previousDep: Dependency[]): number {
+        if (this.deps.includes(this.method) || previousDep.includes(this.method)) {
+          return recursiveLevel;
+        }
         const depsFromDeps: {
           method: BaseMethod;
           deps: Dependency[];
-          level: number
+          level: (previousDep: Dependency[]) => number
         }[] = methodsWithDep.filter(
           (method) => this.deps.some((dep) => dep === method.method),
         );
         if (depsFromDeps.length === 0) {
           return 0;
         }
-        return Math.max(...depsFromDeps.map((dep) => dep.level)) + 1;
+        return Math.max(...depsFromDeps.map((dep) => dep.level([...previousDep, this.method]))) + 1;
       },
     }));
 
     const methodsWithDepLevelCounted = methodsWithDep.map((m) => ({
       method: m.method,
       deps: m.deps,
-      level: m.level,
+      level: m.level([]),
     })).sort((a, b) => (a.level - b.level));
 
-    const result = methodsWithDepLevelCounted.map((m) => m.method);
-
-    return result.map(
-      (m) => {
+    return methodsWithDepLevelCounted.map(
+      (methodWithDeps) => {
+        const method = methodWithDeps.method;
         const options = this.getToStringOptions();
-        const depNames = calculateMethodDependencyString(m, options);
-        return `const ${m.name} = useCallback(${m.declaration(options)}, [${depNames}]);`;
+        if (methodWithDeps.level >= recursiveLevel) {
+          return method.declaration(options);
+        }
+        return `const ${method.name} = useCallback(${method.declaration(options)}, [${calculateMethodDependencyString(method, options)}]);`;
       },
     )
       .join('\n');

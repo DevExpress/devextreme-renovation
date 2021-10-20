@@ -13,7 +13,7 @@ const WidgetProps: WidgetPropsType = {
   defaultPageIndex: 1,
   pageIndexChange: () => {},
 } as any as WidgetPropsType;
-const view = () => <div></div>;
+const view = (model: Widget) => <div></div>;
 
 import * as React from "react";
 import {
@@ -33,15 +33,19 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof WidgetProps & RestProps;
+  someState: number;
   g7: any;
   g5: (string | undefined)[];
   g1: any;
   g2: any;
+  factorial: (n: number) => number;
   g4: (string | undefined)[];
   g6: (string | undefined)[];
   type: any;
   pageIndexChange: (newPageIndex: number) => void;
   someMethod: () => any;
+  recursive1: () => void;
+  recursive2: () => number;
   restAttributes: RestProps;
 }
 
@@ -50,6 +54,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
     const [__state_pageIndex, __state_setPageIndex] = useState<number>(() =>
       props.pageIndex !== undefined ? props.pageIndex : props.defaultPageIndex!
     );
+    const [__state_someState, __state_setSomeState] = useState<number>(0);
 
     const __g1 = useCallback(
       function __g1(): any {
@@ -133,11 +138,40 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [__g6]
     );
+    function __factorial(n: number): number {
+      return n > 1 ? __factorial(n - 1) : 1;
+    }
+    function __recursive1(): void {
+      __state_setSomeState((__state_someState) => __recursive2());
+    }
+    function __recursive2(): number {
+      return requestAnimationFrame(__recursive1);
+    }
     useEffect(() => {
       return () => __g7();
     }, [__g7]);
     useImperativeHandle(ref, () => ({ g3: __g3 }), [__g3]);
-    return view();
+    return view({
+      props: {
+        ...props,
+        pageIndex:
+          props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
+      },
+      someState: __state_someState,
+      g7: __g7(),
+      g5: __g5(),
+      g1: __g1(),
+      g2: __g2(),
+      factorial: __factorial,
+      g4: __g4(),
+      g6: __g6(),
+      type: __type(),
+      pageIndexChange: __pageIndexChange,
+      someMethod: __someMethod,
+      recursive1: __recursive1,
+      recursive2: __recursive2,
+      restAttributes: __restAttributes(),
+    });
   }
 ) as React.FC<
   typeof WidgetProps & RestProps & { ref?: React.Ref<WidgetRef> }

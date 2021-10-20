@@ -21,7 +21,7 @@ const WidgetProps: WidgetPropsType = {
   defaultPageIndex: 1,
   pageIndexChange: () => {},
 } as any as WidgetPropsType;
-const view = () => <div></div>;
+const view = (model: Widget) => <div></div>;
 
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
@@ -32,23 +32,29 @@ declare type RestProps = {
 };
 
 class Widget extends InfernoComponent<any> {
-  state: { pageIndex: number };
+  state: { someState: number; pageIndex: number };
 
   refs: any;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      someState: 0,
       pageIndex:
         this.props.pageIndex !== undefined
           ? this.props.pageIndex
           : this.props.defaultPageIndex,
     };
+    this.factorial = this.factorial.bind(this);
     this.g3 = this.g3.bind(this);
     this.someEffect = this.someEffect.bind(this);
     this.pageIndexChange = this.pageIndexChange.bind(this);
     this.someMethod = this.someMethod.bind(this);
+    this.recursive1 = this.recursive1.bind(this);
+    this.recursive2 = this.recursive2.bind(this);
   }
+
+  someState!: number;
 
   createEffects() {
     return [
@@ -81,6 +87,9 @@ class Widget extends InfernoComponent<any> {
   }
   get g2(): any {
     return this.props.type;
+  }
+  factorial(n: number): number {
+    return n > 1 ? this.factorial(n - 1) : 1;
   }
   get g4(): (string | undefined)[] {
     if (this.__getterCache["g4"] !== undefined) {
@@ -124,6 +133,14 @@ class Widget extends InfernoComponent<any> {
   }
   someMethod(): any {
     return undefined;
+  }
+  recursive1(): void {
+    this.setState((__state_argument: any) => ({
+      someState: this.recursive2(),
+    }));
+  }
+  recursive2(): number {
+    return requestAnimationFrame(this.recursive1);
   }
   get restAttributes(): RestProps {
     const {
@@ -174,7 +191,29 @@ class Widget extends InfernoComponent<any> {
   }
   render() {
     const props = this.props;
-    return view();
+    return view({
+      props: {
+        ...props,
+        pageIndex:
+          this.props.pageIndex !== undefined
+            ? this.props.pageIndex
+            : this.state.pageIndex,
+      },
+      someState: this.state.someState,
+      g7: this.g7,
+      g5: this.g5,
+      g1: this.g1,
+      g2: this.g2,
+      factorial: this.factorial,
+      g4: this.g4,
+      g6: this.g6,
+      type: this.type,
+      pageIndexChange: this.pageIndexChange,
+      someMethod: this.someMethod,
+      recursive1: this.recursive1,
+      recursive2: this.recursive2,
+      restAttributes: this.restAttributes,
+    } as Widget);
   }
 }
 

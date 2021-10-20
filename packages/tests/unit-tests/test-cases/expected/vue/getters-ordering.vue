@@ -33,6 +33,7 @@ export const DxWidget = {
   props: WidgetProps,
   data() {
     return {
+      someState: 0,
       pageIndex_state: this.pageIndex,
     };
   },
@@ -79,6 +80,9 @@ export const DxWidget = {
     pageIndex: ["__pageIndex_watcher"],
   },
   methods: {
+    __factorial(n) {
+      return n > 1 ? this.__factorial(n - 1) : 1;
+    },
     __pageIndexChange(newPageIndex) {
       if (this.gridCompatibility) {
         (this.pageIndex_state = newPageIndex + 1),
@@ -90,6 +94,12 @@ export const DxWidget = {
     },
     __someMethod() {
       return undefined;
+    },
+    __recursive1() {
+      this.someState = this.__recursive2();
+    },
+    __recursive2() {
+      return requestAnimationFrame(this.__recursive1);
     },
     __someEffect() {
       return () => this.__g7;
