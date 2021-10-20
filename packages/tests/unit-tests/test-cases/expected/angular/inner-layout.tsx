@@ -1,15 +1,11 @@
-import BaseProps from "./component-bindings-only";
-export interface PropsI {
-  p: string;
-}
-
-interface WidgetI {
-  onClick(): void;
-}
-
-import { Input } from "@angular/core";
-class WidgetInput extends BaseProps {
-  @Input() p: string = "10";
+import {
+  InnerComponent,
+  InnerComponentProps,
+  DxInnerComponentModule,
+} from "./inner-component";
+import { Input, TemplateRef } from "@angular/core";
+export class InnerLayoutProps {
+  @Input() innerComponentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -24,13 +20,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-inner-layout",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["p", "height", "data", "info"],
-  template: `<span></span>`,
+  inputs: ["innerComponentTemplate"],
+  template: `<div></div>`,
 })
-export default class Widget extends WidgetInput {
-  __onClick(): void {}
+export class InnerLayout extends InnerLayoutProps {
   get __restAttributes(): any {
     return {};
   }
@@ -50,10 +45,11 @@ export default class Widget extends WidgetInput {
   }
 }
 @NgModule({
-  declarations: [Widget],
-  imports: [CommonModule],
-
-  exports: [Widget],
+  declarations: [InnerLayout],
+  imports: [DxInnerComponentModule, CommonModule],
+  entryComponents: [InnerComponent],
+  exports: [InnerLayout],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxInnerLayoutModule {}
+export { InnerLayout as DxInnerLayoutComponent };
+export default InnerLayout;

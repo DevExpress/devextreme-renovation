@@ -127,6 +127,16 @@ export class Component extends Class implements Heritable {
           body,
         );
       }
+      if (m instanceof GetAccessor) {
+        const memberWithTypes = m;
+        memberWithTypes.contextTypes = {
+          ...this.context.externalTypes,
+          ...this.context.externalInterfaces,
+          ...this.context.types,
+          ...this.context.interfaces,
+        };
+        return memberWithTypes;
+      }
       return m;
     });
 

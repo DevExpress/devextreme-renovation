@@ -11,7 +11,7 @@ export const getWrapperTemplate = (TemplateProp: any) => (data: any) => {
     const container = data.container ? data.container : data;
     ReactDOM.render(
       /* eslint-disable react/jsx-props-no-spreading */
-      <><TemplateProp {...data} /></>,
+      <><TemplateProp {...data} /></> as React.ReactElement,
       container,
     );
   }

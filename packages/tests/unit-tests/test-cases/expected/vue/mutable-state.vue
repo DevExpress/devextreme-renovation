@@ -31,6 +31,9 @@ export const DxWidget = {
       return {};
     },
   },
+  watch: {
+    notDefinedObj: ["__schedule_initialize"],
+  },
   methods: {
     __setObj() {
       this.obj.value = 0;
@@ -55,6 +58,21 @@ export const DxWidget = {
     },
     __initialize() {
       this.__setObj();
+    },
+    __schedule_initialize() {
+      this.__scheduleEffect(0, "__initialize");
+    },
+    __scheduleEffect(index, name) {
+      if (!this.__scheduleEffects[index]) {
+        this.__scheduleEffects[index] = () => {
+          this.__destroyEffects[index] && this.__destroyEffects[index]();
+          this.__destroyEffects[index] = this[name]();
+          this.__scheduleEffects[index] = null;
+        };
+        this.$nextTick(
+          () => this.__scheduleEffects[index] && this.__scheduleEffects[index]()
+        );
+      }
     },
   },
   created() {
