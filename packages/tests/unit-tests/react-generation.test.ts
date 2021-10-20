@@ -197,7 +197,7 @@ mocha.describe("react-generation", function () {
   mocha.it("component-input", function () {
     this.testGenerator(this.test!.title);
   });
-
+  
   mocha.it("component-input-defaults", function () {
     this.testGenerator(this.test!.title);
   });
@@ -362,6 +362,11 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
   
+  mocha.it("invalid-method-parameters", function () {
+    assert.throws(
+       () => { this.testGenerator(this.test!.title) }, Error);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
