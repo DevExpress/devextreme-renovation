@@ -464,12 +464,9 @@ export class ReactComponent extends Component {
       subscriptionsString
       + this.effects
         .map(
-          (e) => {
-            const depNames = calculateMethodDependencyString(e, options);
-            return `useEffect(${e.arrowDeclaration(
-              options,
-            )}, [${depNames}])`;
-          },
+          (e) => `useEffect(${e.arrowDeclaration(
+            options,
+          )}${calculateMethodDependencyString(e, options)})`,
         )
         .join(';\n')
     );
@@ -900,34 +897,36 @@ export class ReactComponent extends Component {
         ) as Array<Method>,
       );
     const recursiveLevel = 10000;
+
     const methodsWithDep = methods.map((m) => ({
       method: m,
       deps: m.getDependency({
         members: this.members,
         componentContext: SyntaxKind.ThisKeyword,
       }),
-      level(previousDep: Dependency[]): number {
-        if (this.deps.includes(this.method) || previousDep.includes(this.method)) {
-          return recursiveLevel;
-        }
-        const depsFromDeps: {
-          method: BaseMethod;
-          deps: Dependency[];
-          level: (previousDep: Dependency[]) => number
-        }[] = methodsWithDep.filter(
-          (method) => this.deps.some((dep) => dep === method.method),
-        );
-        if (depsFromDeps.length === 0) {
-          return 0;
-        }
-        return Math.max(...depsFromDeps.map((dep) => dep.level([...previousDep, this.method]))) + 1;
-      },
     }));
-
+    function level(
+      m: {
+        method: BaseMethod,
+        deps: Dependency[],
+      },
+      previousDep: Dependency[],
+    ): number {
+      if (m.deps.includes(m.method) || previousDep.includes(m.method)) {
+        return recursiveLevel;
+      }
+      const dependantMethods = methodsWithDep.filter(
+        (method) => m.deps.some((dep) => dep === method.method),
+      );
+      if (dependantMethods.length === 0) {
+        return 0;
+      }
+      return Math.max(...dependantMethods.map((method) => level(method, [...previousDep, m.method]))) + 1;
+    }
     const methodsWithDepLevelCounted = methodsWithDep.map((m) => ({
       method: m.method,
       deps: m.deps,
-      level: m.level([]),
+      level: level(m, []),
     })).sort((a, b) => (a.level - b.level));
 
     return methodsWithDepLevelCounted.map(
@@ -937,7 +936,7 @@ export class ReactComponent extends Component {
         if (methodWithDeps.level >= recursiveLevel) {
           return method.declaration(options);
         }
-        return `const ${method.name} = useCallback(${method.declaration(options)}, [${calculateMethodDependencyString(method, options)}]);`;
+        return `const ${method.name} = useCallback(${method.declaration(options)}${calculateMethodDependencyString(method, options)});`;
       },
     )
       .join('\n');

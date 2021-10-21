@@ -15,18 +15,7 @@ export class GetAccessor extends ReactGetAccessor {
     options: toStringOptions,
     startingDeps: Dependency[] = [],
   ): Dependency[] {
-    const members = options.members;
-    const depsReducer = (d: Dependency[], p: Dependency) => {
-      if (p instanceof BaseClassMember) {
-        return [...d, ...p.getDependency({
-          ...options,
-          members: members.filter((m) => m !== p),
-        })];
-      }
-      const member = members.find((m) => m._name.toString() === p);
-      return [...d, member || p];
-    };
-    return dependencies.reduce(depsReducer, startingDeps);
+    return this.baseReduceDependency(dependencies, options, startingDeps);
   }
 
   getDependencyString(options: toStringOptions): string[] {

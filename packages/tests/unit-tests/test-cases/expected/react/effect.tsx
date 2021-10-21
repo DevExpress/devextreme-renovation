@@ -82,7 +82,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   useEffect(() => {
     const id = subscribe(__getP(), 1, 2);
     return () => unsubscribe(id);
-  }, [props, __state_i, __state_j, __state_s]);
+  });
 
   return view({
     props: { ...props, s: props.s !== undefined ? props.s : __state_s },

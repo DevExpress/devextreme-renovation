@@ -247,7 +247,7 @@ export class Method extends BaseClassMember {
     return dependencies;
   }
 
-  reduceDependency(
+  baseReduceDependency(
     dependencies: Dependency[],
     options: toStringOptions,
     startingDeps: Dependency[] = [],
@@ -264,6 +264,14 @@ export class Method extends BaseClassMember {
       return [...d, member || p];
     };
     return dependencies.reduce(depsReducer, startingDeps);
+  }
+
+  reduceDependency(
+    dependencies: Dependency[],
+    options: toStringOptions,
+    startingDeps: Dependency[] = [],
+  ): Dependency[] {
+    return this.baseReduceDependency(dependencies, options, startingDeps);
   }
 
   getDependency(options: toStringOptions): Dependency[] {

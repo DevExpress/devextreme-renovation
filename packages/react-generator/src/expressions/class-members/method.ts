@@ -1,12 +1,12 @@
 import {
-  BaseClassMember, Dependency, Method as BaseMethod, toStringOptions, SyntaxKind, getProps,
+  BaseClassMember, Dependency, Method as BaseMethod, toStringOptions, SyntaxKind, getProps, Decorators,
 } from '@devextreme-generator/core';
 import { getLocalStateName, Property } from './property';
 
 export function calculateMethodDependencyString(
   method: BaseMethod,
   options: toStringOptions,
-): string[] {
+): string {
   const members = options.members;
   const props = getProps(members);
   const twoWayProps = members.filter((m) => m.isState && props.includes(m as Property));
@@ -14,13 +14,19 @@ export function calculateMethodDependencyString(
     members,
     componentContext: SyntaxKind.ThisKeyword,
   });
-
+  const run = method.decorators
+    .find((d) => d.name === Decorators.Effect)
+    ?.getParameter('run')
+    ?.valueOf();
+  if (run === 'always') {
+    return '';
+  }
   if (deps.indexOf('props') > -1) {
     const depsWithoutProps = deps.filter(
       (d) => !(d instanceof BaseClassMember
           && props.includes(d as Property)),
     );
-    return depsWithoutProps
+    const result = depsWithoutProps
       .reduce((arr: string[], dep) => {
         if (dep instanceof BaseClassMember) {
           if (dep instanceof BaseMethod) {
@@ -31,8 +37,9 @@ export function calculateMethodDependencyString(
         return [...arr, dep];
       }, [])
       .concat(twoWayProps.map((p) => getLocalStateName(p.name)));
+    return `, [${result}]`;
   }
-  return deps.reduce((arr: string[], dep) => {
+  const result = deps.reduce((arr: string[], dep) => {
     if (dep instanceof BaseClassMember) {
       if (dep instanceof BaseMethod) {
         return [...arr, dep.name];
@@ -41,6 +48,7 @@ export function calculateMethodDependencyString(
     }
     return [...arr, dep];
   }, []);
+  return `, [${result}]`;
   // return method.getDependencyString(options) -> change BaseMethod to ReactMethod
 }
 
