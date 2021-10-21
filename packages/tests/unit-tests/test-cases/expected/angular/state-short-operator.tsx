@@ -12,6 +12,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,7 +22,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["propState"],
   outputs: ["propStateChange"],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   innerState: number = 0;
@@ -45,6 +47,8 @@ export default class Widget extends WidgetInput {
   }
 
   _propStateChange: any;
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -61,6 +65,7 @@ export default class Widget extends WidgetInput {
     this._detectChanges();
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

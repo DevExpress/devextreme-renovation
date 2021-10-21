@@ -93,6 +93,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
   ContentChildren,
   QueryList,
   Directive,
@@ -123,7 +124,7 @@ class DxWidgetTexts2 extends TextsProps {}
     "width",
     "expressionDefault",
   ],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetPropsType {
   private __texts2?: DxWidgetTexts2;
@@ -164,6 +165,8 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -180,6 +183,7 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
 }
+
 @NgModule({
   declarations: [Widget, DxWidgetTexts2, DxWidgetTexts3],
   imports: [CommonModule],

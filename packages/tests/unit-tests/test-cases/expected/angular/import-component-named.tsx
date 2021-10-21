@@ -12,6 +12,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -19,8 +21,10 @@ import { CommonModule } from "@angular/common";
   selector: "dx-child",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height"],
-  template: `<dx-widget [prop]="true" #widget1></dx-widget
-    ><ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-widget [prop]="true" #widget1></dx-widget
+    ><ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content
+  ></ng-template>`,
 })
 export default class Child extends ChildInput {
   get __restAttributes(): any {
@@ -33,6 +37,8 @@ export default class Child extends ChildInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -41,6 +47,7 @@ export default class Child extends ChildInput {
     super();
   }
 }
+
 @NgModule({
   declarations: [Child],
   imports: [DxWidgetModule, CommonModule],

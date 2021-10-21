@@ -18,6 +18,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -35,7 +37,9 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   inputs: ["baseStateProp", "modelStateProp", "value"],
   outputs: ["baseStatePropChange", "modelStatePropChange", "valueChange"],
-  template: `<div>{{ baseStateProp }}</div>`,
+  template: `<ng-template #widgetTemplate
+    ><div>{{ baseStateProp }}</div></ng-template
+  >`,
 })
 export default class ModelWidget
   extends ModelWidgetInput
@@ -69,6 +73,8 @@ export default class ModelWidget
   _baseStatePropChange: any;
   _modelStatePropChange: any;
   _valueChange: any;
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -89,6 +95,7 @@ export default class ModelWidget
     };
   }
 }
+
 @NgModule({
   declarations: [ModelWidget],
   imports: [CommonModule],

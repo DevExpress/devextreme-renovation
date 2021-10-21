@@ -11,6 +11,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -18,11 +20,13 @@ import { CommonModule } from "@angular/common";
   selector: "g [TextSvgElement]",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["text"],
-  template: `<svg:text>
-    <svg:ng-container *ngIf="![].length">
-      {{ __computedProps.text }}
-    </svg:ng-container>
-  </svg:text>`,
+  template: `<ng-template #widgetTemplate
+    ><svg:text>
+      <svg:ng-container *ngIf="![].length">
+        {{ __computedProps.text }}
+      </svg:ng-container>
+    </svg:text></ng-template
+  >`,
 })
 export class TextSvgElement extends TextSvgElementProps {
   get __computedProps(): TextSvgElementProps {
@@ -38,6 +42,8 @@ export class TextSvgElement extends TextSvgElementProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -46,6 +52,7 @@ export class TextSvgElement extends TextSvgElementProps {
     super();
   }
 }
+
 @NgModule({
   declarations: [TextSvgElement],
   imports: [CommonModule],

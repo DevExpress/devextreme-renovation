@@ -13,6 +13,7 @@ import {
   ViewRef,
   ViewChild,
   ElementRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,9 +21,10 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
-  template: `<div #hostLink
-    ><input #_auto_ref_0 /><input #i1Link /><input #_auto_ref_1
-  /></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div #hostLink
+      ><input #_auto_ref_0 /><input #i1Link /><input #_auto_ref_1 /></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
@@ -98,6 +100,8 @@ export default class Widget extends WidgetInput {
     }
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -106,6 +110,7 @@ export default class Widget extends WidgetInput {
     super();
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

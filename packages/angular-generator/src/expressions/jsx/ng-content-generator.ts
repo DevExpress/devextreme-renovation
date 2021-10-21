@@ -23,13 +23,13 @@ export function tryToGetContent(element: JsxOpeningElement): {
   }
 
   const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
-  let ref = refAttr?.toString().split('.').pop();
+  let ref = refAttr?.toString().split('.').pop()?.replace('#', '');
 
   if (!ref) {
     ref = getUniqComponentName(componentName);
     elementDirective = new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression(''));
   }
 
-  content = `<ng-content *ngTemplateOutlet="${ref}.widgetTemplate"></ng-content>`;
+  content = `<ng-content *ngTemplateOutlet="${ref}?.widgetTemplate"></ng-content>`;
   return { content, elementDirective };
 }

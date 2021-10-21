@@ -10,6 +10,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -17,13 +18,14 @@ import { CommonModule } from "@angular/common";
   selector: "dx-test-component",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["contentTemplate"],
-  template: `<ng-container
+  template: `<ng-template #widgetTemplate
+    ><ng-container
       *ngTemplateOutlet="contentTemplate || contentTemplateDefault"
     >
     </ng-container>
     <ng-template #contentTemplateDefault>
-      <div></div>
-    </ng-template>`,
+      <div></div> </ng-template
+  ></ng-template>`,
 })
 export class TestComponent extends Props {
   get __restAttributes(): any {
@@ -36,6 +38,8 @@ export class TestComponent extends Props {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -44,6 +48,7 @@ export class TestComponent extends Props {
     super();
   }
 }
+
 @NgModule({
   declarations: [TestComponent],
   imports: [CommonModule],

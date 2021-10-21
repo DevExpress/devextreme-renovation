@@ -7,6 +7,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -25,7 +27,9 @@ export function defaultOptions(rule: WidgetOptionRule) {
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height", "data", "info"],
-  template: `<div>{{ height }}</div>`,
+  template: `<ng-template #widgetTemplate
+    ><div>{{ height }}</div></ng-template
+  >`,
 })
 export default class Widget extends Props {
   get __restAttributes(): any {
@@ -38,6 +42,8 @@ export default class Widget extends Props {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -51,6 +57,7 @@ export default class Widget extends Props {
     });
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

@@ -23,6 +23,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -96,23 +98,25 @@ const normalizeStyles = (styles: unknown) => {
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["cells"],
-  template: `<div
-    [class]="global_CLASS_NAME"
-    [ngStyle]="__processNgStyle(global_externalFunction())"
-    ><ng-container
-      *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
-      ><span
-        ><div *ngIf="global_conditionFn(cell) && index > 0"
-          >{{ global_getValue(cell) }}{{ __addPostfix(index)
-          }}{{ global_SomeClass.name }}</div
-        ></span
-      ></ng-container
+  template: `<ng-template #widgetTemplate
     ><div
+      [class]="global_CLASS_NAME"
+      [ngStyle]="__processNgStyle(global_externalFunction())"
       ><ng-container
-        *ngFor="let i of global_array; trackBy: _trackBy_global_array_1"
-        ><div>{{ i.toString() }}</div></ng-container
+        *ngFor="let cell of cells; index as index; trackBy: _trackBy_cells_0"
+        ><span
+          ><div *ngIf="global_conditionFn(cell) && index > 0"
+            >{{ global_getValue(cell) }}{{ __addPostfix(index)
+            }}{{ global_SomeClass.name }}</div
+          ></span
+        ></ng-container
+      ><div
+        ><ng-container
+          *ngFor="let i of global_array; trackBy: _trackBy_global_array_1"
+          ><div>{{ i.toString() }}</div></ng-container
+        ></div
       ></div
-    ></div
+    ></ng-template
   >`,
 })
 export default class Widget extends WidgetProps {
@@ -142,6 +146,8 @@ export default class Widget extends WidgetProps {
     return i;
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -154,6 +160,7 @@ export default class Widget extends WidgetProps {
     return normalizeStyles(value);
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

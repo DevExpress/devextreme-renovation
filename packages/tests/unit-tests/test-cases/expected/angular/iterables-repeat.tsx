@@ -11,6 +11,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -18,16 +20,18 @@ import { CommonModule } from "@angular/common";
   selector: "dx-list",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["items", "keyExpr"],
-  template: `<div
+  template: `<ng-template #widgetTemplate
     ><div
-      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
-        ><div>One -{{ item.key }}</div></ng-container
+      ><div
+        ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
+          ><div>One -{{ item.key }}</div></ng-container
+        ></div
+      ><div
+        ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_1"
+          ><div>Two -{{ item.key }}</div></ng-container
+        ></div
       ></div
-    ><div
-      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_1"
-        ><div>Two -{{ item.key }}</div></ng-container
-      ></div
-    ></div
+    ></ng-template
   >`,
 })
 export default class List extends ListInput {
@@ -48,6 +52,8 @@ export default class List extends ListInput {
     return item.key;
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -56,6 +62,7 @@ export default class List extends ListInput {
     super();
   }
 }
+
 @NgModule({
   declarations: [List],
   imports: [CommonModule],

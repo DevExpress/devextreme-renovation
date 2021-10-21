@@ -22,6 +22,7 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
+  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -36,7 +37,9 @@ import { CommonModule } from "@angular/common";
     "requiredRefProp",
     "requiredForwardRefProp",
   ],
-  template: `<div #divRefLink><div #outerDivRef__Ref__></div></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div #divRefLink><div #outerDivRef__Ref__></div></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   @ViewChild("divRefLink", { static: false })
@@ -239,6 +242,8 @@ export default class Widget extends WidgetProps {
     this.outerDivRef?.(this.outerDivRef__Ref__);
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -247,6 +252,7 @@ export default class Widget extends WidgetProps {
     super();
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

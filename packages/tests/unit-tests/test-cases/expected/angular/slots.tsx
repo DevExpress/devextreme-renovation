@@ -22,13 +22,15 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div
+  template: `<ng-template #widgetTemplate
+    ><div
       ><div
         ><div #slotNamedSlot style="display: contents"
           ><ng-container
@@ -41,7 +43,8 @@ import { CommonModule } from "@angular/common";
           ></ng-container></div></div></div
     ><ng-template #dxnamedSlot
       ><ng-content select="[namedSlot]"></ng-content></ng-template
-    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template
+  ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -54,6 +57,8 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -82,6 +87,7 @@ export default class Widget extends WidgetInput {
     }
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

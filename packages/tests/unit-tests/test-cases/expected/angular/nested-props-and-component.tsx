@@ -86,10 +86,11 @@ class DxUndefWidgetNestedProp extends FakeNested {}
     "anotherNestedPropInit",
   ],
   outputs: ["someEvent", "twoWayPropChange"],
-  template: `<div></div
+  template: `<ng-template #widgetTemplate
+    ><div></div
     ><ng-template #dxslotProp
-      ><ng-content select="[slotProp]"></ng-content
-    ></ng-template>`,
+      ><ng-content select="[slotProp]"></ng-content></ng-template
+  ></ng-template>`,
 })
 export default class UndefWidget extends WidgetProps {
   get __oneway(): any {
@@ -191,6 +192,8 @@ export default class UndefWidget extends WidgetProps {
 
   _someEvent: any;
   _twoWayPropChange: any;
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -226,6 +229,7 @@ export default class UndefWidget extends WidgetProps {
     }
   }
 }
+
 @NgModule({
   declarations: [
     UndefWidget,

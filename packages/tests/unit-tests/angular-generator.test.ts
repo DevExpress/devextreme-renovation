@@ -447,7 +447,7 @@ mocha.describe("Angular generator", function () {
         removeSpaces(expression.toString()),
         removeSpaces(`
           <dx-base-widget #basewidget1><svg:text ></text></dx-base-widget>
-          <ng-content *ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+          <ng-content *ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
         `)
       );
     });
@@ -1709,7 +1709,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1></dx-base-widget>
-            <ng-content *ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content *ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2029,7 +2029,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1 [p1]="p1"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2091,7 +2091,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1 [p1]="__p1"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2155,7 +2155,7 @@ mocha.describe("Angular generator", function () {
             })),
             removeSpaces(`
               <dx-base-widget #basewidget1 [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
-              <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+              <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
             `)
           );
         }
@@ -2215,7 +2215,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1 [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2274,7 +2274,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1 [p1]="(__p1!==undefined?__p1:p1)"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2339,7 +2339,7 @@ mocha.describe("Angular generator", function () {
           })),
           removeSpaces(`
             <dx-base-widget #basewidget1 [p1]="p1"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2389,7 +2389,7 @@ mocha.describe("Angular generator", function () {
           ),
           removeSpaces(`
             <dx-base-widget #basewidget1 [x]="xValue" [y]="y"></dx-base-widget>
-            <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+            <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
       });
@@ -2789,7 +2789,7 @@ mocha.describe("Angular generator", function () {
 
           assert.strictEqual(removeSpaces(element.toString()), removeSpaces(`
             <dx-widget #widget1></dx-widget>
-            <ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`));
+            <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`));
         });
 
         mocha.it("<Widget/> -> <dx-widget></dx-widget>", function () {
@@ -2802,7 +2802,7 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString()), 
             removeSpaces(`
               <dx-widget #widget1></dx-widget>
-              <ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>
+              <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>
             `));
         });
 
@@ -2894,7 +2894,7 @@ mocha.describe("Angular generator", function () {
               members: [],
             })),
             removeSpaces(`<dx-widget (event)="value($event)" #widget1></dx-widget>
-            <ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+            <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
           );
         });
 
@@ -2933,7 +2933,7 @@ mocha.describe("Angular generator", function () {
               members: [],
             })),
             removeSpaces(`<dx-widget [className]="value" #widget1></dx-widget>
-            <ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+            <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
           );
         });
 
@@ -2999,7 +2999,7 @@ mocha.describe("Angular generator", function () {
               removeSpaces(`<dx-widget [className]="value" #widget1>
                 <div class="class-name"></div>
               </dx-widget>
-              <ng-content *ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+              <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           }
         );
@@ -3070,7 +3070,7 @@ mocha.describe("Angular generator", function () {
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
               </dx-widget>
-              <ng-content*ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+              <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           });
 
@@ -3127,7 +3127,7 @@ mocha.describe("Angular generator", function () {
                   </ng-container>
                 </div>
               </dx-widget>
-              <ng-content*ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+              <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           });
 
@@ -3166,7 +3166,7 @@ mocha.describe("Angular generator", function () {
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
               </dx-widget>
-              <ng-content*ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+              <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           });
 
@@ -3211,7 +3211,7 @@ mocha.describe("Angular generator", function () {
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
               </dx-widget>
-              <ng-content*ngTemplateOutlet="widget1.widgetTemplate"></ng-content>`)
+              <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           });
         });
@@ -3972,7 +3972,7 @@ mocha.describe("Angular generator", function () {
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
-              <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+              <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
             `)
           );
         });
@@ -4010,7 +4010,7 @@ mocha.describe("Angular generator", function () {
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
-              <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+              <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
             `)
           );
         });
@@ -4051,7 +4051,7 @@ mocha.describe("Angular generator", function () {
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
-              <ng-content*ngTemplateOutlet="basewidget1.widgetTemplate"></ng-content>
+              <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
             `)
           );
         });
@@ -6869,7 +6869,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef,ViewChild,TemplateRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
@@ -6883,7 +6883,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef;
+                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,
@@ -6962,7 +6962,7 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           getResult(component.toString()),
           getResult(`
-                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef} from "@angular/core";
+                import {Component,NgModule,ChangeDetectionStrategy,ChangeDetectorRef,ViewContainerRef,Renderer2,ViewRef,ViewChild,TemplateRef} from "@angular/core";
                 import {CommonModule} from "@angular/common";
 
                 ${component.decorator}
@@ -6976,7 +6976,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef;
+                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,

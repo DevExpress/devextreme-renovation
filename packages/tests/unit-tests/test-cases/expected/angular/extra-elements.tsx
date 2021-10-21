@@ -13,6 +13,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,11 +22,13 @@ import { CommonModule } from "@angular/common";
   selector: "dx-extra-element",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
-  template: `<pre><dx-inner-layout #rf
-[prop]="3"></dx-inner-layout><ng-content *ngTemplateOutlet="rf.widgetTemplate"></ng-content><div id="firstDiv"></div><dx-inner-layout #rf
-[prop]="4"></dx-inner-layout><ng-content *ngTemplateOutlet="rf.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
-#child1></dx-inner-layout><ng-content *ngTemplateOutlet="child1.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
-#child2></dx-inner-layout><ng-content *ngTemplateOutlet="child2.widgetTemplate"></ng-content></pre>`,
+  template: `<ng-template #widgetTemplate>
+    <pre><dx-inner-layout #rf
+[prop]="3"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="firstDiv"></div><dx-inner-layout #rf
+[prop]="4"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
+#child1></dx-inner-layout><ng-content *ngTemplateOutlet="child1?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
+#child2></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content></pre>
+  </ng-template>`,
 })
 export class ExtraElement extends Props {
   get __restAttributes(): any {
@@ -37,6 +41,8 @@ export class ExtraElement extends Props {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -45,6 +51,7 @@ export class ExtraElement extends Props {
     super();
   }
 }
+
 @NgModule({
   declarations: [ExtraElement],
   imports: [DxInnerLayoutModule, CommonModule],

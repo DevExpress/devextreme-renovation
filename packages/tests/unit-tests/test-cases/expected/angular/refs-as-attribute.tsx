@@ -16,6 +16,7 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
+  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -24,18 +25,21 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["refProp", "forwardRefProp"],
-  template: `<div
-    ><dx-helper-widget
-      [forwardRef]="forwardRef?.nativeElement"
-      [someRef]="someRef?.nativeElement"
-      [refProp]="refProp"
-      [forwardRefProp]="
-        forwardRefProp ? forwardRefProp()?.nativeElement : undefined
-      "
-      #helperwidget1
-    ></dx-helper-widget
-    ><ng-content *ngTemplateOutlet="helperwidget1.widgetTemplate"></ng-content
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div
+      ><dx-helper-widget
+        [forwardRef]="forwardRef?.nativeElement"
+        [someRef]="someRef?.nativeElement"
+        [refProp]="refProp"
+        [forwardRefProp]="
+          forwardRefProp ? forwardRefProp()?.nativeElement : undefined
+        "
+        #helperwidget1
+      ></dx-helper-widget
+      ><ng-content
+        *ngTemplateOutlet="helperwidget1?.widgetTemplate"
+      ></ng-content></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   @ViewChild("someRefLink", { static: false })
@@ -105,6 +109,8 @@ export default class Widget extends WidgetProps {
     ) => ElementRef<HTMLDivElement> | undefined;
   } = {};
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -113,6 +119,7 @@ export default class Widget extends WidgetProps {
     super();
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [DxHelperWidgetModule, CommonModule],

@@ -8,13 +8,15 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export class Widget extends WidgetInput {
   getValue(): any {
@@ -30,6 +32,8 @@ export class Widget extends WidgetInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -38,6 +42,7 @@ export class Widget extends WidgetInput {
     super();
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

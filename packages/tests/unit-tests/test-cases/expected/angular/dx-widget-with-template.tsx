@@ -13,6 +13,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,11 +21,12 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["template", "componentTemplate", "arrowTemplate"],
-  template: `<div
-    ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container
-    ><ng-container *ngTemplateOutlet="template"></ng-container
-    ><ng-container *ngTemplateOutlet="arrowTemplate"></ng-container
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div
+      ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container
+      ><ng-container *ngTemplateOutlet="template"></ng-container
+      ><ng-container *ngTemplateOutlet="arrowTemplate"></ng-container></div
+  ></ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetWithTemplateInput {
   get __restAttributes(): any {
@@ -37,6 +39,8 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -45,6 +49,7 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
     super();
   }
 }
+
 @NgModule({
   declarations: [WidgetWithTemplate],
   imports: [CommonModule],

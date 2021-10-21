@@ -14,6 +14,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -22,7 +24,9 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["value", "optionalValue", "number"],
   outputs: ["onClick"],
-  template: `<div>{{ optionalValue || value }}</div>`,
+  template: `<ng-template #widgetTemplate
+    ><div>{{ optionalValue || value }}</div></ng-template
+  >`,
 })
 export class WidgetWithProps extends WidgetWithPropsInput {
   doSomething(): any {}
@@ -37,6 +41,8 @@ export class WidgetWithProps extends WidgetWithPropsInput {
   }
 
   _onClick: any;
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -48,6 +54,7 @@ export class WidgetWithProps extends WidgetWithPropsInput {
     };
   }
 }
+
 @NgModule({
   declarations: [WidgetWithProps],
   imports: [CommonModule],

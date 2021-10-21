@@ -34,6 +34,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -42,7 +44,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
   inputs: ["p"],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends Props {
   mutableVar: number = 10;
@@ -118,6 +120,8 @@ export default class Widget extends Props {
     this.__provide;
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -148,6 +152,7 @@ export default class Widget extends Props {
     this.__getterCache["g1"] = undefined;
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

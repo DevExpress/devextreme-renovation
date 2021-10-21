@@ -16,6 +16,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -23,7 +24,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-inner-layout",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["innerComponentTemplate"],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export class InnerLayout extends InnerLayoutProps {
   get __restAttributes(): any {
@@ -36,6 +37,8 @@ export class InnerLayout extends InnerLayoutProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -44,6 +47,7 @@ export class InnerLayout extends InnerLayoutProps {
     super();
   }
 }
+
 @NgModule({
   declarations: [InnerLayout],
   imports: [DxInnerComponentModule, CommonModule],

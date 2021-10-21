@@ -12,13 +12,16 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<dx-widget-with-template
+  template: `<ng-template #widgetTemplate
+    ><dx-widget-with-template
       [template]="CustomTemplate"
       [componentTemplate]="InnerWidget"
       [arrowTemplate]="__arrowTemplate__generated"
@@ -45,7 +48,7 @@ import { CommonModule } from "@angular/common";
           #innerwidget1
         ></dx-inner-widget
         ><ng-content
-          *ngTemplateOutlet="innerwidget1.widgetTemplate"
+          *ngTemplateOutlet="innerwidget1?.widgetTemplate"
         ></ng-content></ng-template
       ><ng-template #CustomTemplate let-text="text" let-value="value"
         ><span>{{ text }}</span></ng-template
@@ -53,8 +56,9 @@ import { CommonModule } from "@angular/common";
         ><div>{{ name }}</div></ng-template
       ></dx-widget-with-template
     ><ng-content
-      *ngTemplateOutlet="widgetwithtemplate1.widgetTemplate"
-    ></ng-content>`,
+      *ngTemplateOutlet="widgetwithtemplate1?.widgetTemplate"
+    ></ng-content
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -67,6 +71,8 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -81,6 +87,7 @@ export default class Widget extends WidgetProps {
     valueChange: () => {},
   };
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [DxWidgetWithTemplateModule, DxInnerWidgetModule, CommonModule],

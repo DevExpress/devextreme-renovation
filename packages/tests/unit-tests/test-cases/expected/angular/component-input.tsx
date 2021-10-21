@@ -19,6 +19,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -26,8 +27,9 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height", "width"],
-  template: `<div></div
-    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
+  template: `<ng-template #widgetTemplate
+    ><div></div><ng-template #dxchildren><ng-content></ng-content></ng-template
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   __onClick(): any {
@@ -43,6 +45,8 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: false })
+  widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -61,6 +65,7 @@ export default class Widget extends WidgetProps {
     }
   }
 }
+
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],
