@@ -4,7 +4,7 @@ import {
 import { getLocalStateName, Property } from './property';
 
 export function calculateMethodDependencyString(
-  method: BaseMethod,
+  method: Method,
   options: toStringOptions,
 ): string {
   const members = options.members;
@@ -39,17 +39,8 @@ export function calculateMethodDependencyString(
       .concat(twoWayProps.map((p) => getLocalStateName(p.name)));
     return `, [${result}]`;
   }
-  const result = deps.reduce((arr: string[], dep) => {
-    if (dep instanceof BaseClassMember) {
-      if (dep instanceof BaseMethod) {
-        return [...arr, dep.name];
-      }
-      return [...arr, ...dep.getDependencyString(options)];
-    }
-    return [...arr, dep];
-  }, []);
+  const result = method.getDependencyString(options);
   return `, [${result}]`;
-  // return method.getDependencyString(options) -> change BaseMethod to ReactMethod
 }
 
 export class Method extends BaseMethod {
@@ -65,7 +56,7 @@ export class Method extends BaseMethod {
     const members = options.members;
     const depsReducer = (d: Dependency[], p: Dependency) => {
       if (p instanceof BaseClassMember) {
-        if (p instanceof BaseMethod) { // method or getAccessor?
+        if (p instanceof BaseMethod) {
           return [...d, p];
         }
         return [...d, ...p.getDependency({

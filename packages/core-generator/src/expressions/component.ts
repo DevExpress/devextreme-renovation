@@ -17,7 +17,7 @@ import { ComponentInput } from './component-input';
 import { Decorator } from './decorator';
 import { BaseFunction, getViewFunctionBindingPattern } from './functions';
 import { ObjectLiteral } from './literal';
-import { Block, ReturnStatement } from './statements';
+import { Block } from './statements';
 import { extractComplexType, isTypeArray, TypeExpression } from './type';
 
 export function isJSXComponent(heritageClauses: HeritageClause[]) {
@@ -108,24 +108,7 @@ export class Component extends Class implements Heritable {
         && m.decorators.length === 0
         && m.initializer instanceof BaseFunction
       ) {
-        const body = m.initializer.body instanceof Block
-          ? m.initializer.body
-          : new Block(
-            [new ReturnStatement(m.initializer.body as Expression)],
-            true,
-          );
-
-        return new Method(
-          [],
-          m.modifiers,
-          undefined,
-          m._name,
-          undefined,
-          [],
-          m.initializer.parameters,
-          m.initializer.type,
-          body,
-        );
+        throw new Error('Generator Exception: Please use the regular function syntax for method');
       }
       if (m instanceof GetAccessor) {
         const memberWithTypes = m;

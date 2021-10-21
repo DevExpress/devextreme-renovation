@@ -19,7 +19,7 @@ export class GetAccessor extends BaseGetAccessor {
     const members = options.members;
     const depsReducer = (d: Dependency[], p: Dependency) => {
       if (p instanceof BaseClassMember) {
-        if (p instanceof BaseMethod) { // method or getAccessor?
+        if (p instanceof BaseMethod) {
           return [...d, p];
         }
         return [...d, ...p.getDependency({

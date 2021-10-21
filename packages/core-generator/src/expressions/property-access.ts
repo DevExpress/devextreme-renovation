@@ -140,7 +140,6 @@ export class PropertyAccess extends ExpressionWithExpression {
     const expressionString = this.expression.toString();
     const componentContext = options?.componentContext || SyntaxKind.ThisKeyword;
     if (expressionString === componentContext && this.name.toString() !== 'props') {
-    // check influence of componentContext
       const member = options.members.find((m) => m._name.toString() === this.name.toString());
       return member ? [member] : [];
     }
