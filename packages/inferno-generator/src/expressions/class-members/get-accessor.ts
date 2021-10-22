@@ -1,6 +1,6 @@
 import { GetAccessor as ReactGetAccessor } from '@devextreme-generator/react';
 import {
-  toStringOptions, Identifier,
+  toStringOptions, Identifier, Dependency, BaseClassMember,
 } from '@devextreme-generator/core';
 
 import { compileGetterCache } from '@devextreme-generator/angular';
@@ -8,6 +8,22 @@ import { compileGetterCache } from '@devextreme-generator/angular';
 export class GetAccessor extends ReactGetAccessor {
   getter(componentContext?: string): string {
     return super.getter(componentContext).replace('()', '');
+  }
+
+  reduceDependency(
+    dependencies: Dependency[],
+    options: toStringOptions,
+    startingDeps: Dependency[] = [],
+  ): Dependency[] {
+    return this.baseReduceDependency(dependencies, options, startingDeps);
+  }
+
+  getDependencyString(options: toStringOptions): string[] {
+    const dependencies = this.getDependency(options).filter((dep) => dep !== this);
+    return dependencies.reduce((arr: string[], dep) => (dep instanceof BaseClassMember
+      ? [...arr, ...dep.getDependencyString(options)]
+      : [...arr, dep]),
+    []);
   }
 
   toString(options?: toStringOptions): string {
