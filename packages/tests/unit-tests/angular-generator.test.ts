@@ -6883,7 +6883,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef<any>;
+                    @ViewChild('widgetTemplate', { static: true }) widgetTemplate: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,
@@ -6976,7 +6976,7 @@ mocha.describe("Angular generator", function () {
                           this.changeDetection.detectChanges();
                       });
                     }
-                    @ViewChild('widgetTemplate', { static: false }) widgetTemplate: TemplateRef<any>;
+                    @ViewChild('widgetTemplate', { static: true }) widgetTemplate: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
                       private render: Renderer2,
