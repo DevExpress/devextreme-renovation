@@ -202,7 +202,7 @@ export class InfernoComponent extends PreactComponent {
                 arr.push(
                   d.isState
                     ? `this.state.${d._name}, this.props.${d._name}`
-                    : `this.${d.getDependencyString()}`,
+                    : `this.${d.getDependencyString(this.getToStringOptions())}`,
                 );
               }
 

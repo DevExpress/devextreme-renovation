@@ -11,6 +11,8 @@ import {
   processComponentContext,
   PropertyAssignment,
   SpreadAssignment,
+  Dependency,
+  BaseClassMember,
 } from '@devextreme-generator/core';
 import {
   Property,
@@ -60,8 +62,18 @@ export class PropertyAccess extends BasePropertyAccess {
     return setState;
   }
 
-  getAssignmentDependency(_options?: toStringOptions) {
-    return [`${this.name}Change`];
+  getAssignmentDependency(options: toStringOptions): Dependency[] {
+    const dependencies = this.getDependency(options);
+    return dependencies.map((dep) => {
+      if (dep instanceof BaseClassMember && dep.isState) {
+        const props = getProps(options.members);
+        const changeMember = props.find((m) => m._name.toString() === `${dep.name}Change`);
+        if (changeMember) {
+          return changeMember;
+        }
+      }
+      return dep;
+    });
   }
 
   needToCreateAssignment(

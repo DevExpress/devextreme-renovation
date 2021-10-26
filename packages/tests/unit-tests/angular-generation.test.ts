@@ -185,10 +185,6 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("method-without-decorator", function () {
-    this.testGenerator(this.test!.title);
-  });
-
   mocha.it("mutable-state", function () {
     this.testGenerator(this.test!.title);
   });
@@ -394,6 +390,10 @@ mocha.describe("angular-generation", function () {
   });
 
   mocha.it("getters-is-memorized", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("getters-ordering", function () {
     this.testGenerator(this.test!.title);
   });
 
