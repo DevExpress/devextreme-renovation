@@ -13,10 +13,10 @@ export const getWrapperTemplate = (TemplateProp: any) => {
   const isComponent = typeof TemplateProp === 'string' || !!(TemplateProp instanceof Element);
 
   return isComponent ? TemplateProp : (data: any) => {
-    const container = data.container ? data.container : data;
+    const container = data.container ? data.container : data.item;
     ReactDOM.render(
     /* eslint-disable react/jsx-props-no-spreading */
-      <><TemplateProp {...data} /></> as React.ReactElement,
+      <TemplateProp {...data} /> as React.ReactElement,
       container,
     );
   };
