@@ -1687,7 +1687,6 @@ export class AngularComponent extends Component {
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
             ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}
         }
-    
         @NgModule({
             declarations: [${this.name}, ${nestedModules
   .concat(importModules)
