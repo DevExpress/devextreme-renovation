@@ -242,7 +242,7 @@ export default class Widget extends WidgetProps {
     this.outerDivRef?.(this.outerDivRef__Ref__);
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -34,7 +34,7 @@ export default class WidgetWithRefProp extends WidgetWithRefPropInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

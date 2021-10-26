@@ -808,8 +808,8 @@ const VOID_ELEMENTS = [
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
-  postProcess(): string {
-    return process(this);
+  postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
+    return process(this, options);
   }
 
   toString(options?: toStringOptions) {
@@ -825,7 +825,7 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (elementString) {
       return elementString;
     }
-    const addinitionalStr = this.postProcess();
+    const { prefix, postfix } = this.postProcess(options);
     const openingElement = super.toString(options);
     const children: Expression[] = [
       ...this.getSlotsFromAttributes(options),
@@ -838,21 +838,21 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     );
 
     if (separatedChildren) {
-      return `${openingElement}${separatedChildren[0]}</${this.processTagName(
+      return `${prefix}${openingElement}${separatedChildren[0]}</${this.processTagName(
         this.tagName,
         options,
         true,
       )}>
-        ${separatedChildren[1]}${addinitionalStr}`;
+        ${separatedChildren[1]}${postfix}`;
     }
 
     const childrenString = children.map((c) => c.toString(options)).join('');
 
-    return `${openingElement}${childrenString}</${this.processTagName(
+    return `${prefix}${openingElement}${childrenString}</${this.processTagName(
       this.tagName,
       options,
       true,
-    )}>${addinitionalStr}`;
+    )}>${postfix}`;
   }
 
   clone() {

@@ -41,7 +41,7 @@ export class WidgetWithProps extends WidgetWithPropsInput {
   }
 
   _onClick: any;
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

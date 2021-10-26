@@ -77,7 +77,7 @@ export default class Widget extends WidgetInput {
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -42,7 +42,7 @@ export default class Widget extends Props {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -71,7 +71,7 @@ export default class Widget extends WidgetInput {
     clearTimeout(this._effectTimeout);
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

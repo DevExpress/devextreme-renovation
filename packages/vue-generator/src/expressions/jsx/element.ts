@@ -5,8 +5,8 @@ import {
 import { JsxChildExpression } from './jsx-expression';
 
 export class JsxElement extends BaseJsxElement {
-  postProcess(): string {
-    return '';
+  postProcess(): { prefix: string, postfix: string } {
+    return { prefix: '', postfix: '' };
   }
 
   createChildJsxExpression(expression: AngularJsxExpression) {

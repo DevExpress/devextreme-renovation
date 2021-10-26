@@ -49,7 +49,7 @@ export default class Widget extends WidgetInput {
   }
 
   _selectedChange: any;
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

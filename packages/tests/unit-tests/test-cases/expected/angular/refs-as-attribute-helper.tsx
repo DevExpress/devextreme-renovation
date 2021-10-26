@@ -42,7 +42,7 @@ export default class HelperWidget extends HelperWidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

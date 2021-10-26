@@ -55,8 +55,8 @@ export class JsxElement extends BaseJsxElement {
     return this.openingElement.tagName.toString() === 'Fragment';
   }
 
-  postProcess(): string {
-    return process(this.openingElement);
+  postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
+    return process(this.openingElement, options);
   }
 
   toString(options?: toStringOptions): string {
@@ -68,7 +68,7 @@ export class JsxElement extends BaseJsxElement {
       return elementString;
     }
 
-    const addinitionalStr = this.postProcess();
+    const { prefix, postfix } = this.postProcess(options);
     const openingElementString = this.openingElement.toString(options);
     const hasSvgSlot = this.openingElement.component?.slots.some(
       (s) => s.isSvgSlot,
@@ -119,10 +119,10 @@ export class JsxElement extends BaseJsxElement {
     );
 
     if (separatedChildren) {
-      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${addinitionalStr}`;
+      return `${prefix}${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${postfix}`;
     }
 
-    return `${openingElementString}${childrenString}${closingElementString}${addinitionalStr}`;
+    return `${prefix}${openingElementString}${childrenString}${closingElementString}${postfix}`;
   }
 
   clone() {

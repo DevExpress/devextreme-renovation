@@ -114,7 +114,7 @@ export default class RefOnChildrenTemplate extends Props {
     this._updateEffects();
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

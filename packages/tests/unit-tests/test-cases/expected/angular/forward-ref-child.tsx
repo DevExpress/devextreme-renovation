@@ -112,7 +112,7 @@ export default class RefOnChildrenChild extends Props {
     this.nullableRef?.(this.nullableRef__Ref__);
   }
 
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

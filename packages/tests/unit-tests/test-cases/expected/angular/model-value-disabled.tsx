@@ -74,7 +74,7 @@ export default class ModelWidget
 
   _valueChange: any;
   _notValueChange: any;
-  @ViewChild("widgetTemplate", { static: false })
+  @ViewChild("widgetTemplate", { static: true })
   widgetTemplate: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

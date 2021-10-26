@@ -10,7 +10,7 @@ import {
   
   export const viewFunction = ( model: ExtraElement): JSX.Element => (
     <pre>
-        <Child ref={model.props.rf} prop={3}/>
+        {model.props.rf && <Child ref={model.props.rf} prop={3}/>}
         <div id="firstDiv"></div>
         <Child ref={model.props.rf} prop={4}></Child>
         <div id="secondDiv"/>
