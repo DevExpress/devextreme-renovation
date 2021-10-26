@@ -9,14 +9,18 @@ export const hasTemplate = (name: any, props: any, _component?: any): boolean =>
   const value = props[name];
   return !!value && typeof value !== 'string';
 };
-export const getWrapperTemplate = (TemplateProp: any) => (typeof TemplateProp === 'string' || !!(TemplateProp instanceof Element) ? TemplateProp : (data: any) => {
-  const container = data.container ? data.container : data;
-  ReactDOM.render(
+export const getWrapperTemplate = (TemplateProp: any) => {
+  const isComponent = typeof TemplateProp === 'string' || !!(TemplateProp instanceof Element);
+
+  return isComponent ? TemplateProp : (data: any) => {
+    const container = data.container ? data.container : data;
+    ReactDOM.render(
     /* eslint-disable react/jsx-props-no-spreading */
-    <><TemplateProp {...data} /></> as React.ReactElement,
-    container,
-  );
-});
+      <><TemplateProp {...data} /></> as React.ReactElement,
+      container,
+    );
+  };
+};
 
 export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
   (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp))
