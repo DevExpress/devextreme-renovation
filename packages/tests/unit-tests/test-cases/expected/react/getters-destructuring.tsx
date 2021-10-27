@@ -41,10 +41,8 @@ interface Widget {
   arrayFromArr: (string | undefined)[];
   someObj: GetterType;
   objectFromDestructured: GetterType;
-  someMethod1: GetterType;
+  someGetter: GetterType;
   someMethodFromDestructured: () => GetterType;
-  someMethodFromDestructured2: () => any;
-  someMethod2: () => any;
   restAttributes: RestProps;
 }
 
@@ -57,12 +55,6 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
         return { stateField: __state_someState, propField: props.someProp };
       },
       [__state_someState, props.someProp]
-    );
-    const __someMethodFromDestructured2 = useCallback(
-      function __someMethodFromDestructured2(): any {
-        const { someProp, type } = props;
-      },
-      [props.someProp, props.type]
     );
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
@@ -91,16 +83,10 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [__someObj]
     );
-    const __someMethod1 = useMemo(
-      function __someMethod1(): GetterType {
+    const __someGetter = useMemo(
+      function __someGetter(): GetterType {
         const { propField, stateField: stateField2 } = __someObj;
         return { stateField: stateField2, propField };
-      },
-      [__someObj]
-    );
-    const __someMethod2 = useCallback(
-      function __someMethod2(): any {
-        const state = __someObj.stateField;
       },
       [__someObj]
     );

@@ -45,9 +45,6 @@ class Widget extends BaseInfernoComponent<any> {
     };
     this.someMethodFromDestructured =
       this.someMethodFromDestructured.bind(this);
-    this.someMethodFromDestructured2 =
-      this.someMethodFromDestructured2.bind(this);
-    this.someMethod2 = this.someMethod2.bind(this);
     this.changeState = this.changeState.bind(this);
   }
 
@@ -97,11 +94,11 @@ class Widget extends BaseInfernoComponent<any> {
       return { stateField, propField };
     })());
   }
-  get someMethod1(): GetterType {
-    if (this.__getterCache["someMethod1"] !== undefined) {
-      return this.__getterCache["someMethod1"];
+  get someGetter(): GetterType {
+    if (this.__getterCache["someGetter"] !== undefined) {
+      return this.__getterCache["someGetter"];
     }
-    return (this.__getterCache["someMethod1"] = ((): GetterType => {
+    return (this.__getterCache["someGetter"] = ((): GetterType => {
       const { propField, stateField: stateField2 } = this.someObj;
       return { stateField: stateField2, propField };
     })());
@@ -109,12 +106,6 @@ class Widget extends BaseInfernoComponent<any> {
   someMethodFromDestructured(): GetterType {
     const { propField, stateField } = this.objectFromDestructured;
     return { stateField, propField };
-  }
-  someMethodFromDestructured2(): any {
-    const { someProp, type } = this.props as any;
-  }
-  someMethod2(): any {
-    const state = this.someObj.stateField;
   }
   get restAttributes(): RestProps {
     const { someProp, type, ...restProps } = this.props as any;
@@ -128,7 +119,7 @@ class Widget extends BaseInfernoComponent<any> {
     arrayFromArr?: (string | undefined)[];
     someObj?: GetterType;
     objectFromDestructured?: GetterType;
-    someMethod1?: GetterType;
+    someGetter?: GetterType;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     if (
@@ -159,7 +150,7 @@ class Widget extends BaseInfernoComponent<any> {
       this.state["someState"] !== nextState["someState"] ||
       this.props["someProp"] !== nextProps["someProp"]
     ) {
-      this.__getterCache["someMethod1"] = undefined;
+      this.__getterCache["someGetter"] = undefined;
     }
   }
   render() {

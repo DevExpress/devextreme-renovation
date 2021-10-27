@@ -74,11 +74,11 @@ class Widget extends WidgetProps {
       return { stateField, propField };
     })());
   }
-  get __someMethod1(): GetterType {
-    if (this.__getterCache["someMethod1"] !== undefined) {
-      return this.__getterCache["someMethod1"];
+  get __someGetter(): GetterType {
+    if (this.__getterCache["someGetter"] !== undefined) {
+      return this.__getterCache["someGetter"];
     }
-    return (this.__getterCache["someMethod1"] = ((): GetterType => {
+    return (this.__getterCache["someGetter"] = ((): GetterType => {
       const { propField, stateField: stateField2 } = this.__someObj;
       return { stateField: stateField2, propField };
     })());
@@ -86,12 +86,6 @@ class Widget extends WidgetProps {
   __someMethodFromDestructured(): GetterType {
     const { propField, stateField } = this.__objectFromDestructured;
     return { stateField, propField };
-  }
-  __someMethodFromDestructured2(): any {
-    const { someProp, type } = this;
-  }
-  __someMethod2(): any {
-    const state = this.__someObj.stateField;
   }
   changeState(newValue: string): any {
     this._someState = newValue;
@@ -111,7 +105,7 @@ class Widget extends WidgetProps {
     arrayFromArr?: (string | undefined)[];
     someObj?: GetterType;
     objectFromDestructured?: GetterType;
-    someMethod1?: GetterType;
+    someGetter?: GetterType;
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
@@ -132,7 +126,7 @@ class Widget extends WidgetProps {
     }
 
     if (["someProp"].some((d) => changes[d])) {
-      this.__getterCache["someMethod1"] = undefined;
+      this.__getterCache["someGetter"] = undefined;
     }
   }
 
@@ -150,7 +144,7 @@ class Widget extends WidgetProps {
     this.__getterCache["arrayFromArr"] = undefined;
     this.__getterCache["someObj"] = undefined;
     this.__getterCache["objectFromDestructured"] = undefined;
-    this.__getterCache["someMethod1"] = undefined;
+    this.__getterCache["someGetter"] = undefined;
   }
 }
 @NgModule({
