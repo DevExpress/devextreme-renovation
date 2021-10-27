@@ -19,7 +19,13 @@ interface GetterType {
 const view = () => <div></div>;
 
 import * as React from "react";
-import { useState, useCallback, useImperativeHandle, forwardRef } from "react";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 
 export type WidgetRef = { changeState: (newValue: string) => any };
 declare type RestProps = {
@@ -43,7 +49,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
   function widget(props: typeof WidgetProps & RestProps, ref) {
     const [__state_someState, __state_setSomeState] = useState<string>("");
 
-    const __someObj = useCallback(
+    const __someObj = useMemo(
       function __someObj(): GetterType {
         return { stateField: __state_someState, propField: props.someProp };
       },
@@ -62,35 +68,32 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       __state_setSomeState((__state_someState) => newValue);
     },
     []);
-    const __objectFromDestructured = useCallback(
+    const __objectFromDestructured = useMemo(
       function __objectFromDestructured(): GetterType {
-        const { propField, stateField } = __someObj();
+        const { propField, stateField } = __someObj;
         return { stateField, propField };
       },
-      [__someObj().propField, __someObj().stateField]
+      [__someObj.propField, __someObj.stateField]
     );
     const __someMethod1 = useCallback(
       function __someMethod1(): any {
-        const { propField, stateField: stateField2 } = __someObj();
+        const { propField, stateField: stateField2 } = __someObj;
       },
-      [__someObj().propField, __someObj().stateField]
+      [__someObj.propField, __someObj.stateField]
     );
     const __someMethod2 = useCallback(
       function __someMethod2(): any {
-        const state = __someObj().stateField;
-        const prop = __someObj().propField;
+        const state = __someObj.stateField;
+        const prop = __someObj.propField;
       },
       [__someObj]
     );
     const __someMethodFromDestructured = useCallback(
       function __someMethodFromDestructured(): GetterType {
-        const { propField, stateField } = __objectFromDestructured();
+        const { propField, stateField } = __objectFromDestructured;
         return { stateField, propField };
       },
-      [
-        __objectFromDestructured().propField,
-        __objectFromDestructured().stateField,
-      ]
+      [__objectFromDestructured.propField, __objectFromDestructured.stateField]
     );
 
     useImperativeHandle(ref, () => ({ changeState: __changeState }), [

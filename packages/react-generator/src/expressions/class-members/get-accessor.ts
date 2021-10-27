@@ -7,8 +7,9 @@ import {
 } from '@devextreme-generator/core';
 
 export class GetAccessor extends BaseGetAccessor {
-  getter(componentContext?: string): string {
-    return `${super.getter(componentContext)}()`;
+  getter(componentContext?: string, options?: toStringOptions): string {
+    const isMemorized = this.name !== 'restAttributes' && this.isMemorized(options);
+    return `${super.getter(componentContext)}${isMemorized ? '' : '()'}`;
   }
 
   reduceDependency(
@@ -40,7 +41,7 @@ export class GetAccessor extends BaseGetAccessor {
     return dependencies.reduce((arr: string[], dep) => {
       if (dep instanceof BaseClassMember) {
         if (dep instanceof BaseMethod) {
-          if (propertyAccessMembers.includes(dep.getter())) {
+          if (propertyAccessMembers.includes(dep.getter(undefined, options))) {
             return arr;
           }
           return [...arr, dep.name];

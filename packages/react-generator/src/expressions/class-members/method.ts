@@ -77,7 +77,7 @@ export class Method extends BaseMethod {
     return dependencies.reduce((arr: string[], dep) => {
       if (dep instanceof BaseClassMember) {
         if (dep instanceof BaseMethod) {
-          if (propertyAccessMembers.includes(dep.getter())) {
+          if (propertyAccessMembers.includes(dep.getter(undefined, options))) {
             return arr;
           }
           return [...arr, dep.name];

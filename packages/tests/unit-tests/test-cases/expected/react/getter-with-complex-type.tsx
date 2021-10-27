@@ -12,7 +12,7 @@ export const Props: PropsType = {
   p: 10,
 };
 import * as React from "react";
-import { useState, useContext, useCallback, useRef } from "react";
+import { useState, useContext, useCallback, useMemo, useRef } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -38,13 +38,13 @@ export default function Widget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
-  const __provide = useCallback(
+  const __provide = useMemo(
     function __provide(): any {
       return __state_i;
     },
     [__state_i]
   );
-  const __g1 = useCallback(
+  const __g1 = useMemo(
     function __g1(): number[] {
       return [props.p, __state_i];
     },
@@ -62,7 +62,7 @@ export default function Widget(props: typeof Props & RestProps) {
     },
     [__state_i]
   );
-  const __g4 = useCallback(
+  const __g4 = useMemo(
     function __g4(): number[] {
       return [cons];
     },
@@ -91,11 +91,11 @@ export default function Widget(props: typeof Props & RestProps) {
         props: { ...props },
         i: __state_i,
         cons,
-        provide: __provide(),
-        g1: __g1(),
+        provide: __provide,
+        g1: __g1,
         g2: __g2(),
         g3: __g3(),
-        g4: __g4(),
+        g4: __g4,
         g5: __g5(),
         userGet: __userGet(),
         restAttributes: __restAttributes(),
