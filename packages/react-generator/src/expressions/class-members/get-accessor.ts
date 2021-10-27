@@ -8,7 +8,7 @@ import {
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string, options?: toStringOptions): string {
-    const isMemorized = this.name !== 'restAttributes' && this.isMemorized(options, false);
+    const isMemorized = this.isMemorized(options, false);
     return `${super.getter(componentContext)}${isMemorized ? '' : '()'}`;
   }
 
@@ -36,20 +36,15 @@ export class GetAccessor extends BaseGetAccessor {
 
   getDependencyString(options: toStringOptions): string[] {
     const dependencies = this.getDependency(options).filter((dep) => dep !== this);
-    const destructuredDeps = this.body?.destructuredDepsString(options);
-    const propertyAccessMembers = [...new Set(destructuredDeps?.map((p) => p.split('.')[0]))];
     return dependencies.reduce((arr: string[], dep) => {
       if (dep instanceof BaseClassMember) {
         if (dep instanceof BaseMethod) {
-          if (propertyAccessMembers.includes(dep.getter(undefined, options))) {
-            return arr;
-          }
           return [...arr, dep.name];
         }
         return [...arr, ...dep.getDependencyString(options)];
       }
       return [...arr, dep];
     },
-    []).concat(destructuredDeps || []);
+    []);
   }
 }

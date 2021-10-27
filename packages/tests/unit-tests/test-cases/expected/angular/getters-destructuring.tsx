@@ -33,6 +33,30 @@ import { CommonModule } from "@angular/common";
 })
 class Widget extends WidgetProps {
   someState: string = "";
+  get __arrayFromObj(): (string | undefined)[] {
+    if (this.__getterCache["arrayFromObj"] !== undefined) {
+      return this.__getterCache["arrayFromObj"];
+    }
+    return (this.__getterCache["arrayFromObj"] = ((): (
+      | string
+      | undefined
+    )[] => {
+      const { propField, stateField } = this.__someObj;
+      return [stateField, propField];
+    })());
+  }
+  get __arrayFromArr(): (string | undefined)[] {
+    if (this.__getterCache["arrayFromArr"] !== undefined) {
+      return this.__getterCache["arrayFromArr"];
+    }
+    return (this.__getterCache["arrayFromArr"] = ((): (
+      | string
+      | undefined
+    )[] => {
+      const [stateField, propField] = this.__arrayFromObj;
+      return [stateField, propField];
+    })());
+  }
   get __someObj(): GetterType {
     if (this.__getterCache["someObj"] !== undefined) {
       return this.__getterCache["someObj"];
@@ -50,16 +74,24 @@ class Widget extends WidgetProps {
       return { stateField, propField };
     })());
   }
-  __someMethod1(): any {
-    const { propField, stateField: stateField2 } = this.__someObj;
+  get __someMethod1(): GetterType {
+    if (this.__getterCache["someMethod1"] !== undefined) {
+      return this.__getterCache["someMethod1"];
+    }
+    return (this.__getterCache["someMethod1"] = ((): GetterType => {
+      const { propField, stateField: stateField2 } = this.__someObj;
+      return { stateField: stateField2, propField };
+    })());
   }
   __someMethodFromDestructured(): GetterType {
     const { propField, stateField } = this.__objectFromDestructured;
     return { stateField, propField };
   }
+  __someMethodFromDestructured2(): any {
+    const { someProp, type } = this;
+  }
   __someMethod2(): any {
     const state = this.__someObj.stateField;
-    const prop = this.__someObj.propField;
   }
   changeState(newValue: string): any {
     this._someState = newValue;
@@ -75,17 +107,32 @@ class Widget extends WidgetProps {
   }
 
   __getterCache: {
+    arrayFromObj?: (string | undefined)[];
+    arrayFromArr?: (string | undefined)[];
     someObj?: GetterType;
     objectFromDestructured?: GetterType;
+    someMethod1?: GetterType;
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
+    if (["someProp"].some((d) => changes[d])) {
+      this.__getterCache["arrayFromObj"] = undefined;
+    }
+
+    if (["someProp"].some((d) => changes[d])) {
+      this.__getterCache["arrayFromArr"] = undefined;
+    }
+
     if (["someProp"].some((d) => changes[d])) {
       this.__getterCache["someObj"] = undefined;
     }
 
     if (["someProp"].some((d) => changes[d])) {
       this.__getterCache["objectFromDestructured"] = undefined;
+    }
+
+    if (["someProp"].some((d) => changes[d])) {
+      this.__getterCache["someMethod1"] = undefined;
     }
   }
 
@@ -99,8 +146,11 @@ class Widget extends WidgetProps {
   set _someState(someState: string) {
     this.someState = someState;
     this._detectChanges();
+    this.__getterCache["arrayFromObj"] = undefined;
+    this.__getterCache["arrayFromArr"] = undefined;
     this.__getterCache["someObj"] = undefined;
     this.__getterCache["objectFromDestructured"] = undefined;
+    this.__getterCache["someMethod1"] = undefined;
   }
 }
 @NgModule({

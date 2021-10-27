@@ -92,7 +92,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
       const { style } = __restAttributes();
       return modifyStyles(style);
     },
-    [__restAttributes().style]
+    [__restAttributes]
   );
 
   return view({

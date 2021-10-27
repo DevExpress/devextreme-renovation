@@ -31,11 +31,11 @@ class Widget extends JSXComponent(WidgetProps){
 // 	//[someObj.statefield, someObj.propField]
 // 	// ngOnChanges(changes){ if (["statefield", "propfield"] in changes) {this.gettercahce[]}}
 // 	// componentWillupdate
-//   get arrayFromObj(): (string|undefined)[] {
-//     const {stateField , propField} = this.someObj
-// 		return [stateField, propField]
-// 		// [someobj.statefield, someobj.propfield]
-//   }
+  get arrayFromObj(): (string|undefined)[] {
+    const {stateField , propField} = this.someObj
+		return [stateField, propField]
+		// [someobj.statefield, someobj.propfield]
+  }
 
 //   get someObj2() {
 // 	return {
@@ -55,10 +55,10 @@ class Widget extends JSXComponent(WidgetProps){
 // 	  return this.props.someProp
 //   }
 
-//   get arrayFromArr(): (string|undefined)[] {
-//     const [stateField , propField] = this.arrayFromObj
-// 		return [stateField, propField]
-//   }
+  get arrayFromArr(): (string|undefined)[] {
+    const [stateField , propField] = this.arrayFromObj
+		return [stateField, propField]
+  }
 
 //   get someMethod(): { stateField: string, propField: string } {
 //    const { stateField, propField } = this.objectFromDestructured;
@@ -92,9 +92,10 @@ class Widget extends JSXComponent(WidgetProps){
 		return {stateField, propField}
 	}
 
-	someMethod1() {
+	get someMethod1(): GetterType {
 	const { stateField: stateField2 , propField } = this.someObj;
 	// There is no dependencies [this.somestate, this.props.someProp]
+	return {stateField: stateField2 , propField  }
 	}
 
 	someMethodFromDestructured(): GetterType {
@@ -102,9 +103,14 @@ class Widget extends JSXComponent(WidgetProps){
 		return {stateField, propField}
 	}
 
+	someMethodFromDestructured2() {
+		const { someProp , type } = this.props;
+	
+	}
+
 	someMethod2() {
 		const state = this.someObj.stateField;
-		const prop = this.someObj.propField;
+		
 	// There is we have dependencies [this.somestate, this.props.someProp]
 	}
 

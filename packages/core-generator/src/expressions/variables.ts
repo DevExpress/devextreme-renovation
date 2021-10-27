@@ -137,47 +137,17 @@ export class VariableDeclaration extends Expression {
         if (initializerString === 'this.props' || initializerString === 'this') {
           return this.name.getDependency(options);
         }
-        if (this.name.type === 'object') {
+        if (this.name.type === 'object' || this.name.type === 'array') {
           const initName = this.initializer.toString(options);
           const initMember = this.initializer instanceof PropertyAccess
             ? this.initializer.getMember(options)
             : options.members.find((m) => m.name === initName);
-          // if (initMember instanceof Method) {
-          //   return this.name.elements.map((el) => `${initName}.${el.propertyName || el.name}`);
-          // }
           return initMember ? [initMember] : [];
         }
         // check if type is array
         return this.name.getDependency(options);
       }
       return initializerDependency;
-    }
-    return [];
-  }
-
-  destructuredDepsString(options: toStringOptions): string[] {
-    if (this.initializer && typeof this.initializer !== 'string') {
-      const initializerString = this.initializer.toString();
-      if (
-        this.name instanceof BindingPattern
-        && initializerString
-          .startsWith(options?.componentContext || SyntaxKind.ThisKeyword)
-      ) {
-        if (this.name.type === 'object') {
-          const initName = this.initializer.toString(options);
-          const initMember = this.initializer instanceof PropertyAccess
-            ? this.initializer.getMember(options)
-            : options.members.find((m) => m.name === initName);
-          if (initializerString === 'this.props' || initializerString === 'this') {
-            return [];
-          }
-          if (initMember instanceof Method) {
-            return this.name.elements.map((el) => `${initName}.${el.propertyName || el.name}`);
-          }
-          return [initName];
-          // check if initMember not a method
-        }
-      }
     }
     return [];
   }
@@ -242,13 +212,6 @@ export class VariableDeclarationList extends Expression {
       ...d.getVariableExpressions(),
     }), {});
   }
-
-  destructuredDepsString(options: toStringOptions): string[] {
-    return this.declarations.reduce(
-      (arr: string[], declaration) => [...arr, ...declaration.destructuredDepsString(options)],
-      [],
-    );
-  }
 }
 
 export class VariableStatement extends Expression {
@@ -278,9 +241,5 @@ export class VariableStatement extends Expression {
 
   getVariableExpressions() {
     return this.declarationList.getVariableExpressions();
-  }
-
-  destructuredDepsString(options: toStringOptions): string[] {
-    return this.declarationList.destructuredDepsString(options);
   }
 }
