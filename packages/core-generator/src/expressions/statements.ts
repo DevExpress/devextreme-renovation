@@ -1,6 +1,7 @@
 import { Expression, ExpressionWithOptionalExpression } from './base';
 import { toStringOptions } from '../types';
 import { Dependency } from '..';
+import { VariableStatement } from './variables';
 
 export class Block extends Expression {
   statements: Expression[];
@@ -25,6 +26,24 @@ export class Block extends Expression {
 
   isJsx() {
     return this.statements.some((s) => s.isJsx());
+  }
+
+  destructuredDepsString(options: toStringOptions): string[] {
+    const destructuredDepsString = this.statements.reduce((arr: string[], s) => (
+      s instanceof VariableStatement
+        ? [...arr, ...s.destructuredDepsString(options)]
+        : arr), []);
+    const usualMembers = destructuredDepsString?.filter((depString) => !depString.includes('.'));
+    const propertyAccess = destructuredDepsString?.filter((depString) => {
+      let notDefined = true;
+      usualMembers?.forEach((m) => {
+        if (depString.includes(m)) {
+          notDefined = false;
+        }
+      });
+      return notDefined;
+    });
+    return propertyAccess;
   }
 }
 

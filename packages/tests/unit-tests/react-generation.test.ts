@@ -367,6 +367,10 @@ mocha.describe("react-generation", function () {
        () => { this.testGenerator(this.test!.title) }, Error);
   });
 
+  mocha.it("getters-destructuring", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {
