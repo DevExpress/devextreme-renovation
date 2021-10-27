@@ -111,7 +111,7 @@ export default class WidgetWithTemplate extends WidgetInput {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -126,7 +126,6 @@ export default class WidgetWithTemplate extends WidgetInput {
     onClick: (e: any) => void 0,
   };
 }
-
 @NgModule({
   declarations: [WidgetWithTemplate],
   imports: [DxWidgetWithPropsModule, CommonModule],

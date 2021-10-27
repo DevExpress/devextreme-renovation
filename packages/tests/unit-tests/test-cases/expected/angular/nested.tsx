@@ -167,7 +167,7 @@ export default class Widget extends PickedProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -184,7 +184,6 @@ export default class Widget extends PickedProps {
     this._detectChanges();
   }
 }
-
 @NgModule({
   declarations: [
     Widget,

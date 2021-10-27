@@ -43,7 +43,7 @@ export class TextSvgElement extends TextSvgElementProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -52,7 +52,6 @@ export class TextSvgElement extends TextSvgElementProps {
     super();
   }
 }
-
 @NgModule({
   declarations: [TextSvgElement],
   imports: [CommonModule],

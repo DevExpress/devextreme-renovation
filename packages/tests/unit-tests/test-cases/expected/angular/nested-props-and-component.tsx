@@ -193,7 +193,7 @@ export default class UndefWidget extends WidgetProps {
   _someEvent: any;
   _twoWayPropChange: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -229,7 +229,6 @@ export default class UndefWidget extends WidgetProps {
     }
   }
 }
-
 @NgModule({
   declarations: [
     UndefWidget,

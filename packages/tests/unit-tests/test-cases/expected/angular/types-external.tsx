@@ -46,7 +46,7 @@ export default class Widget extends WidgetProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -55,7 +55,6 @@ export default class Widget extends WidgetProps {
     super();
   }
 }
-
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

@@ -295,7 +295,7 @@ export default class DynamicComponentCreator extends Props {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -311,7 +311,6 @@ export default class DynamicComponentCreator extends Props {
     return normalizeStyles(value);
   }
 }
-
 @NgModule({
   declarations: [DynamicComponentCreator, DynamicComponentDirective],
   imports: [DxWidgetModule, DxWidgetWithTemplateModule, CommonModule],

@@ -53,7 +53,7 @@ export class ExternalLayout extends Props {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -64,7 +64,6 @@ export class ExternalLayout extends Props {
 
   InnerComponentDefaults = { someTemplate: InnerWidget };
 }
-
 @NgModule({
   declarations: [ExternalLayout],
   imports: [

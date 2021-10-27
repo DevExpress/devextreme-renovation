@@ -78,7 +78,7 @@ export default class Widget extends WidgetInput {
   _state2Change: any;
   _statePropChange: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -107,7 +107,6 @@ export default class Widget extends WidgetInput {
     this._detectChanges();
   }
 }
-
 @NgModule({
   declarations: [Widget],
   imports: [DxModelWidgetModule, CommonModule],

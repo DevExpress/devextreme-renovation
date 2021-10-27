@@ -73,7 +73,7 @@ export default class Widget
 
   _valueChange: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -86,7 +86,6 @@ export default class Widget
     };
   }
 }
-
 @NgModule({
   declarations: [Widget],
   imports: [DxInnerWidgetModule, CommonModule],

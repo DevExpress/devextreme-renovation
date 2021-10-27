@@ -42,7 +42,7 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -51,7 +51,6 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     super();
   }
 }
-
 @NgModule({
   declarations: [WidgetWithApiRef],
   imports: [DxWidgetModule, CommonModule],

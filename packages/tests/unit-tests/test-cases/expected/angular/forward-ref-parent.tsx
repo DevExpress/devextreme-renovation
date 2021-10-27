@@ -150,7 +150,7 @@ export default class RefOnChildrenParent extends Props {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -163,7 +163,6 @@ export default class RefOnChildrenParent extends Props {
     this._detectChanges();
   }
 }
-
 @NgModule({
   declarations: [RefOnChildrenParent],
   imports: [DxRefOnChildrenChildModule, CommonModule],

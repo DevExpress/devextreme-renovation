@@ -42,7 +42,7 @@ export class WidgetWithProps extends WidgetWithPropsInput {
 
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -54,7 +54,6 @@ export class WidgetWithProps extends WidgetWithPropsInput {
     };
   }
 }
-
 @NgModule({
   declarations: [WidgetWithProps],
   imports: [CommonModule],

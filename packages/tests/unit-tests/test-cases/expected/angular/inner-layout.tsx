@@ -38,7 +38,7 @@ export class InnerLayout extends InnerLayoutProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -47,7 +47,6 @@ export class InnerLayout extends InnerLayoutProps {
     super();
   }
 }
-
 @NgModule({
   declarations: [InnerLayout],
   imports: [DxInnerComponentModule, CommonModule],

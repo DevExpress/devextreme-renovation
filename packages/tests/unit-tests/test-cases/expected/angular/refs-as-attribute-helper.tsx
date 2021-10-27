@@ -43,7 +43,7 @@ export default class HelperWidget extends HelperWidgetProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -52,7 +52,6 @@ export default class HelperWidget extends HelperWidgetProps {
     super();
   }
 }
-
 @NgModule({
   declarations: [HelperWidget],
   imports: [CommonModule],

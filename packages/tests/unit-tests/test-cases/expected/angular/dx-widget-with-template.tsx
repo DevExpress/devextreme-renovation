@@ -40,7 +40,7 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -49,7 +49,6 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
     super();
   }
 }
-
 @NgModule({
   declarations: [WidgetWithTemplate],
   imports: [CommonModule],

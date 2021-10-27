@@ -164,7 +164,7 @@ class Widget extends WidgetProps {
 
   _pageIndexChange: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

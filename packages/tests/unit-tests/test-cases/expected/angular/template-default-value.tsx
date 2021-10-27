@@ -80,7 +80,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -95,7 +95,6 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     onClick: (e: any) => void 0,
   };
 }
-
 @NgModule({
   declarations: [TemplateDefaultValue],
   imports: [DxWidgetWithPropsModule, CommonModule],

@@ -40,7 +40,7 @@ export default class Import extends ImportProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -49,7 +49,6 @@ export default class Import extends ImportProps {
     super();
   }
 }
-
 @NgModule({
   declarations: [Import],
   imports: [CommonModule],

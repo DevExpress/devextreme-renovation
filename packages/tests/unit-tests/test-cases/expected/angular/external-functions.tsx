@@ -147,7 +147,7 @@ export default class Widget extends WidgetProps {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -160,7 +160,6 @@ export default class Widget extends WidgetProps {
     return normalizeStyles(value);
   }
 }
-
 @NgModule({
   declarations: [Widget],
   imports: [CommonModule],

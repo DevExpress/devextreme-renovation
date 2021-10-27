@@ -1674,7 +1674,7 @@ export class AngularComponent extends Component {
   )}
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements)}
-            @ViewChild('widgetTemplate', { static: true }) widgetTemplate: TemplateRef<any>;
+            @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
             ${this.compileLifeCycle(
     'constructor',
     (constructorStatements.length || constructorArguments.length)

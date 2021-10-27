@@ -166,7 +166,7 @@ export default class Widget extends WidgetPropsType {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -183,7 +183,6 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
 }
-
 @NgModule({
   declarations: [Widget, DxWidgetTexts2, DxWidgetTexts3],
   imports: [CommonModule],

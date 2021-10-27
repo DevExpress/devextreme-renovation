@@ -135,7 +135,7 @@ export default class InnerWidget
   _onSelect: any;
   _valueChange: any;
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -155,7 +155,6 @@ export default class InnerWidget
     return normalizeStyles(value);
   }
 }
-
 @NgModule({
   declarations: [InnerWidget],
   imports: [CommonModule],

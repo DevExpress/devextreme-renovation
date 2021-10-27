@@ -103,7 +103,7 @@ export default class WithNested extends WithNestedInput {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -116,7 +116,6 @@ export default class WithNested extends WithNestedInput {
     this._detectChanges();
   }
 }
-
 @NgModule({
   declarations: [WithNested, DxWithNestedRow, DxWithNestedRowCell],
   imports: [CommonModule],

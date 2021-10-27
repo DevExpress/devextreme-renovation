@@ -47,7 +47,7 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   }
 
   @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate: TemplateRef<any>;
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
@@ -56,7 +56,6 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
     super();
   }
 }
-
 @NgModule({
   declarations: [TemplateTransitWidget],
   imports: [DxWidgetWithTemplateModule, CommonModule],
