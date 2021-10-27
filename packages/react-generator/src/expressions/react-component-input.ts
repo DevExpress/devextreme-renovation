@@ -10,6 +10,7 @@ import {
   Property as BaseProperty,
   SyntaxKind,
   TypeExpression,
+  isComponentWrapper,
 } from '@devextreme-generator/core';
 
 import { Method } from './class-members/method';
@@ -155,6 +156,7 @@ export class ComponentInput extends BaseComponentInput {
       ${propertiesWithInitializer
     .map((p) => p.defaultProps(options))
     .join(',\n')}
+    ${isComponentWrapper(this.context.imports) ? ',isReactComponentWrapper: true' : ''}
    }`;
 
     let defaultProps = defaultObject;
