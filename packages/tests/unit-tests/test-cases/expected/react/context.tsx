@@ -12,7 +12,7 @@ const Props: PropsType = {
   p1: 10,
 };
 import * as React from "react";
-import { useState, useContext, useCallback, useMemo } from "react";
+import { useState, useContext, useCallback } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -38,7 +38,7 @@ export default function Widget(props: typeof Props & RestProps) {
     },
     [provider, contextConsumer]
   );
-  const __contextProvider = useMemo(function __contextProvider(): any {
+  const __contextProvider = useCallback(function __contextProvider(): any {
     return "provide";
   }, []);
   const __restAttributes = useCallback(
@@ -57,7 +57,7 @@ export default function Widget(props: typeof Props & RestProps) {
           contextConsumer,
           provider,
           sum: __sum(),
-          contextProvider: __contextProvider,
+          contextProvider: __contextProvider(),
           restAttributes: __restAttributes(),
         })}
       </P1Context.Provider>

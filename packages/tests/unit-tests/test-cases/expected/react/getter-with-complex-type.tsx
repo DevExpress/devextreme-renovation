@@ -38,7 +38,7 @@ export default function Widget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
-  const __provide = useMemo(
+  const __provide = useCallback(
     function __provide(): any {
       return __state_i;
     },
@@ -91,7 +91,7 @@ export default function Widget(props: typeof Props & RestProps) {
         props: { ...props },
         i: __state_i,
         cons,
-        provide: __provide,
+        provide: __provide(),
         g1: __g1,
         g2: __g2(),
         g3: __g3(),

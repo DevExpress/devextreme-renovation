@@ -8,7 +8,7 @@ import {
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string, options?: toStringOptions): string {
-    const isMemorized = this.name !== 'restAttributes' && this.isMemorized(options);
+    const isMemorized = this.name !== 'restAttributes' && this.isMemorized(options, false);
     return `${super.getter(componentContext)}${isMemorized ? '' : '()'}`;
   }
 

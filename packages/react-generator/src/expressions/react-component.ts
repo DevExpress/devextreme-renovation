@@ -333,7 +333,7 @@ export class ReactComponent extends Component {
     }
 
     const memorizedGetters = this.methods.reduce((arr, method) => (method instanceof GetAccessor
-      && method.isMemorized(this.getToStringOptions())
+      && method.isMemorized(this.getToStringOptions(), false)
       ? [...arr, method]
       : arr),
     [] as BaseMethod[]);
@@ -946,7 +946,7 @@ export class ReactComponent extends Component {
         if (methodWithDeps.level >= recursiveLevel) {
           return method.declaration(options);
         }
-        const isMemorized = method instanceof GetAccessor && method.isMemorized(options);
+        const isMemorized = method instanceof GetAccessor && method.isMemorized(options, false);
         return `const ${method.name} = ${isMemorized ? 'useMemo' : 'useCallback'}(
           ${method.declaration(options)}${calculateMethodDependencyString(method, options)});`;
       },
