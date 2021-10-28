@@ -137,6 +137,7 @@ interface Widget {
   __getNestedTexts2: typeof TextsProps;
   __getNestedTexts3: typeof TextsProps;
 }
+
 export default function Widget(props: typeof WidgetPropsType & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

@@ -80,16 +80,19 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const __styles = useCallback(function __styles(): any {
-    const { style } = __restAttributes();
-    return modifyStyles(style);
-  }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
       return restProps;
     },
     [props]
+  );
+  const __styles = useCallback(
+    function __styles(): any {
+      const { style } = __restAttributes();
+      return modifyStyles(style);
+    },
+    [__restAttributes]
   );
 
   return view({
