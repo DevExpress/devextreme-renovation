@@ -4469,27 +4469,24 @@ mocha.describe("ComponentInput", function () {
     );
 
     mocha.it(
-      "Nested component should throw warn with not TypeReferenceNode",
+      "Nested component should throw error with not TypeReferenceNode",
       function () {
-        createComponentInput([
-          generator.createProperty(
-            [createDecorator("Nested")],
-            undefined,
-            generator.createIdentifier("Custom1")
-          ),
-          generator.createProperty(
-            [createDecorator("Nested")],
-            undefined,
-            generator.createIdentifier("Custom2"),
-            undefined,
-            generator.createKeywordTypeNode("string")
-          ),
-        ]);
-
-        assert.deepEqual(this.getWarnings(), [
-          'One of "Custom1" Nested property\'s types should be complex type',
-          'One of "Custom2" Nested property\'s types should be complex type',
-        ]);
+        assert.throws(
+          () => createComponentInput([
+            generator.createProperty(
+              [createDecorator("Nested")],
+              undefined,
+              generator.createIdentifier("Custom1")
+            ),
+            generator.createProperty(
+              [createDecorator("Nested")],
+              undefined,
+              generator.createIdentifier("Custom2"),
+              undefined,
+              generator.createKeywordTypeNode("string")
+            ),
+          ]),
+          new Error('One of "Custom1" Nested property\'s types should be complex type'))
       }
     );
 
