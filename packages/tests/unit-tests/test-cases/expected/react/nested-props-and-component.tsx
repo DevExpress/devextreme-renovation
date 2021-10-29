@@ -88,6 +88,7 @@ interface UndefWidget {
   __getNestedNestedProp: typeof FakeNested[] | undefined;
   __getNestedAnotherNestedPropInit: typeof FakeNested[];
 }
+
 export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   const [__state_twoWayProp, __state_setTwoWayProp] = useState<
     number | undefined

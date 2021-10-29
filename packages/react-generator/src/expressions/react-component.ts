@@ -34,6 +34,7 @@ import {
   PropertyAssignment,
   ShorthandPropertyAssignment,
   Dependency,
+  isComponentWrapper,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method, calculateMethodDependencyString } from './class-members/method';
@@ -283,7 +284,7 @@ export class ReactComponent extends Component {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
     if (this.props.some((p) => p.isTemplate)) {
-      imports.push(`import { ${this.isComponentWrapper() ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
+      imports.push(`import { ${isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
     }
 
     return imports;
@@ -332,8 +333,18 @@ export class ReactComponent extends Component {
       hooks.push('useContext');
     }
 
-    if (this.listeners.length || this.methods.length) {
+    const memorizedGetters = this.methods.reduce((arr, method) => (method instanceof GetAccessor
+      && method.isMemorized(this.getToStringOptions(), false)
+      ? [...arr, method]
+      : arr),
+    [] as BaseMethod[]);
+
+    if (this.listeners.length || this.methods.length > memorizedGetters.length) {
       hooks.push('useCallback');
+    }
+
+    if (memorizedGetters.length) {
+      hooks.push('useMemo');
     }
 
     if (getSubscriptions(this.listeners).length || this.effects.length) {
@@ -534,12 +545,8 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  isComponentWrapper(): boolean {
-    return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
-  }
-
   getTemplateRender(name: string): string {
-    return this.isComponentWrapper() ? `getWrapperTemplate(props.${name})`
+    return isComponentWrapper(this.context.imports) ? `getWrapperTemplate(props.${name})`
       : `getTemplate(props.${name}, props.${getTemplatePropName(
         name,
         'render',
@@ -560,7 +567,7 @@ export class ReactComponent extends Component {
       .filter((s) => !s.isPrivate)
       .map((s) => {
         if (
-          s._name.toString() !== s.getter(toStringOptions.newComponentContext)
+          s._name.toString() !== s.getter(toStringOptions.newComponentContext, toStringOptions)
         ) {
           const expression = context
             ? new PropertyAccess(
@@ -584,7 +591,7 @@ export class ReactComponent extends Component {
 
     const nestedProps = this.members
       .filter((m) => m.isNested)
-      .map((n) => `${n.name}: ${n.getter()}`);
+      .map((n) => `${n.name}: ${n.getter(undefined, toStringOptions)}`);
 
     const props = this.isJSXComponent
       ? [
@@ -615,7 +622,7 @@ export class ReactComponent extends Component {
             (m) => (m.isConsumer || m.isProvider) && !(m instanceof GetAccessor),
           )
           .map((m) => (toStringOptions.newComponentContext
-            ? `${m.name}:${m.getter(toStringOptions.componentContext)}`
+            ? `${m.name}:${m.getter(toStringOptions.componentContext, toStringOptions)}`
             : m.name.toString())),
       )
       .concat(compileState(this.methods.filter((m) => !m.isPrivate)));
@@ -936,7 +943,9 @@ export class ReactComponent extends Component {
         if (methodWithDeps.level >= recursiveLevel) {
           return method.declaration(options);
         }
-        return `const ${method.name} = useCallback(${method.declaration(options)}${calculateMethodDependencyString(method, options)});`;
+        const isMemorized = method instanceof GetAccessor && method.isMemorized(options, false);
+        return `const ${method.name} = ${isMemorized ? 'useMemo' : 'useCallback'}(
+          ${method.declaration(options)}${calculateMethodDependencyString(method, options)});`;
       },
     )
       .join('\n');

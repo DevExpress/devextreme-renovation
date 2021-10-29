@@ -19,6 +19,7 @@ import * as React from "react";
 import {
   useState,
   useCallback,
+  useMemo,
   useEffect,
   useImperativeHandle,
   forwardRef,
@@ -114,27 +115,27 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       [__g1, __g2]
     );
-    const __g5 = useCallback(
+    const __g5 = useMemo(
       function __g5(): (string | undefined)[] {
         return [...__g3(), __g2()];
       },
       [__g3, __g2]
     );
-    const __g4 = useCallback(
+    const __g4 = useMemo(
       function __g4(): (string | undefined)[] {
         return [...__g3(), __g1()];
       },
       [__g3, __g1]
     );
-    const __g6 = useCallback(
+    const __g6 = useMemo(
       function __g6(): (string | undefined)[] {
-        return [...__g5(), ...__g4()];
+        return [...__g5, ...__g4];
       },
       [__g5, __g4]
     );
     const __g7 = useCallback(
       function __g7(): any {
-        return __g6();
+        return __g6;
       },
       [__g6]
     );
@@ -159,12 +160,12 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       },
       someState: __state_someState,
       g7: __g7(),
-      g5: __g5(),
+      g5: __g5,
       g1: __g1(),
       g2: __g2(),
       factorial: __factorial,
-      g4: __g4(),
-      g6: __g6(),
+      g4: __g4,
+      g6: __g6,
       type: __type(),
       pageIndexChange: __pageIndexChange,
       someMethod: __someMethod,

@@ -20,7 +20,7 @@ type internalType = { a: string };
 const view = () => <div></div>;
 
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -38,25 +38,25 @@ interface Widget {
 }
 
 function Widget(props: typeof WidgetProps & RestProps) {
-  const __internalInterfaceGetter = useCallback(
+  const __internalInterfaceGetter = useMemo(
     function __internalInterfaceGetter(): internalInterface {
       return { field1: { a: props.someProp }, field2: 2, field3: 3 };
     },
     [props.someProp]
   );
-  const __internalTypeGetter = useCallback(
+  const __internalTypeGetter = useMemo(
     function __internalTypeGetter(): internalType {
       return { a: "1" };
     },
     []
   );
-  const __externalInterfaceGetter = useCallback(
+  const __externalInterfaceGetter = useMemo(
     function __externalInterfaceGetter(): externalInterface {
       return { inputInt: 2 };
     },
     []
   );
-  const __externalTypeGetter = useCallback(
+  const __externalTypeGetter = useMemo(
     function __externalTypeGetter(): externalType {
       return { value: "" };
     },

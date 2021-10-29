@@ -104,7 +104,7 @@ export class PropertyAccess extends ExpressionWithExpression {
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member) {
-      return `${member.getter(options!.newComponentContext)}`;
+      return `${member.getter(options!.newComponentContext, options)}`;
     }
 
     const result = `${this.expression.toString(options)}${this.processName(

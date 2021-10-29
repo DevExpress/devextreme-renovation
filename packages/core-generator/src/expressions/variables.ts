@@ -125,15 +125,26 @@ export class VariableDeclaration extends Expression {
   getDependency(options: toStringOptions): Dependency[] {
     if (this.initializer && typeof this.initializer !== 'string') {
       const initializerDependency = this.initializer.getDependency(options);
+      const initializerString = this.initializer.toString();
       if (
         this.name instanceof BindingPattern
-        && this.initializer
-          .toString()
+        && initializerString
           .startsWith(options?.componentContext || SyntaxKind.ThisKeyword)
       ) {
         if (this.name.hasRest()) {
           return initializerDependency;
         }
+        if (initializerString === 'this.props' || initializerString === 'this') {
+          return this.name.getDependency(options);
+        }
+        if (this.name.type === 'object' || this.name.type === 'array') {
+          const initName = this.initializer.toString(options);
+          const initMember = this.initializer instanceof PropertyAccess
+            ? this.initializer.getMember(options)
+            : options.members.find((m) => m.name === initName);
+          return initMember ? [initMember] : [];
+        }
+        // check if type is array
         return this.name.getDependency(options);
       }
       return initializerDependency;
