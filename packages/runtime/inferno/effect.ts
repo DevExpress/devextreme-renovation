@@ -3,22 +3,23 @@ export class InfernoEffect {
 
   constructor(
     private effect: () => (() => void) | void,
-    private dependency: Array<any>,
+    private dependency: Array<unknown>,
   ) {
     this.destroy = effect();
   }
 
-  update(dependency?: Array<any>) {
-    if (!dependency || dependency.some((d, i) => this.dependency[i] !== d)) {
-      this.dispose();
-      this.destroy = this.effect();
-    }
+  update(dependency?: Array<unknown>): void {
+    const currentDependency = this.dependency;
     if (dependency) {
       this.dependency = dependency;
     }
+    if (!dependency || dependency.some((d, i) => currentDependency[i] !== d)) {
+      this.dispose();
+      this.destroy = this.effect();
+    }
   }
 
-  dispose() {
+  dispose(): void {
     if (this.destroy) {
       this.destroy();
     }
