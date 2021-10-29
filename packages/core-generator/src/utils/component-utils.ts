@@ -3,6 +3,7 @@ import { HeritageClause } from '../expressions/class';
 import { Call, Identifier } from '../expressions/common';
 import { Component } from '../expressions/component';
 import { ComponentInput } from '../expressions/component-input';
+import { ImportClause } from '../expressions/import';
 import { Decorator } from '../expressions/decorator';
 import {
   ExpressionWithTypeArguments,
@@ -69,4 +70,10 @@ export function extractComponentFromType(
   }
 
   return undefined;
+}
+
+export function isComponentWrapper(imports: {
+  [name: string]: ImportClause;
+} | undefined): boolean {
+  return Object.keys(imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
 }
