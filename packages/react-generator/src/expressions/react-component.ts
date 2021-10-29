@@ -34,6 +34,7 @@ import {
   PropertyAssignment,
   ShorthandPropertyAssignment,
   Dependency,
+  isComponentWrapper,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method, calculateMethodDependencyString } from './class-members/method';
@@ -283,7 +284,7 @@ export class ReactComponent extends Component {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
     if (this.props.some((p) => p.isTemplate)) {
-      imports.push(`import { ${this.isComponentWrapper() ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
+      imports.push(`import { ${isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
     }
 
     return imports;
@@ -544,12 +545,8 @@ export class ReactComponent extends Component {
     return '';
   }
 
-  isComponentWrapper(): boolean {
-    return Object.keys(this.context.imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
-  }
-
   getTemplateRender(name: string): string {
-    return this.isComponentWrapper() ? `getWrapperTemplate(props.${name})`
+    return isComponentWrapper(this.context.imports) ? `getWrapperTemplate(props.${name})`
       : `getTemplate(props.${name}, props.${getTemplatePropName(
         name,
         'render',
