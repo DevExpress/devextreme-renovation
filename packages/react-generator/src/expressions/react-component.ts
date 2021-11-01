@@ -114,13 +114,13 @@ export class ReactComponent extends Component {
     });
 
     if (members.some((m) => m.isNested)) {
-      members.push(this.createNestedChildrenGetter());
+      members.unshift(this.createNestedChildrenGetter());
     }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       if (m.initializer) {
         m.questionOrExclamationToken = SyntaxKind.QuestionToken;
       }
-      members.push(this.createNestedPropertyGetter(m));
+      members.unshift(this.createNestedPropertyGetter(m));
     });
 
     return members;

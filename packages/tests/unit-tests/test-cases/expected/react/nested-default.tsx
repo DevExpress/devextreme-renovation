@@ -68,13 +68,31 @@ declare type RestProps = {
 };
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
+  __getNestedRows: typeof GridRow[];
+  nestedChildren: () => Record<string, any>;
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
-  nestedChildren: () => Record<string, any>;
-  __getNestedRows: typeof GridRow[];
 }
 
 export default function WithNested(props: typeof WithNestedInput & RestProps) {
+  const __getNestedRows = useCallback(
+    function __getNestedRows(): typeof GridRow[] {
+      const nested = __nestedChildren();
+      return props.rows
+        ? props.rows
+        : nested.rows
+        ? nested.rows
+        : props?.__defaultNestedValues?.rows;
+    },
+    [props.rows, props.children]
+  );
+  const __nestedChildren = useCallback(
+    function __nestedChildren(): Record<string, any> {
+      const { children } = props;
+      return __collectChildren(children);
+    },
+    [props.children]
+  );
   const __getRowCells = useCallback(
     function __getRowCells(index: number): any {
       const cells = __getNestedRows()?.[index].cells;
@@ -96,31 +114,13 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     },
     [props]
   );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
-  );
-  const __getNestedRows = useCallback(
-    function __getNestedRows(): typeof GridRow[] {
-      const nested = __nestedChildren();
-      return props.rows
-        ? props.rows
-        : nested.rows
-        ? nested.rows
-        : props?.__defaultNestedValues?.rows;
-    },
-    [props.rows, props.children]
-  );
 
   return view({
     props: { ...props, rows: __getNestedRows() },
+    __getNestedRows: __getNestedRows(),
+    nestedChildren: __nestedChildren,
     getRowCells: __getRowCells,
     restAttributes: __restAttributes(),
-    nestedChildren: __nestedChildren,
-    __getNestedRows: __getNestedRows(),
   });
 }
 
