@@ -8,6 +8,7 @@ import {
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  objectProp?: { someField: number };
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
@@ -94,11 +95,11 @@ class Widget extends BaseInfernoComponent<any> {
       return { stateField, propField };
     })());
   }
-  get someGetter(): GetterType {
+  get someGetter(): GetterType | undefined {
     if (this.__getterCache["someGetter"] !== undefined) {
       return this.__getterCache["someGetter"];
     }
-    return (this.__getterCache["someGetter"] = ((): GetterType => {
+    return (this.__getterCache["someGetter"] = ((): GetterType | undefined => {
       const { propField, stateField: stateField2 } = this.someObj;
       return { stateField: stateField2, propField };
     })());
@@ -108,7 +109,7 @@ class Widget extends BaseInfernoComponent<any> {
     return { stateField, propField };
   }
   get restAttributes(): RestProps {
-    const { someProp, type, ...restProps } = this.props as any;
+    const { objectProp, someProp, type, ...restProps } = this.props as any;
     return restProps;
   }
   changeState(newValue: string): any {
@@ -119,7 +120,7 @@ class Widget extends BaseInfernoComponent<any> {
     arrayFromArr?: (string | undefined)[];
     someObj?: GetterType;
     objectFromDestructured?: GetterType;
-    someGetter?: GetterType;
+    someGetter?: GetterType | undefined;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     if (
