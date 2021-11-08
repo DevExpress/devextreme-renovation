@@ -3,6 +3,7 @@ import { Component, JSXComponent, ComponentBindings, Method, OneWay, InternalSta
 class WidgetProps {
   @OneWay() someProp: string =''
 	@OneWay() type?: string = '';
+	@OneWay() objectProp?: {someField: number};
 }
 interface FirstGetter {
 	field1: string;
@@ -39,7 +40,7 @@ class Widget extends JSXComponent(WidgetProps){
 		return {stateField, propField}
 	}
 
-	get someGetter(): GetterType {
+	get someGetter(): GetterType | undefined {
 		const { stateField: stateField2 , propField } = this.someObj;
 		return {stateField: stateField2 , propField  }
 	}
@@ -48,7 +49,6 @@ class Widget extends JSXComponent(WidgetProps){
 		const { stateField , propField } = this.objectFromDestructured;
 		return {stateField, propField}
 	}
-	
   @Method()
   changeState(newValue: string) {
     this.someState = newValue;
