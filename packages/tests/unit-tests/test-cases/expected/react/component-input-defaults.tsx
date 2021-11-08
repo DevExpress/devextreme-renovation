@@ -146,14 +146,54 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof WidgetPropsType & RestProps;
-  restAttributes: RestProps;
-  nestedChildren: () => Record<string, any>;
-  __getNestedTexts2: typeof TextsProps;
-  __getNestedTexts3: typeof TextsProps;
   __getNestedBaseNested: typeof TextsProps | string;
+  __getNestedTexts3: typeof TextsProps;
+  __getNestedTexts2: typeof TextsProps;
+  nestedChildren: () => Record<string, any>;
+  restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetPropsType & RestProps) {
+  const __getNestedBaseNested = useCallback(
+    function __getNestedBaseNested(): typeof TextsProps | string {
+      const nested = __nestedChildren();
+      return props.baseNested
+        ? props.baseNested
+        : nested.baseNested
+        ? nested.baseNested?.[0]
+        : props?.__defaultNestedValues?.baseNested;
+    },
+    [props.baseNested, props.children]
+  );
+  const __getNestedTexts3 = useCallback(
+    function __getNestedTexts3(): typeof TextsProps {
+      const nested = __nestedChildren();
+      return props.texts3
+        ? props.texts3
+        : nested.texts3
+        ? nested.texts3?.[0]
+        : props?.__defaultNestedValues?.texts3;
+    },
+    [props.texts3, props.children]
+  );
+  const __getNestedTexts2 = useCallback(
+    function __getNestedTexts2(): typeof TextsProps {
+      const nested = __nestedChildren();
+      return props.texts2
+        ? props.texts2
+        : nested.texts2
+        ? nested.texts2?.[0]
+        : props?.__defaultNestedValues?.texts2;
+    },
+    [props.texts2, props.children]
+  );
+  const __nestedChildren = useCallback(
+    function __nestedChildren(): Record<string, any> {
+      const { children } = props;
+      return __collectChildren(children);
+    },
+    [props.children]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -182,46 +222,6 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
     },
     [props]
   );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
-  );
-  const __getNestedTexts2 = useCallback(
-    function __getNestedTexts2(): typeof TextsProps {
-      const nested = __nestedChildren();
-      return props.texts2
-        ? props.texts2
-        : nested.texts2
-        ? nested.texts2?.[0]
-        : props?.__defaultNestedValues?.texts2;
-    },
-    [props.texts2, props.children]
-  );
-  const __getNestedTexts3 = useCallback(
-    function __getNestedTexts3(): typeof TextsProps {
-      const nested = __nestedChildren();
-      return props.texts3
-        ? props.texts3
-        : nested.texts3
-        ? nested.texts3?.[0]
-        : props?.__defaultNestedValues?.texts3;
-    },
-    [props.texts3, props.children]
-  );
-  const __getNestedBaseNested = useCallback(
-    function __getNestedBaseNested(): typeof TextsProps | string {
-      const nested = __nestedChildren();
-      return props.baseNested
-        ? props.baseNested
-        : nested.baseNested
-        ? nested.baseNested?.[0]
-        : props?.__defaultNestedValues?.baseNested;
-    },
-    [props.baseNested, props.children]
-  );
 
   return view({
     props: {
@@ -231,11 +231,11 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
       texts3: __getNestedTexts3(),
       baseNested: __getNestedBaseNested(),
     },
-    restAttributes: __restAttributes(),
-    nestedChildren: __nestedChildren,
-    __getNestedTexts2: __getNestedTexts2(),
-    __getNestedTexts3: __getNestedTexts3(),
     __getNestedBaseNested: __getNestedBaseNested(),
+    __getNestedTexts3: __getNestedTexts3(),
+    __getNestedTexts2: __getNestedTexts2(),
+    nestedChildren: __nestedChildren,
+    restAttributes: __restAttributes(),
   });
 }
 
