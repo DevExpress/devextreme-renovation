@@ -74,6 +74,9 @@ declare type RestProps = {
 };
 interface UndefWidget {
   props: typeof WidgetProps & RestProps;
+  __getNestedAnotherNestedPropInit: typeof FakeNested[];
+  __getNestedNestedProp: typeof FakeNested[] | undefined;
+  nestedChildren: () => Record<string, any>;
   oneway: any;
   twoway: any;
   someevent: any;
@@ -84,10 +87,8 @@ interface UndefWidget {
   nested: any;
   nestedinit: any;
   restAttributes: RestProps;
-  nestedChildren: () => Record<string, any>;
-  __getNestedNestedProp: typeof FakeNested[] | undefined;
-  __getNestedAnotherNestedPropInit: typeof FakeNested[];
 }
+
 export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   const [__state_twoWayProp, __state_setTwoWayProp] = useState<
     number | undefined
@@ -95,6 +96,35 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     props.twoWayProp !== undefined ? props.twoWayProp : props.defaultTwoWayProp
   );
 
+  const __getNestedAnotherNestedPropInit = useCallback(
+    function __getNestedAnotherNestedPropInit(): typeof FakeNested[] {
+      const nested = __nestedChildren();
+      return props.anotherNestedPropInit
+        ? props.anotherNestedPropInit
+        : nested.anotherNestedPropInit
+        ? nested.anotherNestedPropInit
+        : props?.__defaultNestedValues?.anotherNestedPropInit;
+    },
+    [props.anotherNestedPropInit, props.children]
+  );
+  const __getNestedNestedProp = useCallback(
+    function __getNestedNestedProp(): typeof FakeNested[] | undefined {
+      const nested = __nestedChildren();
+      return props.nestedProp
+        ? props.nestedProp
+        : nested.nestedProp
+        ? nested.nestedProp
+        : undefined;
+    },
+    [props.nestedProp, props.children]
+  );
+  const __nestedChildren = useCallback(
+    function __nestedChildren(): Record<string, any> {
+      const { children } = props;
+      return __collectChildren(children);
+    },
+    [props.children]
+  );
   const __oneway = useCallback(function __oneway(): any {
     return {
       ...props,
@@ -221,35 +251,6 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     },
     [props, __state_twoWayProp]
   );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
-  );
-  const __getNestedNestedProp = useCallback(
-    function __getNestedNestedProp(): typeof FakeNested[] | undefined {
-      const nested = __nestedChildren();
-      return props.nestedProp
-        ? props.nestedProp
-        : nested.nestedProp
-        ? nested.nestedProp
-        : undefined;
-    },
-    [props.nestedProp, props.children]
-  );
-  const __getNestedAnotherNestedPropInit = useCallback(
-    function __getNestedAnotherNestedPropInit(): typeof FakeNested[] {
-      const nested = __nestedChildren();
-      return props.anotherNestedPropInit
-        ? props.anotherNestedPropInit
-        : nested.anotherNestedPropInit
-        ? nested.anotherNestedPropInit
-        : props?.__defaultNestedValues?.anotherNestedPropInit;
-    },
-    [props.anotherNestedPropInit, props.children]
-  );
 
   return view({
     props: {
@@ -264,6 +265,9 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
       nestedProp: __getNestedNestedProp(),
       anotherNestedPropInit: __getNestedAnotherNestedPropInit(),
     },
+    __getNestedAnotherNestedPropInit: __getNestedAnotherNestedPropInit(),
+    __getNestedNestedProp: __getNestedNestedProp(),
+    nestedChildren: __nestedChildren,
     oneway: __oneway(),
     twoway: __twoway(),
     someevent: __someevent(),
@@ -274,9 +278,6 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     nested: __nested(),
     nestedinit: __nestedinit(),
     restAttributes: __restAttributes(),
-    nestedChildren: __nestedChildren,
-    __getNestedNestedProp: __getNestedNestedProp(),
-    __getNestedAnotherNestedPropInit: __getNestedAnotherNestedPropInit(),
   });
 }
 

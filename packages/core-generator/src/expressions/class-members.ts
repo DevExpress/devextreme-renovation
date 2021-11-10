@@ -61,7 +61,7 @@ export class BaseClassMember extends Expression {
     return processComponentContext(componentContext);
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string, _options?: toStringOptions): string {
     return `${this.processComponentContext(componentContext)}${this.name}`;
   }
 
@@ -381,7 +381,7 @@ export class GetAccessor extends Method {
     return `${this._name}:${this.type}`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string): string {
     return `${this.processComponentContext(componentContext)}${this.name}`;
   }
 
@@ -434,7 +434,7 @@ export class Property extends BaseClassMember {
     return `${this.name}:${this.initializer?.toString(options)}`;
   }
 
-  getter(componentContext?: string) {
+  getter(componentContext?: string): string {
     return `${this.processComponentContext(
       componentContext,
     )}${this._name.toString()}`;

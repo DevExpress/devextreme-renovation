@@ -213,7 +213,7 @@ export class ComponentInput extends Class implements Heritable {
       }
 
       if (m.isNested && extractComplexType(m.type) === 'any') {
-        warn(
+        throw new Error(
           `One of "${m.name}" Nested property's types should be complex type`,
         );
       }

@@ -50,7 +50,7 @@ function view(model: Widget) {
 }
 
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { getTemplate } from "@devextreme/runtime/react";
 
 declare type RestProps = {
@@ -64,8 +64,9 @@ interface Widget {
   spreadGetter: { width: string; height: string };
   restAttributes: RestProps;
 }
+
 export default function Widget(props: typeof Props & RestProps) {
-  const __spreadGetter = useCallback(function __spreadGetter(): {
+  const __spreadGetter = useMemo(function __spreadGetter(): {
     width: string;
     height: string;
   } {
@@ -98,7 +99,7 @@ export default function Widget(props: typeof Props & RestProps) {
       template: getTemplate(props.template, props.render, props.component),
       template2: getTemplate(props.template2, props.render2, props.component2),
     },
-    spreadGetter: __spreadGetter(),
+    spreadGetter: __spreadGetter,
     restAttributes: __restAttributes(),
   });
 }

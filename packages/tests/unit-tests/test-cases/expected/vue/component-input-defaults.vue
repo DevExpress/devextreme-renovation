@@ -24,6 +24,11 @@ export const BaseProps = {
       return isMaterial() ? 20 : 10;
     },
   },
+  __defaultNestedValues: {
+    default() {
+      return { baseNested: { text: "3" } };
+    },
+  },
 };
 export const TextsProps = {
   text: {
@@ -70,6 +75,10 @@ export const WidgetProps = {
               ? undefined
               : TextsProps.text?.default(),
         },
+        baseNested:
+          BaseProps === undefined || BaseProps === null
+            ? undefined
+            : BaseProps.__defaultNestedValues?.default().baseNested,
       };
     },
   },
@@ -139,6 +148,10 @@ const WidgetPropsType = {
           typeof WidgetProps.texts3.default === "function"
             ? WidgetProps.texts3.default()
             : WidgetProps.texts3.default,
+        baseNested:
+          typeof WidgetProps.baseNested.default === "function"
+            ? WidgetProps.baseNested.default()
+            : WidgetProps.baseNested.default,
       };
     },
   },
@@ -214,6 +227,7 @@ export const DxWidget = {
         empty: this.empty,
         height: this.height,
         width: this.width,
+        baseNested: this.__getNestedBaseNested,
         expressionDefault: this.expressionDefault,
       };
     },
@@ -257,6 +271,25 @@ export const DxWidget = {
         : nested.length
         ? nested?.[0]
         : this?.__defaultNestedValues?.texts3;
+    },
+    __getNestedBaseNested() {
+      const nested = this.__nestedChildren
+        .filter((child) => child.__name === "baseNested")
+        .map((n) => {
+          if (
+            !Object.keys(n).some(
+              (k) => k !== "__name" && k !== "__defaultNestedValues"
+            )
+          ) {
+            return n?.__defaultNestedValues || n;
+          }
+          return n;
+        });
+      return this.baseNested
+        ? this.baseNested
+        : nested.length
+        ? nested?.[0]
+        : this?.__defaultNestedValues?.baseNested;
     },
   },
 };
