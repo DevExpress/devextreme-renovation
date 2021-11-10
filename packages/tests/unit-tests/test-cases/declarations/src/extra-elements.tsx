@@ -29,6 +29,7 @@ import {
   @Component({
     defaultOptionRules: null,
     view: viewFunction,
+    jQuery: {register: true},
   })
   export class ExtraElement extends JSXComponent(Props) {}
   

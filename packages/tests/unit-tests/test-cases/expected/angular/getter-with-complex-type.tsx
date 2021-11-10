@@ -44,7 +44,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
   inputs: ["p"],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 export default class Widget extends Props {
   mutableVar: number = 10;
