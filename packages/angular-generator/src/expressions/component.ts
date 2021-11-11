@@ -1605,6 +1605,8 @@ export class AngularComponent extends Component {
       entryComponents,
     );
 
+    coreImports.push('ViewChild', 'TemplateRef');
+
     return `
         ${this.compileImports(coreImports)}
         ${this.compileCdkImports(cdkImports)}
@@ -1673,6 +1675,7 @@ export class AngularComponent extends Component {
   )}
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements)}
+            @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
             ${this.compileLifeCycle(
     'constructor',
     (constructorStatements.length || constructorArguments.length)

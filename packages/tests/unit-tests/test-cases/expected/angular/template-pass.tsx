@@ -12,42 +12,53 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<dx-widget-with-template
-    [template]="CustomTemplate"
-    [componentTemplate]="InnerWidget"
-    [arrowTemplate]="__arrowTemplate__generated"
-    ><ng-template
-      #InnerWidget
-      let-selected="selected"
-      let-value="value"
-      let-onSelect="onSelect"
-      let-valueChange="valueChange"
-      ><dx-inner-widget
-        [selected]="selected"
-        [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-        (onSelect)="
-          (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
-            $event
-          )
-        "
-        (valueChange)="
-          (valueChange !== undefined
-            ? valueChange
-            : InnerWidgetDefaults.valueChange)($event)
-        "
-      ></dx-inner-widget></ng-template
-    ><ng-template #CustomTemplate let-text="text" let-value="value"
-      ><span>{{ text }}</span></ng-template
-    ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
-      ><div>{{ name }}</div></ng-template
-    ></dx-widget-with-template
-  >`,
+  template: `<ng-template #widgetTemplate
+    ><dx-widget-with-template
+      [template]="CustomTemplate"
+      [componentTemplate]="InnerWidget"
+      [arrowTemplate]="__arrowTemplate__generated"
+      #widgetwithtemplate2
+      ><ng-template
+        #InnerWidget
+        let-selected="selected"
+        let-value="value"
+        let-onSelect="onSelect"
+        let-valueChange="valueChange"
+        ><dx-inner-widget
+          [selected]="selected"
+          [value]="value !== undefined ? value : InnerWidgetDefaults.value"
+          (onSelect)="
+            (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
+              $event
+            )
+          "
+          (valueChange)="
+            (valueChange !== undefined
+              ? valueChange
+              : InnerWidgetDefaults.valueChange)($event)
+          "
+          #innerwidget3
+        ></dx-inner-widget
+        ><ng-content
+          *ngTemplateOutlet="innerwidget3?.widgetTemplate"
+        ></ng-content></ng-template
+      ><ng-template #CustomTemplate let-text="text" let-value="value"
+        ><span>{{ text }}</span></ng-template
+      ><ng-template #__arrowTemplate__generated let-name="name" let-id="id"
+        ><div>{{ name }}</div></ng-template
+      ></dx-widget-with-template
+    ><ng-content
+      *ngTemplateOutlet="widgetwithtemplate2?.widgetTemplate"
+    ></ng-content
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -60,6 +71,8 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

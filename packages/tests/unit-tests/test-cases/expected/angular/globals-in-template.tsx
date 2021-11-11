@@ -20,6 +20,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -27,11 +29,16 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget-with-globals",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["items"],
-  template: `<div [class]="global_CLASS_NAME"
-    ><span [class]="global_CLASS_NAME"></span><dx-widget-two></dx-widget-two
-    ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
-      ><div></div></ng-container
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div [class]="global_CLASS_NAME"
+      ><span [class]="global_CLASS_NAME"></span
+      ><dx-widget-two #externalcomponent1></dx-widget-two
+      ><ng-content
+        *ngTemplateOutlet="externalcomponent1?.widgetTemplate"
+      ></ng-content
+      ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
+        ><div></div></ng-container></div
+  ></ng-template>`,
 })
 export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
@@ -50,6 +57,8 @@ export default class WidgetWithGlobals extends WidgetProps {
     return this.global_getKey(item);
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

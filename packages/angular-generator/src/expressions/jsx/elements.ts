@@ -15,6 +15,7 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxSpreadAttributeMeta } from './spread-attribute';
 import { Property } from '../class-members/property';
+import { process } from './element-post-processing';
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement
   || e instanceof JsxSelfClosingElement
@@ -54,6 +55,10 @@ export class JsxElement extends BaseJsxElement {
     return this.openingElement.tagName.toString() === 'Fragment';
   }
 
+  postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
+    return process(this.openingElement, options);
+  }
+
   toString(options?: toStringOptions): string {
     const elementString = this.openingElement.compileJsxElementsForVariable(
       options,
@@ -63,6 +68,7 @@ export class JsxElement extends BaseJsxElement {
       return elementString;
     }
 
+    const { prefix, postfix } = this.postProcess(options);
     const openingElementString = this.openingElement.toString(options);
     const hasSvgSlot = this.openingElement.component?.slots.some(
       (s) => s.isSvgSlot,
@@ -113,10 +119,10 @@ export class JsxElement extends BaseJsxElement {
     );
 
     if (separatedChildren) {
-      return `${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}`;
+      return `${prefix}${openingElementString}${separatedChildren[0]}${closingElementString}${separatedChildren[1]}${postfix}`;
     }
 
-    return `${openingElementString}${childrenString}${closingElementString}`;
+    return `${prefix}${openingElementString}${childrenString}${closingElementString}${postfix}`;
   }
 
   clone() {

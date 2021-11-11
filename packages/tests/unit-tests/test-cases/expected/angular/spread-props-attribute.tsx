@@ -14,6 +14,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -31,10 +33,14 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   inputs: ["visible", "value"],
   outputs: ["valueChange"],
-  template: `<dx-inner-widget
-    [value]="value"
-    (valueChange)="_valueChange($event)"
-  ></dx-inner-widget>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-inner-widget
+      #innerwidget2
+      [value]="value"
+      (valueChange)="_valueChange($event)"
+    ></dx-inner-widget
+    ><ng-content *ngTemplateOutlet="innerwidget2?.widgetTemplate"></ng-content
+  ></ng-template>`,
 })
 export default class Widget
   extends WidgetInput
@@ -66,6 +72,8 @@ export default class Widget
   }
 
   _valueChange: any;
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

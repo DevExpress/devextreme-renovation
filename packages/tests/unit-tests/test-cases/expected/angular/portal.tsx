@@ -16,6 +16,7 @@ import {
   ApplicationRef,
   Injector,
   ElementRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { DomPortalOutlet, DomPortal } from "@angular/cdk/portal";
@@ -93,13 +94,14 @@ class DxPortal {
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["someRef"],
-  template: `<div
-    ><dx-portal [container]="document.body" *ngIf="rendered"
-      ><span></span
-    ></dx-portal>
-    <ng-container *ngIf="!rendered">{{ null }}</ng-container
-    ><dx-portal [container]="someRef"><span></span></dx-portal
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div
+      ><dx-portal [container]="document.body" *ngIf="rendered"
+        ><span></span
+      ></dx-portal>
+      <ng-container *ngIf="!rendered">{{ null }}</ng-container
+      ><dx-portal [container]="someRef"><span></span></dx-portal></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   rendered: boolean = false;
@@ -131,6 +133,8 @@ export default class Widget extends WidgetProps {
     clearTimeout(this._effectTimeout);
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

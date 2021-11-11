@@ -14,6 +14,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -97,9 +99,9 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   inputs: ["selected", "value"],
   outputs: ["onSelect", "valueChange"],
-  template: `<div
-    [ngStyle]="__processNgStyle({ width: 100, height: 100 })"
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div [ngStyle]="__processNgStyle({ width: 100, height: 100 })"></div
+  ></ng-template>`,
 })
 export default class InnerWidget
   extends InnerWidgetProps
@@ -132,6 +134,8 @@ export default class InnerWidget
 
   _onSelect: any;
   _valueChange: any;
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

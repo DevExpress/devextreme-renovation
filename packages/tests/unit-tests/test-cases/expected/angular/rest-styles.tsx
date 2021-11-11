@@ -11,6 +11,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -83,7 +85,9 @@ const normalizeStyles = (styles: unknown) => {
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<span [ngStyle]="__processNgStyle(__styles)"></span>`,
+  template: `<ng-template #widgetTemplate
+    ><span [ngStyle]="__processNgStyle(__styles)"></span
+  ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   get __styles(): any {
@@ -100,6 +104,8 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

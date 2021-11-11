@@ -13,6 +13,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,10 +22,11 @@ import { CommonModule } from "@angular/common";
   selector: "dx-extra-element",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
-  template: `<pre><dx-inner-layout #rf
-[prop]="3"
-*ngIf="rf"></dx-inner-layout><div id="firstDiv"></div><dx-inner-layout #rf
-[prop]="4"></dx-inner-layout><div id="secondDiv"></div><dx-inner-layout [prop]="2"></dx-inner-layout><div id="thirdDiv"></div><dx-inner-layout [prop]="1"></dx-inner-layout></pre>`,
+  template: `<pre><ng-container *ngIf="rf"><dx-inner-layout #rf
+[prop]="3"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
+[prop]="4"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
+#child2></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
+#child3></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
 })
 export class ExtraElement extends Props {
   get __restAttributes(): any {
@@ -36,6 +39,8 @@ export class ExtraElement extends Props {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
