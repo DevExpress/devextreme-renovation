@@ -23,5 +23,6 @@ export class Props {
 @Component({
   view,
   isSVG: true,
+  jQuery: {register: true},
 })
 export default class SVGComponent extends JSXComponent(Props) {}
