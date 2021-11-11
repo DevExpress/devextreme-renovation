@@ -1,6 +1,7 @@
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  objectProp?: { someField: number };
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
@@ -41,7 +42,7 @@ interface Widget {
   arrayFromArr: (string | undefined)[];
   someObj: GetterType;
   objectFromDestructured: GetterType;
-  someGetter: GetterType;
+  someGetter: GetterType | undefined;
   someMethodFromDestructured: () => GetterType;
   restAttributes: RestProps;
 }
@@ -58,7 +59,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
     );
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
-        const { someProp, type, ...restProps } = props;
+        const { objectProp, someProp, type, ...restProps } = props;
         return restProps;
       },
       [props]
@@ -84,7 +85,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
       [__someObj]
     );
     const __someGetter = useMemo(
-      function __someGetter(): GetterType {
+      function __someGetter(): GetterType | undefined {
         const { propField, stateField: stateField2 } = __someObj;
         return { stateField: stateField2, propField };
       },

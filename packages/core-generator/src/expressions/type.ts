@@ -487,18 +487,18 @@ export function isComplexType(
   contextTypes?:{ [name:string]: TypeExpression | string },
 ): boolean {
   if (type instanceof UnionTypeNode) {
-    return type.types.some((t) => isComplexType(t));
+    return type.types.some((t) => isComplexType(t, contextTypes));
   }
   if (type instanceof TypeReferenceNode) {
     const contextType = contextTypes?.[type.typeName.toString()];
-    return isComplexType(contextType || '');
+    return isComplexType(contextType || '', contextTypes);
   }
   if (
     type instanceof FunctionTypeNode
     || type instanceof ArrayTypeNode
     || type instanceof ObjectLiteral
     || type instanceof TypeLiteralNode
-    || (type instanceof LiteralTypeNode && isComplexType(type.expression))
+    || (type instanceof LiteralTypeNode && isComplexType(type.expression, contextTypes))
     || type.toString() === 'object'
   ) {
     return true;

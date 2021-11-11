@@ -8,6 +8,6 @@
     "module": "../dist/esm/angular/index",
     "types": "../dist/esm/angular/index",
     "peerDependencies": {
-      "@angular/core": "^8.0.0"
+      "@angular/core": "^11.0.4"
     }
   }

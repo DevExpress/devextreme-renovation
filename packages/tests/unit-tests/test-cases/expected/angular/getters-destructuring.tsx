@@ -2,6 +2,7 @@ import { Input } from "@angular/core";
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
+  @Input() objectProp?: { someField: number };
 }
 
 interface FirstGetter {
@@ -28,7 +29,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp", "type"],
+  inputs: ["someProp", "type", "objectProp"],
   template: `<div></div>`,
 })
 class Widget extends WidgetProps {
@@ -74,11 +75,11 @@ class Widget extends WidgetProps {
       return { stateField, propField };
     })());
   }
-  get __someGetter(): GetterType {
+  get __someGetter(): GetterType | undefined {
     if (this.__getterCache["someGetter"] !== undefined) {
       return this.__getterCache["someGetter"];
     }
-    return (this.__getterCache["someGetter"] = ((): GetterType => {
+    return (this.__getterCache["someGetter"] = ((): GetterType | undefined => {
       const { propField, stateField: stateField2 } = this.__someObj;
       return { stateField: stateField2, propField };
     })());
@@ -105,7 +106,7 @@ class Widget extends WidgetProps {
     arrayFromArr?: (string | undefined)[];
     someObj?: GetterType;
     objectFromDestructured?: GetterType;
-    someGetter?: GetterType;
+    someGetter?: GetterType | undefined;
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
