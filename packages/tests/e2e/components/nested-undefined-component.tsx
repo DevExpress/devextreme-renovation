@@ -42,7 +42,10 @@ export class WidgetProps {
   @Nested() nestedProp?: FakeNested[];
   @Nested() anotherNestedPropInit: FakeNested[] = [new FakeNested()];
 }
-@Component({ view })
+@Component({ 
+  view,
+  jQuery: {register: true}, 
+})
 export default class UndefWidget extends JSXComponent(WidgetProps) {
   get oneway() {
     return this.props.hasOwnProperty("oneWayProp");
