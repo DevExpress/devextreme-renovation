@@ -16,5 +16,6 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ButtonTemplate extends JSXComponent(Props) {}

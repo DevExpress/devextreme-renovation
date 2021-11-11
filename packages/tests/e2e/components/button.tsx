@@ -35,6 +35,7 @@ export class ButtonInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class Button extends JSXComponent(ButtonInput) {
   @Ref() host!: RefObject<HTMLDivElement>;
