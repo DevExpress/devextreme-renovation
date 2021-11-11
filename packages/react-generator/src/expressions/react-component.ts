@@ -182,6 +182,25 @@ export class ReactComponent extends Component {
 
   createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
+    const additionalBindings = [
+      new BindingElement(
+        SyntaxKind.DotDotDotToken,
+        undefined,
+        new Identifier('restProps'),
+      ),
+    ];
+
+    // TODO: remove it after overlay components are renovated
+    if (isComponentWrapper(this.context.imports)) {
+      additionalBindings.unshift(
+        new BindingElement(
+          undefined,
+          undefined,
+          new Identifier('isReactComponentWrapper'),
+        ),
+      );
+    }
+
     const bindingElements = props
       .reduce((bindingElements, p) => {
         if (p._name.toString() === 'export') {
@@ -195,13 +214,7 @@ export class ReactComponent extends Component {
         }
         return bindingElements;
       }, [] as BindingElement[])
-      .concat([
-        new BindingElement(
-          SyntaxKind.DotDotDotToken,
-          undefined,
-          new Identifier('restProps'),
-        ),
-      ]);
+      .concat(additionalBindings);
 
     const statements = [
       new VariableStatement(
