@@ -19,7 +19,6 @@ import {
   TemplateRef,
   ComponentFactoryResolver,
   EmbeddedViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -133,18 +132,17 @@ export class DynamicComponentDirective {
   selector: "dx-dynamic-component-creator",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height"],
-  template: `<ng-template #widgetTemplate
-    ><div
-      ><ng-container *ngFor="let C of __Components; index as index"
-        ><ng-template
-          dynamicComponent
-          [props]="{ onClick: __onComponentClick.bind(this) }"
-          [componentConstructor]="C"
-          let-Components="Components"
-          let-restAttributes="restAttributes"
-          let-height="height"
-        ></ng-template></ng-container></div
-  ></ng-template>`,
+  template: `<div
+    ><ng-container *ngFor="let C of __Components; index as index"
+      ><ng-template
+        dynamicComponent
+        [props]="{ onClick: __onComponentClick.bind(this) }"
+        [componentConstructor]="C"
+        let-Components="Components"
+        let-restAttributes="restAttributes"
+        let-height="height"
+      ></ng-template></ng-container
+  ></div>`,
 })
 export default class DynamicComponentCreator extends Props {
   get __Components(): any[] {
@@ -186,8 +184,6 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

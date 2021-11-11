@@ -22,7 +22,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -37,8 +36,7 @@ import { CommonModule } from "@angular/common";
     "footerTemplate",
     "componentTemplate",
   ],
-  template: `<ng-template #widgetTemplate
-    ><div
+  template: `<div
       ><ng-container
         *ngTemplateOutlet="headerTemplate || headerTemplateDefault"
       >
@@ -96,8 +94,8 @@ import { CommonModule } from "@angular/common";
     ><ng-template #componentTemplateDefault let-value="value"
       ><dx-widget-with-props
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-      ></dx-widget-with-props> </ng-template
-  ></ng-template>`,
+      ></dx-widget-with-props>
+    </ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetInput {
   get __restAttributes(): any {
@@ -110,8 +108,6 @@ export default class WidgetWithTemplate extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

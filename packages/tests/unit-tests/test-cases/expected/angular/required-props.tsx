@@ -12,8 +12,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -51,8 +49,6 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

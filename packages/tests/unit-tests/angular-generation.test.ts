@@ -6,7 +6,6 @@ import path from "path";
 
 import { createTestGenerator } from "./helpers/common";
 import mocha from "./helpers/mocha";
-import { reset as resetUniqNameGenerator } from "@devextreme-generator/angular/src/expressions/utils/uniq_name_generator";
 
 mocha.describe("angular-generation", function () {
   const testGenerator = createTestGenerator("angular");
@@ -29,10 +28,6 @@ mocha.describe("angular-generation", function () {
       });
       testGenerator.call(this, componentName, generator);
     };
-  });
-
-  this.beforeEach(function () {
-    resetUniqNameGenerator();
   });
 
   this.afterEach(function () {

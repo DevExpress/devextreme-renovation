@@ -27,8 +27,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -46,11 +44,9 @@ import { CommonModule } from "@angular/common";
     "stringValue",
   ],
   outputs: ["onClick", "onSomething", "stringValueChange"],
-  template: `<ng-template #widgetTemplate
-    ><span
-      >{{ (sizes ?? { width: 0, height: 0 }).height
-      }}{{ (sizes ?? { width: 0, height: 0 }).width }}</span
-    ></ng-template
+  template: `<span
+    >{{ (sizes ?? { width: 0, height: 0 }).height
+    }}{{ (sizes ?? { width: 0, height: 0 }).width }}</span
   >`,
 })
 export default class Widget extends WidgetInput {
@@ -88,8 +84,6 @@ export default class Widget extends WidgetInput {
   _onClick: any;
   _onSomething: any;
   _stringValueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

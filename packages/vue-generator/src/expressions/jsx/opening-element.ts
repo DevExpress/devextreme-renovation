@@ -69,10 +69,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     }
   }
 
-  postProcess(): { prefix: string, postfix: string } {
-    return { prefix: '', postfix: '' };
-  }
-
   isPropsGetAccessor(
     member: Property | Method | undefined,
   ): member is IPropsGetAccessor {

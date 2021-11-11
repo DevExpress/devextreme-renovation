@@ -6,15 +6,13 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<ng-template #widgetTemplate><span></span></ng-template>`,
+  template: `<span></span>`,
 })
 export default class Widget {
   _hovered: Boolean = false;
@@ -31,8 +29,6 @@ export default class Widget {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

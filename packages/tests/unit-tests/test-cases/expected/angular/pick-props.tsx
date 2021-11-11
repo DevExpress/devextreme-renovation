@@ -15,8 +15,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,11 +22,9 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["data", "info"],
-  template: `<ng-template #widgetTemplate
-    ><div>{{
-      data === undefined || data === null ? undefined : data.value
-    }}</div></ng-template
-  >`,
+  template: `<div>{{
+    data === undefined || data === null ? undefined : data.value
+  }}</div>`,
 })
 export default class Widget extends WidgetProps {
   innerData: Options = { value: "" };
@@ -42,8 +38,6 @@ export default class Widget extends WidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

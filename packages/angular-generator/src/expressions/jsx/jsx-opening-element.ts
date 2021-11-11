@@ -41,7 +41,6 @@ import { JsxElement } from './elements';
 import { AngularComponent } from '../component';
 import { counter } from '../../counter';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
-import { process } from './element_post_processing';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -808,10 +807,6 @@ const VOID_ELEMENTS = [
 ];
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
-  postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
-    return process(this, options);
-  }
-
   toString(options?: toStringOptions) {
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
@@ -825,7 +820,6 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     if (elementString) {
       return elementString;
     }
-    const { prefix, postfix } = this.postProcess(options);
     const openingElement = super.toString(options);
     const children: Expression[] = [
       ...this.getSlotsFromAttributes(options),
@@ -838,21 +832,21 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
     );
 
     if (separatedChildren) {
-      return `${prefix}${openingElement}${separatedChildren[0]}</${this.processTagName(
+      return `${openingElement}${separatedChildren[0]}</${this.processTagName(
         this.tagName,
         options,
         true,
       )}>
-        ${separatedChildren[1]}${postfix}`;
+        ${separatedChildren[1]}`;
     }
 
     const childrenString = children.map((c) => c.toString(options)).join('');
 
-    return `${prefix}${openingElement}${childrenString}</${this.processTagName(
+    return `${openingElement}${childrenString}</${this.processTagName(
       this.tagName,
       options,
       true,
-    )}>${postfix}`;
+    )}>`;
   }
 
   clone() {

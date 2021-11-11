@@ -17,7 +17,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -25,8 +24,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-template-default-value",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["defaultCompTemplate", "defaultFuncTemplate", "stringToRender"],
-  template: `<ng-template #widgetTemplate
-    ><div
+  template: `<div
       >TemplateDefaultValue<ng-container
         *ngTemplateOutlet="
           defaultCompTemplate || defaultCompTemplateDefault;
@@ -65,8 +63,7 @@ import { CommonModule } from "@angular/common";
       <div
         >!DefaultFunc:{{ value || "ftwdCompDefault" }}{{ optionalValue }}</div
       >
-    </ng-template></ng-template
-  >`,
+    </ng-template>`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   get __restAttributes(): any {
@@ -79,8 +76,6 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

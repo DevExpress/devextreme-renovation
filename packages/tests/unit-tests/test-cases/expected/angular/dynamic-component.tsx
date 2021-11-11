@@ -23,7 +23,6 @@ import {
   TemplateRef,
   ComponentFactoryResolver,
   EmbeddedViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -203,54 +202,52 @@ export class DynamicComponentDirective {
   selector: "dx-dynamic-component-creator",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height"],
-  template: `<ng-template #widgetTemplate
-    ><div
-      ><ng-template
-        dynamicComponent
-        [props]="{
-          height: internalStateValue,
-          onClick: __onComponentClick.bind(this),
-          dxSpreadProp2: __spreadProps
-        }"
-        [componentConstructor]="__JSXTemplateComponent"
-        let-internalStateValue="internalStateValue"
-        let-Component="Component"
-        let-JSXTemplateComponent="JSXTemplateComponent"
-        let-ComponentWithTemplate="ComponentWithTemplate"
-        let-spreadProps="spreadProps"
-        let-restAttributes="restAttributes"
-        let-height="height"
-      ></ng-template
-      ><ng-template
-        dynamicComponent
-        [props]="{ height: height, onClick: __onComponentClick.bind(this) }"
-        [componentConstructor]="__Component"
-        let-internalStateValue="internalStateValue"
-        let-Component="Component"
-        let-JSXTemplateComponent="JSXTemplateComponent"
-        let-ComponentWithTemplate="ComponentWithTemplate"
-        let-spreadProps="spreadProps"
-        let-restAttributes="restAttributes"
-        let-height="height"
-      ></ng-template
-      ><ng-template
-        dynamicComponent
-        [props]="{ template: __template__generated }"
-        [componentConstructor]="__ComponentWithTemplate"
-        let-internalStateValue="internalStateValue"
-        let-Component="Component"
-        let-JSXTemplateComponent="JSXTemplateComponent"
-        let-ComponentWithTemplate="ComponentWithTemplate"
-        let-spreadProps="spreadProps"
-        let-restAttributes="restAttributes"
-        let-height="height"
-      ></ng-template>
-      <ng-template #__template__generated let-textProp="textProp"
-        ><div [ngStyle]="__processNgStyle({ height: '50px' })">{{
-          textProp
-        }}</div></ng-template
-      ></div
+  template: `<div
+    ><ng-template
+      dynamicComponent
+      [props]="{
+        height: internalStateValue,
+        onClick: __onComponentClick.bind(this),
+        dxSpreadProp2: __spreadProps
+      }"
+      [componentConstructor]="__JSXTemplateComponent"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
+      let-spreadProps="spreadProps"
+      let-restAttributes="restAttributes"
+      let-height="height"
     ></ng-template
+    ><ng-template
+      dynamicComponent
+      [props]="{ height: height, onClick: __onComponentClick.bind(this) }"
+      [componentConstructor]="__Component"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
+      let-spreadProps="spreadProps"
+      let-restAttributes="restAttributes"
+      let-height="height"
+    ></ng-template
+    ><ng-template
+      dynamicComponent
+      [props]="{ template: __template__generated }"
+      [componentConstructor]="__ComponentWithTemplate"
+      let-internalStateValue="internalStateValue"
+      let-Component="Component"
+      let-JSXTemplateComponent="JSXTemplateComponent"
+      let-ComponentWithTemplate="ComponentWithTemplate"
+      let-spreadProps="spreadProps"
+      let-restAttributes="restAttributes"
+      let-height="height"
+    ></ng-template>
+    <ng-template #__template__generated let-textProp="textProp"
+      ><div [ngStyle]="__processNgStyle({ height: '50px' })">{{
+        textProp
+      }}</div></ng-template
+    ></div
   >`,
 })
 export default class DynamicComponentCreator extends Props {
@@ -294,8 +291,6 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

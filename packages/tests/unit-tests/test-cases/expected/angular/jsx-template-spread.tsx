@@ -25,7 +25,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -40,8 +39,7 @@ import { CommonModule } from "@angular/common";
     "template",
     "template2",
   ],
-  template: `<ng-template #widgetTemplate
-    ><div
+  template: `<div
       ><ng-container
         *ngTemplateOutlet="
           template || templateDefault;
@@ -85,8 +83,8 @@ import { CommonModule } from "@angular/common";
       <div></div>
     </ng-template>
     <ng-template #template2Default let-inputInt="inputInt">
-      <div></div> </ng-template
-  ></ng-template>`,
+      <div></div>
+    </ng-template>`,
 })
 export default class Widget extends Props {
   get __spreadGetter(): { width: string; height: string } {
@@ -114,8 +112,6 @@ export default class Widget extends Props {
     spreadGetter?: { width: string; height: string };
   } = {};
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

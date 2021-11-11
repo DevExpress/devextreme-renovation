@@ -13,7 +13,6 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -22,9 +21,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop1", "prop2"],
-  template: `<ng-template #widgetTemplate
-    ><div #divRefLink></div
-  ></ng-template>`,
+  template: `<div #divRefLink></div>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
@@ -47,8 +44,6 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

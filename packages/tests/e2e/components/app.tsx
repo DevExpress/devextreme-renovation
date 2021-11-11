@@ -191,7 +191,6 @@ class AppInput {}
 
 @Component({
   view,
-  jQuery: {register: true},
 })
 export default class App extends JSXComponent(AppInput) {
   @InternalState() clickCount: number = 0;

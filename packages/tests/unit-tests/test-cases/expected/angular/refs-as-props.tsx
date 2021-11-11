@@ -15,7 +15,6 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -24,17 +23,12 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["nullableRef"],
-  template: `<ng-template #widgetTemplate
-    ><div #divRefLink
-      ><dx-widget-with-ref-prop
-        [parentRef]="divRefLink"
-        [nullableRef]="nullableRef"
-        #widgetwithrefprop1
-      ></dx-widget-with-ref-prop
-      ><ng-content
-        *ngTemplateOutlet="widgetwithrefprop1?.widgetTemplate"
-      ></ng-content></div
-  ></ng-template>`,
+  template: `<div #divRefLink
+    ><dx-widget-with-ref-prop
+      [parentRef]="divRefLink"
+      [nullableRef]="nullableRef"
+    ></dx-widget-with-ref-prop
+  ></div>`,
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
@@ -59,8 +53,6 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

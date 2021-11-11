@@ -16,8 +16,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
   forwardRef,
   HostListener,
 } from "@angular/core";
@@ -35,9 +33,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
   inputs: ["disabled", "value", "notValue"],
   outputs: ["valueChange", "notValueChange"],
-  template: `<ng-template #widgetTemplate
-    ><div>{{ value }}</div></ng-template
-  >`,
+  template: `<div>{{ value }}</div>`,
 })
 export default class ModelWidget
   extends ModelWidgetInput
@@ -74,8 +70,6 @@ export default class ModelWidget
 
   _valueChange: any;
   _notValueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

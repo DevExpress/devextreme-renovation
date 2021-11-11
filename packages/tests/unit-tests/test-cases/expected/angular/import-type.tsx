@@ -13,8 +13,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -22,11 +20,9 @@ import { CommonModule } from "@angular/common";
   selector: "dx-import",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["Test"],
-  template: `<ng-template #widgetTemplate
-    ><div>{{
-      Test === undefined || Test === null ? undefined : Test.value
-    }}</div></ng-template
-  >`,
+  template: `<div>{{
+    Test === undefined || Test === null ? undefined : Test.value
+  }}</div>`,
 })
 export default class Import extends ImportProps {
   get __restAttributes(): any {
@@ -39,8 +35,6 @@ export default class Import extends ImportProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

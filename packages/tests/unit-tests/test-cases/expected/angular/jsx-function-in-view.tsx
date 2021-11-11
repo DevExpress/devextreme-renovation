@@ -12,8 +12,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -21,15 +19,13 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["loading", "greetings"],
-  template: `<ng-template #widgetTemplate
-    ><div
-      ><ng-container *ngIf="loading"
-        ><div>{{ __loadingProps.text }}</div></ng-container
-      >
-      <ng-container *ngIf="!loading"
-        ><span>{{ "" + greetings + " " + __name + "" }}</span></ng-container
-      ></div
-    ></ng-template
+  template: `<div
+    ><ng-container *ngIf="loading"
+      ><div>{{ __loadingProps.text }}</div></ng-container
+    >
+    <ng-container *ngIf="!loading"
+      ><span>{{ "" + greetings + " " + __name + "" }}</span></ng-container
+    ></div
   >`,
 })
 export default class Widget extends WidgetInput {
@@ -49,8 +45,6 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

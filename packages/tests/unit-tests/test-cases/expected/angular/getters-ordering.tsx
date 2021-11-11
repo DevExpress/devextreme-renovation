@@ -14,8 +14,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,7 +22,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["someProp", "type", "gridCompatibility", "pageIndex"],
   outputs: ["pageIndexChange"],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 class Widget extends WidgetProps {
   someState: number = 0;
@@ -163,8 +161,6 @@ class Widget extends WidgetProps {
   }
 
   _pageIndexChange: any;
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

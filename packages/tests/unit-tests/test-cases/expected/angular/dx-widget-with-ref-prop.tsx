@@ -12,8 +12,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -21,7 +19,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget-with-ref-prop",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["parentRef", "nullableRef"],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 export default class WidgetWithRefProp extends WidgetWithRefPropInput {
   get __restAttributes(): any {
@@ -34,8 +32,6 @@ export default class WidgetWithRefProp extends WidgetWithRefPropInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

@@ -32,8 +32,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -56,7 +54,7 @@ import { CommonModule } from "@angular/common";
     "externalArray",
     "externalString",
   ],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -69,8 +67,6 @@ export default class Widget extends WidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

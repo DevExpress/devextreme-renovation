@@ -47,8 +47,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -57,7 +55,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [P1Context, GetterContext],
   inputs: ["p1"],
-  template: `<ng-template #widgetTemplate><span></span></ng-template>`,
+  template: `<span></span>`,
 })
 export default class Widget extends Props {
   contextConsumerConsumer: number;
@@ -98,8 +96,6 @@ export default class Widget extends Props {
     this.__contextProvider;
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

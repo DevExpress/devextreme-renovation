@@ -15,8 +15,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -24,51 +22,23 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["mode", "firstText", "secondText"],
-  template: `<ng-template #widgetTemplate
-    ><ng-container *ngIf="mode"
-      ><dx-widget-one [text]="firstText" #widgetone1
-        ><div>Slot content</div></dx-widget-one
-      ><ng-content
-        *ngTemplateOutlet="widgetone1?.widgetTemplate"
-      ></ng-content></ng-container
-    ><ng-container *ngIf="!mode"
-      ><dx-widget-two [text]="firstText" #widgettwo1
-        ><div>Slot content</div></dx-widget-two
-      ><ng-content
-        *ngTemplateOutlet="widgettwo1?.widgetTemplate"
-      ></ng-content></ng-container
-    ><dx-widget-one [text]="secondText" #widgetone2
+  template: `<dx-widget-one [text]="firstText" *ngIf="mode"
+      ><div>Slot content</div></dx-widget-one
+    ><dx-widget-two [text]="firstText" *ngIf="!mode"
+      ><div>Slot content</div></dx-widget-two
+    ><dx-widget-one [text]="secondText"
       ><div>Children go here</div></dx-widget-one
-    ><ng-content *ngTemplateOutlet="widgetone2?.widgetTemplate"></ng-content
-    ><ng-container *ngIf="mode"
-      ><dx-widget-one
-        text="self closing by condition"
-        #widgetone3
-      ></dx-widget-one
-      ><ng-content
-        *ngTemplateOutlet="widgetone3?.widgetTemplate"
-      ></ng-content></ng-container
-    ><ng-container *ngIf="!mode"
-      ><dx-widget-two
-        text="self closing by condition"
-        #widgettwo2
-      ></dx-widget-two
-      ><ng-content
-        *ngTemplateOutlet="widgettwo2?.widgetTemplate"
-      ></ng-content></ng-container
-    ><dx-widget-two text="self closing" #widgettwo3></dx-widget-two
-    ><ng-content *ngTemplateOutlet="widgettwo3?.widgetTemplate"></ng-content
-    ><ng-container *ngIf="mode"
-      ><dx-widget-one [text]="secondText" #widgetone4></dx-widget-one
-      ><ng-content
-        *ngTemplateOutlet="widgetone4?.widgetTemplate"
-      ></ng-content></ng-container
-    ><ng-container *ngIf="!mode"
-      ><dx-widget-two [text]="secondText" #widgettwo4></dx-widget-two
-      ><ng-content
-        *ngTemplateOutlet="widgettwo4?.widgetTemplate"
-      ></ng-content></ng-container
-  ></ng-template>`,
+    ><dx-widget-one
+      text="self closing by condition"
+      *ngIf="mode"
+    ></dx-widget-one
+    ><dx-widget-two
+      text="self closing by condition"
+      *ngIf="!mode"
+    ></dx-widget-two
+    ><dx-widget-two text="self closing"></dx-widget-two
+    ><dx-widget-one [text]="secondText" *ngIf="mode"></dx-widget-one
+    ><dx-widget-two [text]="secondText" *ngIf="!mode"></dx-widget-two>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -81,8 +51,6 @@ export default class Widget extends WidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

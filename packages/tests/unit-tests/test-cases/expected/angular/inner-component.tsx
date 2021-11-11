@@ -15,7 +15,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -23,7 +22,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-inner-component",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["someTemplate"],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 export class InnerComponent extends InnerComponentProps {
   get __restAttributes(): any {
@@ -36,8 +35,6 @@ export class InnerComponent extends InnerComponentProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

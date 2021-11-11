@@ -6,8 +6,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
   Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -82,10 +80,9 @@ const normalizeStyles = (styles: unknown) => {
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height", "width"],
-  template: `<ng-template #widgetTemplate
-    ><div [ngStyle]="__processNgStyle({ height: height })"
-      ><span></span><span></span></div
-  ></ng-template>`,
+  template: `<div [ngStyle]="__processNgStyle({ height: height })"
+    ><span></span><span></span
+  ></div>`,
 })
 export default class Widget {
   @Input() height?: number;
@@ -100,8 +97,6 @@ export default class Widget {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

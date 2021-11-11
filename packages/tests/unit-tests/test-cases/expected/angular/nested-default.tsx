@@ -7,8 +7,6 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
-  ViewChild,
-  TemplateRef,
   Input,
   ContentChildren,
   QueryList,
@@ -49,18 +47,16 @@ class DxWithNestedRow extends GridRow {
   selector: "dx-with-nested",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["rows"],
-  template: `<ng-template #widgetTemplate
-    ><div
-      ><ng-container *ngIf="rows"
-        ><ng-container *ngIf="rows.length"
-          ><ng-container
-            *ngFor="let _ of rows; index as index; trackBy: _trackBy_rows_0"
-            ><span>{{ __getRowCells(index) }}<br /></span></ng-container
-        ></ng-container>
-        <span *ngIf="!rows.length">Empty Array</span></ng-container
-      >
-      <span *ngIf="!rows">No Data</span></div
-    ></ng-template
+  template: `<div
+    ><ng-container *ngIf="rows"
+      ><ng-container *ngIf="rows.length"
+        ><ng-container
+          *ngFor="let _ of rows; index as index; trackBy: _trackBy_rows_0"
+          ><span>{{ __getRowCells(index) }}<br /></span></ng-container
+      ></ng-container>
+      <span *ngIf="!rows.length">Empty Array</span></ng-container
+    >
+    <span *ngIf="!rows">No Data</span></div
   >`,
 })
 export default class WithNested extends WithNestedInput {
@@ -102,8 +98,6 @@ export default class WithNested extends WithNestedInput {
     this._detectChanges();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

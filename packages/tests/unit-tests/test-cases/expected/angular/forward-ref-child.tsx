@@ -18,7 +18,6 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -27,9 +26,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-ref-on-children-child",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["childRef", "nullableRef", "state"],
-  template: `<ng-template #widgetTemplate
-    ><div #childRef__Ref__><div #nullableRef__Ref__></div></div
-  ></ng-template>`,
+  template: `<div #childRef__Ref__><div #nullableRef__Ref__></div></div>`,
 })
 export default class RefOnChildrenChild extends Props {
   __method(): any {
@@ -112,8 +109,6 @@ export default class RefOnChildrenChild extends Props {
     this.nullableRef?.(this.nullableRef__Ref__);
   }
 
-  @ViewChild("widgetTemplate", { static: true })
-  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
