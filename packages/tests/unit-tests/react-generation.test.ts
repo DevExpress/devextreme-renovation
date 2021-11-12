@@ -371,6 +371,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dom_component_wrapper", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-wrapper", function () {
     this.testGenerator(this.test!.title);
   });

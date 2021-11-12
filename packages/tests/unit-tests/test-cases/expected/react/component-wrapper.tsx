@@ -9,6 +9,7 @@ export declare type WidgetInputType = {
   templateProp?: any;
   renderProp?: any;
   componentProp?: any;
+  isReactComponentWrapper: boolean;
 };
 export const WidgetInput: WidgetInputType = {
   prop1: 10,
