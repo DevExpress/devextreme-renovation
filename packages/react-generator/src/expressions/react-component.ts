@@ -182,7 +182,7 @@ export class ReactComponent extends Component {
 
   createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
-    const additionalBindings = [
+    let additionalBindings = [
       new BindingElement(
         SyntaxKind.DotDotDotToken,
         undefined,
@@ -192,29 +192,26 @@ export class ReactComponent extends Component {
 
     // TODO: remove it after overlay components are renovated
     if (isComponentWrapper(this.context.imports)) {
-      additionalBindings.unshift(
-        new BindingElement(
-          undefined,
-          undefined,
-          new Identifier('isReactComponentWrapper'),
-        ),
-      );
+      additionalBindings = [new BindingElement(
+        undefined,
+        undefined,
+        new Identifier('isReactComponentWrapper'),
+      ), ...additionalBindings];
     }
 
-    const bindingElements = props
-      .reduce((bindingElements, p) => {
-        if (p._name.toString() === 'export') {
-          bindingElements.push(
-            new BindingElement(undefined, p._name, 'exportProp'),
-          );
-        } else {
-          bindingElements.push(
-            new BindingElement(undefined, undefined, p._name),
-          );
-        }
-        return bindingElements;
-      }, [] as BindingElement[])
-      .concat(additionalBindings);
+    const bindingElements = [...props
+      .reduce<BindingElement[]>((bindingElements, p) => {
+      if (p._name.toString() === 'export') {
+        bindingElements.push(
+          new BindingElement(undefined, p._name, 'exportProp'),
+        );
+      } else {
+        bindingElements.push(
+          new BindingElement(undefined, undefined, p._name),
+        );
+      }
+      return bindingElements;
+    }, []), ...additionalBindings];
 
     const statements = [
       new VariableStatement(
