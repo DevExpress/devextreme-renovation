@@ -81,7 +81,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
     Object.assign(
       Object.getOwnPropertyDescriptors(Widget.defaultProps),
       Object.getOwnPropertyDescriptors(
-        __processTwoWayProps(convertRulesToOptions(__defaultOptionRules))
+        __processTwoWayProps(convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules))
       )
     )
   );
