@@ -6,11 +6,18 @@ import {
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  currentDate: Date | number | string;
+  defaultCurrentDate: Date | number | string;
+  currentDateChange?: (currentDate: Date | number | string) => void;
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
   type: "",
-};
+  get defaultCurrentDate() {
+    return new Date();
+  },
+  currentDateChange: () => {},
+} as any as WidgetPropsType;
 interface internalInterface {
   field1: { a: string };
   field2: number;
@@ -20,7 +27,7 @@ type internalType = { a: string };
 const view = () => <div></div>;
 
 import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 declare type RestProps = {
   className?: string;
@@ -34,10 +41,19 @@ interface Widget {
   internalTypeGetter: internalType;
   externalInterfaceGetter: externalInterface;
   externalTypeGetter: externalType;
+  someDate: Date;
   restAttributes: RestProps;
 }
 
 function Widget(props: typeof WidgetProps & RestProps) {
+  const [__state_currentDate, __state_setCurrentDate] = useState<
+    Date | number | string
+  >(() =>
+    props.currentDate !== undefined
+      ? props.currentDate
+      : props.defaultCurrentDate!
+  );
+
   const __internalInterfaceGetter = useMemo(
     function __internalInterfaceGetter(): internalInterface {
       return { field1: { a: props.someProp }, field2: 2, field3: 3 };
@@ -62,12 +78,35 @@ function Widget(props: typeof WidgetProps & RestProps) {
     },
     []
   );
+  const __someDate = useMemo(
+    function __someDate(): Date {
+      return new Date(
+        props.currentDate !== undefined
+          ? props.currentDate
+          : __state_currentDate
+      );
+    },
+    [props.currentDate, __state_currentDate]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { someProp, type, ...restProps } = props;
+      const {
+        currentDate,
+        currentDateChange,
+        defaultCurrentDate,
+        someProp,
+        type,
+        ...restProps
+      } = {
+        ...props,
+        currentDate:
+          props.currentDate !== undefined
+            ? props.currentDate
+            : __state_currentDate,
+      };
       return restProps;
     },
-    [props]
+    [props, __state_currentDate]
   );
 
   return view();
