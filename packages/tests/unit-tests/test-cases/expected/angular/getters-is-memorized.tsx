@@ -3,10 +3,13 @@ import {
   Options as externalType,
 } from "./types.d";
 
-import { Input } from "@angular/core";
+import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
+  @Input() currentDate: Date | number | string = new Date();
+  @Output() currentDateChange: EventEmitter<Date | number | string> =
+    new EventEmitter();
 }
 
 interface internalInterface {
@@ -29,7 +32,8 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp", "type"],
+  inputs: ["someProp", "type", "currentDate"],
+  outputs: ["currentDateChange"],
   template: `<div></div>`,
 })
 class Widget extends WidgetProps {
@@ -67,6 +71,14 @@ class Widget extends WidgetProps {
       return { value: "" };
     })());
   }
+  get __someDate(): Date {
+    if (this.__getterCache["someDate"] !== undefined) {
+      return this.__getterCache["someDate"];
+    }
+    return (this.__getterCache["someDate"] = ((): Date => {
+      return new Date(this.currentDate);
+    })());
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -82,20 +94,30 @@ class Widget extends WidgetProps {
     internalTypeGetter?: internalType;
     externalInterfaceGetter?: externalInterface;
     externalTypeGetter?: externalType;
+    someDate?: Date;
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (["someProp"].some((d) => changes[d])) {
       this.__getterCache["internalInterfaceGetter"] = undefined;
     }
+
+    if (["currentDate"].some((d) => changes[d])) {
+      this.__getterCache["someDate"] = undefined;
+    }
   }
 
+  _currentDateChange: any;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    this._currentDateChange = (e: any) => {
+      this.currentDateChange.emit(e);
+      this._detectChanges();
+    };
   }
 }
 @NgModule({

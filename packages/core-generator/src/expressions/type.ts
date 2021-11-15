@@ -23,6 +23,7 @@ import {
   NamedImports,
 } from './import';
 import { Interface } from '..';
+import { warn } from '../utils/messages';
 
 export class TypeExpression extends Expression {}
 
@@ -485,20 +486,29 @@ export class TypeAliasDeclaration extends TypeExpression {
 export function isComplexType(
   type: TypeExpression | string,
   contextTypes?:{ [name:string]: TypeExpression | string },
+  hasDependency = true,
 ): boolean {
   if (type instanceof UnionTypeNode) {
-    return type.types.some((t) => isComplexType(t, contextTypes));
+    return type.types.some((t) => isComplexType(t, contextTypes, hasDependency));
   }
   if (type instanceof TypeReferenceNode) {
+    if (type.typeName.toString() === 'Date') {
+      if (!hasDependency) {
+        warn('One of your getters with Date type has no dependencies: it won\'t be cached');
+        return false;
+      }
+      return true;
+    }
     const contextType = contextTypes?.[type.typeName.toString()];
-    return isComplexType(contextType || '', contextTypes);
+    return isComplexType(contextType || '', contextTypes, hasDependency);
   }
   if (
     type instanceof FunctionTypeNode
     || type instanceof ArrayTypeNode
     || type instanceof ObjectLiteral
     || type instanceof TypeLiteralNode
-    || (type instanceof LiteralTypeNode && isComplexType(type.expression, contextTypes))
+    || (type instanceof LiteralTypeNode
+      && isComplexType(type.expression, contextTypes, hasDependency))
     || type.toString() === 'object'
   ) {
     return true;
