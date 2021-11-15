@@ -9,7 +9,6 @@ export declare type WidgetInputType = {
   templateProp?: any;
   renderProp?: any;
   componentProp?: any;
-  isReactComponentWrapper: boolean;
 };
 export const WidgetInput: WidgetInputType = {
   prop1: 10,
@@ -25,6 +24,7 @@ declare type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  isReactComponentWrapper?: boolean;
 };
 interface Widget {
   props: typeof WidgetInput & RestProps;

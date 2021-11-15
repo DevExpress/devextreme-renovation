@@ -640,7 +640,13 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
+    return `declare type RestProps = {
+      className?: string;
+      style?: { [name: string]: any },
+      key?: any,
+      ref?: any,
+      ${isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''}
+    }`;
   }
 
   getPropsType(): string {
