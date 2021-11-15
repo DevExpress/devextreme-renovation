@@ -9,10 +9,12 @@ export declare type WidgetInputType = {
   templateProp?: any;
   renderProp?: any;
   componentProp?: any;
+  isReactComponentWrapper?: boolean;
 };
 export const WidgetInput: WidgetInputType = {
   prop1: 10,
   prop2: "text",
+  isReactComponentWrapper: true,
 };
 import * as React from "react";
 import { useCallback } from "react";
