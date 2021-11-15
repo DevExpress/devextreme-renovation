@@ -366,12 +366,13 @@ export class GetAccessor extends Method {
     }
     if (options) {
       const mutables = options?.members.filter((m) => m.isMutable) as BaseClassMember[];
-      const depMembers = this.getDependency(options)
+      const dependencies = this.getDependency(options);
+      const depMembers = dependencies
         .filter((dep) => dep instanceof BaseClassMember) as BaseClassMember[];
       const containMutableDep = depMembers
         .some((dep) => mutables?.includes(dep));
       return !containMutableDep
-      && (isComplexType(this.type, this.contextTypes)
+      && (isComplexType(this.type, this.contextTypes, dependencies.length > 0)
         || this.isProvider);
     }
     return false;
