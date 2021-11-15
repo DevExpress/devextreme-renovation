@@ -23,6 +23,7 @@ import {
   NamedImports,
 } from './import';
 import { Interface } from '..';
+import { warn } from '../utils/messages';
 
 export class TypeExpression extends Expression {}
 
@@ -492,7 +493,11 @@ export function isComplexType(
   }
   if (type instanceof TypeReferenceNode) {
     if (type.typeName.toString() === 'Date') {
-      return hasDependency;
+      if (!hasDependency) {
+        warn('One of your getters with Date type has no dependencies: it will be cached once on initialization');
+        return false;
+      }
+      return true;
     }
     const contextType = contextTypes?.[type.typeName.toString()];
     return isComplexType(contextType || '', contextTypes, hasDependency);
