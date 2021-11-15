@@ -494,7 +494,7 @@ export function isComplexType(
   if (type instanceof TypeReferenceNode) {
     if (type.typeName.toString() === 'Date') {
       if (!hasDependency) {
-        warn('One of your getters with Date type has no dependencies: it will be cached once on initialization');
+        warn('One of your getters with Date type has no dependencies: it won\'t be cached');
         return false;
       }
       return true;
