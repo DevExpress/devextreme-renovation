@@ -25,4 +25,7 @@ export const hasTemplate = (
   name: string,
   properties: Record<string, unknown>,
   _component: unknown,
-): boolean => !!properties[name];
+): boolean => {
+  const value = properties[name];
+  return !!value && typeof value !== 'string';
+};
