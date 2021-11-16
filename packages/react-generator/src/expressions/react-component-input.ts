@@ -112,6 +112,7 @@ export class ComponentInput extends BaseComponentInput {
       .concat([
         `{
               ${properties.map((p) => p.typeDeclaration()).join(';\n')}
+              ${isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''}
           }`,
       ])
       .join('&')}`;
