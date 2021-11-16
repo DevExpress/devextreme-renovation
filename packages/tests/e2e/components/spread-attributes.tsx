@@ -26,6 +26,7 @@ class WidgetInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ComponentWithSpread extends JSXComponent(WidgetInput) {
   get attributes() {
