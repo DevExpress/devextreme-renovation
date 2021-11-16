@@ -5,12 +5,12 @@ import {
     JSXComponent,
     Template,
   } from "@devextreme-generator/declarations";
-  import DomCompoentWrapper from "./dom_component_wrapper";
+  import DomComponentWrapper from "./dom_component_wrapper";
 
   function view(model: Widget): JSX.Element {
     return (
-      <DomCompoentWrapper>
-      </DomCompoentWrapper>
+      <DomComponentWrapper>
+      </DomComponentWrapper>
     );
   }
 

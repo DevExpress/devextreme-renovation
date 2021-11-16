@@ -4,7 +4,7 @@ import {
     JSXComponent,
   } from "@devextreme-generator/declarations";
 
-  function view(model: DomCompoentWrapper): JSX.Element {
+  function view(model: DomComponentWrapper): JSX.Element {
     return (
       <span>
       </span>
@@ -12,11 +12,11 @@ import {
   }
 
   @ComponentBindings()
-  export class DomCompoentWrapperProps {
+  export class DomComponentWrapperProps {
   }
 
   @Component({
     view: view,
   })
-  export default class DomCompoentWrapper extends JSXComponent(DomCompoentWrapperProps) {
+  export default class DomComponentWrapper extends JSXComponent(DomComponentWrapperProps) {
   }

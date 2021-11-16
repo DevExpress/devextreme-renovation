@@ -1,9 +1,9 @@
-function view(model: DomCompoentWrapper): any {
+function view(model: DomComponentWrapper): any {
   return <span></span>;
 }
 
-export declare type DomCompoentWrapperPropsType = {};
-export const DomCompoentWrapperProps: DomCompoentWrapperPropsType = {};
+export declare type DomComponentWrapperPropsType = {};
+export const DomComponentWrapperProps: DomComponentWrapperPropsType = {};
 import * as React from "react";
 import { useCallback } from "react";
 
@@ -13,13 +13,13 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
-interface DomCompoentWrapper {
-  props: typeof DomCompoentWrapperProps & RestProps;
+interface DomComponentWrapper {
+  props: typeof DomComponentWrapperProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function DomCompoentWrapper(
-  props: typeof DomCompoentWrapperProps & RestProps
+export default function DomComponentWrapper(
+  props: typeof DomComponentWrapperProps & RestProps
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -32,4 +32,4 @@ export default function DomCompoentWrapper(
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-DomCompoentWrapper.defaultProps = DomCompoentWrapperProps;
+DomComponentWrapper.defaultProps = DomComponentWrapperProps;

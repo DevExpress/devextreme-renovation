@@ -67,11 +67,6 @@ jobs:
       - name: Get DevExtreme
         run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
 
-      - name: Use Node.js 15
-        uses: actions/setup-node@v2
-        with:
-          node-version: '15'
-
       - name: Build DevExtreme
         run: |
           cd ./DevExtreme
@@ -115,11 +110,6 @@ jobs:
 
       - name: Get DevExtreme
         run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
-
-      - name: Use Node.js 15
-        uses: actions/setup-node@v2
-        with:
-          node-version: '15'
 
       - name: Build DevExtreme
         env:
@@ -185,11 +175,6 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: devextreme-generator-artifacts
-
-      - name: Use Node.js 15
-        uses: actions/setup-node@v2
-        with:
-          node-version: '15'
 
       - name: Install Generators
         run: |

@@ -1,6 +1,6 @@
-import DomCompoentWrapper from "./dom_component_wrapper";
+import DomComponentWrapper from "./dom_component_wrapper";
 function view(model: Widget): any {
-  return <DomCompoentWrapper></DomCompoentWrapper>;
+  return <DomComponentWrapper></DomComponentWrapper>;
 }
 
 export declare type WidgetInputType = {
