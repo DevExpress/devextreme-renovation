@@ -109,9 +109,9 @@ class Widget extends WidgetProps {
     }
   }
 
+  _currentDateChange: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
-  _currentDateChange: any;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
