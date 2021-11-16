@@ -23,6 +23,7 @@ class ButtonWithStateInput extends ButtonInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ButtonWithState extends JSXComponent(
   ButtonWithStateInput
