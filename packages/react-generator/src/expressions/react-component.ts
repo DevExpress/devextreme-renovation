@@ -375,7 +375,7 @@ export class ReactComponent extends Component {
 
   compileConvertRulesToOptions(rules: string | Expression): string {
     return this.state.length
-      ? `__processTwoWayProps(convertRulesToOptions(${rules}))`
+      ? `__processTwoWayProps(convertRulesToOptions<${this.getPropsType()}>(${rules}))`
       : `convertRulesToOptions<${this.getPropsType()}>(${rules})`;
   }
 

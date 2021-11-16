@@ -12,11 +12,18 @@ import {
 export declare type WidgetPropsType = {
   someProp: string;
   type?: string;
+  currentDate: Date | number | string;
+  defaultCurrentDate: Date | number | string;
+  currentDateChange?: (currentDate: Date | number | string) => void;
 };
 const WidgetProps: WidgetPropsType = {
   someProp: "",
   type: "",
-};
+  get defaultCurrentDate() {
+    return new Date();
+  },
+  currentDateChange: () => {},
+} as any as WidgetPropsType;
 interface internalInterface {
   field1: { a: string };
   field2: number;
@@ -34,11 +41,18 @@ declare type RestProps = {
 };
 
 class Widget extends BaseInfernoComponent<any> {
-  state = {};
+  state: { currentDate: Date | number | string };
+
   refs: any;
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      currentDate:
+        this.props.currentDate !== undefined
+          ? this.props.currentDate
+          : this.props.defaultCurrentDate,
+    };
   }
 
   get internalInterfaceGetter(): internalInterface {
@@ -75,8 +89,33 @@ class Widget extends BaseInfernoComponent<any> {
       return { value: "" };
     })());
   }
+  get someDate(): Date {
+    if (this.__getterCache["someDate"] !== undefined) {
+      return this.__getterCache["someDate"];
+    }
+    return (this.__getterCache["someDate"] = ((): Date => {
+      return new Date(
+        this.props.currentDate !== undefined
+          ? this.props.currentDate
+          : this.state.currentDate
+      );
+    })());
+  }
   get restAttributes(): RestProps {
-    const { someProp, type, ...restProps } = this.props as any;
+    const {
+      currentDate,
+      currentDateChange,
+      defaultCurrentDate,
+      someProp,
+      type,
+      ...restProps
+    } = {
+      ...this.props,
+      currentDate:
+        this.props.currentDate !== undefined
+          ? this.props.currentDate
+          : this.state.currentDate,
+    } as any;
     return restProps;
   }
   __getterCache: {
@@ -84,10 +123,17 @@ class Widget extends BaseInfernoComponent<any> {
     internalTypeGetter?: internalType;
     externalInterfaceGetter?: externalInterface;
     externalTypeGetter?: externalType;
+    someDate?: Date;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     if (this.props["someProp"] !== nextProps["someProp"]) {
       this.__getterCache["internalInterfaceGetter"] = undefined;
+    }
+    if (
+      this.state["currentDate"] !== nextState["currentDate"] ||
+      this.props["currentDate"] !== nextProps["currentDate"]
+    ) {
+      this.__getterCache["someDate"] = undefined;
     }
   }
   render() {
