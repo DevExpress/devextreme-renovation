@@ -1,4 +1,4 @@
-import { Component, JSXComponent, ComponentBindings, Method, OneWay, InternalState } from '@devextreme-generator/declarations';
+import { Component, JSXComponent, ComponentBindings, Method, OneWay, InternalState, TwoWay } from '@devextreme-generator/declarations';
 import { 
 	InterfaceTemplateInput as externalInterface,
 	Options as externalType,
@@ -7,6 +7,7 @@ import {
 class WidgetProps {
   @OneWay() someProp: string =''
 	@OneWay() type?: string = '';
+	@TwoWay() currentDate: Date | number | string = new Date();
 }
 interface internalInterface {
 	field1: {a: string};
@@ -35,4 +36,7 @@ class Widget extends JSXComponent(WidgetProps){
 	get externalTypeGetter(): externalType {
 		return {value: ''}
 	}
+	get someDate(): Date {
+    return new Date(this.props.currentDate);
+  }
 }
