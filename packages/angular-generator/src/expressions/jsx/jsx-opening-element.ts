@@ -41,7 +41,7 @@ import { JsxElement } from './elements';
 import { AngularComponent } from '../component';
 import { counter } from '../../counter';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
-import { process } from './element_post_processing';
+import { process } from './element-post-processing';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
