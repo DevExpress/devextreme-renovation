@@ -96,8 +96,8 @@ export class Decorator extends BaseDecorator {
         if (templates?.length) template += templates.join('');
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
-        const isInnerComp = ((this.expression.argumentsArray[0] as ObjectLiteral)
-          ?.properties.find((e) => e.key?.toString() === 'jQuery')?.value as ObjectLiteral)
+        const isInnerComp = (parameters?.properties.find((e) => e.key?.toString() === 'jQuery')
+          ?.value as ObjectLiteral)
           ?.properties.find((e) => e.key?.toString() === 'register' && e.value?.toString() === 'true');
         if (template) {
           parameters.setProperty(
