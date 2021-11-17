@@ -29,6 +29,7 @@ class HeaderComponentProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export class HeaderComponent extends JSXComponent(HeaderComponentProps) {
   click() {

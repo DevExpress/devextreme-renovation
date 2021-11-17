@@ -36,6 +36,7 @@ class InterComponentProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class InterComponent extends JSXComponent(InterComponentProps) {
   @InternalState() clicks = "";

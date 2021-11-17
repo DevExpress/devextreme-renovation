@@ -37,6 +37,7 @@ export class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class RenderSlotCondition extends JSXComponent(Props) {
   @InternalState() condition = false;

@@ -8,12 +8,12 @@ export class RefMiddleProps {
     @ForwardRef() forwardRefProp?: RefObject<HTMLDivElement>;
     @OneWay() showRefHelper?: boolean;
 }
-function view(model:RefMiddle){   
+function view(model:RefMiddle){
     return (
         <div id="forwardRefProp" ref={model.props.forwardRefProp}>
             <div id="ref" ref={model.middleDivRef}></div>
             <RefChild forwardRef={model.forwardRef}/>
-            { model.props.showRefHelper && <RefHelper 
+            { model.props.showRefHelper && <RefHelper
                 someRef={model.middleDivRef?.current}
                 refProp={model.props.refProp?.current}
                 forwardRef={model.forwardRef?.current}
@@ -22,8 +22,8 @@ function view(model:RefMiddle){
         </div>
     )
 }
-@Component({view})
+@Component({view, jQuery: {register: true},})
 export default class RefMiddle extends JSXComponent(RefMiddleProps) {
     @Ref() middleDivRef?: RefObject<HTMLDivElement>;
-    @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;    
+    @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
 }

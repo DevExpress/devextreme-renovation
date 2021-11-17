@@ -10,5 +10,5 @@ function view(model:RefChild){
         </div>
     )
 }
-@Component({view})
+@Component({view, jQuery: {register: true},})
 export default class RefChild extends JSXComponent(RefChildProps) {}

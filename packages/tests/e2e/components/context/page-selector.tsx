@@ -30,6 +30,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class PageSelector extends JSXComponent(Props) {
   get add() {

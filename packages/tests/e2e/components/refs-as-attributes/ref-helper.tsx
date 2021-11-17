@@ -17,5 +17,5 @@ function view(model:RefHelper) {
         </div>
     )
 }
-@Component({view})
+@Component({view, jQuery: {register: true},})
 export default class RefHelper extends JSXComponent(RefHelperProps) {}

@@ -16,6 +16,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ConsumerComponent extends JSXComponent(Props) {
   @Consumer(SimpleContext)

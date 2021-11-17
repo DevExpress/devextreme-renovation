@@ -17,6 +17,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class SetNonElementRef extends JSXComponent<Props>() {
   @Ref() host!: RefObject<HTMLDivElement>;
