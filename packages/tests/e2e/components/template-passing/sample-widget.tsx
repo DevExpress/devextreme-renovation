@@ -24,5 +24,6 @@ class SampleWidgetProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class SampleWidget extends JSXComponent(SampleWidgetProps) {}

@@ -16,6 +16,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -23,10 +24,16 @@ import { CommonModule } from "@angular/common";
   selector: "dx-template-transit-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["templateProp", "componentTemplateProp"],
-  template: `<dx-widget-with-template
-    [template]="templateProp"
-    [componentTemplate]="componentTemplateProp"
-  ></dx-widget-with-template>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-widget-with-template
+      [template]="templateProp"
+      [componentTemplate]="componentTemplateProp"
+      #widgetwithtemplate1
+    ></dx-widget-with-template
+    ><ng-content
+      *ngTemplateOutlet="widgetwithtemplate1?.widgetTemplate"
+    ></ng-content
+  ></ng-template>`,
 })
 export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   get __restAttributes(): any {
@@ -39,6 +46,8 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

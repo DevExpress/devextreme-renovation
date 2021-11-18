@@ -21,6 +21,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class RefPass extends JSXComponent(Props) {
   @Ref() contentRef!: RefObject<HTMLDivElement>;

@@ -19,6 +19,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -27,12 +29,17 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["state1", "state2", "stateProp"],
   outputs: ["state1Change", "state2Change", "statePropChange"],
-  template: `<div
-    >{{ state1
-    }}<dx-model-widget
-      (baseStatePropChange)="__stateChange($event)"
-    ></dx-model-widget
-  ></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div
+      >{{ state1
+      }}<dx-model-widget
+        (baseStatePropChange)="__stateChange($event)"
+        #basestate1
+      ></dx-model-widget
+      ><ng-content
+        *ngTemplateOutlet="basestate1?.widgetTemplate"
+      ></ng-content></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   internalState: number = 0;
@@ -70,6 +77,8 @@ export default class Widget extends WidgetInput {
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

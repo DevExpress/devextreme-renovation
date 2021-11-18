@@ -8,5 +8,6 @@ type PickPropsInput = Pick<WidgetInput, "color">;
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export class PickPropsComponent extends JSXComponent<PickPropsInput>() {}

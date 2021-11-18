@@ -20,6 +20,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class GridComponent extends JSXComponent(Props) {
   @Provider(Context)

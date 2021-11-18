@@ -27,6 +27,7 @@ class ButtonWithInternalStateInput extends ButtonInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ButtonWithInternalState extends JSXComponent(
   ButtonWithInternalStateInput

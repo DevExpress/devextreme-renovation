@@ -25,9 +25,10 @@ import {
   class ConsumerCompProps {
     @OneWay() numProp: number = 0;
   }
-  
+
   @Component({
     view,
+    jQuery: {register: true},
   })
   export default class ConsumerComp extends JSXComponent(ConsumerCompProps) {
     @InternalState() numState = 0;
@@ -47,10 +48,10 @@ import {
       return [this.props.numProp, this.numState, this.numberContextConsumer?.counter]
     }
     get objectGetter(): {propNumber: number, stateNumber: number, contextNumber: number} {
-      return { 
-        propNumber: this.props.numProp, 
-        stateNumber: this.numState, 
-        contextNumber: this.numberContextConsumer?.counter || 0 
+      return {
+        propNumber: this.props.numProp,
+        stateNumber: this.numState,
+        contextNumber: this.numberContextConsumer?.counter || 0
       }
     }
     get renderArray(): string{

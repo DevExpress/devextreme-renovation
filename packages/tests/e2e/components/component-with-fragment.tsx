@@ -20,7 +20,10 @@ class Props {}
 
 const baseStyle = { width: 10, height: 10, display: "inline-block" };
 
-@Component({ view })
+@Component({
+  view,
+  jQuery: {register: true},
+})
 export default class ComponentWithFragment extends JSXComponent(Props) {
   get r() {
     return {

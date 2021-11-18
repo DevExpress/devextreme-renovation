@@ -2,7 +2,7 @@ import {
     Component,
     ComponentBindings,
     JSXComponent,
-    InternalState, 
+    InternalState,
     Provider,
   } from "@devextreme-generator/declarations";
 
@@ -19,13 +19,14 @@ import {
       </div>
     );
   }
-  
+
   @ComponentBindings()
   class GetterCacheParentProps {
   }
-  
+
   @Component({
     view,
+    jQuery: {register: true},
   })
   export default class GetterCacheParent extends JSXComponent(GetterCacheParentProps) {
     @InternalState() numState = 2;

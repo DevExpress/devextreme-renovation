@@ -22,6 +22,7 @@ type InternalStateType = { value: string };
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class TestPropertyAccessChain extends JSXComponent(ButtonInput) {
   @InternalState() i1?: InternalStateType;

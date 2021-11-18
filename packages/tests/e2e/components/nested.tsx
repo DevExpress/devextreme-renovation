@@ -24,6 +24,7 @@ function view({ props: { rows }, getRowCells }: WithNested) {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class WithNested extends JSXComponent(WithNestedInput) {
   getRowCells(index: number) {

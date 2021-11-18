@@ -19,6 +19,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class SetForwardRefDeepMiddle extends JSXComponent<
   Props,

@@ -29,6 +29,7 @@ export class ListItemProps {
 
 @Component({
   view,
+  jQuery: {register: true}
 })
 export default class ListItem extends JSXComponent<
   ListItemProps,

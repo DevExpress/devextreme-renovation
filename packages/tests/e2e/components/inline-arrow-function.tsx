@@ -24,6 +24,7 @@ class InlineArrowFunctionProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class InlineArrowFunction extends JSXComponent(
   InlineArrowFunctionProps

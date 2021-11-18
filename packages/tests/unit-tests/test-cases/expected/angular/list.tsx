@@ -18,6 +18,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -25,7 +26,8 @@ import { CommonModule } from "@angular/common";
   selector: "dx-list",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["items", "ListItem"],
-  template: `<div
+  template: `<ng-template #widgetTemplate
+    ><div
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
         ><div>{{ item.text }}</div></ng-container
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_1"
@@ -63,8 +65,8 @@ import { CommonModule } from "@angular/common";
             ? onClick($event)
             : WidgetWithPropsDefaults.onClick($event)
         "
-      ></dx-widget-with-props>
-    </ng-template>`,
+      ></dx-widget-with-props> </ng-template
+  ></ng-template>`,
 })
 export default class List extends ListInput {
   global_noop = noop;
@@ -91,6 +93,8 @@ export default class List extends ListInput {
     return item.key;
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,
