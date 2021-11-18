@@ -19,7 +19,6 @@ class Props {
 
 @Component({
   view,
-  jQuery: {register: true},
 })
 export default class ForwardRefDeep extends JSXComponent<Props, "childRef">() {
   @Effect()
