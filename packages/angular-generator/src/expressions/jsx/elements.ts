@@ -15,7 +15,7 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxSpreadAttributeMeta } from './spread-attribute';
 import { Property } from '../class-members/property';
-import { process } from './element-post-processing';
+import { elementPostProcess } from './element-post-processing';
 
 export const isElement = (e: any): e is JsxElement | JsxSelfClosingElement => e instanceof JsxElement
   || e instanceof JsxSelfClosingElement
@@ -56,7 +56,7 @@ export class JsxElement extends BaseJsxElement {
   }
 
   postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
-    return process(this.openingElement, options);
+    return elementPostProcess(this.openingElement, options);
   }
 
   toString(options?: toStringOptions): string {

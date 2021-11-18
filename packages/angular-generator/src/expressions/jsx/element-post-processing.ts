@@ -2,7 +2,7 @@ import { toStringOptions } from '@devextreme-generator/core';
 import type { JsxOpeningElement } from './jsx-opening-element';
 import { tryToGetContent } from './ng-content-generator';
 
-export const process = (element: JsxOpeningElement, options?: toStringOptions): { prefix: string, postfix: string } => {
+export const elementPostProcess = (element: JsxOpeningElement, options?: toStringOptions): { prefix: string, postfix: string } => {
   const { content, elementDirective, condition } = tryToGetContent(element);
 
   if (elementDirective !== null) {

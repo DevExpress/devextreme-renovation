@@ -41,7 +41,7 @@ import { JsxElement } from './elements';
 import { AngularComponent } from '../component';
 import { counter } from '../../counter';
 import { PropsGetAccessor } from '../class-members/props-get-accessor';
-import { process } from './element-post-processing';
+import { elementPostProcess } from './element-post-processing';
 
 function pickSpreadValue(first: string, second: string): string {
   return `(${second}!==undefined?${second}:${first})`;
@@ -809,7 +809,7 @@ const VOID_ELEMENTS = [
 
 export class JsxSelfClosingElement extends JsxOpeningElement {
   postProcess(options?: toStringOptions): { prefix: string, postfix: string } {
-    return process(this, options);
+    return elementPostProcess(this, options);
   }
 
   toString(options?: toStringOptions) {
