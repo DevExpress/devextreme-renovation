@@ -20,13 +20,11 @@ import { CommonModule } from "@angular/common";
   selector: "g [TextSvgElement]",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["text"],
-  template: `<ng-template #widgetTemplate
-    ><svg:text>
-      <svg:ng-container *ngIf="![].length">
-        {{ __computedProps.text }}
-      </svg:ng-container>
-    </svg:text></ng-template
-  >`,
+  template: `<svg:text>
+    <svg:ng-container *ngIf="![].length">
+      {{ __computedProps.text }}
+    </svg:ng-container>
+  </svg:text>`,
 })
 export class TextSvgElement extends TextSvgElementProps {
   get __computedProps(): TextSvgElementProps {
