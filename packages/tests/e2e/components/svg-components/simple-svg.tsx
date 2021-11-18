@@ -48,7 +48,6 @@ export class Props {
 @Component({
   view,
   isSVG: true,
-  jQuery: {register: true},
 })
 export default class SimpleSVGComponent extends JSXComponent(Props) {
   @Ref() host!: RefObject<SVGSVGElement>;

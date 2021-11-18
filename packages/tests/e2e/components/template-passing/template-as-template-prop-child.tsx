@@ -21,6 +21,5 @@ export class ChildProps {
 @Component({
   defaultOptionRules: null,
   view: viewFunction,
-  jQuery: {register: true},
 })
 export class Child extends JSXComponent(ChildProps) {}

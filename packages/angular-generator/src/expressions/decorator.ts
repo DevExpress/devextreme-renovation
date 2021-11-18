@@ -101,7 +101,7 @@ export class Decorator extends BaseDecorator {
         if (template) {
           parameters.setProperty(
             'template',
-            new TemplateExpression(`${!isInnerComp ? '<ng-template #widgetTemplate>' : ''}${template}${!isInnerComp ? '</ng-template>' : ''}`, []),
+            new TemplateExpression(!isInnerComp && !options?.isSVG ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
           );
         }
       }

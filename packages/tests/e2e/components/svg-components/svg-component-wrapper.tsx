@@ -27,7 +27,6 @@ export class Props {
 
 @Component({
   view,
-  jQuery: {register: true},
 })
 export default class SvgComponentWrapper extends JSXComponent<
   Props,
