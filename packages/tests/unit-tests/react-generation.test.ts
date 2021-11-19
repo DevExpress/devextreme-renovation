@@ -379,17 +379,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("parent1", function () {
+  mocha.it("method-use-api-forwardRef", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("child1", function () {
-    this.testGenerator(this.test!.title);
-  });
-
-  mocha.it("child2", function () {
-    this.testGenerator(this.test!.title);
-  });
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

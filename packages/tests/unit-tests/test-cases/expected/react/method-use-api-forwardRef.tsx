@@ -1,15 +1,15 @@
 import { MutableRefObject } from "react";
-import { Child2Component } from "./child2";
+import BaseWidget from "./method";
 export const viewFunction = ({
   props: { forwardedRef },
-}: Child1Component): any => <Child2Component ref={forwardedRef} />;
+}: Child1Component): any => <BaseWidget ref={forwardedRef} />;
 
 export declare type Child1ComponentPropsType = {
   forwardedRef: any;
 };
 export const Child1ComponentProps: Child1ComponentPropsType =
   {} as any as Child1ComponentPropsType;
-import { Child2ComponentRef as Child2ComponentRef } from "./child2";
+import { WidgetRef as BaseWidgetRef } from "./method";
 import * as React from "react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -29,8 +29,8 @@ interface Child1Component {
 export function Child1Component(
   props: typeof Child1ComponentProps & RestProps
 ) {
-  const forwardedRef: MutableRefObject<Child2ComponentRef | null> =
-    useRef<Child2ComponentRef>(null);
+  const forwardedRef: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
 
   const __someGetter = useCallback(function __someGetter(): Partial<
     typeof Child1ComponentProps
@@ -46,7 +46,7 @@ export function Child1Component(
     [props]
   );
   useEffect(() => {
-    console.log(props.forwardedRef.current!.twoPlusTwo());
+    console.log(props.forwardedRef.current!.getSize());
   }, []);
 
   return viewFunction({
