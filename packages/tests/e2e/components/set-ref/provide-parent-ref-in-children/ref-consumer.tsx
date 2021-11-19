@@ -18,6 +18,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class RefConsumer extends JSXComponent<Props>() {
   getElementRef() {

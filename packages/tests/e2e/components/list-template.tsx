@@ -78,6 +78,7 @@ export class ListComponentProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ListComponent extends JSXComponent(ListComponentProps) {
   @InternalState() counter = 0;

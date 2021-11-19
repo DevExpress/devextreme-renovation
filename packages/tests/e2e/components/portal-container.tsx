@@ -26,6 +26,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class PortalContainer extends JSXComponent(Props) {
   @Ref() containerRef?: RefObject<HTMLDivElement>;

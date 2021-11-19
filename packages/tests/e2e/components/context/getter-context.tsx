@@ -24,6 +24,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class GetterProvider extends JSXComponent(Props) {
   @Provider(SimpleContext)

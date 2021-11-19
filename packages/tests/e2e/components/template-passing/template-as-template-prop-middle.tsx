@@ -22,5 +22,6 @@ export class MiddleProps {
 @Component({
   defaultOptionRules: null,
   view: viewFunction,
+  jQuery: {register: true},
 })
 export class Middle extends JSXComponent(MiddleProps) {}

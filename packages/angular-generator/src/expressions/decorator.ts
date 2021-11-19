@@ -96,10 +96,12 @@ export class Decorator extends BaseDecorator {
         if (templates?.length) template += templates.join('');
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
+        const isInnerComp = (parameters?.getProperty('jQuery') as ObjectLiteral)
+          ?.getProperty('register')?.toString() === 'true';
         if (template) {
           parameters.setProperty(
             'template',
-            new TemplateExpression(template, []),
+            new TemplateExpression(!isInnerComp && !options?.isSVG ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
           );
         }
       }

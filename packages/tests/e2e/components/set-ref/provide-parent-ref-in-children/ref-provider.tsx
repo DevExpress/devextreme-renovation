@@ -27,6 +27,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ForwardRefProvider extends JSXComponent<Props>() {
   @InternalState() isRendered = false;

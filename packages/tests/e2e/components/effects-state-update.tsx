@@ -32,6 +32,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class EffectsStateUpdate extends JSXComponent(Props) {
   @Ref() divRef!: RefObject<HTMLDivElement>;

@@ -27,5 +27,6 @@ export class WidgetInput {
 
 @Component({
   view,
+  jQuery: {register:true},
 })
 export class SimpleComponent extends JSXComponent(WidgetInput) {}

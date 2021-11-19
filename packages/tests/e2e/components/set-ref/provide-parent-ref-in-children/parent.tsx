@@ -21,6 +21,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ProvideRefFromParentToChildren extends JSXComponent<
   Props,

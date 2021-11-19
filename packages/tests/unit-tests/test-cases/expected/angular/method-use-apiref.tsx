@@ -13,6 +13,7 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,7 +21,10 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget-with-api-ref",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop1"],
-  template: `<dx-widget #baseRef [prop1]="prop1"></dx-widget>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-widget #baseRef [prop1]="prop1"></dx-widget
+    ><ng-content *ngTemplateOutlet="baseRef?.widgetTemplate"></ng-content
+  ></ng-template>`,
 })
 export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   @ViewChild("baseRef", { static: false }) baseRef?: BaseWidget;
@@ -37,6 +41,8 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

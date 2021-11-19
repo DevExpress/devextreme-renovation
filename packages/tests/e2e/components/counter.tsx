@@ -25,6 +25,7 @@ export class CounterInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class Counter extends JSXComponent(CounterInput) {
   onClick() {

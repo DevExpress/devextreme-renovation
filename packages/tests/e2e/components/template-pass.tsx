@@ -26,5 +26,6 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class TemplatePass extends JSXComponent(Props) {}

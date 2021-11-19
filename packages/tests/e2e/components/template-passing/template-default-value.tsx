@@ -41,6 +41,7 @@ export class TemplateDefaultValueProps {
 
 @Component({
   view: viewFunction,
+  jQuery: {register: true},
 })
 export default class TemplateDefaultValue extends JSXComponent(
   TemplateDefaultValueProps

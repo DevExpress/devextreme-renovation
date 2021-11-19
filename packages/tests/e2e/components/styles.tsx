@@ -27,5 +27,6 @@ class StylesWidgetProps {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class StylesWidget extends JSXComponent(StylesWidgetProps) {}

@@ -28,5 +28,6 @@ export class Props extends ButtonInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ButtonWithTemplate extends JSXComponent(Props) {}

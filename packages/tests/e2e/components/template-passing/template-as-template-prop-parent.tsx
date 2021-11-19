@@ -24,5 +24,6 @@ export class TemplateParentProps {
 @Component({
   defaultOptionRules: null,
   view: viewFunction,
+  jQuery: {register: true},
 })
 export default class TemplateParent extends JSXComponent(TemplateParentProps) {}

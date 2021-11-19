@@ -16,5 +16,6 @@ class WidgetInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ComponentWithRest extends JSXComponent(WidgetInput) {}
