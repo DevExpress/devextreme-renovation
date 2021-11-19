@@ -39,10 +39,13 @@ export default (
   return new Promise<webpack.Stats>((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) reject(err);
-      if (stats.hasErrors())
-        reject(new Error(stats.toJson().errors.join("\n")));
+      if (stats) {
+        if (stats.hasErrors())
+          reject(new Error(stats.toJson().errors?.join("\n")));
 
-      resolve(stats);
+        resolve(stats);
+
+      }
     });
   });
 };
