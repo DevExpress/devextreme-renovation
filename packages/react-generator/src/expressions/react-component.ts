@@ -533,7 +533,7 @@ export class ReactComponent extends Component {
     const props = this.isJSXComponent
       ? [`props: ${this.compilePropsType()}`]
       : [];
-
+    const forwardRefApiProps = this.members.filter((m) => m.inherited && m.isApiRef);
     return `interface ${this.name}{
               ${props
     .concat(
@@ -545,6 +545,7 @@ export class ReactComponent extends Component {
                 && !m.isPrivate
                 && !m.isMutable,
         )
+        .concat(forwardRefApiProps)
         .map((m) => m.typeDeclaration()),
     )
     .join(';\n')}
