@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "2.3.12",
+  "version": "nextversion",
   "npmClient": "npm",
   "stream": true,
   "command": {
