@@ -34,6 +34,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class EffectSubscribeUnsubscribe extends JSXComponent(Props) {
   @Ref() buttonRef!: RefObject<HTMLSpanElement>;

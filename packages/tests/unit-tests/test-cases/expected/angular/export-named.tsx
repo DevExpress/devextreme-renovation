@@ -11,6 +11,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -18,7 +20,7 @@ import { CommonModule } from "@angular/common";
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export class Widget extends WidgetInput {
   get __restAttributes(): any {
@@ -31,6 +33,8 @@ export class Widget extends WidgetInput {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

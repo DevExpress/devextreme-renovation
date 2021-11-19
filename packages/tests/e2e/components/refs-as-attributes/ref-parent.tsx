@@ -13,7 +13,10 @@ function view(model:RefParent){
         </div>
     )
 }
-@Component({view})
+@Component({
+  view,
+  jQuery: {register: true},
+})
 export default class RefParent extends JSXComponent(RefParentProps) {
     showRefHelper = false;
     @ForwardRef() forwardRefProp?: RefObject<HTMLDivElement>;

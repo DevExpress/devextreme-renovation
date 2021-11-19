@@ -31,6 +31,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class PortalComponent extends JSXComponent(Props) {
   rendered: boolean = false;

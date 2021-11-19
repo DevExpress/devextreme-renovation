@@ -36,6 +36,7 @@ class BodyComponentProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class BodyComponent extends JSXComponent(BodyComponentProps) {
   click() {

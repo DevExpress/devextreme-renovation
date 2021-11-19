@@ -17,6 +17,7 @@ class WidgetProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class CallMethodInGetterWidget extends JSXComponent(
   WidgetProps

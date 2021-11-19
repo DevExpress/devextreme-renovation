@@ -260,6 +260,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("extra-elements", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-child", function () {
     this.testGenerator(this.test!.title);
   });

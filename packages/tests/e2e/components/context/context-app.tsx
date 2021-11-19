@@ -47,6 +47,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class ContextApp extends JSXComponent(Props) {
   @InternalState() pageIndex = 1;

@@ -182,26 +182,36 @@ export class ReactComponent extends Component {
 
   createRestPropsGetter(members: BaseClassMember[]): GetAccessor {
     const props = getProps(members);
-    const bindingElements = props
-      .reduce((bindingElements, p) => {
-        if (p._name.toString() === 'export') {
-          bindingElements.push(
-            new BindingElement(undefined, p._name, 'exportProp'),
-          );
-        } else {
-          bindingElements.push(
-            new BindingElement(undefined, undefined, p._name),
-          );
-        }
-        return bindingElements;
-      }, [] as BindingElement[])
-      .concat([
-        new BindingElement(
-          SyntaxKind.DotDotDotToken,
-          undefined,
-          new Identifier('restProps'),
-        ),
-      ]);
+    let additionalBindings = [
+      new BindingElement(
+        SyntaxKind.DotDotDotToken,
+        undefined,
+        new Identifier('restProps'),
+      ),
+    ];
+
+    // TODO: remove it after overlay components are renovated
+    if (isComponentWrapper(this.context.imports)) {
+      additionalBindings = [new BindingElement(
+        undefined,
+        undefined,
+        new Identifier('isReactComponentWrapper'),
+      ), ...additionalBindings];
+    }
+
+    const bindingElements = [...props
+      .reduce<BindingElement[]>((bindingElements, p) => {
+      if (p._name.toString() === 'export') {
+        bindingElements.push(
+          new BindingElement(undefined, p._name, 'exportProp'),
+        );
+      } else {
+        bindingElements.push(
+          new BindingElement(undefined, undefined, p._name),
+        );
+      }
+      return bindingElements;
+    }, []), ...additionalBindings];
 
     const statements = [
       new VariableStatement(
@@ -630,7 +640,13 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return 'declare type RestProps = { className?: string; style?: { [name: string]: any }, key?: any, ref?: any }';
+    return `declare type RestProps = {
+      className?: string;
+      style?: { [name: string]: any },
+      key?: any,
+      ref?: any,
+      ${isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''}
+    }`;
   }
 
   getPropsType(): string {

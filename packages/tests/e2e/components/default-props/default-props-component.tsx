@@ -55,6 +55,7 @@ class Props {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class DefaultPropsComponent extends JSXComponent(Props) {
   get booleanPropsInRest(): {

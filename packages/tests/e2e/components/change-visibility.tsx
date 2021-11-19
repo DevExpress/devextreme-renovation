@@ -38,6 +38,7 @@ class WidgetInput {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class VisibilityChange extends JSXComponent(WidgetInput) {
   @InternalState() visible: boolean = false;

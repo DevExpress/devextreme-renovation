@@ -36,6 +36,7 @@ class WidgetInput {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class VisibilityChangeProp extends JSXComponent(WidgetInput) {
   @InternalState() counter: number = 0;

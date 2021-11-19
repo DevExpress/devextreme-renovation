@@ -13,6 +13,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -22,16 +24,22 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   selector: "dx-external-layout",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
-  template: `<dx-inner-layout [innerComponentTemplate]="InnerComponent"
-    ><ng-template #InnerComponent let-someTemplate="someTemplate"
-      ><dx-inner-component
-        [someTemplate]="
-          someTemplate !== undefined
-            ? someTemplate
-            : InnerComponentDefaults.someTemplate
-        "
-      ></dx-inner-component></ng-template
-  ></dx-inner-layout>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-inner-layout [innerComponentTemplate]="InnerComponent" #innerlayout1
+      ><ng-template #InnerComponent let-someTemplate="someTemplate"
+        ><dx-inner-component
+          [someTemplate]="
+            someTemplate !== undefined
+              ? someTemplate
+              : InnerComponentDefaults.someTemplate
+          "
+          #innercomponent1
+        ></dx-inner-component
+        ><ng-content
+          *ngTemplateOutlet="innercomponent1?.widgetTemplate"
+        ></ng-content></ng-template></dx-inner-layout
+    ><ng-content *ngTemplateOutlet="innerlayout1?.widgetTemplate"></ng-content
+  ></ng-template>`,
 })
 export class ExternalLayout extends Props {
   get __restAttributes(): any {
@@ -44,6 +52,8 @@ export class ExternalLayout extends Props {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

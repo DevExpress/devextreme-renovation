@@ -18,6 +18,7 @@ class Props {}
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class SetForwardRefParent extends JSXComponent<Props>() {
   @ForwardRef() host!: RefObject<HTMLDivElement>;

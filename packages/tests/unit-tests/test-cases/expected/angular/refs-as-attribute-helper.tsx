@@ -13,6 +13,8 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  ViewChild,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -20,11 +22,13 @@ import { CommonModule } from "@angular/common";
   selector: "dx-helper-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["forwardRef", "someRef", "refProp", "forwardRefProp"],
-  template: `<div
-    ><div>Ref:{{ someRef }}</div
-    ><div>ForwardRef:{{ forwardRef }}</div
-    ><div>RefProp:{{ refProp }}</div
-    ><div>ForwardRefProp:{{ forwardRefProp }}</div></div
+  template: `<ng-template #widgetTemplate
+    ><div
+      ><div>Ref:{{ someRef }}</div
+      ><div>ForwardRef:{{ forwardRef }}</div
+      ><div>RefProp:{{ refProp }}</div
+      ><div>ForwardRefProp:{{ forwardRefProp }}</div></div
+    ></ng-template
   >`,
 })
 export default class HelperWidget extends HelperWidgetProps {
@@ -38,6 +42,8 @@ export default class HelperWidget extends HelperWidgetProps {
     });
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

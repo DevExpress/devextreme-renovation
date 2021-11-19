@@ -15,6 +15,7 @@ import {
   ViewRef,
   ViewChild,
   ElementRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -23,7 +24,9 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["a", "id"],
   outputs: ["onClick"],
-  template: `<div #_auto_ref_0></div>`,
+  template: `<ng-template #widgetTemplate
+    ><div #_auto_ref_0></div
+  ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   get __restAttributes(): any {
@@ -69,6 +72,8 @@ export default class Widget extends WidgetProps {
   }
 
   _onClick: any;
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

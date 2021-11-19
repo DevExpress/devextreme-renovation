@@ -18,6 +18,7 @@ import {
   ViewContainerRef,
   Renderer2,
   ViewRef,
+  TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -25,13 +26,18 @@ import { CommonModule } from "@angular/common";
   selector: "dx-slot-pass",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["p"],
-  template: `<div
-      ><dx-widget
+  template: `<ng-template #widgetTemplate
+    ><div
+      ><dx-widget #widget1
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"
-          ></ng-container></div></dx-widget></div
-    ><ng-template #dxchildren><ng-content></ng-content></ng-template>`,
+          ></ng-container></div></dx-widget
+      ><ng-content
+        *ngTemplateOutlet="widget1?.widgetTemplate"
+      ></ng-content></div
+    ><ng-template #dxchildren><ng-content></ng-content></ng-template
+  ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
   get __restAttributes(): any {
@@ -47,6 +53,8 @@ export default class SlotPass extends WidgetInput {
     return { children: this.children };
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

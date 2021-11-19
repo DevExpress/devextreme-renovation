@@ -15,6 +15,7 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
+  TemplateRef,
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -23,11 +24,15 @@ import { CommonModule } from "@angular/common";
   selector: "dx-ref-on-children-parent",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["nullableRef"],
-  template: `<dx-ref-on-children-child
-    [childRef]="forwardRef_child"
-    [nullableRef]="forwardRef_nullableRef"
-    [state]="innerState"
-  ></dx-ref-on-children-child>`,
+  template: `<ng-template #widgetTemplate
+    ><dx-ref-on-children-child
+      [childRef]="forwardRef_child"
+      [nullableRef]="forwardRef_nullableRef"
+      [state]="innerState"
+      #child1
+    ></dx-ref-on-children-child
+    ><ng-content *ngTemplateOutlet="child1?.widgetTemplate"></ng-content
+  ></ng-template>`,
 })
 export default class RefOnChildrenParent extends Props {
   child!: ElementRef<HTMLDivElement>;
@@ -144,6 +149,8 @@ export default class RefOnChildrenParent extends Props {
     this._updateEffects();
   }
 
+  @ViewChild("widgetTemplate", { static: true })
+  widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private render: Renderer2,

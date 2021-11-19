@@ -32,6 +32,7 @@ class PanelComponentProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class PanelComponent extends JSXComponent(PanelComponentProps) {
   headerClick() {

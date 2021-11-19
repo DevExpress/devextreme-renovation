@@ -28,6 +28,7 @@ export class SumArrayProps {
 
 @Component({
   view,
+  jQuery: {register: true},
 })
 export default class SumArray extends JSXComponent(SumArrayProps) {
   @Ref() counterRef!: RefObject<HTMLDivElement>;
