@@ -25,7 +25,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         include: path.resolve(__dirname, "../../components"),
-        loaders: [
+        use: [
           {
             loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
@@ -40,7 +40,7 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: path.resolve(__dirname, "../../components"),
-        loaders: [
+        use: [
           {
             loader: "ts-loader",
             options: {
@@ -53,16 +53,16 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        loader: "html-loader",
+        use: "html-loader",
       },
       {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
-        loader: "file-loader?name=assets/[name].[hash].[ext]",
+        use: "file-loader?name=assets/[name].[hash].[ext]",
       },
       {
         test: /\.css$/,
         include: path.resolve(__dirname, "./src/app"),
-        loader: "raw-loader",
+        use: "raw-loader",
       },
     ],
   },
