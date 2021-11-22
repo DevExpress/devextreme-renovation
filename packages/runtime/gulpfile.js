@@ -15,20 +15,16 @@ platforms.forEach(function(platform) {
 
 gulp.task('compile.esm', function() {
   var tsProject = ts.createProject('tsconfig.esm.build.json');
-  //gulp
   return tsProject.src()
     .pipe(tsProject())
     .pipe(gulp.dest('./dist/esm'))
-  //done();
 });
 
-gulp.task('compile.cjs', function(done) {
+gulp.task('compile.cjs', function() {
   const tsProject = ts.createProject('tsconfig.cjs.build.json');
-  //gulp
   return tsProject.src()
     .pipe(tsProject())
     .pipe(gulp.dest('./dist/cjs'))
-  //done();
 });
 
 gulp.task('npm.license', function(done) {

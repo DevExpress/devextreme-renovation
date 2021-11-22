@@ -141,8 +141,6 @@ jobs:
           cd ./DevExtreme
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
-          ls ./node_modules/@devextreme/runtime/declarations
-          ls ./node_modules/@devextreme/runtime/cjs/declarations/
 
       - name: Run Jest tests
         run: |

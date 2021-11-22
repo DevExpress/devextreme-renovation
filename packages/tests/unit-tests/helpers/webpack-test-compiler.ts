@@ -41,10 +41,8 @@ export default (
       if (err) reject(err);
       if (stats) {
         if (stats.hasErrors())
-          reject(new Error(stats.toJson().errors?.join("\n")));
-
+          reject(new Error(stats.toJson().errors?.map(({message}) => message).join("\n")));
         resolve(stats);
-
       }
     });
   });
