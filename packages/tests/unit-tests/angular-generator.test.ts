@@ -2799,7 +2799,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(
-            removeSpaces(element.toString()), 
+            removeSpaces(element.toString()),
             removeSpaces(`
               <dx-widget #widget1></dx-widget>
               <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>
@@ -6886,7 +6886,7 @@ mocha.describe("Angular generator", function () {
                     @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
-                      private render: Renderer2,
+                      private renderer: Renderer2,
                       private viewContainerRef: ViewContainerRef) {}
                 }
 
@@ -6979,7 +6979,7 @@ mocha.describe("Angular generator", function () {
                     @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
                     constructor(
                       private changeDetection: ChangeDetectorRef,
-                      private render: Renderer2,
+                      private renderer: Renderer2,
                       private viewContainerRef: ViewContainerRef) {
                       super();
                     }

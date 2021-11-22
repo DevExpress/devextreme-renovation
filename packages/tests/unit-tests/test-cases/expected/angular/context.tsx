@@ -102,7 +102,7 @@ export default class Widget extends Props {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef,
     @SkipSelf() @Optional() private contextConsumer: P1Context,
     @Host() private provider: P1Context,
