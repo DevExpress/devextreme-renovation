@@ -16,6 +16,7 @@ on:
       - '**'
 env:
   nodeVersion: 15
+  devextremeBranch: 22_1
 
 jobs:
   build-generators:
@@ -27,7 +28,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 2
-          
+
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
@@ -69,7 +70,7 @@ jobs:
           node-version: ${{ env.nodeVersion }}
 
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         run: |
@@ -119,7 +120,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         env:
@@ -140,14 +141,9 @@ jobs:
           cd ./DevExtreme
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../build-helpers/package.tgz
-
+          ls node_modules/@devextreme/runtime/declarations
+          ls node_modules/@devextreme/runtime/cjs/declarations/
+          
       - name: Run Jest tests
         run: |
           cd ./DevExtreme
@@ -179,7 +175,7 @@ jobs:
           node-version: ${{ env.nodeVersion }}
 
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - uses: actions/download-artifact@master
         with:
