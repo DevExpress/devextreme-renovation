@@ -1528,7 +1528,7 @@ export class AngularComponent extends Component {
     ];
     const constructorArguments: string[] = [
       'private changeDetection: ChangeDetectorRef',
-      'private render: Renderer2',
+      'private renderer: Renderer2',
       'private viewContainerRef: ViewContainerRef',
     ];
 
