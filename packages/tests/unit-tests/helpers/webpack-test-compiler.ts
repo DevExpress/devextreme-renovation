@@ -40,8 +40,9 @@ export default (
     compiler.run((err, stats) => {
       if (err) reject(err);
       if (stats) {
-        if (stats.hasErrors())
-          reject(new Error(stats.toJson().errors?.map(({message}) => message).join("\n")));
+        if (stats.hasErrors()) {
+          reject(new Error(stats.toJson().errors?.map(({ message }) => message).join("\n")));
+        }
         resolve(stats);
       }
     });
