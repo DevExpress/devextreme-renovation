@@ -13,20 +13,18 @@ platforms.forEach(function(platform) {
   });
 });
 
-gulp.task('compile.esm', function(done) {
-  gulp
-    .src(['./**/*.ts', './**/*.tsx'])
-    .pipe(ts('tsconfig.esm.build.json'))
+gulp.task('compile.esm', function() {
+  var tsProject = ts.createProject('tsconfig.esm.build.json');
+  return tsProject.src()
+    .pipe(tsProject())
     .pipe(gulp.dest('./dist/esm'))
-  done();
 });
 
-gulp.task('compile.cjs', function(done) {
-  gulp
-    .src(['./**/*.ts', './**/*.tsx'])
-    .pipe(ts('tsconfig.cjs.build.json'))
+gulp.task('compile.cjs', function() {
+  const tsProject = ts.createProject('tsconfig.cjs.build.json');
+  return tsProject.src()
+    .pipe(tsProject())
     .pipe(gulp.dest('./dist/cjs'))
-  done();
 });
 
 gulp.task('npm.license', function(done) {
