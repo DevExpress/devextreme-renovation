@@ -1,4 +1,5 @@
-import { toStringOptions } from '@devextreme-generator/core';
+import { Identifier, SimpleExpression, toStringOptions } from '@devextreme-generator/core';
+import { AngularDirective } from './angular-directive';
 import type { JsxOpeningElement } from './jsx-opening-element';
 import { tryToGetContent } from './ng-content-generator';
 
@@ -6,7 +7,8 @@ export const elementPostProcess = (element: JsxOpeningElement, options?: toStrin
   const { content, elementDirective, condition } = tryToGetContent(element);
 
   if (elementDirective !== null) {
-    element.attributes.push(elementDirective);
+    element.addAttribute(elementDirective);
+    element.addAttribute(new AngularDirective(new Identifier('styles'), new SimpleExpression('{display: contents}')));
   }
 
   return {

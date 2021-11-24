@@ -25,7 +25,10 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
   template: `<ng-template #widgetTemplate
-    ><dx-inner-layout [innerComponentTemplate]="InnerComponent" #innerlayout1
+    ><dx-inner-layout
+      [innerComponentTemplate]="InnerComponent"
+      #innerlayout1
+      styles="{display: contents}"
       ><ng-template #InnerComponent let-someTemplate="someTemplate"
         ><dx-inner-component
           [someTemplate]="
@@ -34,6 +37,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
               : InnerComponentDefaults.someTemplate
           "
           #innercomponent1
+          styles="{display: contents}"
         ></dx-inner-component
         ><ng-content
           *ngTemplateOutlet="innercomponent1?.widgetTemplate"

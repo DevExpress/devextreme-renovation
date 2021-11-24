@@ -26,6 +26,7 @@ import { CommonModule } from "@angular/common";
       [componentTemplate]="InnerWidget"
       [arrowTemplate]="__arrowTemplate__generated"
       #widgetwithtemplate2
+      styles="{display: contents}"
       ><ng-template
         #InnerWidget
         let-selected="selected"
@@ -46,6 +47,7 @@ import { CommonModule } from "@angular/common";
               : InnerWidgetDefaults.valueChange)($event)
           "
           #innerwidget3
+          styles="{display: contents}"
         ></dx-inner-widget
         ><ng-content
           *ngTemplateOutlet="innerwidget3?.widgetTemplate"

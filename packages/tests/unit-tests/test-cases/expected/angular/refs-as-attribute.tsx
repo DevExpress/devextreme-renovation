@@ -35,6 +35,7 @@ import { CommonModule } from "@angular/common";
           forwardRefProp ? forwardRefProp()?.nativeElement : undefined
         "
         #helperwidget1
+        styles="{display: contents}"
       ></dx-helper-widget
       ><ng-content
         *ngTemplateOutlet="helperwidget1?.widgetTemplate"
