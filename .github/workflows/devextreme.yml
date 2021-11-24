@@ -15,7 +15,8 @@ on:
     branches:
       - '**'
 env:
-  nodeVersion: 15.x
+  nodeVersion: 15
+  devextremeBranch: 22_1
 
 jobs:
   build-generators:
@@ -27,6 +28,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.nodeVersion }}
 
       - name: Install packages
         run: npm install --no-audit --no-fund --ignore-scripts
@@ -62,10 +68,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.nodeVersion }}
-          registry-url: https://registry.npmjs.org/
 
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         run: |
@@ -108,8 +113,14 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.nodeVersion }}
+          registry-url: https://registry.npmjs.org/
+
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - name: Build DevExtreme
         env:
@@ -118,7 +129,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
         run: |
           cd ./DevExtreme
-          npm install --no-package-lock --no-audit --no-fund
+          npm install --no-audit --no-fund
           npm run build
 
       - uses: actions/download-artifact@master
@@ -130,13 +141,6 @@ jobs:
           cd ./DevExtreme
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../build-helpers/package.tgz
 
       - name: Run Jest tests
         run: |
@@ -167,10 +171,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.nodeVersion }}
-          registry-url: https://registry.npmjs.org/
 
       - name: Get DevExtreme
-        run: git clone -b 21_2 --single-branch https://github.com/DevExpress/DevExtreme
+        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
 
       - uses: actions/download-artifact@master
         with:
@@ -196,7 +199,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
         run: |
           cd ./DevExtreme
-          npm install --no-package-lock --no-audit --no-fund
+          npm install --no-audit --no-fund
           npm run build
 
       - name: Run QUnit tests

@@ -11,7 +11,7 @@ module.exports = {
     rules: [
       {
         test: /\.tsx$/,
-        loaders: [
+        use: [
           {
             loader: "vue-loader",
           },
@@ -47,7 +47,7 @@ module.exports = {
 
       {
         test: /\.ts$/,
-        loaders: [
+        use: [
           {
             loader: "babel-loader",
             options: {

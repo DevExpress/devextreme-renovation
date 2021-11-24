@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.build.json",
-  "include": ["angular/**/*", "react/**/*", "vue/**/*", "inferno/**/*"],
+  "include": ["declarations/**/*", "angular/**/*", "react/**/*", "vue/**/*", "inferno/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
     "skipLibCheck": true,

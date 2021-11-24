@@ -6,7 +6,7 @@ on:
     paths:
       - 'packages/*/package.json'
 env:
-  nodeVersion: 12.x
+  nodeVersion: 15
 
 jobs:
 
@@ -38,6 +38,18 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.nodeVersion }}
+
+      - name: Restore npm cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-modules
 
       - name: Install packages
         run: npm install --no-audit --no-fund --ignore-scripts
@@ -87,7 +99,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.nodeVersion }}
-          registry-url: https://registry.npmjs.org/
 
       - uses: actions/download-artifact@master
         with:

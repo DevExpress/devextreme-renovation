@@ -32,7 +32,7 @@ mocha.describe("webpack-loader", function () {
       try {
         await compiler(fixtureFileName, { platform: "unknown" });
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
 
       assert.ok(error!.message!.indexOf("Invalid platform") > -1);
@@ -46,7 +46,7 @@ mocha.describe("webpack-loader", function () {
         jqueryComponentRegistratorModule: "registrator",
       });
 
-      const output = stats.toJson().modules![0].source;
+      const output = stats.toJson({ source: true }).modules![0].source;
 
       assert.strictEqual(this.codeCompilerStub.callCount, 1);
       const args = this.codeCompilerStub.lastCall.args;
@@ -132,7 +132,7 @@ mocha.describe("webpack-loader", function () {
         tsConfig: path.resolve(__dirname, "test-cases/tsconfig.json"),
       });
 
-      const output = stats.toJson().modules![0].source!;
+      const output = stats.toJson({ source: true }).modules![0].source! as string;
 
       assertCode(output, '"use strict";\nconst a = 10;\n');
     });
@@ -144,7 +144,7 @@ mocha.describe("webpack-loader", function () {
         tsConfig: path.resolve(__dirname, "./test-cases/tsconfig.json"),
       });
 
-      const output = stats.toJson().modules![0].source!;
+      const output = stats.toJson({ source: true }).modules![0].source! as string;
 
       assertCode(output, '"use strict";\nconst a = null;\n');
     });
@@ -155,7 +155,7 @@ mocha.describe("webpack-loader", function () {
         tsConfig: path.resolve(__dirname, "incorrect.tsconfig.json"),
       });
 
-      const output = stats.toJson().modules![0].source!;
+      const output = stats.toJson({ source: true }).modules![0].source! as string;
 
       assertCode(output, "var a = 10;\n");
     });
@@ -168,7 +168,7 @@ mocha.describe("webpack-loader", function () {
           tsConfig: path.resolve(__dirname, "./test-cases/webpack-loader.test.tsconfig.json"),
         });
 
-        const output = stats.toJson().modules![0].source!;
+        const output = stats.toJson({ source: true }).modules![0].source! as string;
 
         assertCode(output, "const a = 10;\n");
       }
