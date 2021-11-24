@@ -28,7 +28,7 @@ import { CommonModule } from "@angular/common";
     ><dx-widget
       [height]="__getProps().height"
       #base1
-      styles="{display: contents}"
+      style="display: contents"
     ></dx-widget
     ><ng-content *ngTemplateOutlet="base1?.widgetTemplate"></ng-content
     ><ng-template #dxchildren><ng-content></ng-content></ng-template

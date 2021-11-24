@@ -28,7 +28,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
     ><dx-inner-layout
       [innerComponentTemplate]="InnerComponent"
       #innerlayout1
-      styles="{display: contents}"
+      style="display: contents"
       ><ng-template #InnerComponent let-someTemplate="someTemplate"
         ><dx-inner-component
           [someTemplate]="
@@ -37,7 +37,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
               : InnerComponentDefaults.someTemplate
           "
           #innercomponent1
-          styles="{display: contents}"
+          style="display: contents"
         ></dx-inner-component
         ><ng-content
           *ngTemplateOutlet="innercomponent1?.widgetTemplate"

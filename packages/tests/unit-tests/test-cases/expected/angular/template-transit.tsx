@@ -29,7 +29,7 @@ import { CommonModule } from "@angular/common";
       [template]="templateProp"
       [componentTemplate]="componentTemplateProp"
       #widgetwithtemplate1
-      styles="{display: contents}"
+      style="display: contents"
     ></dx-widget-with-template
     ><ng-content
       *ngTemplateOutlet="widgetwithtemplate1?.widgetTemplate"

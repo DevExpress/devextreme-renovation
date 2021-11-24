@@ -446,7 +446,7 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         removeSpaces(expression.toString()),
         removeSpaces(`
-          <dx-base-widget #basewidget1 styles="{display:contents}"  ><svg:text ></text></dx-base-widget>
+          <dx-base-widget #basewidget1 style="display:contents"  ><svg:text ></text></dx-base-widget>
           <ng-content *ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
         `)
       );
@@ -1708,7 +1708,7 @@ mocha.describe("Angular generator", function () {
             members: [],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  ></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  ></dx-base-widget>
             <ng-content *ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2028,7 +2028,7 @@ mocha.describe("Angular generator", function () {
             members: [p1, p2],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="p1"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [p1]="p1"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2090,7 +2090,7 @@ mocha.describe("Angular generator", function () {
             members: [p1, p1Method],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="__p1"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [p1]="__p1"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2154,7 +2154,7 @@ mocha.describe("Angular generator", function () {
               members: [p1, p1Method],
             })),
             removeSpaces(`
-              <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
+              <dx-base-widget #basewidget1 style="display:contents"  [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
               <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
             `)
           );
@@ -2214,7 +2214,7 @@ mocha.describe("Angular generator", function () {
             members: [p1, p1Method],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [p1]="(p1!==undefined?p1:__p1)"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2273,7 +2273,7 @@ mocha.describe("Angular generator", function () {
             members: [p1, p1Method],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="(__p1!==undefined?__p1:p1)"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [p1]="(__p1!==undefined?__p1:p1)"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2338,7 +2338,7 @@ mocha.describe("Angular generator", function () {
             members: [p1, restAttributes],
           })),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [p1]="p1"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [p1]="p1"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2388,7 +2388,7 @@ mocha.describe("Angular generator", function () {
             })
           ),
           removeSpaces(`
-            <dx-base-widget #basewidget1 styles="{display:contents}"  [x]="xValue" [y]="y"></dx-base-widget>
+            <dx-base-widget #basewidget1 style="display:contents"  [x]="xValue" [y]="y"></dx-base-widget>
             <ng-content*ngTemplateOutlet="basewidget1?.widgetTemplate"></ng-content>
           `)
         );
@@ -2788,7 +2788,7 @@ mocha.describe("Angular generator", function () {
           );
 
           assert.strictEqual(removeSpaces(element.toString()), removeSpaces(`
-            <dx-widget #widget1 styles="{display:contents}" ></dx-widget>
+            <dx-widget #widget1 style="display:contents" ></dx-widget>
             <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`));
         });
 
@@ -2801,7 +2801,7 @@ mocha.describe("Angular generator", function () {
           assert.strictEqual(
             removeSpaces(element.toString()),
             removeSpaces(`
-              <dx-widget #widget1 styles="{display:contents}" ></dx-widget>
+              <dx-widget #widget1 style="display:contents" ></dx-widget>
               <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>
             `));
         });
@@ -2893,7 +2893,7 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString({
               members: [],
             })),
-            removeSpaces(`<dx-widget (event)="value($event)" #widget1 styles="{display:contents}" ></dx-widget>
+            removeSpaces(`<dx-widget (event)="value($event)" #widget1 style="display:contents" ></dx-widget>
             <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
           );
         });
@@ -2932,7 +2932,7 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString({
               members: [],
             })),
-            removeSpaces(`<dx-widget [className]="value" #widget1 styles="{display:contents}" ></dx-widget>
+            removeSpaces(`<dx-widget [className]="value" #widget1 style="display:contents" ></dx-widget>
             <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
           );
         });
@@ -2996,7 +2996,7 @@ mocha.describe("Angular generator", function () {
               removeSpaces(element.toString({
                 members: [],
               })),
-              removeSpaces(`<dx-widget [className]="value" #widget1 styles="{display:contents}" >
+              removeSpaces(`<dx-widget [className]="value" #widget1 style="display:contents" >
                 <div class="class-name"></div>
               </dx-widget>
               <ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
@@ -3065,7 +3065,7 @@ mocha.describe("Angular generator", function () {
                 })
               ),
               removeSpaces(`
-              <dx-widget #widget1 styles="{display:contents}" >
+              <dx-widget #widget1 style="display:contents" >
                 <div #slotChildren style="display: contents">
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
@@ -3117,7 +3117,7 @@ mocha.describe("Angular generator", function () {
                 })
               ),
               removeSpaces(`
-              <dx-widget #widget1 styles="{display:contents}" >
+              <dx-widget #widget1 style="display:contents" >
                 <div #slotChildrenstyle="display:contents">
                   <ng-container [ngTemplateOutlet]="dxchildren">
                   </ng-container>
@@ -3161,7 +3161,7 @@ mocha.describe("Angular generator", function () {
                 })
               ),
               removeSpaces(`
-              <dx-widget #widget1 styles="{display:contents}" >
+              <dx-widget #widget1 style="display:contents" >
                 <div #slotChildren style="display: contents">
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
@@ -3206,7 +3206,7 @@ mocha.describe("Angular generator", function () {
                 })
               ),
               removeSpaces(`
-              <dx-widget #widget1 styles="{display:contents}" >
+              <dx-widget #widget1 style="display:contents" >
                 <div #slotChildren style="display: contents">
                   <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
                 </div>
@@ -3967,7 +3967,7 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 styles="{display:contents}"  >
+              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents"  >
                 <ng-template #__template__generated>
                   <div ></div>
                 </ng-template>
@@ -4005,7 +4005,7 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 styles="{display:contents}"  >
+              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents"  >
                 <ng-template #__template__generated let-p1="p1" let-myP2="p2">
                   <div ></div>
                 </ng-template>
@@ -4046,7 +4046,7 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 styles="{display:contents}"  >
+              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents"  >
                 <ng-template #__template__generated let-p1="p1" let-p2="p2">
                   <div ></div>
                 </ng-template>

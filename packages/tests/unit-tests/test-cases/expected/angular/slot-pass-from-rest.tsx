@@ -28,7 +28,7 @@ import { CommonModule } from "@angular/common";
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-widget #widget1 styles="{display: contents}"
+      ><dx-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"

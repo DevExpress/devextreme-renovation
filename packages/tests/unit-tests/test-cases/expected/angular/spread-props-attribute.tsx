@@ -36,7 +36,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
       #innerwidget2
-      styles="{display: contents}"
+      style="display: contents"
       [value]="value"
       (valueChange)="_valueChange($event)"
     ></dx-inner-widget

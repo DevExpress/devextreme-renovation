@@ -34,7 +34,7 @@ import { CommonModule } from "@angular/common";
       ><span [class]="global_CLASS_NAME"></span
       ><dx-widget-two
         #externalcomponent1
-        styles="{display: contents}"
+        style="display: contents"
       ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="externalcomponent1?.widgetTemplate"

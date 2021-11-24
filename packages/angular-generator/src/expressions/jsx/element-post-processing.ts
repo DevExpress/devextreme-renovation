@@ -8,7 +8,7 @@ export const elementPostProcess = (element: JsxOpeningElement, options?: toStrin
 
   if (elementDirective !== null) {
     element.addAttribute(elementDirective);
-    element.addAttribute(new AngularDirective(new Identifier('styles'), new SimpleExpression('{display: contents}')));
+    element.addAttribute(new AngularDirective(new Identifier('style'), new SimpleExpression('display: contents')));
   }
 
   return {

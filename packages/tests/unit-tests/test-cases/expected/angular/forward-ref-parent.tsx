@@ -30,7 +30,7 @@ import { CommonModule } from "@angular/common";
       [nullableRef]="forwardRef_nullableRef"
       [state]="innerState"
       #child1
-      styles="{display: contents}"
+      style="display: contents"
     ></dx-ref-on-children-child
     ><ng-content *ngTemplateOutlet="child1?.widgetTemplate"></ng-content
   ></ng-template>`,

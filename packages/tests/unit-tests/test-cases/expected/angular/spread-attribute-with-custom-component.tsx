@@ -20,7 +20,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
       #innerwidget1
-      styles="{display: contents}"
+      style="display: contents"
       [selected]="__attr1.selected !== undefined ? __attr1.selected : false"
       [value]="__attr1.value"
       (onSelect)="__attr1.onSelect($event)"
