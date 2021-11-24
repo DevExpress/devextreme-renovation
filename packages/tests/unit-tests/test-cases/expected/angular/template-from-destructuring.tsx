@@ -1,4 +1,5 @@
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class Props {
   @Input() contentTemplate: TemplateRef<any> | null = null;
 }

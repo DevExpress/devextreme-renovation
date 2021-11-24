@@ -1,5 +1,6 @@
 import BaseWidget, { DxWidgetModule } from "./method";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetWithApiRefInput {
   @Input() prop1?: number;
 }

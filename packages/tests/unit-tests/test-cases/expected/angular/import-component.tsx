@@ -1,5 +1,6 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
   @Output() onClick: EventEmitter<number> = new EventEmitter();

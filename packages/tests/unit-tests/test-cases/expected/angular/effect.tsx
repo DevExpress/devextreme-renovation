@@ -5,7 +5,8 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() p: string = "10";
   @Input() r: string = "20";

@@ -1,6 +1,7 @@
 import HelperWidget, { DxHelperWidgetModule } from "./refs-as-attribute-helper";
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetProps {
   @Input() refProp?: HTMLDivElement;
   @Input() forwardRefProp?: (

@@ -8,7 +8,8 @@ interface TemplateInput {
   inputInt: number;
 }
 
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 class Props {
   @Input() PropFromClass?: ClassTemplateInput;
   @Input() PropFromInterface?: TemplateInput;

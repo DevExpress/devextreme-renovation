@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetWithPropsInput {
   @Input() value: string = "default text";
   @Input() optionalValue?: string;

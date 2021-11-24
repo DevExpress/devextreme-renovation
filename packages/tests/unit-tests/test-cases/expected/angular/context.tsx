@@ -34,7 +34,8 @@ class GetterContext {
   }
 }
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class Props {
   @Input() p1: number = 10;
 }

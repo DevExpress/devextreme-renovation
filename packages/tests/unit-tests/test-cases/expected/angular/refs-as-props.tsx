@@ -1,7 +1,8 @@
 import WidgetWithRefProp, {
   DxWidgetWithRefPropModule,
 } from "./dx-widget-with-ref-prop";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() nullableRef?: HTMLDivElement;
 }

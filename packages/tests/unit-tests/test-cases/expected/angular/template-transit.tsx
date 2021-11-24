@@ -2,7 +2,8 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class TemplateTransitWidgetInput {
   @Input() templateProp?: TemplateRef<any> | null = null;
   @Input() componentTemplateProp?: TemplateRef<any> | null = null;

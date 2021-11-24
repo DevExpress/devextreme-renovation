@@ -1,5 +1,6 @@
 import BaseState, { DxModelWidgetModule } from "./model";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;

@@ -7,7 +7,8 @@ interface WidgetI {
   onClick(): void;
 }
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput extends BaseProps {
   @Input() p: string = "10";
 }

@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() propState: number = 1;
   @Output() propStateChange: EventEmitter<number> = new EventEmitter();

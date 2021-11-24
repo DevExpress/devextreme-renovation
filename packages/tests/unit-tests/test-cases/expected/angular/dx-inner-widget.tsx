@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class InnerWidgetProps {
   @Input() selected?: boolean;
   @Input() value: number = 14;

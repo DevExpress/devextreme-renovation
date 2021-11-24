@@ -1,4 +1,5 @@
-import { ViewChild, ElementRef } from "@angular/core";
+import { Injectable, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 class WidgetInput {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
 

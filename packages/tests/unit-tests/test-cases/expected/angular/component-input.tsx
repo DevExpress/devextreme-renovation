@@ -1,5 +1,6 @@
 export const COMPONENT_INPUT_CLASS = "c3";
-import { Input, ViewChild, ElementRef } from "@angular/core";
+import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() height?: number = 10;
   @Input() width?: number = 10;

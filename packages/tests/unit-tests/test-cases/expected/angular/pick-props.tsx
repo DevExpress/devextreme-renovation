@@ -1,7 +1,8 @@
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
 import { AdditionalOptions } from "./types.d";
+@Injectable()
 class WidgetProps {
   @Input() data?: Options = new Props().data;
   @Input() info?: AdditionalOptions = new Props().info;

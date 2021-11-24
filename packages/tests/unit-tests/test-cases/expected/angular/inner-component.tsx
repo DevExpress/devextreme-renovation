@@ -2,7 +2,8 @@ import InnerWidget, {
   InnerWidgetProps,
   DxInnerWidgetModule,
 } from "./dx-inner-widget";
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class InnerComponentProps {
   @Input() someTemplate: TemplateRef<any> | null = null;
 }

@@ -3,7 +3,8 @@ import {
   Options as externalType,
 } from "./types.d";
 
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";

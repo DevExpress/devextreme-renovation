@@ -199,6 +199,7 @@ export class ComponentInput extends BaseComponentInput {
 
     return `
         ${this.compileImports()}
+        @Injectable()
         ${this.modifiers.join(' ')} class ${
   this.name
 } ${this.heritageClauses.map((h) => h.toString()).join(' ')} {

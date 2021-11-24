@@ -1,6 +1,7 @@
 import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
 import { InnerComponent, DxInnerComponentModule } from "./inner-component";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class Props {
   @Input() prop: number = 0;
 }

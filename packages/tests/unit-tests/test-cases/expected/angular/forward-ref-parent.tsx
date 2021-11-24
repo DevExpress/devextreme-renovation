@@ -1,5 +1,6 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class Props {
   @Input() nullableRef?: (
     ref?: ElementRef<HTMLDivElement>

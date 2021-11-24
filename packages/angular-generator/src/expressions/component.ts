@@ -58,7 +58,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = 'CUSTOM_VALUE_ACCESSOR_PROVIDER';
 export function compileCoreImports(
   members: Array<Property | Method>,
   context: AngularGeneratorContext,
-  imports: string[] = [],
+  imports: string[] = ['Injectable'],
 ) {
   if (
     members.some((m) => m.decorators.some(

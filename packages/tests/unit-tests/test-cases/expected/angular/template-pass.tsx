@@ -2,6 +2,8 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
+import { Injectable } from "@angular/core";
+@Injectable()
 export class WidgetProps {}
 
 import {

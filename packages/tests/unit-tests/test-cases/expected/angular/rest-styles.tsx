@@ -1,6 +1,8 @@
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
+import { Injectable } from "@angular/core";
+@Injectable()
 class WidgetInput {}
 
 import {

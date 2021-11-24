@@ -1,6 +1,7 @@
 import type { Options } from "./types.d";
 import type { CustomClass } from "./types.d";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class ImportProps {
   @Input() Test?: Options;
 }

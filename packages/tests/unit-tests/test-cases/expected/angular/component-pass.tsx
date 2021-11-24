@@ -1,6 +1,7 @@
 import WidgetOne, { DxWidgetOneModule } from "./component-pass-one";
 import { WidgetTwo, DxWidgetTwoModule } from "./component-pass-two";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() mode?: boolean = false;
   @Input() firstText?: string;
