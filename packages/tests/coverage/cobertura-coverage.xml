@@ -1,0 +1,3901 @@
+<?xml version="1.0" ?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+<coverage lines-valid="376" lines-covered="368" line-rate="0.9787" branches-valid="40" branches-covered="28" branch-rate="0.7" timestamp="1637831791060" complexity="0" version="0.1">
+  <sources>
+    <source>/Users/vladislavvolkov/Documents/work/github/devextreme-renovation/packages/tests</source>
+  </sources>
+  <packages>
+    <package name="helpers" line-rate="0.884" branch-rate="0.7">
+      <classes>
+        <class name="common.ts" filename="unit-tests/helpers/common.ts" line-rate="0.8571" branch-rate="0.6956">
+          <methods>
+            <method name="removeSpaces" hits="834" signature="()V">
+              <lines>
+                <line number="7" hits="834"/>
+              </lines>
+            </method>
+            <method name="printNodeValue" hits="192484" signature="()V">
+              <lines>
+                <line number="11" hits="192484"/>
+              </lines>
+            </method>
+            <method name="print" hits="193684" signature="()V">
+              <lines>
+                <line number="31" hits="193684"/>
+              </lines>
+            </method>
+            <method name="(anonymous_4)" hits="191284" signature="()V">
+              <lines>
+                <line number="42" hits="191284"/>
+              </lines>
+            </method>
+            <method name="(anonymous_5)" hits="410" signature="()V">
+              <lines>
+                <line number="49" hits="410"/>
+              </lines>
+            </method>
+            <method name="printSourceCodeAst" hits="1200" signature="()V">
+              <lines>
+                <line number="53" hits="1200"/>
+              </lines>
+            </method>
+            <method name="createTestGenerator" hits="7" signature="()V">
+              <lines>
+                <line number="64" hits="7"/>
+              </lines>
+            </method>
+            <method name="(anonymous_8)" hits="245" signature="()V">
+              <lines>
+                <line number="67" hits="245"/>
+              </lines>
+            </method>
+            <method name="testGenerator" hits="329" signature="()V">
+              <lines>
+                <line number="69" hits="329"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="3" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="7" hits="1" branch="false"/>
+            <line number="8" hits="834" branch="false"/>
+            <line number="12" hits="192484" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="13" hits="59202" branch="false"/>
+            <line number="16" hits="133282" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="17" hits="392" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="20" hits="132890" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="21" hits="5348" branch="false"/>
+            <line number="24" hits="127542" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="25" hits="236" branch="false"/>
+            <line number="28" hits="127306" branch="false"/>
+            <line number="32" hits="193684" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="33" hits="1200" branch="false"/>
+            <line number="35" hits="192484" branch="false"/>
+            <line number="41" hits="192484" branch="false"/>
+            <line number="42" hits="192484" branch="false"/>
+            <line number="43" hits="191284" branch="false"/>
+            <line number="45" hits="192484" branch="false"/>
+            <line number="46" hits="192484" branch="false"/>
+            <line number="49" hits="1" branch="false"/>
+            <line number="50" hits="410" branch="false"/>
+            <line number="53" hits="1" branch="false"/>
+            <line number="54" hits="1200" branch="false"/>
+            <line number="64" hits="1" branch="false"/>
+            <line number="67" hits="245" branch="true" condition-coverage="100% (1/1)"/>
+            <line number="69" hits="7" branch="false"/>
+            <line number="75" hits="329" branch="false"/>
+            <line number="78" hits="329" branch="false"/>
+            <line number="79" hits="324" branch="false"/>
+            <line number="85" hits="324" branch="false"/>
+            <line number="86" hits="324" branch="false"/>
+            <line number="87" hits="324" branch="false"/>
+            <line number="89" hits="0" branch="true" condition-coverage="0% (0/2)"/>
+            <line number="90" hits="0" branch="false"/>
+            <line number="95" hits="0" branch="true" condition-coverage="0% (0/2)"/>
+            <line number="100" hits="0" branch="false"/>
+            <line number="102" hits="0" branch="false"/>
+            <line number="105" hits="0" branch="false"/>
+          </lines>
+        </class>
+        <class name="create-component.ts" filename="unit-tests/helpers/create-component.ts" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="default_1" hits="5" signature="()V">
+              <lines>
+                <line number="3" hits="5"/>
+              </lines>
+            </method>
+            <method name="createComponentDecorator" hits="79" signature="()V">
+              <lines>
+                <line number="4" hits="79"/>
+              </lines>
+            </method>
+            <method name="(anonymous_2)" hits="11" signature="()V">
+              <lines>
+                <line number="11" hits="11"/>
+              </lines>
+            </method>
+            <method name="createDecorator" hits="363" signature="()V">
+              <lines>
+                <line number="24" hits="363"/>
+              </lines>
+            </method>
+            <method name="(anonymous_4)" hits="4" signature="()V">
+              <lines>
+                <line number="29" hits="4"/>
+              </lines>
+            </method>
+            <method name="createComponent" hits="61" signature="()V">
+              <lines>
+                <line number="43" hits="61"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="3" hits="1" branch="false"/>
+            <line number="5" hits="79" branch="false"/>
+            <line number="12" hits="11" branch="false"/>
+            <line number="25" hits="363" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="30" hits="4" branch="false"/>
+            <line number="38" hits="363" branch="false"/>
+            <line number="47" hits="61" branch="false"/>
+            <line number="57" hits="5" branch="false"/>
+          </lines>
+        </class>
+        <class name="mocha.ts" filename="unit-tests/helpers/mocha.ts" line-rate="0.6" branch-rate="0.5">
+          <methods>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="3" hits="1" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="4" hits="0" branch="false"/>
+            <line number="5" hits="0" branch="false"/>
+            <line number="8" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="webpack-test-compiler.ts" filename="unit-tests/helpers/webpack-test-compiler.ts" line-rate="1" branch-rate="0.6363">
+          <methods>
+            <method name="(anonymous_1)" hits="10" signature="()V">
+              <lines>
+                <line number="12" hits="10"/>
+              </lines>
+            </method>
+            <method name="(anonymous_2)" hits="10" signature="()V">
+              <lines>
+                <line number="39" hits="10"/>
+              </lines>
+            </method>
+            <method name="(anonymous_3)" hits="10" signature="()V">
+              <lines>
+                <line number="40" hits="10"/>
+              </lines>
+            </method>
+            <method name="(anonymous_4)" hits="1" signature="()V">
+              <lines>
+                <line number="44" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="3" hits="1" branch="false"/>
+            <line number="12" hits="1" branch="false"/>
+            <line number="16" hits="10" branch="false"/>
+            <line number="36" hits="10" branch="false"/>
+            <line number="37" hits="10" branch="false"/>
+            <line number="39" hits="10" branch="false"/>
+            <line number="40" hits="10" branch="false"/>
+            <line number="41" hits="10" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="42" hits="10" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="43" hits="10" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="44" hits="1" branch="true" condition-coverage="75% (3/4)"/>
+            <line number="46" hits="10" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="test-cases.componentFactory.angular" line-rate="1" branch-rate="1">
+      <classes>
+        <class name="abstract-class.js" filename="unit-tests/test-cases/componentFactory/angular/abstract-class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="class.js" filename="unit-tests/test-cases/componentFactory/angular/class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="collision-tag-name-and-property.js" filename="unit-tests/test-cases/componentFactory/angular/collision-tag-name-and-property.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-bindings-only.js" filename="unit-tests/test-cases/componentFactory/angular/component-bindings-only.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input-defaults.js" filename="unit-tests/test-cases/componentFactory/angular/component-input-defaults.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input.js" filename="unit-tests/test-cases/componentFactory/angular/component-input.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-pass.js" filename="unit-tests/test-cases/componentFactory/angular/component-pass.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="context.js" filename="unit-tests/test-cases/componentFactory/angular/context.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-empty.js" filename="unit-tests/test-cases/componentFactory/angular/default-options-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-inner-widget.js" filename="unit-tests/test-cases/componentFactory/angular/dx-inner-widget.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-props.js" filename="unit-tests/test-cases/componentFactory/angular/dx-widget-with-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-ref-prop.js" filename="unit-tests/test-cases/componentFactory/angular/dx-widget-with-ref-prop.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-template.js" filename="unit-tests/test-cases/componentFactory/angular/dx-widget-with-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-component.js" filename="unit-tests/test-cases/componentFactory/angular/dynamic-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-components-array.js" filename="unit-tests/test-cases/componentFactory/angular/dynamic-components-array.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="effect.js" filename="unit-tests/test-cases/componentFactory/angular/effect.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="effects-with-iterable.js" filename="unit-tests/test-cases/componentFactory/angular/effects-with-iterable.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="empty-component.js" filename="unit-tests/test-cases/componentFactory/angular/empty-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-default.js" filename="unit-tests/test-cases/componentFactory/angular/export-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named-api-ref.js" filename="unit-tests/test-cases/componentFactory/angular/export-named-api-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named.js" filename="unit-tests/test-cases/componentFactory/angular/export-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="external-functions.js" filename="unit-tests/test-cases/componentFactory/angular/external-functions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="external-layout.js" filename="unit-tests/test-cases/componentFactory/angular/external-layout.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="extra-elements.js" filename="unit-tests/test-cases/componentFactory/angular/extra-elements.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-child.js" filename="unit-tests/test-cases/componentFactory/angular/forward-ref-child.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-parent.js" filename="unit-tests/test-cases/componentFactory/angular/forward-ref-parent.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-template.js" filename="unit-tests/test-cases/componentFactory/angular/forward-ref-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="functions.js" filename="unit-tests/test-cases/componentFactory/angular/functions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getter-with-complex-type.js" filename="unit-tests/test-cases/componentFactory/angular/getter-with-complex-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-destructuring.js" filename="unit-tests/test-cases/componentFactory/angular/getters-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-is-memorized.js" filename="unit-tests/test-cases/componentFactory/angular/getters-is-memorized.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-ordering.js" filename="unit-tests/test-cases/componentFactory/angular/getters-ordering.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="globals-in-template.js" filename="unit-tests/test-cases/componentFactory/angular/globals-in-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="implements.js" filename="unit-tests/test-cases/componentFactory/angular/implements.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component-named.js" filename="unit-tests/test-cases/componentFactory/angular/import-component-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component.js" filename="unit-tests/test-cases/componentFactory/angular/import-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-type.js" filename="unit-tests/test-cases/componentFactory/angular/import-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="inner-component.js" filename="unit-tests/test-cases/componentFactory/angular/inner-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="inner-layout.js" filename="unit-tests/test-cases/componentFactory/angular/inner-layout.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="internal-state.js" filename="unit-tests/test-cases/componentFactory/angular/internal-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="iterables-repeat.js" filename="unit-tests/test-cases/componentFactory/angular/iterables-repeat.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-function-in-view.js" filename="unit-tests/test-cases/componentFactory/angular/jsx-function-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-template-spread.js" filename="unit-tests/test-cases/componentFactory/angular/jsx-template-spread.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="list.js" filename="unit-tests/test-cases/componentFactory/angular/list.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method-use-apiref.js" filename="unit-tests/test-cases/componentFactory/angular/method-use-apiref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method.js" filename="unit-tests/test-cases/componentFactory/angular/method.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="model-value-disabled.js" filename="unit-tests/test-cases/componentFactory/angular/model-value-disabled.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="model.js" filename="unit-tests/test-cases/componentFactory/angular/model.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="mutable-state.js" filename="unit-tests/test-cases/componentFactory/angular/mutable-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default-props.js" filename="unit-tests/test-cases/componentFactory/angular/nested-default-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default.js" filename="unit-tests/test-cases/componentFactory/angular/nested-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-inherited.js" filename="unit-tests/test-cases/componentFactory/angular/nested-inherited.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-pick.js" filename="unit-tests/test-cases/componentFactory/angular/nested-pick.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props-and-component.js" filename="unit-tests/test-cases/componentFactory/angular/nested-props-and-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props.js" filename="unit-tests/test-cases/componentFactory/angular/nested-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested.js" filename="unit-tests/test-cases/componentFactory/angular/nested.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="object-with-current.js" filename="unit-tests/test-cases/componentFactory/angular/object-with-current.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="pick-props.js" filename="unit-tests/test-cases/componentFactory/angular/pick-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="portal.js" filename="unit-tests/test-cases/componentFactory/angular/portal.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="private.js" filename="unit-tests/test-cases/componentFactory/angular/private.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="props.js" filename="unit-tests/test-cases/componentFactory/angular/props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-attribute-helper.js" filename="unit-tests/test-cases/componentFactory/angular/refs-as-attribute-helper.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-attribute.js" filename="unit-tests/test-cases/componentFactory/angular/refs-as-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-props.js" filename="unit-tests/test-cases/componentFactory/angular/refs-as-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs.js" filename="unit-tests/test-cases/componentFactory/angular/refs.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="required-props.js" filename="unit-tests/test-cases/componentFactory/angular/required-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="rest-styles.js" filename="unit-tests/test-cases/componentFactory/angular/rest-styles.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="runtime-import.js" filename="unit-tests/test-cases/componentFactory/angular/runtime-import.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="slot-pass-from-rest.js" filename="unit-tests/test-cases/componentFactory/angular/slot-pass-from-rest.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="slots.js" filename="unit-tests/test-cases/componentFactory/angular/slots.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-attribute-with-custom-component.js" filename="unit-tests/test-cases/componentFactory/angular/spread-attribute-with-custom-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-attribute-without-ref.js" filename="unit-tests/test-cases/componentFactory/angular/spread-attribute-without-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-attribute.js" filename="unit-tests/test-cases/componentFactory/angular/spread-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-in-view.js" filename="unit-tests/test-cases/componentFactory/angular/spread-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-props-attribute.js" filename="unit-tests/test-cases/componentFactory/angular/spread-props-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state-short-operator.js" filename="unit-tests/test-cases/componentFactory/angular/state-short-operator.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state.js" filename="unit-tests/test-cases/componentFactory/angular/state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-default-value.js" filename="unit-tests/test-cases/componentFactory/angular/template-default-value.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-from-destructuring.js" filename="unit-tests/test-cases/componentFactory/angular/template-from-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-pass.js" filename="unit-tests/test-cases/componentFactory/angular/template-pass.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-transit.js" filename="unit-tests/test-cases/componentFactory/angular/template-transit.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-with-ref.js" filename="unit-tests/test-cases/componentFactory/angular/template-with-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template.js" filename="unit-tests/test-cases/componentFactory/angular/template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="two-way-props.js" filename="unit-tests/test-cases/componentFactory/angular/two-way-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types-external.js" filename="unit-tests/test-cases/componentFactory/angular/types-external.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types.js" filename="unit-tests/test-cases/componentFactory/angular/types.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="use-external-component-bindings.js" filename="unit-tests/test-cases/componentFactory/angular/use-external-component-bindings.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag-arrow.js" filename="unit-tests/test-cases/componentFactory/angular/view-without-tag-arrow.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag.js" filename="unit-tests/test-cases/componentFactory/angular/view-without-tag.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="test-cases.componentFactory.inferno" line-rate="1" branch-rate="1">
+      <classes>
+        <class name="abstract-class.js" filename="unit-tests/test-cases/componentFactory/inferno/abstract-class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="class.js" filename="unit-tests/test-cases/componentFactory/inferno/class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-bindings-only.js" filename="unit-tests/test-cases/componentFactory/inferno/component-bindings-only.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input-defaults.js" filename="unit-tests/test-cases/componentFactory/inferno/component-input-defaults.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input.js" filename="unit-tests/test-cases/componentFactory/inferno/component-input.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="context.js" filename="unit-tests/test-cases/componentFactory/inferno/context.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-empty.js" filename="unit-tests/test-cases/componentFactory/inferno/default-options-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-inner-widget.js" filename="unit-tests/test-cases/componentFactory/inferno/dx-inner-widget.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-props.js" filename="unit-tests/test-cases/componentFactory/inferno/dx-widget-with-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="effect.js" filename="unit-tests/test-cases/componentFactory/inferno/effect.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-default.js" filename="unit-tests/test-cases/componentFactory/inferno/export-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="function-declaration.js" filename="unit-tests/test-cases/componentFactory/inferno/function-declaration.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getter-with-complex-type.js" filename="unit-tests/test-cases/componentFactory/inferno/getter-with-complex-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-destructuring.js" filename="unit-tests/test-cases/componentFactory/inferno/getters-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-is-memorized.js" filename="unit-tests/test-cases/componentFactory/inferno/getters-is-memorized.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-ordering.js" filename="unit-tests/test-cases/componentFactory/inferno/getters-ordering.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component.js" filename="unit-tests/test-cases/componentFactory/inferno/import-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="inferno-will-update-base.js" filename="unit-tests/test-cases/componentFactory/inferno/inferno-will-update-base.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="inferno-will-update-effects.js" filename="unit-tests/test-cases/componentFactory/inferno/inferno-will-update-effects.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="inferno-will-update-jquery.js" filename="unit-tests/test-cases/componentFactory/inferno/inferno-will-update-jquery.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="internal-state.js" filename="unit-tests/test-cases/componentFactory/inferno/internal-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-empty.js" filename="unit-tests/test-cases/componentFactory/inferno/jquery-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-with-default-options.js" filename="unit-tests/test-cases/componentFactory/inferno/jquery-with-default-options.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-function-in-view.js" filename="unit-tests/test-cases/componentFactory/inferno/jsx-function-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method-use-apiref.js" filename="unit-tests/test-cases/componentFactory/inferno/method-use-apiref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method.js" filename="unit-tests/test-cases/componentFactory/inferno/method.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="mutable-state.js" filename="unit-tests/test-cases/componentFactory/inferno/mutable-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-pick.js" filename="unit-tests/test-cases/componentFactory/inferno/nested-pick.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props.js" filename="unit-tests/test-cases/componentFactory/inferno/nested-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested.js" filename="unit-tests/test-cases/componentFactory/inferno/nested.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="object-with-current.js" filename="unit-tests/test-cases/componentFactory/inferno/object-with-current.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="portal.js" filename="unit-tests/test-cases/componentFactory/inferno/portal.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="props.js" filename="unit-tests/test-cases/componentFactory/inferno/props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs.js" filename="unit-tests/test-cases/componentFactory/inferno/refs.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-props-attribute.js" filename="unit-tests/test-cases/componentFactory/inferno/spread-props-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state-short-operator.js" filename="unit-tests/test-cases/componentFactory/inferno/state-short-operator.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state.js" filename="unit-tests/test-cases/componentFactory/inferno/state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template.js" filename="unit-tests/test-cases/componentFactory/inferno/template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="test-cases.componentFactory.react" line-rate="1" branch-rate="1">
+      <classes>
+        <class name="abstract-class.js" filename="unit-tests/test-cases/componentFactory/react/abstract-class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="class.js" filename="unit-tests/test-cases/componentFactory/react/class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-bindings-only.js" filename="unit-tests/test-cases/componentFactory/react/component-bindings-only.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input-defaults.js" filename="unit-tests/test-cases/componentFactory/react/component-input-defaults.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input.js" filename="unit-tests/test-cases/componentFactory/react/component-input.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-wrapper.js" filename="unit-tests/test-cases/componentFactory/react/component-wrapper.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="conditions.js" filename="unit-tests/test-cases/componentFactory/react/conditions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="context.js" filename="unit-tests/test-cases/componentFactory/react/context.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="cycle-dependencies.js" filename="unit-tests/test-cases/componentFactory/react/cycle-dependencies.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-empty.js" filename="unit-tests/test-cases/componentFactory/react/default-options-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-with-state.js" filename="unit-tests/test-cases/componentFactory/react/default-options-with-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dom_component_wrapper.js" filename="unit-tests/test-cases/componentFactory/react/dom_component_wrapper.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-inner-widget.js" filename="unit-tests/test-cases/componentFactory/react/dx-inner-widget.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-props.js" filename="unit-tests/test-cases/componentFactory/react/dx-widget-with-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-ref-prop.js" filename="unit-tests/test-cases/componentFactory/react/dx-widget-with-ref-prop.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-widget-with-template.js" filename="unit-tests/test-cases/componentFactory/react/dx-widget-with-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-component.js" filename="unit-tests/test-cases/componentFactory/react/dynamic-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-components-array.js" filename="unit-tests/test-cases/componentFactory/react/dynamic-components-array.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="effect.js" filename="unit-tests/test-cases/componentFactory/react/effect.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="empty-component.js" filename="unit-tests/test-cases/componentFactory/react/empty-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-default.js" filename="unit-tests/test-cases/componentFactory/react/export-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named-api-ref.js" filename="unit-tests/test-cases/componentFactory/react/export-named-api-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named.js" filename="unit-tests/test-cases/componentFactory/react/export-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="expressions.js" filename="unit-tests/test-cases/componentFactory/react/expressions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-child.js" filename="unit-tests/test-cases/componentFactory/react/forward-ref-child.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-parent.js" filename="unit-tests/test-cases/componentFactory/react/forward-ref-parent.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-template.js" filename="unit-tests/test-cases/componentFactory/react/forward-ref-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="functions.js" filename="unit-tests/test-cases/componentFactory/react/functions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getter-with-complex-type.js" filename="unit-tests/test-cases/componentFactory/react/getter-with-complex-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-destructuring.js" filename="unit-tests/test-cases/componentFactory/react/getters-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-is-memorized.js" filename="unit-tests/test-cases/componentFactory/react/getters-is-memorized.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-ordering.js" filename="unit-tests/test-cases/componentFactory/react/getters-ordering.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="implements.js" filename="unit-tests/test-cases/componentFactory/react/implements.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component-named.js" filename="unit-tests/test-cases/componentFactory/react/import-component-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component.js" filename="unit-tests/test-cases/componentFactory/react/import-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-duplicate.js" filename="unit-tests/test-cases/componentFactory/react/import-duplicate.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-type.js" filename="unit-tests/test-cases/componentFactory/react/import-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="internal-state.js" filename="unit-tests/test-cases/componentFactory/react/internal-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="invalid-method-parameters.js" filename="unit-tests/test-cases/componentFactory/react/invalid-method-parameters.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-api-wrapper.js" filename="unit-tests/test-cases/componentFactory/react/jquery-api-wrapper.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-api.js" filename="unit-tests/test-cases/componentFactory/react/jquery-api.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-custom-base-with-module-import.js" filename="unit-tests/test-cases/componentFactory/react/jquery-custom-base-with-module-import.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-custom-base.js" filename="unit-tests/test-cases/componentFactory/react/jquery-custom-base.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-custom-named-base.js" filename="unit-tests/test-cases/componentFactory/react/jquery-custom-named-base.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-element-type.js" filename="unit-tests/test-cases/componentFactory/react/jquery-element-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-empty.js" filename="unit-tests/test-cases/componentFactory/react/jquery-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-events.js" filename="unit-tests/test-cases/componentFactory/react/jquery-events.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-export-named.js" filename="unit-tests/test-cases/componentFactory/react/jquery-export-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-props-info.js" filename="unit-tests/test-cases/componentFactory/react/jquery-props-info.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-props-without-initializer.js" filename="unit-tests/test-cases/componentFactory/react/jquery-props-without-initializer.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-register-false.js" filename="unit-tests/test-cases/componentFactory/react/jquery-register-false.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-template.js" filename="unit-tests/test-cases/componentFactory/react/jquery-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jquery-without-modules.js" filename="unit-tests/test-cases/componentFactory/react/jquery-without-modules.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-template-spread.js" filename="unit-tests/test-cases/componentFactory/react/jsx-template-spread.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="listen-with-target.js" filename="unit-tests/test-cases/componentFactory/react/listen-with-target.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="listen.js" filename="unit-tests/test-cases/componentFactory/react/listen.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method-use-api-forwardRef.js" filename="unit-tests/test-cases/componentFactory/react/method-use-api-forwardRef.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method-use-apiref.js" filename="unit-tests/test-cases/componentFactory/react/method-use-apiref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="method.js" filename="unit-tests/test-cases/componentFactory/react/method.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="model.js" filename="unit-tests/test-cases/componentFactory/react/model.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="mutable-state.js" filename="unit-tests/test-cases/componentFactory/react/mutable-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default-props.js" filename="unit-tests/test-cases/componentFactory/react/nested-default-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default.js" filename="unit-tests/test-cases/componentFactory/react/nested-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-inherited.js" filename="unit-tests/test-cases/componentFactory/react/nested-inherited.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-pick.js" filename="unit-tests/test-cases/componentFactory/react/nested-pick.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props-and-component.js" filename="unit-tests/test-cases/componentFactory/react/nested-props-and-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props.js" filename="unit-tests/test-cases/componentFactory/react/nested-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested.js" filename="unit-tests/test-cases/componentFactory/react/nested.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="object-with-current.js" filename="unit-tests/test-cases/componentFactory/react/object-with-current.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="objects.js" filename="unit-tests/test-cases/componentFactory/react/objects.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="pick-props.js" filename="unit-tests/test-cases/componentFactory/react/pick-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="portal.js" filename="unit-tests/test-cases/componentFactory/react/portal.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="private.js" filename="unit-tests/test-cases/componentFactory/react/private.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="props-in-listener.js" filename="unit-tests/test-cases/componentFactory/react/props-in-listener.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="props-name-collision.js" filename="unit-tests/test-cases/componentFactory/react/props-name-collision.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="props-with-initial.js" filename="unit-tests/test-cases/componentFactory/react/props-with-initial.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="props.js" filename="unit-tests/test-cases/componentFactory/react/props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-props.js" filename="unit-tests/test-cases/componentFactory/react/refs-as-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs.js" filename="unit-tests/test-cases/componentFactory/react/refs.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="required-props.js" filename="unit-tests/test-cases/componentFactory/react/required-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="rest-styles.js" filename="unit-tests/test-cases/componentFactory/react/rest-styles.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="runtime-import.js" filename="unit-tests/test-cases/componentFactory/react/runtime-import.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="same-type-ref.js" filename="unit-tests/test-cases/componentFactory/react/same-type-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="slots.js" filename="unit-tests/test-cases/componentFactory/react/slots.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-in-view.js" filename="unit-tests/test-cases/componentFactory/react/spread-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state.js" filename="unit-tests/test-cases/componentFactory/react/state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="svg-element.js" filename="unit-tests/test-cases/componentFactory/react/svg-element.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-default-value.js" filename="unit-tests/test-cases/componentFactory/react/template-default-value.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-from-destructuring.js" filename="unit-tests/test-cases/componentFactory/react/template-from-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-pass.js" filename="unit-tests/test-cases/componentFactory/react/template-pass.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-transit.js" filename="unit-tests/test-cases/componentFactory/react/template-transit.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-with-ref.js" filename="unit-tests/test-cases/componentFactory/react/template-with-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template.js" filename="unit-tests/test-cases/componentFactory/react/template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="1" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+          </lines>
+        </class>
+        <class name="two-way-props.js" filename="unit-tests/test-cases/componentFactory/react/two-way-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types-external.js" filename="unit-tests/test-cases/componentFactory/react/types-external.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types.js" filename="unit-tests/test-cases/componentFactory/react/types.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="use-external-component-bindings.js" filename="unit-tests/test-cases/componentFactory/react/use-external-component-bindings.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="variable-declaration.js" filename="unit-tests/test-cases/componentFactory/react/variable-declaration.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag-arrow.js" filename="unit-tests/test-cases/componentFactory/react/view-without-tag-arrow.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag.js" filename="unit-tests/test-cases/componentFactory/react/view-without-tag.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="test-cases.componentFactory.vue" line-rate="1" branch-rate="1">
+      <classes>
+        <class name="abstract-class.js" filename="unit-tests/test-cases/componentFactory/vue/abstract-class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="between_props.js" filename="unit-tests/test-cases/componentFactory/vue/between_props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="child.js" filename="unit-tests/test-cases/componentFactory/vue/child.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="class.js" filename="unit-tests/test-cases/componentFactory/vue/class.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="collision-tag-name-and-property.js" filename="unit-tests/test-cases/componentFactory/vue/collision-tag-name-and-property.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-bindings-only.js" filename="unit-tests/test-cases/componentFactory/vue/component-bindings-only.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input-defaults.js" filename="unit-tests/test-cases/componentFactory/vue/component-input-defaults.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-input.js" filename="unit-tests/test-cases/componentFactory/vue/component-input.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="component-pass.js" filename="unit-tests/test-cases/componentFactory/vue/component-pass.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="context.js" filename="unit-tests/test-cases/componentFactory/vue/context.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-empty.js" filename="unit-tests/test-cases/componentFactory/vue/default-options-empty.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="default-options-with-state.js" filename="unit-tests/test-cases/componentFactory/vue/default-options-with-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dx-inner-widget.js" filename="unit-tests/test-cases/componentFactory/vue/dx-inner-widget.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-component.js" filename="unit-tests/test-cases/componentFactory/vue/dynamic-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="dynamic-components-array.js" filename="unit-tests/test-cases/componentFactory/vue/dynamic-components-array.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="effect.js" filename="unit-tests/test-cases/componentFactory/vue/effect.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-default.js" filename="unit-tests/test-cases/componentFactory/vue/export-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named-api-ref.js" filename="unit-tests/test-cases/componentFactory/vue/export-named-api-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="export-named.js" filename="unit-tests/test-cases/componentFactory/vue/export-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="external-functions.js" filename="unit-tests/test-cases/componentFactory/vue/external-functions.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-child.js" filename="unit-tests/test-cases/componentFactory/vue/forward-ref-child.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-parent.js" filename="unit-tests/test-cases/componentFactory/vue/forward-ref-parent.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="forward-ref-template.js" filename="unit-tests/test-cases/componentFactory/vue/forward-ref-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="function-declaration.js" filename="unit-tests/test-cases/componentFactory/vue/function-declaration.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-is-memorized.js" filename="unit-tests/test-cases/componentFactory/vue/getters-is-memorized.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="getters-ordering.js" filename="unit-tests/test-cases/componentFactory/vue/getters-ordering.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="globals-in-template.js" filename="unit-tests/test-cases/componentFactory/vue/globals-in-template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="implements.js" filename="unit-tests/test-cases/componentFactory/vue/implements.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component-named.js" filename="unit-tests/test-cases/componentFactory/vue/import-component-named.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-component.js" filename="unit-tests/test-cases/componentFactory/vue/import-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="import-type.js" filename="unit-tests/test-cases/componentFactory/vue/import-type.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="internal-state.js" filename="unit-tests/test-cases/componentFactory/vue/internal-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-function-in-view.js" filename="unit-tests/test-cases/componentFactory/vue/jsx-function-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="jsx-template-spread.js" filename="unit-tests/test-cases/componentFactory/vue/jsx-template-spread.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="list.js" filename="unit-tests/test-cases/componentFactory/vue/list.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="method.js" filename="unit-tests/test-cases/componentFactory/vue/method.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="model-value-disabled.js" filename="unit-tests/test-cases/componentFactory/vue/model-value-disabled.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="model.js" filename="unit-tests/test-cases/componentFactory/vue/model.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="mutable-state.js" filename="unit-tests/test-cases/componentFactory/vue/mutable-state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default-props.js" filename="unit-tests/test-cases/componentFactory/vue/nested-default-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-default.js" filename="unit-tests/test-cases/componentFactory/vue/nested-default.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-inherited.js" filename="unit-tests/test-cases/componentFactory/vue/nested-inherited.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-pick.js" filename="unit-tests/test-cases/componentFactory/vue/nested-pick.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props-and-component.js" filename="unit-tests/test-cases/componentFactory/vue/nested-props-and-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested-props.js" filename="unit-tests/test-cases/componentFactory/vue/nested-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="nested.js" filename="unit-tests/test-cases/componentFactory/vue/nested.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="object-with-current.js" filename="unit-tests/test-cases/componentFactory/vue/object-with-current.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="parent.js" filename="unit-tests/test-cases/componentFactory/vue/parent.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="pick-props.js" filename="unit-tests/test-cases/componentFactory/vue/pick-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="portal.js" filename="unit-tests/test-cases/componentFactory/vue/portal.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="private.js" filename="unit-tests/test-cases/componentFactory/vue/private.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="props-any-undefined-unknown.js" filename="unit-tests/test-cases/componentFactory/vue/props-any-undefined-unknown.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="props.js" filename="unit-tests/test-cases/componentFactory/vue/props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-attribute-helper.js" filename="unit-tests/test-cases/componentFactory/vue/refs-as-attribute-helper.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-attribute.js" filename="unit-tests/test-cases/componentFactory/vue/refs-as-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs-as-props.js" filename="unit-tests/test-cases/componentFactory/vue/refs-as-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="refs.js" filename="unit-tests/test-cases/componentFactory/vue/refs.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="required-props.js" filename="unit-tests/test-cases/componentFactory/vue/required-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="rest-styles.js" filename="unit-tests/test-cases/componentFactory/vue/rest-styles.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="runtime-import.js" filename="unit-tests/test-cases/componentFactory/vue/runtime-import.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="slot-pass-from-rest.js" filename="unit-tests/test-cases/componentFactory/vue/slot-pass-from-rest.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="slots.js" filename="unit-tests/test-cases/componentFactory/vue/slots.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-attribute-with-custom-component.js" filename="unit-tests/test-cases/componentFactory/vue/spread-attribute-with-custom-component.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-attribute.js" filename="unit-tests/test-cases/componentFactory/vue/spread-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-in-view.js" filename="unit-tests/test-cases/componentFactory/vue/spread-in-view.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="spread-props-attribute.js" filename="unit-tests/test-cases/componentFactory/vue/spread-props-attribute.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state-short-operator.js" filename="unit-tests/test-cases/componentFactory/vue/state-short-operator.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="state.js" filename="unit-tests/test-cases/componentFactory/vue/state.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-default-value.js" filename="unit-tests/test-cases/componentFactory/vue/template-default-value.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-from-destructuring.js" filename="unit-tests/test-cases/componentFactory/vue/template-from-destructuring.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-pass.js" filename="unit-tests/test-cases/componentFactory/vue/template-pass.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-transit.js" filename="unit-tests/test-cases/componentFactory/vue/template-transit.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template-with-ref.js" filename="unit-tests/test-cases/componentFactory/vue/template-with-ref.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="template.js" filename="unit-tests/test-cases/componentFactory/vue/template.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="two-way-props.js" filename="unit-tests/test-cases/componentFactory/vue/two-way-props.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types-external.js" filename="unit-tests/test-cases/componentFactory/vue/types-external.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="types.js" filename="unit-tests/test-cases/componentFactory/vue/types.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="use-external-component-bindings.js" filename="unit-tests/test-cases/componentFactory/vue/use-external-component-bindings.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag-arrow.js" filename="unit-tests/test-cases/componentFactory/vue/view-without-tag-arrow.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="view-without-tag.js" filename="unit-tests/test-cases/componentFactory/vue/view-without-tag.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="1" signature="()V">
+              <lines>
+                <line number="1" hits="1"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
