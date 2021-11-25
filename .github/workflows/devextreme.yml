@@ -55,7 +55,7 @@ jobs:
 
     strategy:
       matrix:
-        TASK: [generate-components, react-compilation-check, angular-compilation-check, vue-compilation-check]
+        TASK: [generate-components, react-compilation-check, angular-compilation-check]
 
     steps:
 
@@ -89,7 +89,6 @@ jobs:
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
           npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
