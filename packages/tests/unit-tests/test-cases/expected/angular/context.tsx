@@ -1,5 +1,4 @@
 import {
-  Injectable,
   EventEmitter as ContextEmitter,
   SkipSelf,
   Optional,
@@ -35,6 +34,7 @@ class GetterContext {
 }
 
 import { Injectable, Input } from "@angular/core";
+
 @Injectable()
 class Props {
   @Input() p1: number = 10;
