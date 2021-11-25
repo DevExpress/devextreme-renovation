@@ -56,7 +56,7 @@ export class ComponentInput extends BaseComponentInput {
     ];
     const missedImports = this.getImports(this.context);
 
-    return [...imports, missedImports.map((i) => i.toString())].join(';\n');
+    return [...imports, ...missedImports.map((i) => i.toString())].join(';\n');
   }
 
   processNestedProperty(property: Property) {
