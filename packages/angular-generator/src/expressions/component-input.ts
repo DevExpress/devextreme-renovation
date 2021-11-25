@@ -47,15 +47,16 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   compileImports() {
-    const imports: string[] = [
+    const imports = [
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
         this.context,
+        ['Injectable'],
       )}`,
     ];
     const missedImports = this.getImports(this.context);
 
-    return imports.concat(missedImports.map((i) => i.toString())).join(';\n');
+    return [...imports, missedImports.map((i) => i.toString())].join(';\n');
   }
 
   processNestedProperty(property: Property) {
