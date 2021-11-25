@@ -1,6 +1,7 @@
 type EventCallBack<Type> = (e: Type) => void;
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() someProp?: { current: string };
 }

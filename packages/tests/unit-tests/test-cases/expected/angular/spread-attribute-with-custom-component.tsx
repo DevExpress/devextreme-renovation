@@ -1,4 +1,6 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
+import { Injectable } from "@angular/core";
+@Injectable()
 export class WidgetInput {}
 
 import {

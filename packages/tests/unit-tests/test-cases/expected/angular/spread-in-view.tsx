@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() a: Array<Number> = [1, 2, 3];
   @Input() id: string = "1";

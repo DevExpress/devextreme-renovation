@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() propArray: Array<string> = [];
   @Input() propObject: object = {};

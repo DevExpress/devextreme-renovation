@@ -1,5 +1,6 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() visible?: boolean;
   @Input() value?: boolean;

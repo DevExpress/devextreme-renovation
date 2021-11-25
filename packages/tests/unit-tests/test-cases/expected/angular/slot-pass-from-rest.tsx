@@ -1,5 +1,6 @@
 import Widget, { DxWidgetModule } from "./slots";
-import { Input, ViewChild, ElementRef } from "@angular/core";
+import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() p: string = "";
   __slotChildren?: ElementRef<HTMLDivElement>;

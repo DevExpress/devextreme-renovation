@@ -7,7 +7,8 @@ export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() items: Item[] = [];
 }

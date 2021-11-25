@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
