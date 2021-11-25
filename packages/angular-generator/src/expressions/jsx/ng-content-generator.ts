@@ -1,5 +1,4 @@
 import {
-  Component,
   Identifier,
   JsxAttribute,
   JsxSpreadAttribute,
@@ -8,6 +7,7 @@ import {
 import { AngularDirective } from './angular-directive';
 import type { JsxOpeningElement } from './jsx-opening-element';
 import { getUniqComponentName } from '../utils/uniq_name_generator';
+import { AngularComponent } from '../component';
 
 function isStructDirective(d: JsxAttribute | JsxSpreadAttribute) : boolean {
   return d.toString().indexOf('*ngIf') === 0
@@ -17,29 +17,31 @@ function isStructDirective(d: JsxAttribute | JsxSpreadAttribute) : boolean {
 
 export function tryToGetContent(element: JsxOpeningElement): {
   content: string;
-  elementDirective: AngularDirective | null;
+  elementDirectives: AngularDirective[];
   condition: AngularDirective | null;
 } {
   const componentName = element.tagName.toString();
-  const isComponent = element.context.components?.[componentName];
-  let elementDirective = null;
-  let content = '';
+  const component = element.context.components?.[componentName] as AngularComponent;
+  const elementDirectives : Array<AngularDirective> = [];
 
-  if (!isComponent || (isComponent as Component).isSVGComponent) {
-    return { content, elementDirective, condition: null };
+  if (!component || component.isSVGComponent) {
+    return { content: '', elementDirectives, condition: null };
   }
-
+  const isInnerComp =  component.decorator.isInnerComponent();
   const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
-  let ref = refAttr?.toString().split('.').pop()?.replace('#', '');
-  if (!ref) {
-    ref = getUniqComponentName(componentName);
-    elementDirective = new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression(''));
+  const existRef = refAttr?.toString().split('.').pop()?.replace('#', '');
+  const ref = existRef ? existRef : getUniqComponentName(componentName);
+  if (!existRef) {
+    elementDirectives.push(new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression('')));
+  }
+  if (!isInnerComp) {
+    elementDirectives.push(new AngularDirective(new Identifier('style'), new SimpleExpression('display: contents')));
   }
   const condition = element.attributes.find(isStructDirective) as AngularDirective;
   if (element.attributes.find(isStructDirective)) {
     element.attributes = element.attributes.filter((d) => !isStructDirective(d));
   }
 
-  content = `<ng-content *ngTemplateOutlet="${ref}?.widgetTemplate"></ng-content>`;
-  return { content, elementDirective, condition };
+  const content = `<ng-content *ngTemplateOutlet="${ref}?.widgetTemplate"></ng-content>`;
+  return { content, elementDirectives, condition };
 }

@@ -23,8 +23,11 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
   template: `<pre><ng-container *ngIf="rf"><dx-inner-layout #rf
-[prop]="3"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
-[prop]="4"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
+[prop]="3"
+style="display: contents"
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
+[prop]="4"
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
 #child2
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
 #child3
