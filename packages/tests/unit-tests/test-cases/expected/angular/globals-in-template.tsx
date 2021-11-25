@@ -33,7 +33,10 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><div [class]="global_CLASS_NAME"
       ><span [class]="global_CLASS_NAME"></span
-      ><dx-widget-two #externalcomponent1></dx-widget-two
+      ><dx-widget-two
+        #externalcomponent1
+        style="display: contents"
+      ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="externalcomponent1?.widgetTemplate"
       ></ng-content

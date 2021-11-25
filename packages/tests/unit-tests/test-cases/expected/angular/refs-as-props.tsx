@@ -31,6 +31,7 @@ import { CommonModule } from "@angular/common";
         [parentRef]="divRefLink"
         [nullableRef]="nullableRef"
         #widgetwithrefprop1
+        style="display: contents"
       ></dx-widget-with-ref-prop
       ><ng-content
         *ngTemplateOutlet="widgetwithrefprop1?.widgetTemplate"
