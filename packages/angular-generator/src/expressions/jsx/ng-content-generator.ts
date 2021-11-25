@@ -27,10 +27,10 @@ export function tryToGetContent(element: JsxOpeningElement): {
   if (!component || component.isSVGComponent) {
     return { content: '', elementDirectives, condition: null };
   }
-  const isInnerComp =  component.decorator.isInnerComponent();
+  const isInnerComp = component.decorator.isInnerComponent();
   const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
   const existRef = refAttr?.toString().split('.').pop()?.replace('#', '');
-  const ref = existRef ? existRef : getUniqComponentName(componentName);
+  const ref = existRef || getUniqComponentName(componentName);
   if (!existRef) {
     elementDirectives.push(new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression('')));
   }
