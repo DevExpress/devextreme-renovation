@@ -1,5 +1,6 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
   @Output() onClick: EventEmitter<number> = new EventEmitter();
@@ -25,7 +26,11 @@ import { CommonModule } from "@angular/common";
   inputs: ["height", "width"],
   outputs: ["onClick"],
   template: `<ng-template #widgetTemplate
-    ><dx-widget [height]="__getProps().height" #base1></dx-widget
+    ><dx-widget
+      [height]="__getProps().height"
+      #base1
+      style="display: contents"
+    ></dx-widget
     ><ng-content *ngTemplateOutlet="base1?.widgetTemplate"></ng-content
     ><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,

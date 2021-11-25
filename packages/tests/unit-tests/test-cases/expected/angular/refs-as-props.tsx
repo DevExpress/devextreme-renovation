@@ -1,7 +1,8 @@
 import WidgetWithRefProp, {
   DxWidgetWithRefPropModule,
 } from "./dx-widget-with-ref-prop";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() nullableRef?: HTMLDivElement;
 }
@@ -30,6 +31,7 @@ import { CommonModule } from "@angular/common";
         [parentRef]="divRefLink"
         [nullableRef]="nullableRef"
         #widgetwithrefprop1
+        style="display: contents"
       ></dx-widget-with-ref-prop
       ><ng-content
         *ngTemplateOutlet="widgetwithrefprop1?.widgetTemplate"

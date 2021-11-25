@@ -4,7 +4,8 @@ import {
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
 
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() someProp: boolean = false;
   @Input() headerTemplate: TemplateRef<any> | null = null;

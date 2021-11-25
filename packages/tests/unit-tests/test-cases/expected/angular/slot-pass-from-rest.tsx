@@ -1,5 +1,6 @@
 import Widget, { DxWidgetModule } from "./slots";
-import { Input, ViewChild, ElementRef } from "@angular/core";
+import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() p: string = "";
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -28,7 +29,7 @@ import { CommonModule } from "@angular/common";
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-widget #widget1
+      ><dx-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"

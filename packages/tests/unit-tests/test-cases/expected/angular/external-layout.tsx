@@ -1,6 +1,7 @@
 import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
 import { InnerComponent, DxInnerComponentModule } from "./inner-component";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class Props {
   @Input() prop: number = 0;
 }
@@ -25,7 +26,10 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
   template: `<ng-template #widgetTemplate
-    ><dx-inner-layout [innerComponentTemplate]="InnerComponent" #innerlayout1
+    ><dx-inner-layout
+      [innerComponentTemplate]="InnerComponent"
+      #innerlayout1
+      style="display: contents"
       ><ng-template #InnerComponent let-someTemplate="someTemplate"
         ><dx-inner-component
           [someTemplate]="
@@ -34,6 +38,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
               : InnerComponentDefaults.someTemplate
           "
           #innercomponent1
+          style="display: contents"
         ></dx-inner-component
         ><ng-content
           *ngTemplateOutlet="innercomponent1?.widgetTemplate"

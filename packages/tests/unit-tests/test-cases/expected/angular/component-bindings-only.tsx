@@ -1,6 +1,7 @@
 import { Options, AdditionalOptions } from "./types.d";
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export default class WidgetProps {
   @Input() height?: number = 10;
   @Input() data?: Options = { value: "" };

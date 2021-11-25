@@ -1,5 +1,6 @@
 import DynamicComponent, { WidgetInput, DxWidgetModule } from "./props";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class Props {
   @Input() height: number = 10;
 }

@@ -4,7 +4,10 @@ export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
     const imports: string[] = [];
     if (this.has('createContext')) {
-      imports.push('Injectable', 'EventEmitter as ContextEmitter');
+      if (!this.has('ComponentBindings')) {
+        imports.push('Injectable');
+      }
+      imports.push('EventEmitter as ContextEmitter');
     }
     if (this.has(Decorators.Consumer)) {
       imports.push('SkipSelf', 'Optional');

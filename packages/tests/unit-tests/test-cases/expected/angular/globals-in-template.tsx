@@ -7,7 +7,8 @@ export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() items: Item[] = [];
 }
@@ -32,7 +33,10 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><div [class]="global_CLASS_NAME"
       ><span [class]="global_CLASS_NAME"></span
-      ><dx-widget-two #externalcomponent1></dx-widget-two
+      ><dx-widget-two
+        #externalcomponent1
+        style="display: contents"
+      ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="externalcomponent1?.widgetTemplate"
       ></ng-content

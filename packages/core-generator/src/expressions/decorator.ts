@@ -48,4 +48,10 @@ export class Decorator {
   toString() {
     return `@${this.expression.toString()}`;
   }
+
+  isInnerComponent(): boolean {
+    const parameters = this.expression.arguments[0] as ObjectLiteral;
+    return (parameters?.getProperty('jQuery') as ObjectLiteral)
+      ?.getProperty('register')?.toString() === 'true';
+  }
 }

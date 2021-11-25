@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() size!: { width: number; height: number };
   @Input() type!: string;

@@ -4,7 +4,8 @@ export declare type ObjType = { number: number; text: string };
 export declare type StringArr = Array<String>;
 export declare type StringType = String;
 export declare type StrDate = string | Date;
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() data: EnumType = "data";
   @Input() union: Union = "uniontext";

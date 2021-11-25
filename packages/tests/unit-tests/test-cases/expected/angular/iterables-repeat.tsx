@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class ListInput {
   @Input() items?: any[] = [];
   @Input() keyExpr?: string = "value";

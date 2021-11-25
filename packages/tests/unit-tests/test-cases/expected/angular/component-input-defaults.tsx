@@ -5,7 +5,8 @@ function format(key: string) {
   return "localized_" + key;
 }
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class BaseProps {
   @Input() empty?: string;
   @Input() height?: number = 10;
@@ -23,15 +24,18 @@ export class BaseProps {
   public static __defaultNestedValues: any = { baseNested: { text: "3" } };
 }
 
+@Injectable()
 export class TextsProps {
   @Input() text?: string = format("text");
 }
 
+@Injectable()
 export class ExpressionProps {
   @Input() expressionDefault?: any = isMaterial() ? 20 : 10;
 }
 
 import { TemplateRef } from "@angular/core";
+@Injectable()
 export class WidgetProps extends BaseProps {
   @Input() text?: string = format("text");
   @Input() texts1?: TextsProps = { text: format("text") };
@@ -73,6 +77,7 @@ export class WidgetProps extends BaseProps {
   }
 }
 
+@Injectable()
 class WidgetPropsType {
   @Input() text?: string = new WidgetProps().text;
   @Input() texts1?: TextsProps = new WidgetProps().texts1;
