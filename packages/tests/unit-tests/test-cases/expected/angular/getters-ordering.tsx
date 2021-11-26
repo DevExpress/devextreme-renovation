@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetProps {
-  __somePropInternalValue: string = "";
+  __somePropInternalValue?: string = "";
   @Input()
-  set someProp(value: string) {
+  set someProp(value: string | undefined) {
     if (value !== undefined) this.__somePropInternalValue = value;
     else this.__somePropInternalValue = "";
   }
@@ -10,9 +10,9 @@ class WidgetProps {
     return this.__somePropInternalValue;
   }
 
-  __typeInternalValue: string = "";
+  __typeInternalValue?: string = "";
   @Input()
-  set type(value: string) {
+  set type(value: string | undefined) {
     if (value !== undefined) this.__typeInternalValue = value;
     else this.__typeInternalValue = "";
   }
@@ -20,9 +20,9 @@ class WidgetProps {
     return this.__typeInternalValue;
   }
 
-  __gridCompatibilityInternalValue: boolean = true;
+  __gridCompatibilityInternalValue?: boolean = true;
   @Input()
-  set gridCompatibility(value: boolean) {
+  set gridCompatibility(value: boolean | undefined) {
     if (value !== undefined) this.__gridCompatibilityInternalValue = value;
     else this.__gridCompatibilityInternalValue = true;
   }
@@ -30,9 +30,9 @@ class WidgetProps {
     return this.__gridCompatibilityInternalValue;
   }
 
-  __pageIndexInternalValue: number = 1;
+  __pageIndexInternalValue?: number = 1;
   @Input()
-  set pageIndex(value: number) {
+  set pageIndex(value: number | undefined) {
     if (value !== undefined) this.__pageIndexInternalValue = value;
     else this.__pageIndexInternalValue = 1;
   }

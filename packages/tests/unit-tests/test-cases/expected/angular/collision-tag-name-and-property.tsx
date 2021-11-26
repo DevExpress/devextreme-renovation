@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class TextSvgElementProps {
-  __textInternalValue: string | null = "";
+  __textInternalValue?: string | null = "";
   @Input()
-  set text(value: string | null) {
+  set text(value: string | null | undefined) {
     if (value !== undefined) this.__textInternalValue = value;
     else this.__textInternalValue = "";
   }

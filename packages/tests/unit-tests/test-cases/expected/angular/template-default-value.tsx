@@ -7,9 +7,9 @@ export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
 
-  __stringToRenderInternalValue: string = "strCompDefault";
+  __stringToRenderInternalValue?: string = "strCompDefault";
   @Input()
-  set stringToRender(value: string) {
+  set stringToRender(value: string | undefined) {
     if (value !== undefined) this.__stringToRenderInternalValue = value;
     else this.__stringToRenderInternalValue = "strCompDefault";
   }

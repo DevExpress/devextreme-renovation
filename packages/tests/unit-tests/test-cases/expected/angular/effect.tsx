@@ -7,9 +7,9 @@ function unsubscribe(id: number) {
 
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
-  __pInternalValue: string = "10";
+  __pInternalValue?: string = "10";
   @Input()
-  set p(value: string) {
+  set p(value: string | undefined) {
     if (value !== undefined) this.__pInternalValue = value;
     else this.__pInternalValue = "10";
   }
@@ -17,9 +17,9 @@ export class WidgetInput {
     return this.__pInternalValue;
   }
 
-  __rInternalValue: string = "20";
+  __rInternalValue?: string = "20";
   @Input()
-  set r(value: string) {
+  set r(value: string | undefined) {
     if (value !== undefined) this.__rInternalValue = value;
     else this.__rInternalValue = "20";
   }
@@ -27,9 +27,9 @@ export class WidgetInput {
     return this.__rInternalValue;
   }
 
-  __sInternalValue: number = 10;
+  __sInternalValue?: number = 10;
   @Input()
-  set s(value: number) {
+  set s(value: number | undefined) {
     if (value !== undefined) this.__sInternalValue = value;
     else this.__sInternalValue = 10;
   }

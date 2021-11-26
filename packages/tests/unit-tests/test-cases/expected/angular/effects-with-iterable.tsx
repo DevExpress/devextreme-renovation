@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class WidgetInput {
-  __propArrayInternalValue: Array<string> = [];
+  __propArrayInternalValue?: Array<string> = [];
   @Input()
-  set propArray(value: Array<string>) {
+  set propArray(value: Array<string> | undefined) {
     if (value !== undefined) this.__propArrayInternalValue = value;
     else this.__propArrayInternalValue = [];
   }
@@ -10,9 +10,9 @@ export class WidgetInput {
     return this.__propArrayInternalValue;
   }
 
-  __propObjectInternalValue: object = {};
+  __propObjectInternalValue?: object = {};
   @Input()
-  set propObject(value: object) {
+  set propObject(value: object | undefined) {
     if (value !== undefined) this.__propObjectInternalValue = value;
     else this.__propObjectInternalValue = {};
   }

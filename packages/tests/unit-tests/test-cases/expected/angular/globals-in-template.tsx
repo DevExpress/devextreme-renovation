@@ -9,9 +9,9 @@ export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
 import { Input } from "@angular/core";
 export class WidgetProps {
-  __itemsInternalValue: Item[] = [];
+  __itemsInternalValue?: Item[] = [];
   @Input()
-  set items(value: Item[]) {
+  set items(value: Item[] | undefined) {
     if (value !== undefined) this.__itemsInternalValue = value;
     else this.__itemsInternalValue = [];
   }

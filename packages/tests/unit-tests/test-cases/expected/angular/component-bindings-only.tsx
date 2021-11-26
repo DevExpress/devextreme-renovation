@@ -2,9 +2,9 @@ import { Options, AdditionalOptions } from "./types.d";
 
 import { Input } from "@angular/core";
 export default class WidgetProps {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }
@@ -12,9 +12,9 @@ export default class WidgetProps {
     return this.__heightInternalValue;
   }
 
-  __dataInternalValue: Options = { value: "" };
+  __dataInternalValue?: Options = { value: "" };
   @Input()
-  set data(value: Options) {
+  set data(value: Options | undefined) {
     if (value !== undefined) this.__dataInternalValue = value;
     else this.__dataInternalValue = { value: "" };
   }
@@ -22,9 +22,9 @@ export default class WidgetProps {
     return this.__dataInternalValue;
   }
 
-  __infoInternalValue: AdditionalOptions = { index: 0 };
+  __infoInternalValue?: AdditionalOptions = { index: 0 };
   @Input()
-  set info(value: AdditionalOptions) {
+  set info(value: AdditionalOptions | undefined) {
     if (value !== undefined) this.__infoInternalValue = value;
     else this.__infoInternalValue = { index: 0 };
   }

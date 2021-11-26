@@ -8,9 +8,9 @@ import {
 } from "./types-external";
 import { Input } from "@angular/core";
 export class WidgetProps {
-  __strInternalValue: String = "";
+  __strInternalValue?: String = "";
   @Input()
-  set str(value: String) {
+  set str(value: String | undefined) {
     if (value !== undefined) this.__strInternalValue = value;
     else this.__strInternalValue = "";
   }
@@ -18,9 +18,9 @@ export class WidgetProps {
     return this.__strInternalValue;
   }
 
-  __numInternalValue: Number = 1;
+  __numInternalValue?: Number = 1;
   @Input()
-  set num(value: Number) {
+  set num(value: Number | undefined) {
     if (value !== undefined) this.__numInternalValue = value;
     else this.__numInternalValue = 1;
   }
@@ -28,9 +28,9 @@ export class WidgetProps {
     return this.__numInternalValue;
   }
 
-  __boolInternalValue: Boolean = true;
+  __boolInternalValue?: Boolean = true;
   @Input()
-  set bool(value: Boolean) {
+  set bool(value: Boolean | undefined) {
     if (value !== undefined) this.__boolInternalValue = value;
     else this.__boolInternalValue = true;
   }
@@ -38,9 +38,9 @@ export class WidgetProps {
     return this.__boolInternalValue;
   }
 
-  __arrInternalValue: Array<any> = [];
+  __arrInternalValue?: Array<any> = [];
   @Input()
-  set arr(value: Array<any>) {
+  set arr(value: Array<any> | undefined) {
     if (value !== undefined) this.__arrInternalValue = value;
     else this.__arrInternalValue = [];
   }
@@ -48,9 +48,9 @@ export class WidgetProps {
     return this.__arrInternalValue;
   }
 
-  __strArrInternalValue: Array<String> = ["a", "b"];
+  __strArrInternalValue?: Array<String> = ["a", "b"];
   @Input()
-  set strArr(value: Array<String>) {
+  set strArr(value: Array<String> | undefined) {
     if (value !== undefined) this.__strArrInternalValue = value;
     else this.__strArrInternalValue = ["a", "b"];
   }
@@ -58,9 +58,9 @@ export class WidgetProps {
     return this.__strArrInternalValue;
   }
 
-  __objInternalValue: Object = {};
+  __objInternalValue?: Object = {};
   @Input()
-  set obj(value: Object) {
+  set obj(value: Object | undefined) {
     if (value !== undefined) this.__objInternalValue = value;
     else this.__objInternalValue = {};
   }
@@ -68,9 +68,9 @@ export class WidgetProps {
     return this.__objInternalValue;
   }
 
-  __dateInternalValue: Date = new Date();
+  __dateInternalValue?: Date = new Date();
   @Input()
-  set date(value: Date) {
+  set date(value: Date | undefined) {
     if (value !== undefined) this.__dateInternalValue = value;
     else this.__dateInternalValue = new Date();
   }
@@ -78,9 +78,9 @@ export class WidgetProps {
     return this.__dateInternalValue;
   }
 
-  __funcInternalValue: Function = () => {};
+  __funcInternalValue?: Function = () => {};
   @Input()
-  set func(value: Function) {
+  set func(value: Function | undefined) {
     if (value !== undefined) this.__funcInternalValue = value;
     else this.__funcInternalValue = () => {};
   }
@@ -88,9 +88,9 @@ export class WidgetProps {
     return this.__funcInternalValue;
   }
 
-  __symbolInternalValue: Symbol = Symbol("x");
+  __symbolInternalValue?: Symbol = Symbol("x");
   @Input()
-  set symbol(value: Symbol) {
+  set symbol(value: Symbol | undefined) {
     if (value !== undefined) this.__symbolInternalValue = value;
     else this.__symbolInternalValue = Symbol("x");
   }
@@ -98,9 +98,9 @@ export class WidgetProps {
     return this.__symbolInternalValue;
   }
 
-  __externalEnumInternalValue: EnumType = "data";
+  __externalEnumInternalValue?: EnumType = "data";
   @Input()
-  set externalEnum(value: EnumType) {
+  set externalEnum(value: EnumType | undefined) {
     if (value !== undefined) this.__externalEnumInternalValue = value;
     else this.__externalEnumInternalValue = "data";
   }
@@ -108,9 +108,9 @@ export class WidgetProps {
     return this.__externalEnumInternalValue;
   }
 
-  __externalUnionInternalValue: Union = 0;
+  __externalUnionInternalValue?: Union = 0;
   @Input()
-  set externalUnion(value: Union) {
+  set externalUnion(value: Union | undefined) {
     if (value !== undefined) this.__externalUnionInternalValue = value;
     else this.__externalUnionInternalValue = 0;
   }
@@ -118,9 +118,9 @@ export class WidgetProps {
     return this.__externalUnionInternalValue;
   }
 
-  __externalObjInternalValue: ObjType = { number: 0, text: "text" };
+  __externalObjInternalValue?: ObjType = { number: 0, text: "text" };
   @Input()
-  set externalObj(value: ObjType) {
+  set externalObj(value: ObjType | undefined) {
     if (value !== undefined) this.__externalObjInternalValue = value;
     else this.__externalObjInternalValue = { number: 0, text: "text" };
   }
@@ -128,9 +128,9 @@ export class WidgetProps {
     return this.__externalObjInternalValue;
   }
 
-  __externalArrayInternalValue: StringArr = ["s1", "s2"];
+  __externalArrayInternalValue?: StringArr = ["s1", "s2"];
   @Input()
-  set externalArray(value: StringArr) {
+  set externalArray(value: StringArr | undefined) {
     if (value !== undefined) this.__externalArrayInternalValue = value;
     else this.__externalArrayInternalValue = ["s1", "s2"];
   }
@@ -138,9 +138,9 @@ export class WidgetProps {
     return this.__externalArrayInternalValue;
   }
 
-  __externalStringInternalValue: StringType = "someValue";
+  __externalStringInternalValue?: StringType = "someValue";
   @Input()
-  set externalString(value: StringType) {
+  set externalString(value: StringType | undefined) {
     if (value !== undefined) this.__externalStringInternalValue = value;
     else this.__externalStringInternalValue = "someValue";
   }
@@ -215,9 +215,9 @@ export { Widget as DxWidgetComponent };
 
 import { CustomType } from "./types-external";
 class BaseViewPropsType {
-  __strArrInternalValue: Array<String> = new WidgetProps().strArr;
+  __strArrInternalValue?: Array<String> = new WidgetProps().strArr;
   @Input()
-  set strArr(value: Array<String>) {
+  set strArr(value: Array<String> | undefined) {
     if (value !== undefined) this.__strArrInternalValue = value;
     else this.__strArrInternalValue = new WidgetProps().strArr;
   }

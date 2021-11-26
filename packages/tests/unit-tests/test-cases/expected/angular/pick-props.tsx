@@ -3,9 +3,9 @@ import { Options } from "./types.d";
 import { Input } from "@angular/core";
 import { AdditionalOptions } from "./types.d";
 class WidgetProps {
-  __dataInternalValue: Options = new Props().data;
+  __dataInternalValue?: Options = new Props().data;
   @Input()
-  set data(value: Options) {
+  set data(value: Options | undefined) {
     if (value !== undefined) this.__dataInternalValue = value;
     else this.__dataInternalValue = new Props().data;
   }
@@ -13,9 +13,9 @@ class WidgetProps {
     return this.__dataInternalValue;
   }
 
-  __infoInternalValue: AdditionalOptions = new Props().info;
+  __infoInternalValue?: AdditionalOptions = new Props().info;
   @Input()
-  set info(value: AdditionalOptions) {
+  set info(value: AdditionalOptions | undefined) {
     if (value !== undefined) this.__infoInternalValue = value;
     else this.__infoInternalValue = new Props().info;
   }

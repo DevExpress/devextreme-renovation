@@ -6,9 +6,9 @@ export declare type StringType = String;
 export declare type StrDate = string | Date;
 import { Input } from "@angular/core";
 export class WidgetProps {
-  __dataInternalValue: EnumType = "data";
+  __dataInternalValue?: EnumType = "data";
   @Input()
-  set data(value: EnumType) {
+  set data(value: EnumType | undefined) {
     if (value !== undefined) this.__dataInternalValue = value;
     else this.__dataInternalValue = "data";
   }
@@ -16,9 +16,9 @@ export class WidgetProps {
     return this.__dataInternalValue;
   }
 
-  __unionInternalValue: Union = "uniontext";
+  __unionInternalValue?: Union = "uniontext";
   @Input()
-  set union(value: Union) {
+  set union(value: Union | undefined) {
     if (value !== undefined) this.__unionInternalValue = value;
     else this.__unionInternalValue = "uniontext";
   }
@@ -26,9 +26,9 @@ export class WidgetProps {
     return this.__unionInternalValue;
   }
 
-  __objInternalValue: ObjType = { number: 123, text: "sda" };
+  __objInternalValue?: ObjType = { number: 123, text: "sda" };
   @Input()
-  set obj(value: ObjType) {
+  set obj(value: ObjType | undefined) {
     if (value !== undefined) this.__objInternalValue = value;
     else this.__objInternalValue = { number: 123, text: "sda" };
   }
@@ -36,9 +36,9 @@ export class WidgetProps {
     return this.__objInternalValue;
   }
 
-  __strArrInternalValue: StringArr = ["ba", "ab"];
+  __strArrInternalValue?: StringArr = ["ba", "ab"];
   @Input()
-  set strArr(value: StringArr) {
+  set strArr(value: StringArr | undefined) {
     if (value !== undefined) this.__strArrInternalValue = value;
     else this.__strArrInternalValue = ["ba", "ab"];
   }
@@ -46,9 +46,9 @@ export class WidgetProps {
     return this.__strArrInternalValue;
   }
 
-  __sInternalValue: StringType = "";
+  __sInternalValue?: StringType = "";
   @Input()
-  set s(value: StringType) {
+  set s(value: StringType | undefined) {
     if (value !== undefined) this.__sInternalValue = value;
     else this.__sInternalValue = "";
   }
@@ -56,9 +56,9 @@ export class WidgetProps {
     return this.__sInternalValue;
   }
 
-  __strDateInternalValue: StrDate = new Date();
+  __strDateInternalValue?: StrDate = new Date();
   @Input()
-  set strDate(value: StrDate) {
+  set strDate(value: StrDate | undefined) {
     if (value !== undefined) this.__strDateInternalValue = value;
     else this.__strDateInternalValue = new Date();
   }

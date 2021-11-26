@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class FakeNested {
-  __numberPropInternalValue: number = 2;
+  __numberPropInternalValue?: number = 2;
   @Input()
-  set numberProp(value: number) {
+  set numberProp(value: number | undefined) {
     if (value !== undefined) this.__numberPropInternalValue = value;
     else this.__numberPropInternalValue = 2;
   }

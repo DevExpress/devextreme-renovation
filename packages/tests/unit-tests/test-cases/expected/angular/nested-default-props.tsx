@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class GridCell {
-  __gridDataInternalValue: string = "defaultValue";
+  __gridDataInternalValue?: string = "defaultValue";
   @Input()
-  set gridData(value: string) {
+  set gridData(value: string | undefined) {
     if (value !== undefined) this.__gridDataInternalValue = value;
     else this.__gridDataInternalValue = "defaultValue";
   }

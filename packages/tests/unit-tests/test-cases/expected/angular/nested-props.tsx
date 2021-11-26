@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class GridColumnProps {
-  __nameInternalValue: string = "";
+  __nameInternalValue?: string = "";
   @Input()
-  set name(value: string) {
+  set name(value: string | undefined) {
     if (value !== undefined) this.__nameInternalValue = value;
     else this.__nameInternalValue = "";
   }
@@ -10,9 +10,9 @@ export class GridColumnProps {
     return this.__nameInternalValue;
   }
 
-  __indexInternalValue: number = 0;
+  __indexInternalValue?: number = 0;
   @Input()
-  set index(value: number) {
+  set index(value: number | undefined) {
     if (value !== undefined) this.__indexInternalValue = value;
     else this.__indexInternalValue = 0;
   }
@@ -41,9 +41,9 @@ export class CustomProps {}
 export class AnotherCustomProps {}
 
 export class EditingProps {
-  __editEnabledInternalValue: boolean = false;
+  __editEnabledInternalValue?: boolean = false;
   @Input()
-  set editEnabled(value: boolean) {
+  set editEnabled(value: boolean | undefined) {
     if (value !== undefined) this.__editEnabledInternalValue = value;
     else this.__editEnabledInternalValue = false;
   }
@@ -67,9 +67,9 @@ export class EditingProps {
 }
 
 export class ColumnEditingProps {
-  __editEnabledInternalValue: boolean = false;
+  __editEnabledInternalValue?: boolean = false;
   @Input()
-  set editEnabled(value: boolean) {
+  set editEnabled(value: boolean | undefined) {
     if (value !== undefined) this.__editEnabledInternalValue = value;
     else this.__editEnabledInternalValue = false;
   }

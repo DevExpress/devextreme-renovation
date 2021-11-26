@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class FakeNested {
-  __basePropInternalValue: number = 0;
+  __basePropInternalValue?: number = 0;
   @Input()
-  set baseProp(value: number) {
+  set baseProp(value: number | undefined) {
     if (value !== undefined) this.__basePropInternalValue = value;
     else this.__basePropInternalValue = 0;
   }
@@ -12,9 +12,9 @@ export class FakeNested {
 }
 
 export class WidgetProps {
-  __basePropInternalValue: number = 0;
+  __basePropInternalValue?: number = 0;
   @Input()
-  set baseProp(value: number) {
+  set baseProp(value: number | undefined) {
     if (value !== undefined) this.__basePropInternalValue = value;
     else this.__basePropInternalValue = 0;
   }
@@ -35,9 +35,9 @@ export class WidgetProps {
 }
 
 export class TooltipProps {
-  __tooltipValueInternalValue: number = 0;
+  __tooltipValueInternalValue?: number = 0;
   @Input()
-  set tooltipValue(value: number) {
+  set tooltipValue(value: number | undefined) {
     if (value !== undefined) this.__tooltipValueInternalValue = value;
     else this.__tooltipValueInternalValue = 0;
   }
@@ -60,9 +60,9 @@ export class TooltipProps {
 }
 
 export class BulletProps extends WidgetProps {
-  __valueInternalValue: number = 0;
+  __valueInternalValue?: number = 0;
   @Input()
-  set value(value: number) {
+  set value(value: number | undefined) {
     if (value !== undefined) this.__valueInternalValue = value;
     else this.__valueInternalValue = 0;
   }

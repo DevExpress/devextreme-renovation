@@ -1,9 +1,9 @@
 import Widget, { DxWidgetModule } from "./slots";
 import { Input, ViewChild, ElementRef } from "@angular/core";
 class WidgetInput {
-  __pInternalValue: string = "";
+  __pInternalValue?: string = "";
   @Input()
-  set p(value: string) {
+  set p(value: string | undefined) {
     if (value !== undefined) this.__pInternalValue = value;
     else this.__pInternalValue = "";
   }

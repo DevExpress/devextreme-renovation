@@ -6,9 +6,9 @@ function isDevice() {
 
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }
@@ -16,9 +16,9 @@ export class WidgetInput {
     return this.__heightInternalValue;
   }
 
-  __exportInternalValue: object = {};
+  __exportInternalValue?: object = {};
   @Input()
-  set export(value: object) {
+  set export(value: object | undefined) {
     if (value !== undefined) this.__exportInternalValue = value;
     else this.__exportInternalValue = {};
   }
@@ -26,9 +26,9 @@ export class WidgetInput {
     return this.__exportInternalValue;
   }
 
-  __arrayInternalValue: any = ["1"];
+  __arrayInternalValue?: any = ["1"];
   @Input()
-  set array(value: any) {
+  set array(value: any | undefined) {
     if (value !== undefined) this.__arrayInternalValue = value;
     else this.__arrayInternalValue = ["1"];
   }
@@ -36,9 +36,9 @@ export class WidgetInput {
     return this.__arrayInternalValue;
   }
 
-  __expressionDefaultInternalValue: string = device === "ios" ? "yes" : "no";
+  __expressionDefaultInternalValue?: string = device === "ios" ? "yes" : "no";
   @Input()
-  set expressionDefault(value: string) {
+  set expressionDefault(value: string | undefined) {
     if (value !== undefined) this.__expressionDefaultInternalValue = value;
     else
       this.__expressionDefaultInternalValue = device === "ios" ? "yes" : "no";
@@ -47,9 +47,9 @@ export class WidgetInput {
     return this.__expressionDefaultInternalValue;
   }
 
-  __expressionDefault1InternalValue: boolean = !device;
+  __expressionDefault1InternalValue?: boolean = !device;
   @Input()
-  set expressionDefault1(value: boolean) {
+  set expressionDefault1(value: boolean | undefined) {
     if (value !== undefined) this.__expressionDefault1InternalValue = value;
     else this.__expressionDefault1InternalValue = !device;
   }
@@ -57,9 +57,9 @@ export class WidgetInput {
     return this.__expressionDefault1InternalValue;
   }
 
-  __expressionDefault2InternalValue: boolean | string = isDevice() || "test";
+  __expressionDefault2InternalValue?: boolean | string = isDevice() || "test";
   @Input()
-  set expressionDefault2(value: boolean | string) {
+  set expressionDefault2(value: boolean | string | undefined) {
     if (value !== undefined) this.__expressionDefault2InternalValue = value;
     else this.__expressionDefault2InternalValue = isDevice() || "test";
   }
@@ -68,9 +68,9 @@ export class WidgetInput {
   }
   @Input() sizes?: { height: number; width: number };
 
-  __stringValueInternalValue: string = "";
+  __stringValueInternalValue?: string = "";
   @Input()
-  set stringValue(value: string) {
+  set stringValue(value: string | undefined) {
     if (value !== undefined) this.__stringValueInternalValue = value;
     else this.__stringValueInternalValue = "";
   }

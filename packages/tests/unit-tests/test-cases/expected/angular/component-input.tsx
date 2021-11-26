@@ -1,9 +1,9 @@
 export const COMPONENT_INPUT_CLASS = "c3";
 import { Input, ViewChild, ElementRef } from "@angular/core";
 export class WidgetProps {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }
@@ -11,9 +11,9 @@ export class WidgetProps {
     return this.__heightInternalValue;
   }
 
-  __widthInternalValue: number = 10;
+  __widthInternalValue?: number = 10;
   @Input()
-  set width(value: number) {
+  set width(value: number | undefined) {
     if (value !== undefined) this.__widthInternalValue = value;
     else this.__widthInternalValue = 10;
   }

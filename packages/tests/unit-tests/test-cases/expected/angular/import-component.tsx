@@ -1,9 +1,9 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
 import { Input, Output, EventEmitter } from "@angular/core";
 class ChildInput extends WidgetProps {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }

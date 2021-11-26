@@ -6,9 +6,9 @@ import {
 
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
-  __somePropInternalValue: boolean = false;
+  __somePropInternalValue?: boolean = false;
   @Input()
-  set someProp(value: boolean) {
+  set someProp(value: boolean | undefined) {
     if (value !== undefined) this.__somePropInternalValue = value;
     else this.__somePropInternalValue = false;
   }

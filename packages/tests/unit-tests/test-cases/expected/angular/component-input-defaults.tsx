@@ -9,9 +9,9 @@ import { Input } from "@angular/core";
 export class BaseProps {
   @Input() empty?: string;
 
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }
@@ -19,9 +19,9 @@ export class BaseProps {
     return this.__heightInternalValue;
   }
 
-  __widthInternalValue: number = isMaterial() ? 20 : 10;
+  __widthInternalValue?: number = isMaterial() ? 20 : 10;
   @Input()
-  set width(value: number) {
+  set width(value: number | undefined) {
     if (value !== undefined) this.__widthInternalValue = value;
     else this.__widthInternalValue = isMaterial() ? 20 : 10;
   }
@@ -42,9 +42,9 @@ export class BaseProps {
 }
 
 export class TextsProps {
-  __textInternalValue: string = format("text");
+  __textInternalValue?: string = format("text");
   @Input()
-  set text(value: string) {
+  set text(value: string | undefined) {
     if (value !== undefined) this.__textInternalValue = value;
     else this.__textInternalValue = format("text");
   }
@@ -54,9 +54,9 @@ export class TextsProps {
 }
 
 export class ExpressionProps {
-  __expressionDefaultInternalValue: any = isMaterial() ? 20 : 10;
+  __expressionDefaultInternalValue?: any = isMaterial() ? 20 : 10;
   @Input()
-  set expressionDefault(value: any) {
+  set expressionDefault(value: any | undefined) {
     if (value !== undefined) this.__expressionDefaultInternalValue = value;
     else this.__expressionDefaultInternalValue = isMaterial() ? 20 : 10;
   }
@@ -67,9 +67,9 @@ export class ExpressionProps {
 
 import { TemplateRef } from "@angular/core";
 export class WidgetProps extends BaseProps {
-  __textInternalValue: string = format("text");
+  __textInternalValue?: string = format("text");
   @Input()
-  set text(value: string) {
+  set text(value: string | undefined) {
     if (value !== undefined) this.__textInternalValue = value;
     else this.__textInternalValue = format("text");
   }
@@ -77,9 +77,9 @@ export class WidgetProps extends BaseProps {
     return this.__textInternalValue;
   }
 
-  __texts1InternalValue: TextsProps = { text: format("text") };
+  __texts1InternalValue?: TextsProps = { text: format("text") };
   @Input()
-  set texts1(value: TextsProps) {
+  set texts1(value: TextsProps | undefined) {
     if (value !== undefined) this.__texts1InternalValue = value;
     else this.__texts1InternalValue = { text: format("text") };
   }
@@ -125,9 +125,9 @@ export class WidgetProps extends BaseProps {
 }
 
 class WidgetPropsType {
-  __textInternalValue: string = new WidgetProps().text;
+  __textInternalValue?: string = new WidgetProps().text;
   @Input()
-  set text(value: string) {
+  set text(value: string | undefined) {
     if (value !== undefined) this.__textInternalValue = value;
     else this.__textInternalValue = new WidgetProps().text;
   }
@@ -135,9 +135,9 @@ class WidgetPropsType {
     return this.__textInternalValue;
   }
 
-  __texts1InternalValue: TextsProps = new WidgetProps().texts1;
+  __texts1InternalValue?: TextsProps = new WidgetProps().texts1;
   @Input()
-  set texts1(value: TextsProps) {
+  set texts1(value: TextsProps | undefined) {
     if (value !== undefined) this.__texts1InternalValue = value;
     else this.__texts1InternalValue = new WidgetProps().texts1;
   }
@@ -167,9 +167,9 @@ class WidgetPropsType {
   @Input() template?: TemplateRef<any> | null = null;
   @Input() empty?: string;
 
-  __heightInternalValue: number = new WidgetProps().height;
+  __heightInternalValue?: number = new WidgetProps().height;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = new WidgetProps().height;
   }
@@ -177,9 +177,9 @@ class WidgetPropsType {
     return this.__heightInternalValue;
   }
 
-  __widthInternalValue: number = new WidgetProps().width;
+  __widthInternalValue?: number = new WidgetProps().width;
   @Input()
-  set width(value: number) {
+  set width(value: number | undefined) {
     if (value !== undefined) this.__widthInternalValue = value;
     else this.__widthInternalValue = new WidgetProps().width;
   }
@@ -197,10 +197,10 @@ class WidgetPropsType {
     return this.__baseNested__;
   }
 
-  __expressionDefaultInternalValue: any = new ExpressionProps()
+  __expressionDefaultInternalValue?: any = new ExpressionProps()
     .expressionDefault;
   @Input()
-  set expressionDefault(value: any) {
+  set expressionDefault(value: any | undefined) {
     if (value !== undefined) this.__expressionDefaultInternalValue = value;
     else
       this.__expressionDefaultInternalValue =

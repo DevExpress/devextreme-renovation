@@ -36,9 +36,9 @@ class GetterContext {
 
 import { Input } from "@angular/core";
 class Props {
-  __p1InternalValue: number = 10;
+  __p1InternalValue?: number = 10;
   @Input()
-  set p1(value: number) {
+  set p1(value: number | undefined) {
     if (value !== undefined) this.__p1InternalValue = value;
     else this.__p1InternalValue = 10;
   }

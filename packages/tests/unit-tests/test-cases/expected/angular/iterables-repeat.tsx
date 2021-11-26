@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 export class ListInput {
-  __itemsInternalValue: any[] = [];
+  __itemsInternalValue?: any[] = [];
   @Input()
-  set items(value: any[]) {
+  set items(value: any[] | undefined) {
     if (value !== undefined) this.__itemsInternalValue = value;
     else this.__itemsInternalValue = [];
   }
@@ -10,9 +10,9 @@ export class ListInput {
     return this.__itemsInternalValue;
   }
 
-  __keyExprInternalValue: string = "value";
+  __keyExprInternalValue?: string = "value";
   @Input()
-  set keyExpr(value: string) {
+  set keyExpr(value: string | undefined) {
     if (value !== undefined) this.__keyExprInternalValue = value;
     else this.__keyExprInternalValue = "value";
   }

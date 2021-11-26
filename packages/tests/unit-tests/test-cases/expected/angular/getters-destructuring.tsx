@@ -1,8 +1,8 @@
 import { Input } from "@angular/core";
 class WidgetProps {
-  __somePropInternalValue: string = "";
+  __somePropInternalValue?: string = "";
   @Input()
-  set someProp(value: string) {
+  set someProp(value: string | undefined) {
     if (value !== undefined) this.__somePropInternalValue = value;
     else this.__somePropInternalValue = "";
   }
@@ -10,9 +10,9 @@ class WidgetProps {
     return this.__somePropInternalValue;
   }
 
-  __typeInternalValue: string = "";
+  __typeInternalValue?: string = "";
   @Input()
-  set type(value: string) {
+  set type(value: string | undefined) {
     if (value !== undefined) this.__typeInternalValue = value;
     else this.__typeInternalValue = "";
   }

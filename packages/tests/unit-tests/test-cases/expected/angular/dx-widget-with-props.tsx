@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetWithPropsInput {
-  __valueInternalValue: string = "default text";
+  __valueInternalValue?: string = "default text";
   @Input()
-  set value(value: string) {
+  set value(value: string | undefined) {
     if (value !== undefined) this.__valueInternalValue = value;
     else this.__valueInternalValue = "default text";
   }
@@ -11,9 +11,9 @@ export class WidgetWithPropsInput {
   }
   @Input() optionalValue?: string;
 
-  __numberInternalValue: number = 42;
+  __numberInternalValue?: number = 42;
   @Input()
-  set number(value: number) {
+  set number(value: number | undefined) {
     if (value !== undefined) this.__numberInternalValue = value;
     else this.__numberInternalValue = 42;
   }

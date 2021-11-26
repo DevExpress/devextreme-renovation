@@ -2,9 +2,9 @@ import { Input, Output, EventEmitter } from "@angular/core";
 export class InnerWidgetProps {
   @Input() selected?: boolean;
 
-  __valueInternalValue: number = 14;
+  __valueInternalValue?: number = 14;
   @Input()
-  set value(value: number) {
+  set value(value: number | undefined) {
     if (value !== undefined) this.__valueInternalValue = value;
     else this.__valueInternalValue = 14;
   }

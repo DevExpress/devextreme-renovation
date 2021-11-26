@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetProps {
-  __aInternalValue: Array<Number> = [1, 2, 3];
+  __aInternalValue?: Array<Number> = [1, 2, 3];
   @Input()
-  set a(value: Array<Number>) {
+  set a(value: Array<Number> | undefined) {
     if (value !== undefined) this.__aInternalValue = value;
     else this.__aInternalValue = [1, 2, 3];
   }
@@ -10,9 +10,9 @@ export class WidgetProps {
     return this.__aInternalValue;
   }
 
-  __idInternalValue: string = "1";
+  __idInternalValue?: string = "1";
   @Input()
-  set id(value: string) {
+  set id(value: string | undefined) {
     if (value !== undefined) this.__idInternalValue = value;
     else this.__idInternalValue = "1";
   }

@@ -1,9 +1,9 @@
 import DynamicComponent, { WidgetInput, DxWidgetModule } from "./props";
 import { Input } from "@angular/core";
 class Props {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }

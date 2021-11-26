@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
-  __heightInternalValue: number = 10;
+  __heightInternalValue?: number = 10;
   @Input()
-  set height(value: number) {
+  set height(value: number | undefined) {
     if (value !== undefined) this.__heightInternalValue = value;
     else this.__heightInternalValue = 10;
   }
@@ -10,9 +10,9 @@ class WidgetInput {
     return this.__heightInternalValue;
   }
 
-  __selectedInternalValue: boolean = false;
+  __selectedInternalValue?: boolean = false;
   @Input()
-  set selected(value: boolean) {
+  set selected(value: boolean | undefined) {
     if (value !== undefined) this.__selectedInternalValue = value;
     else this.__selectedInternalValue = false;
   }

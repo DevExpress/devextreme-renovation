@@ -1,8 +1,8 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
-  __propStateInternalValue: number = 1;
+  __propStateInternalValue?: number = 1;
   @Input()
-  set propState(value: number) {
+  set propState(value: number | undefined) {
     if (value !== undefined) this.__propStateInternalValue = value;
     else this.__propStateInternalValue = 1;
   }

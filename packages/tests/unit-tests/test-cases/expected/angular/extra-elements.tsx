@@ -1,9 +1,9 @@
 import { InnerLayout as Child, DxInnerLayoutModule } from "./inner-layout";
 import { Input } from "@angular/core";
 export class Props {
-  __propInternalValue: number = 0;
+  __propInternalValue?: number = 0;
   @Input()
-  set prop(value: number) {
+  set prop(value: number | undefined) {
     if (value !== undefined) this.__propInternalValue = value;
     else this.__propInternalValue = 0;
   }
