@@ -1,7 +1,15 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
 import { Input, Output, EventEmitter } from "@angular/core";
 class ChildInput extends WidgetProps {
-  @Input() height: number = 10;
+  __heightInternalValue: number = 10;
+  @Input()
+  set height(value: number) {
+    if (value !== undefined) this.__heightInternalValue = value;
+    else this.__heightInternalValue = 10;
+  }
+  get height() {
+    return this.__heightInternalValue;
+  }
   @Output() onClick: EventEmitter<number> = new EventEmitter();
 }
 

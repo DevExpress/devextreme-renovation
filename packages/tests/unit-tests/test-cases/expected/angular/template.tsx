@@ -6,7 +6,15 @@ import {
 
 import { Input, TemplateRef } from "@angular/core";
 export class WidgetInput {
-  @Input() someProp: boolean = false;
+  __somePropInternalValue: boolean = false;
+  @Input()
+  set someProp(value: boolean) {
+    if (value !== undefined) this.__somePropInternalValue = value;
+    else this.__somePropInternalValue = false;
+  }
+  get someProp() {
+    return this.__somePropInternalValue;
+  }
   @Input() headerTemplate: TemplateRef<any> | null = null;
   @Input() template: TemplateRef<any> | null = null;
   @Input() contentTemplate: TemplateRef<any> | null = null;

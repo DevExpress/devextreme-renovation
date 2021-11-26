@@ -6,7 +6,16 @@ import { Input, TemplateRef } from "@angular/core";
 export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
-  @Input() stringToRender: string = "strCompDefault";
+
+  __stringToRenderInternalValue: string = "strCompDefault";
+  @Input()
+  set stringToRender(value: string) {
+    if (value !== undefined) this.__stringToRenderInternalValue = value;
+    else this.__stringToRenderInternalValue = "strCompDefault";
+  }
+  get stringToRender() {
+    return this.__stringToRenderInternalValue;
+  }
 }
 
 import {

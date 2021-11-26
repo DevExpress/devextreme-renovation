@@ -1,7 +1,24 @@
 import { Input } from "@angular/core";
 export class WidgetInput {
-  @Input() propArray: Array<string> = [];
-  @Input() propObject: object = {};
+  __propArrayInternalValue: Array<string> = [];
+  @Input()
+  set propArray(value: Array<string>) {
+    if (value !== undefined) this.__propArrayInternalValue = value;
+    else this.__propArrayInternalValue = [];
+  }
+  get propArray() {
+    return this.__propArrayInternalValue;
+  }
+
+  __propObjectInternalValue: object = {};
+  @Input()
+  set propObject(value: object) {
+    if (value !== undefined) this.__propObjectInternalValue = value;
+    else this.__propObjectInternalValue = {};
+  }
+  get propObject() {
+    return this.__propObjectInternalValue;
+  }
 }
 
 import {

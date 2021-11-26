@@ -2,7 +2,15 @@ import WidgetOne, { DxWidgetOneModule } from "./component-pass-one";
 import { WidgetTwo, DxWidgetTwoModule } from "./component-pass-two";
 import { Input } from "@angular/core";
 export class WidgetProps {
-  @Input() mode?: boolean = false;
+  __modeInternalValue: boolean = false;
+  @Input()
+  set mode(value: boolean) {
+    if (value !== undefined) this.__modeInternalValue = value;
+    else this.__modeInternalValue = false;
+  }
+  get mode() {
+    return this.__modeInternalValue;
+  }
   @Input() firstText?: string;
   @Input() secondText?: string;
 }

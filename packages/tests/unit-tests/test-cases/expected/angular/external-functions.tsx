@@ -12,7 +12,15 @@ const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
 import { Input } from "@angular/core";
 export class WidgetProps {
-  @Input() cells: Cell[] = [];
+  __cellsInternalValue: Cell[] = [];
+  @Input()
+  set cells(value: Cell[]) {
+    if (value !== undefined) this.__cellsInternalValue = value;
+    else this.__cellsInternalValue = [];
+  }
+  get cells() {
+    return this.__cellsInternalValue;
+  }
 }
 
 import {

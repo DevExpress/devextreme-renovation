@@ -1,9 +1,44 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetProps {
-  @Input() someProp: string = "";
-  @Input() type?: string = "";
-  @Input() gridCompatibility?: boolean = true;
-  @Input() pageIndex: number = 1;
+  __somePropInternalValue: string = "";
+  @Input()
+  set someProp(value: string) {
+    if (value !== undefined) this.__somePropInternalValue = value;
+    else this.__somePropInternalValue = "";
+  }
+  get someProp() {
+    return this.__somePropInternalValue;
+  }
+
+  __typeInternalValue: string = "";
+  @Input()
+  set type(value: string) {
+    if (value !== undefined) this.__typeInternalValue = value;
+    else this.__typeInternalValue = "";
+  }
+  get type() {
+    return this.__typeInternalValue;
+  }
+
+  __gridCompatibilityInternalValue: boolean = true;
+  @Input()
+  set gridCompatibility(value: boolean) {
+    if (value !== undefined) this.__gridCompatibilityInternalValue = value;
+    else this.__gridCompatibilityInternalValue = true;
+  }
+  get gridCompatibility() {
+    return this.__gridCompatibilityInternalValue;
+  }
+
+  __pageIndexInternalValue: number = 1;
+  @Input()
+  set pageIndex(value: number) {
+    if (value !== undefined) this.__pageIndexInternalValue = value;
+    else this.__pageIndexInternalValue = 1;
+  }
+  get pageIndex() {
+    return this.__pageIndexInternalValue;
+  }
   @Output() pageIndexChange: EventEmitter<number> = new EventEmitter();
 }
 import {

@@ -1,8 +1,25 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetWithPropsInput {
-  @Input() value: string = "default text";
+  __valueInternalValue: string = "default text";
+  @Input()
+  set value(value: string) {
+    if (value !== undefined) this.__valueInternalValue = value;
+    else this.__valueInternalValue = "default text";
+  }
+  get value() {
+    return this.__valueInternalValue;
+  }
   @Input() optionalValue?: string;
-  @Input() number?: number = 42;
+
+  __numberInternalValue: number = 42;
+  @Input()
+  set number(value: number) {
+    if (value !== undefined) this.__numberInternalValue = value;
+    else this.__numberInternalValue = 42;
+  }
+  get number() {
+    return this.__numberInternalValue;
+  }
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 

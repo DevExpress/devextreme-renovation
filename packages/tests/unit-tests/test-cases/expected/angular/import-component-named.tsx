@@ -1,7 +1,15 @@
 import { Widget, DxWidgetModule } from "./export-named";
 import { Input } from "@angular/core";
 class ChildInput {
-  @Input() height: number = 10;
+  __heightInternalValue: number = 10;
+  @Input()
+  set height(value: number) {
+    if (value !== undefined) this.__heightInternalValue = value;
+    else this.__heightInternalValue = 10;
+  }
+  get height() {
+    return this.__heightInternalValue;
+  }
 }
 
 import {

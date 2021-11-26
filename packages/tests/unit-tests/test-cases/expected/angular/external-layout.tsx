@@ -2,7 +2,15 @@ import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
 import { InnerComponent, DxInnerComponentModule } from "./inner-component";
 import { Input } from "@angular/core";
 export class Props {
-  @Input() prop: number = 0;
+  __propInternalValue: number = 0;
+  @Input()
+  set prop(value: number) {
+    if (value !== undefined) this.__propInternalValue = value;
+    else this.__propInternalValue = 0;
+  }
+  get prop() {
+    return this.__propInternalValue;
+  }
 }
 
 import {

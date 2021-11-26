@@ -7,9 +7,35 @@ function unsubscribe(id: number) {
 
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
-  @Input() p: string = "10";
-  @Input() r: string = "20";
-  @Input() s: number = 10;
+  __pInternalValue: string = "10";
+  @Input()
+  set p(value: string) {
+    if (value !== undefined) this.__pInternalValue = value;
+    else this.__pInternalValue = "10";
+  }
+  get p() {
+    return this.__pInternalValue;
+  }
+
+  __rInternalValue: string = "20";
+  @Input()
+  set r(value: string) {
+    if (value !== undefined) this.__rInternalValue = value;
+    else this.__rInternalValue = "20";
+  }
+  get r() {
+    return this.__rInternalValue;
+  }
+
+  __sInternalValue: number = 10;
+  @Input()
+  set s(value: number) {
+    if (value !== undefined) this.__sInternalValue = value;
+    else this.__sInternalValue = 10;
+  }
+  get s() {
+    return this.__sInternalValue;
+  }
   @Output() sChange: EventEmitter<number> = new EventEmitter();
 }
 

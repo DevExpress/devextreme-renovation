@@ -1,6 +1,14 @@
 import { Input } from "@angular/core";
 export class WidgetInput {
-  @Input() prop: any = {};
+  __propInternalValue: any = {};
+  @Input()
+  set prop(value: any) {
+    if (value !== undefined) this.__propInternalValue = value;
+    else this.__propInternalValue = {};
+  }
+  get prop() {
+    return this.__propInternalValue;
+  }
 }
 
 import {

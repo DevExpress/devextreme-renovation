@@ -6,14 +6,77 @@ function isDevice() {
 
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetInput {
-  @Input() height: number = 10;
-  @Input() export: object = {};
-  @Input() array: any = ["1"];
-  @Input() expressionDefault: string = device === "ios" ? "yes" : "no";
-  @Input() expressionDefault1: boolean = !device;
-  @Input() expressionDefault2: boolean | string = isDevice() || "test";
+  __heightInternalValue: number = 10;
+  @Input()
+  set height(value: number) {
+    if (value !== undefined) this.__heightInternalValue = value;
+    else this.__heightInternalValue = 10;
+  }
+  get height() {
+    return this.__heightInternalValue;
+  }
+
+  __exportInternalValue: object = {};
+  @Input()
+  set export(value: object) {
+    if (value !== undefined) this.__exportInternalValue = value;
+    else this.__exportInternalValue = {};
+  }
+  get export() {
+    return this.__exportInternalValue;
+  }
+
+  __arrayInternalValue: any = ["1"];
+  @Input()
+  set array(value: any) {
+    if (value !== undefined) this.__arrayInternalValue = value;
+    else this.__arrayInternalValue = ["1"];
+  }
+  get array() {
+    return this.__arrayInternalValue;
+  }
+
+  __expressionDefaultInternalValue: string = device === "ios" ? "yes" : "no";
+  @Input()
+  set expressionDefault(value: string) {
+    if (value !== undefined) this.__expressionDefaultInternalValue = value;
+    else
+      this.__expressionDefaultInternalValue = device === "ios" ? "yes" : "no";
+  }
+  get expressionDefault() {
+    return this.__expressionDefaultInternalValue;
+  }
+
+  __expressionDefault1InternalValue: boolean = !device;
+  @Input()
+  set expressionDefault1(value: boolean) {
+    if (value !== undefined) this.__expressionDefault1InternalValue = value;
+    else this.__expressionDefault1InternalValue = !device;
+  }
+  get expressionDefault1() {
+    return this.__expressionDefault1InternalValue;
+  }
+
+  __expressionDefault2InternalValue: boolean | string = isDevice() || "test";
+  @Input()
+  set expressionDefault2(value: boolean | string) {
+    if (value !== undefined) this.__expressionDefault2InternalValue = value;
+    else this.__expressionDefault2InternalValue = isDevice() || "test";
+  }
+  get expressionDefault2() {
+    return this.__expressionDefault2InternalValue;
+  }
   @Input() sizes?: { height: number; width: number };
-  @Input() stringValue: string = "";
+
+  __stringValueInternalValue: string = "";
+  @Input()
+  set stringValue(value: string) {
+    if (value !== undefined) this.__stringValueInternalValue = value;
+    else this.__stringValueInternalValue = "";
+  }
+  get stringValue() {
+    return this.__stringValueInternalValue;
+  }
   @Output() onClick: EventEmitter<number> = new EventEmitter();
   @Output() onSomething: EventEmitter<any> = new EventEmitter();
   @Output() stringValueChange: EventEmitter<string> = new EventEmitter();

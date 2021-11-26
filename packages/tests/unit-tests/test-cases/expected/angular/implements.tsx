@@ -9,7 +9,15 @@ interface WidgetI {
 
 import { Input } from "@angular/core";
 class WidgetInput extends BaseProps {
-  @Input() p: string = "10";
+  __pInternalValue: string = "10";
+  @Input()
+  set p(value: string) {
+    if (value !== undefined) this.__pInternalValue = value;
+    else this.__pInternalValue = "10";
+  }
+  get p() {
+    return this.__pInternalValue;
+  }
 }
 
 import {

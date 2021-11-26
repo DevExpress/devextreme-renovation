@@ -1,7 +1,15 @@
 import Widget, { DxWidgetModule } from "./slots";
 import { Input, ViewChild, ElementRef } from "@angular/core";
 class WidgetInput {
-  @Input() p: string = "";
+  __pInternalValue: string = "";
+  @Input()
+  set p(value: string) {
+    if (value !== undefined) this.__pInternalValue = value;
+    else this.__pInternalValue = "";
+  }
+  get p() {
+    return this.__pInternalValue;
+  }
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {

@@ -5,9 +5,35 @@ import {
 
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetProps {
-  @Input() someProp: string = "";
-  @Input() type?: string = "";
-  @Input() currentDate: Date | number | string = new Date();
+  __somePropInternalValue: string = "";
+  @Input()
+  set someProp(value: string) {
+    if (value !== undefined) this.__somePropInternalValue = value;
+    else this.__somePropInternalValue = "";
+  }
+  get someProp() {
+    return this.__somePropInternalValue;
+  }
+
+  __typeInternalValue: string = "";
+  @Input()
+  set type(value: string) {
+    if (value !== undefined) this.__typeInternalValue = value;
+    else this.__typeInternalValue = "";
+  }
+  get type() {
+    return this.__typeInternalValue;
+  }
+
+  __currentDateInternalValue: Date | number | string = new Date();
+  @Input()
+  set currentDate(value: Date | number | string) {
+    if (value !== undefined) this.__currentDateInternalValue = value;
+    else this.__currentDateInternalValue = new Date();
+  }
+  get currentDate() {
+    return this.__currentDateInternalValue;
+  }
   @Output() currentDateChange: EventEmitter<Date | number | string> =
     new EventEmitter();
 }

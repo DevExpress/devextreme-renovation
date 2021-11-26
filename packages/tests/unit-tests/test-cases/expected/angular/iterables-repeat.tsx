@@ -1,7 +1,24 @@
 import { Input } from "@angular/core";
 export class ListInput {
-  @Input() items?: any[] = [];
-  @Input() keyExpr?: string = "value";
+  __itemsInternalValue: any[] = [];
+  @Input()
+  set items(value: any[]) {
+    if (value !== undefined) this.__itemsInternalValue = value;
+    else this.__itemsInternalValue = [];
+  }
+  get items() {
+    return this.__itemsInternalValue;
+  }
+
+  __keyExprInternalValue: string = "value";
+  @Input()
+  set keyExpr(value: string) {
+    if (value !== undefined) this.__keyExprInternalValue = value;
+    else this.__keyExprInternalValue = "value";
+  }
+  get keyExpr() {
+    return this.__keyExprInternalValue;
+  }
 }
 import {
   Component,

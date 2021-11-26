@@ -1,7 +1,24 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 export class WidgetProps {
-  @Input() a: Array<Number> = [1, 2, 3];
-  @Input() id: string = "1";
+  __aInternalValue: Array<Number> = [1, 2, 3];
+  @Input()
+  set a(value: Array<Number>) {
+    if (value !== undefined) this.__aInternalValue = value;
+    else this.__aInternalValue = [1, 2, 3];
+  }
+  get a() {
+    return this.__aInternalValue;
+  }
+
+  __idInternalValue: string = "1";
+  @Input()
+  set id(value: string) {
+    if (value !== undefined) this.__idInternalValue = value;
+    else this.__idInternalValue = "1";
+  }
+  get id() {
+    return this.__idInternalValue;
+  }
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 

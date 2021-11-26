@@ -1,7 +1,24 @@
 import { Input, Output, EventEmitter } from "@angular/core";
 class WidgetInput {
-  @Input() height: number = 10;
-  @Input() selected: boolean = false;
+  __heightInternalValue: number = 10;
+  @Input()
+  set height(value: number) {
+    if (value !== undefined) this.__heightInternalValue = value;
+    else this.__heightInternalValue = 10;
+  }
+  get height() {
+    return this.__heightInternalValue;
+  }
+
+  __selectedInternalValue: boolean = false;
+  @Input()
+  set selected(value: boolean) {
+    if (value !== undefined) this.__selectedInternalValue = value;
+    else this.__selectedInternalValue = false;
+  }
+  get selected() {
+    return this.__selectedInternalValue;
+  }
   @Output() selectedChange: EventEmitter<boolean> = new EventEmitter();
 }
 

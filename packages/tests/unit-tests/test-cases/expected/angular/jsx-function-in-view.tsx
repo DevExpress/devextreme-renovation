@@ -1,7 +1,24 @@
 import { Input } from "@angular/core";
 export class WidgetInput {
-  @Input() loading: boolean = true;
-  @Input() greetings: string = "Hello";
+  __loadingInternalValue: boolean = true;
+  @Input()
+  set loading(value: boolean) {
+    if (value !== undefined) this.__loadingInternalValue = value;
+    else this.__loadingInternalValue = true;
+  }
+  get loading() {
+    return this.__loadingInternalValue;
+  }
+
+  __greetingsInternalValue: string = "Hello";
+  @Input()
+  set greetings(value: string) {
+    if (value !== undefined) this.__greetingsInternalValue = value;
+    else this.__greetingsInternalValue = "Hello";
+  }
+  get greetings() {
+    return this.__greetingsInternalValue;
+  }
 }
 
 import {

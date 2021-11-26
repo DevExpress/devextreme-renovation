@@ -6367,8 +6367,24 @@ mocha.describe("Angular generator", function () {
         getResult(`
                 import {Input} from "@angular/core"
                 export default class ComponentInput {
-                    @Input() p1?:number = 10;
-                    @Input() p2?:number = 11;
+                    __p1InternalValue: number = 10;
+                    @Input()
+                    set p1(value: number){
+                      if (value!==undefined) this.__p1InternalValue = value;
+                      else this.__p1InternalValue = 10;
+                    }
+                    get p1(){
+                      return this.__p1InternalValue
+                    }
+                    __p2InternalValue: number = 11;
+                    @Input()
+                    set p2(value: number){
+                      if (value!==undefined) this.__p2InternalValue = value;
+                      else this.__p2InternalValue = 11;
+                    }
+                    get p2(){
+                      return this.__p2InternalValue
+                    }
                 }`)
       );
     });
@@ -6618,7 +6634,15 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(property.toString()),
-        getResult(`@Input() pressed?:boolean = false`)
+        getResult(`__pressedInternalValue:boolean = false;
+                    @Input()
+                    set pressed(value: boolean){
+                      if (value!==undefined) this.__pressedInternalValue = value;
+                      else this.__pressedInternalValue = false
+                    }
+                    get pressed(){
+                      return this.__pressedInternalValue
+                    }`)
       );
     });
 

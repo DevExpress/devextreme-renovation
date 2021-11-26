@@ -1,10 +1,26 @@
 import { Input } from "@angular/core";
 export class FakeNested {
-  @Input() baseProp: number = 0;
+  __basePropInternalValue: number = 0;
+  @Input()
+  set baseProp(value: number) {
+    if (value !== undefined) this.__basePropInternalValue = value;
+    else this.__basePropInternalValue = 0;
+  }
+  get baseProp() {
+    return this.__basePropInternalValue;
+  }
 }
 
 export class WidgetProps {
-  @Input() baseProp: number = 0;
+  __basePropInternalValue: number = 0;
+  @Input()
+  set baseProp(value: number) {
+    if (value !== undefined) this.__basePropInternalValue = value;
+    else this.__basePropInternalValue = 0;
+  }
+  get baseProp() {
+    return this.__basePropInternalValue;
+  }
   private __someProp__?: FakeNested;
   @Input() set someProp(value: FakeNested) {
     this.__someProp__ = value;
@@ -19,7 +35,15 @@ export class WidgetProps {
 }
 
 export class TooltipProps {
-  @Input() tooltipValue: number = 0;
+  __tooltipValueInternalValue: number = 0;
+  @Input()
+  set tooltipValue(value: number) {
+    if (value !== undefined) this.__tooltipValueInternalValue = value;
+    else this.__tooltipValueInternalValue = 0;
+  }
+  get tooltipValue() {
+    return this.__tooltipValueInternalValue;
+  }
   private __tooltipNested__?: WidgetProps[];
   @Input() set tooltipNested(value: WidgetProps[]) {
     this.__tooltipNested__ = value;
@@ -36,7 +60,15 @@ export class TooltipProps {
 }
 
 export class BulletProps extends WidgetProps {
-  @Input() value: number = 0;
+  __valueInternalValue: number = 0;
+  @Input()
+  set value(value: number) {
+    if (value !== undefined) this.__valueInternalValue = value;
+    else this.__valueInternalValue = 0;
+  }
+  get value() {
+    return this.__valueInternalValue;
+  }
   private __tooltip__?: TooltipProps;
   @Input() set tooltip(value: TooltipProps | undefined) {
     this.__tooltip__ = value;

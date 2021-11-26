@@ -6,12 +6,65 @@ export declare type StringType = String;
 export declare type StrDate = string | Date;
 import { Input } from "@angular/core";
 export class WidgetProps {
-  @Input() data: EnumType = "data";
-  @Input() union: Union = "uniontext";
-  @Input() obj: ObjType = { number: 123, text: "sda" };
-  @Input() strArr: StringArr = ["ba", "ab"];
-  @Input() s: StringType = "";
-  @Input() strDate: StrDate = new Date();
+  __dataInternalValue: EnumType = "data";
+  @Input()
+  set data(value: EnumType) {
+    if (value !== undefined) this.__dataInternalValue = value;
+    else this.__dataInternalValue = "data";
+  }
+  get data() {
+    return this.__dataInternalValue;
+  }
+
+  __unionInternalValue: Union = "uniontext";
+  @Input()
+  set union(value: Union) {
+    if (value !== undefined) this.__unionInternalValue = value;
+    else this.__unionInternalValue = "uniontext";
+  }
+  get union() {
+    return this.__unionInternalValue;
+  }
+
+  __objInternalValue: ObjType = { number: 123, text: "sda" };
+  @Input()
+  set obj(value: ObjType) {
+    if (value !== undefined) this.__objInternalValue = value;
+    else this.__objInternalValue = { number: 123, text: "sda" };
+  }
+  get obj() {
+    return this.__objInternalValue;
+  }
+
+  __strArrInternalValue: StringArr = ["ba", "ab"];
+  @Input()
+  set strArr(value: StringArr) {
+    if (value !== undefined) this.__strArrInternalValue = value;
+    else this.__strArrInternalValue = ["ba", "ab"];
+  }
+  get strArr() {
+    return this.__strArrInternalValue;
+  }
+
+  __sInternalValue: StringType = "";
+  @Input()
+  set s(value: StringType) {
+    if (value !== undefined) this.__sInternalValue = value;
+    else this.__sInternalValue = "";
+  }
+  get s() {
+    return this.__sInternalValue;
+  }
+
+  __strDateInternalValue: StrDate = new Date();
+  @Input()
+  set strDate(value: StrDate) {
+    if (value !== undefined) this.__strDateInternalValue = value;
+    else this.__strDateInternalValue = new Date();
+  }
+  get strDate() {
+    return this.__strDateInternalValue;
+  }
   @Input() customTypeField?: { name: string; customField: CustomType }[];
 }
 

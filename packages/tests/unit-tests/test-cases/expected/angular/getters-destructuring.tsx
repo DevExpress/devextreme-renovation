@@ -1,7 +1,24 @@
 import { Input } from "@angular/core";
 class WidgetProps {
-  @Input() someProp: string = "";
-  @Input() type?: string = "";
+  __somePropInternalValue: string = "";
+  @Input()
+  set someProp(value: string) {
+    if (value !== undefined) this.__somePropInternalValue = value;
+    else this.__somePropInternalValue = "";
+  }
+  get someProp() {
+    return this.__somePropInternalValue;
+  }
+
+  __typeInternalValue: string = "";
+  @Input()
+  set type(value: string) {
+    if (value !== undefined) this.__typeInternalValue = value;
+    else this.__typeInternalValue = "";
+  }
+  get type() {
+    return this.__typeInternalValue;
+  }
   @Input() objectProp?: { someField: number };
 }
 

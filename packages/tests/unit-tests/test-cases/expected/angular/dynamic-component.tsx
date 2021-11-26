@@ -5,7 +5,15 @@ import DynamicComponentWithTemplate, {
 } from "./template";
 import { Input } from "@angular/core";
 class Props {
-  @Input() height: number = 10;
+  __heightInternalValue: number = 10;
+  @Input()
+  set height(value: number) {
+    if (value !== undefined) this.__heightInternalValue = value;
+    else this.__heightInternalValue = 10;
+  }
+  get height() {
+    return this.__heightInternalValue;
+  }
 }
 
 import {

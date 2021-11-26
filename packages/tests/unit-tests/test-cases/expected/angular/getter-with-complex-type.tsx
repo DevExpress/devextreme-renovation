@@ -23,7 +23,15 @@ type UserType = "user" | "not";
 
 import { Input } from "@angular/core";
 export class Props {
-  @Input() p: number = 10;
+  __pInternalValue: number = 10;
+  @Input()
+  set p(value: number) {
+    if (value !== undefined) this.__pInternalValue = value;
+    else this.__pInternalValue = 10;
+  }
+  get p() {
+    return this.__pInternalValue;
+  }
 }
 
 import {
