@@ -11,9 +11,12 @@ export class Decorator {
 
   viewParameter?: Expression | null;
 
+  readonly isSvg: boolean;
+
   constructor(expression: Call, context: GeneratorContext) {
     this.expression = expression;
     this.context = context;
+    this.isSvg = this.getParameter('isSVG')?.valueOf().toString() === 'true';
     if (this.name === 'Component') {
       this.viewParameter = this.getParameter('view');
     }
@@ -47,11 +50,5 @@ export class Decorator {
 
   toString() {
     return `@${this.expression.toString()}`;
-  }
-
-  isInnerComponent(): boolean {
-    const parameters = this.expression.arguments[0] as ObjectLiteral;
-    return (parameters?.getProperty('jQuery') as ObjectLiteral)
-      ?.getProperty('register')?.toString() === 'true';
   }
 }

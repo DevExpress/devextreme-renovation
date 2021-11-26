@@ -15,7 +15,8 @@ import {
 } from '@devextreme-generator/core';
 
 import { toStringOptions } from '../types';
-import { getAngularSelector } from './component';
+import { Call } from './common';
+import { getAngularSelector, AngularComponent } from './component';
 import { isElement } from './jsx/elements';
 
 function isInputDecorator(name: string): boolean {
@@ -52,7 +53,19 @@ function setComponentProperty(
   }
 }
 
+function isInnerComponent(decorator: Decorator): boolean {
+  const parameters = decorator.expression.arguments[0] as ObjectLiteral;
+  return !(parameters?.getProperty<ObjectLiteral>('jQuery')?.getProperty('register')?.toString() === 'true');
+}
+
 export class Decorator extends BaseDecorator {
+  readonly isWrappedByTemplate: boolean;
+
+  constructor(expression: Call, context: GeneratorContext) {
+    super(expression, context);
+    this.isWrappedByTemplate = isInnerComponent(this) && !this.isSvg;
+  }
+
   toString(options?: toStringOptions) {
     if (isInputDecorator(this.name)) {
       return '@Input()';
@@ -96,11 +109,10 @@ export class Decorator extends BaseDecorator {
         if (templates?.length) template += templates.join('');
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
-        const isInnerComp = this.isInnerComponent();
         if (template) {
           parameters.setProperty(
             'template',
-            new TemplateExpression(!isInnerComp && !options?.isSVG ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
+            new TemplateExpression(this.isWrappedByTemplate ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
           );
         }
       }
@@ -130,22 +142,24 @@ function compileDefaultTemplates(
         const [name, template] = i;
 
         if (template.initializer instanceof Identifier && context?.components) {
-          const component = context.components[template.initializer.toString()];
+          const component = context.components[template.initializer.toString()] as AngularComponent;
+          const ref = 'compRef';
+          const componentName = getAngularSelector(component.name);
+          const templateVariables = template.variables.map((v) => {
+            const componentProp = component.heritageProperties.find(
+              (p) => p.name.toString() === v,
+            );
+            if (componentProp?.type instanceof FunctionTypeNode) {
+              return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+            }
+            return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+          })
+            .join(' ');
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
-            .join(' ')}><${getAngularSelector(
-            component.name,
-          )} ${template.variables
-            .map((v) => {
-              const componentProp = component.heritageProperties.find(
-                (p) => p.name.toString() === v,
-              );
-              if (componentProp?.type instanceof FunctionTypeNode) {
-                return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
-              }
-              return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
-            })
-            .join(' ')}></${getAngularSelector(component.name)}>
+            .join(' ')}>
+            <${componentName} #${ref} ${templateVariables}></${componentName}>
+            ${component.decorator.isWrappedByTemplate && component.getContentTemplateOutlet(ref)}
             </ng-template>`;
           return templateString;
         }

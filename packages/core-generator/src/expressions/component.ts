@@ -70,7 +70,7 @@ export class Component extends Class implements Heritable {
 
   viewModel: any;
 
-  isSVGComponent: boolean;
+  readonly isSVGComponent: boolean;
 
   context: GeneratorContext;
 
@@ -242,7 +242,7 @@ export class Component extends Class implements Heritable {
 
     this.defaultOptionRules = decorator.getParameter('defaultOptionRules');
 
-    this.isSVGComponent = decorator.getParameter('isSVG')?.valueOf().toString() === 'true';
+    this.isSVGComponent = decorator.isSvg;
 
     this.context = context;
 

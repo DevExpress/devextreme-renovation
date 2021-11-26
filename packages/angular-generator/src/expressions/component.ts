@@ -32,6 +32,7 @@ import {
   SimpleTypeExpression,
   StringLiteral,
   SyntaxKind,
+  Decorator as BaseDecorator,
 } from '@devextreme-generator/core';
 import path from 'path';
 
@@ -216,7 +217,7 @@ export class AngularComponent extends Component {
   }
 
   createNestedPropertySetter(
-    decorator: Decorator[],
+    decorator: BaseDecorator[],
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
@@ -1493,6 +1494,10 @@ export class AngularComponent extends Component {
           }
           return undefined;
         }));
+  }
+
+  getContentTemplateOutlet(refName: string): string {
+    return `<ng-content *ngTemplateOutlet="${refName}?.widgetTemplate"></ng-content>`;
   }
 
   toString() {

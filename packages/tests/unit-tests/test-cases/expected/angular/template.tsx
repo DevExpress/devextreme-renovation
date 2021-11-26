@@ -94,10 +94,14 @@ import { CommonModule } from "@angular/common";
     </ng-template>
     <ng-template #footerTemplateDefault let-someProp="someProp">
       <div></div> </ng-template
-    ><ng-template #componentTemplateDefault let-value="value"
-      ><dx-widget-with-props
+    ><ng-template #componentTemplateDefault let-value="value">
+      <dx-widget-with-props
+        #compRef
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-      ></dx-widget-with-props> </ng-template
+      ></dx-widget-with-props>
+      <ng-content
+        *ngTemplateOutlet="compRef?.widgetTemplate"
+      ></ng-content> </ng-template
   ></ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetInput {

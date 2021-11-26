@@ -64,6 +64,7 @@ interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
+
 export default function WidgetWithTemplate(
   props: typeof WidgetInput & RestProps
 ) {
