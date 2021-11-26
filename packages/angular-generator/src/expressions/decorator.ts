@@ -55,7 +55,7 @@ function setComponentProperty(
 
 function isInnerComponent(decorator: Decorator): boolean {
   const parameters = decorator.expression.arguments[0] as ObjectLiteral;
-  return !(parameters?.getProperty<ObjectLiteral>('jQuery')?.getProperty('register')?.toString() === 'true');
+  return !(parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true');
 }
 
 export class Decorator extends BaseDecorator {
