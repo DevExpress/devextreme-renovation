@@ -155,11 +155,12 @@ function compileDefaultTemplates(
             return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
           })
             .join(' ');
+          const templateOutlete = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(' ')}>
             <${componentName} #${ref} ${templateVariables}></${componentName}>
-            ${component.decorator.isWrappedByTemplate && component.getContentTemplateOutlet(ref)}
+            ${templateOutlete}
             </ng-template>`;
           return templateString;
         }
