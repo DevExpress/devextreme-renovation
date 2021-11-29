@@ -4,7 +4,11 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
-import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+import {
+  PublicWidgetWithProps,
+  WidgetWithProps,
+  WidgetWithPropsInput,
+} from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
   someProp: boolean;
@@ -13,6 +17,7 @@ export declare type WidgetInputType = {
   contentTemplate: any;
   footerTemplate: any;
   componentTemplate: any;
+  publicComponentTemplate: any;
 };
 export const WidgetInput: WidgetInputType = {
   someProp: false,
@@ -21,6 +26,7 @@ export const WidgetInput: WidgetInputType = {
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
   componentTemplate: WidgetWithProps,
+  publicComponentTemplate: PublicWidgetWithProps,
 };
 import { createElement as h } from "inferno-compat";
 declare type RestProps = {
@@ -48,6 +54,7 @@ export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
       contentTemplate,
       footerTemplate,
       headerTemplate,
+      publicComponentTemplate,
       someProp,
       template,
       ...restProps
@@ -65,6 +72,7 @@ export default class WidgetWithTemplate extends BaseInfernoComponent<any> {
         contentTemplate: getTemplate(props.contentTemplate),
         footerTemplate: getTemplate(props.footerTemplate),
         componentTemplate: getTemplate(props.componentTemplate),
+        publicComponentTemplate: getTemplate(props.publicComponentTemplate),
       },
       restAttributes: this.restAttributes,
     } as WidgetWithTemplate);
@@ -76,6 +84,7 @@ function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;
+  const PublicComponentTemplate = viewModel.props.publicComponentTemplate;
   return (
     <div>
       {viewModel.props.headerTemplate({})}
@@ -92,6 +101,8 @@ function view(viewModel: WidgetWithTemplate) {
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
       {ComponentTemplate({ value: "Test Value" })}
+
+      {PublicComponentTemplate({ value: "Test Value" })}
     </div>
   );
 }

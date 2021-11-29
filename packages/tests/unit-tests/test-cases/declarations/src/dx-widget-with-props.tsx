@@ -7,6 +7,10 @@ import {
   Event,
 } from "@devextreme-generator/declarations";
 
+function view({ props: { value, optionalValue } }: WidgetWithProps) {
+  return <div>{optionalValue || value}</div>;
+}
+
 @ComponentBindings()
 export class WidgetWithPropsInput {
   @OneWay() value = "default text";
@@ -23,6 +27,12 @@ export class WidgetWithProps extends JSXComponent(WidgetWithPropsInput) {
   doSomething() {}
 }
 
-function view({ props: { value, optionalValue } }: WidgetWithProps) {
-  return <div>{optionalValue || value}</div>;
+@Component({
+  view: view,
+  jQuery: {register: true }
+})
+export class PublicWidgetWithProps extends JSXComponent(WidgetWithPropsInput) {
+  @Method()
+  doSomething() {}
 }
+

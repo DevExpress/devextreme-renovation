@@ -1,6 +1,8 @@
 import {
+  PublicWidgetWithProps,
   WidgetWithProps,
   WidgetWithPropsInput,
+  DxPublicWidgetWithPropsModule,
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
 
@@ -13,6 +15,7 @@ export class WidgetInput {
   @Input() contentTemplate: TemplateRef<any> | null = null;
   @Input() footerTemplate: TemplateRef<any> | null = null;
   @Input() componentTemplate: TemplateRef<any> | null = null;
+  @Input() publicComponentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
@@ -26,7 +29,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-
 @Component({
   selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +39,7 @@ import { CommonModule } from "@angular/common";
     "contentTemplate",
     "footerTemplate",
     "componentTemplate",
+    "publicComponentTemplate",
   ],
   template: `<ng-template #widgetTemplate
     ><div
@@ -78,6 +81,13 @@ import { CommonModule } from "@angular/common";
         "
       >
       </ng-container
+      ><ng-container
+        *ngTemplateOutlet="
+          publicComponentTemplate || publicComponentTemplateDefault;
+          context: { value: 'Test Value' }
+        "
+      >
+      </ng-container
     ></div>
     <ng-template #headerTemplateDefault>
       {{ null }}
@@ -102,6 +112,13 @@ import { CommonModule } from "@angular/common";
       <ng-content
         *ngTemplateOutlet="compRef?.widgetTemplate"
       ></ng-content> </ng-template
+    ><ng-template #publicComponentTemplateDefault let-value="value">
+      <dx-public-widget-with-props
+        #compRef
+        [value]="
+          value !== undefined ? value : PublicWidgetWithPropsDefaults.value
+        "
+      ></dx-public-widget-with-props> </ng-template
   ></ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetInput {
@@ -130,11 +147,20 @@ export default class WidgetWithTemplate extends WidgetInput {
     number: 42,
     onClick: (e: any) => void 0,
   };
+  PublicWidgetWithPropsDefaults = {
+    value: "default text",
+    number: 42,
+    onClick: (e: any) => void 0,
+  };
 }
 @NgModule({
   declarations: [WidgetWithTemplate],
-  imports: [DxWidgetWithPropsModule, CommonModule],
-  entryComponents: [WidgetWithProps],
+  imports: [
+    DxPublicWidgetWithPropsModule,
+    DxWidgetWithPropsModule,
+    CommonModule,
+  ],
+  entryComponents: [PublicWidgetWithProps, WidgetWithProps],
   exports: [WidgetWithTemplate],
 })
 export class DxWidgetWithTemplateModule {}

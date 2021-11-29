@@ -47,11 +47,18 @@
         :set="(componentTemplateDefault = { value: 'Test Value' })"
         ><WidgetWithProps :value="componentTemplateDefault.value"
       /></div> </slot
+    ><slot :name="publicComponentTemplate" v-bind:value="'Test Value'">
+      <div
+        style="display: contents"
+        :set="(publicComponentTemplateDefault = { value: 'Test Value' })"
+        ><PublicWidgetWithProps :value="publicComponentTemplateDefault.value"
+      /></div> </slot
   ></div>
 </template>
 <script>
 import {
   WidgetWithPropsInput,
+  DxPublicWidgetWithProps as PublicWidgetWithProps,
   DxWidgetWithProps as WidgetWithProps,
 } from "./dx-widget-with-props";
 export const WidgetInput = {
@@ -94,10 +101,20 @@ export const WidgetInput = {
       return WidgetWithProps;
     },
   },
+  publicComponentTemplate: {
+    type: String,
+    default() {
+      return "publicComponentTemplate";
+    },
+    defaultTemplate() {
+      return PublicWidgetWithProps;
+    },
+  },
 };
 export const DxWidgetWithTemplate = {
   name: "WidgetWithTemplate",
   components: {
+    PublicWidgetWithProps,
     WidgetWithProps,
   },
   props: WidgetInput,
@@ -113,6 +130,7 @@ export const DxWidgetWithTemplate = {
         contentTemplate: this.contentTemplate,
         footerTemplate: this.footerTemplate,
         componentTemplate: this.componentTemplate,
+        publicComponentTemplate: this.publicComponentTemplate,
       };
     },
   },
