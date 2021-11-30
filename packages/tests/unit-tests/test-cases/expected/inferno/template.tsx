@@ -4,11 +4,8 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
-import {
-  PublicWidgetWithProps,
-  WidgetWithProps,
-  WidgetWithPropsInput,
-} from "./dx-widget-with-props";
+import { PublicWidgetWithProps } from "./dx-public-widget-with-props";
+import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
   someProp: boolean;

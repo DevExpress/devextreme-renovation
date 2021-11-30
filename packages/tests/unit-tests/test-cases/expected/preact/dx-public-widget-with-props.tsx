@@ -1,4 +1,4 @@
-function view({ props: { optionalValue, value } }: WidgetWithProps) {
+function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
@@ -12,25 +12,26 @@ export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: "default text",
   number: 42,
 };
-import * as React from "react";
-import { useCallback, useImperativeHandle, forwardRef } from "react";
+import * as Preact from "preact";
+import { useCallback, useImperativeHandle } from "preact/hooks";
+import { forwardRef } from "preact/compat";
 
-export type WidgetWithPropsRef = { doSomething: () => any };
+export type PublicWidgetWithPropsRef = { doSomething: () => any };
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
 };
-interface WidgetWithProps {
+interface PublicWidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
   restAttributes: RestProps;
 }
 
-const WidgetWithProps = forwardRef<
-  WidgetWithPropsRef,
+const PublicWidgetWithProps = forwardRef<
+  PublicWidgetWithPropsRef,
   typeof WidgetWithPropsInput & RestProps
->(function widgetWithProps(
+>(function publicWidgetWithProps(
   props: typeof WidgetWithPropsInput & RestProps,
   ref
 ) {
@@ -47,12 +48,9 @@ const WidgetWithProps = forwardRef<
     __doSomething,
   ]);
   return view({ props: { ...props }, restAttributes: __restAttributes() });
-}) as React.FC<
-  typeof WidgetWithPropsInput &
-    RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
-> & { defaultProps: typeof WidgetWithPropsInput };
-export { WidgetWithProps };
+}) as Preact.FunctionalComponent<typeof WidgetWithPropsInput & RestProps> & {
+  defaultProps: typeof WidgetWithPropsInput;
+};
+export { PublicWidgetWithProps };
 
-export default WidgetWithProps;
-
-WidgetWithProps.defaultProps = WidgetWithPropsInput;
+PublicWidgetWithProps.defaultProps = WidgetWithPropsInput;

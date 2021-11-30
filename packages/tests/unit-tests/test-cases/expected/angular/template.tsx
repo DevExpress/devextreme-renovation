@@ -1,8 +1,10 @@
 import {
   PublicWidgetWithProps,
+  DxPublicWidgetWithPropsModule,
+} from "./dx-public-widget-with-props";
+import {
   WidgetWithProps,
   WidgetWithPropsInput,
-  DxPublicWidgetWithPropsModule,
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
 

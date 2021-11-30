@@ -6,7 +6,9 @@ import {
   OneWay,
   JSXTemplate,
 } from "@devextreme-generator/declarations";
-import { PublicWidgetWithProps, WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+import { PublicWidgetWithProps } from './dx-public-widget-with-props';
+import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+
 
 @ComponentBindings()
 export class WidgetInput {

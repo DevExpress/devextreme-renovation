@@ -27,12 +27,3 @@ export class WidgetWithProps extends JSXComponent(WidgetWithPropsInput) {
   doSomething() {}
 }
 
-@Component({
-  view: view,
-  jQuery: {register: true }
-})
-export class PublicWidgetWithProps extends JSXComponent(WidgetWithPropsInput) {
-  @Method()
-  doSomething() {}
-}
-

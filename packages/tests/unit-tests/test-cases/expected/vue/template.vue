@@ -56,9 +56,9 @@
   ></div>
 </template>
 <script>
+import { DxPublicWidgetWithProps as PublicWidgetWithProps } from "./dx-public-widget-with-props";
 import {
   WidgetWithPropsInput,
-  DxPublicWidgetWithProps as PublicWidgetWithProps,
   DxWidgetWithProps as WidgetWithProps,
 } from "./dx-widget-with-props";
 export const WidgetInput = {

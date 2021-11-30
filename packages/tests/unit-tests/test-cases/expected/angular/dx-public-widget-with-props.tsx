@@ -21,15 +21,13 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget-with-props",
+  selector: "dx-public-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["value", "optionalValue", "number"],
   outputs: ["onClick"],
-  template: `<ng-template #widgetTemplate
-    ><div>{{ optionalValue || value }}</div></ng-template
-  >`,
+  template: `<div>{{ optionalValue || value }}</div>`,
 })
-export class WidgetWithProps extends WidgetWithPropsInput {
+export class PublicWidgetWithProps extends WidgetWithPropsInput {
   doSomething(): any {}
   get __restAttributes(): any {
     return {};
@@ -56,11 +54,11 @@ export class WidgetWithProps extends WidgetWithPropsInput {
   }
 }
 @NgModule({
-  declarations: [WidgetWithProps],
+  declarations: [PublicWidgetWithProps],
   imports: [CommonModule],
 
-  exports: [WidgetWithProps],
+  exports: [PublicWidgetWithProps],
 })
-export class DxWidgetWithPropsModule {}
-export { WidgetWithProps as DxWidgetWithPropsComponent };
-export default WidgetWithProps;
+export class DxPublicWidgetWithPropsModule {}
+export { PublicWidgetWithProps as DxPublicWidgetWithPropsComponent };
+export default PublicWidgetWithProps;
