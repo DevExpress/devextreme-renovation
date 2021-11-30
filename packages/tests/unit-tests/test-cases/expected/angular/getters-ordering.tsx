@@ -136,6 +136,25 @@ class Widget extends WidgetProps {
     }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
+      this.someProp = "";
+    }
+    if (changes["type"] && changes["type"].currentValue === undefined) {
+      this.type = "";
+    }
+    if (
+      changes["gridCompatibility"] &&
+      changes["gridCompatibility"].currentValue === undefined
+    ) {
+      this.gridCompatibility = true;
+    }
+    if (
+      changes["pageIndex"] &&
+      changes["pageIndex"].currentValue === undefined
+    ) {
+      this.pageIndex = 1;
+    }
+
     if (
       this.__destroyEffects.length &&
       ["someProp", "type"].some((d) => changes[d])

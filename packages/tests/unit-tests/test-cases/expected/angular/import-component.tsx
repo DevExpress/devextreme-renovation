@@ -49,6 +49,15 @@ export default class Child extends ChildInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+    if (changes["width"] && changes["width"].currentValue === undefined) {
+      this.width = 10;
+    }
+  }
+
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;

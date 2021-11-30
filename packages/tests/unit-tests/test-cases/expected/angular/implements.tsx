@@ -44,6 +44,21 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["p"] && changes["p"].currentValue === undefined) {
+      this.p = "10";
+    }
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+    if (changes["data"] && changes["data"].currentValue === undefined) {
+      this.data = { value: "" };
+    }
+    if (changes["info"] && changes["info"].currentValue === undefined) {
+      this.info = { index: 0 };
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

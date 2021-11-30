@@ -108,6 +108,10 @@ export default class Widget extends Props {
   _destroyContext: Array<() => void> = [];
 
   ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["p"] && changes["p"].currentValue === undefined) {
+      this.p = 10;
+    }
+
     if (["p"].some((d) => changes[d])) {
       this.__getterCache["g1"] = undefined;
     }

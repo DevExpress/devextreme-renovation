@@ -147,6 +147,12 @@ export default class Widget extends WidgetProps {
     return i;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["cells"] && changes["cells"].currentValue === undefined) {
+      this.cells = [];
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

@@ -61,6 +61,12 @@ export default class WidgetWithGlobals extends WidgetProps {
     return this.global_getKey(item);
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["items"] && changes["items"].currentValue === undefined) {
+      this.items = [];
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

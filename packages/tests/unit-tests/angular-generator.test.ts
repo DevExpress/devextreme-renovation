@@ -6368,24 +6368,10 @@ mocha.describe("Angular generator", function () {
                 import {Injectable, Input} from "@angular/core"
                 @Injectable()
                 export default class ComponentInput {
-                    __p1InternalValue: number = 10;
                     @Input()
-                    set p1(value: number){
-                      if (value!==undefined) this.__p1InternalValue = value;
-                      else this.__p1InternalValue = 10;
-                    }
-                    get p1(){
-                      return this.__p1InternalValue
-                    }
-                    __p2InternalValue: number = 11;
+                    p1?: number = 10;
                     @Input()
-                    set p2(value: number){
-                      if (value!==undefined) this.__p2InternalValue = value;
-                      else this.__p2InternalValue = 11;
-                    }
-                    get p2(){
-                      return this.__p2InternalValue
-                    }
+                    p2?: number = 11;
                 }`)
       );
     });
@@ -6637,15 +6623,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(property.toString()),
-        getResult(`__pressedInternalValue:boolean = false;
-                    @Input()
-                    set pressed(value: boolean){
-                      if (value!==undefined) this.__pressedInternalValue = value;
-                      else this.__pressedInternalValue = false
-                    }
-                    get pressed(){
-                      return this.__pressedInternalValue
-                    }`)
+        getResult(`@Input()
+                  pressed?:boolean = false;`)
       );
     });
 
@@ -6892,7 +6871,6 @@ mocha.describe("Angular generator", function () {
         [],
         []
       );
-
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`

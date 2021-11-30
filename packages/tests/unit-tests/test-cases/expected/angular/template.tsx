@@ -111,6 +111,12 @@ export default class WidgetWithTemplate extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
+      this.someProp = false;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

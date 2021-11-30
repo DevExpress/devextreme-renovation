@@ -121,6 +121,19 @@ export default class Widget extends WidgetInput {
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (
+      changes["propArray"] &&
+      changes["propArray"].currentValue === undefined
+    ) {
+      this.propArray = [];
+    }
+    if (
+      changes["propObject"] &&
+      changes["propObject"].currentValue === undefined
+    ) {
+      this.propObject = {};
+    }
+
+    if (
       this.__destroyEffects.length &&
       ["propObject"].some((d) => changes[d])
     ) {

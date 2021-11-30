@@ -182,6 +182,11 @@ export default class DynamicComponentCreator extends Props {
   ngAfterViewInit() {
     this.createDynamicComponents();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+  }
 
   ngAfterViewChecked() {
     this.createDynamicComponents();

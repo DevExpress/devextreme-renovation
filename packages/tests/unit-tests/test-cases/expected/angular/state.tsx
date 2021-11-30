@@ -76,6 +76,15 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["state1"] && changes["state1"].currentValue === undefined) {
+      this.state1 = false;
+    }
+    if (changes["state2"] && changes["state2"].currentValue === undefined) {
+      this.state2 = false;
+    }
+  }
+
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;

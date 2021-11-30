@@ -104,6 +104,16 @@ export default class Widget extends WidgetInput {
     }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["p"] && changes["p"].currentValue === undefined) {
+      this.p = "10";
+    }
+    if (changes["r"] && changes["r"].currentValue === undefined) {
+      this.r = "20";
+    }
+    if (changes["s"] && changes["s"].currentValue === undefined) {
+      this.s = 10;
+    }
+
     if (this.__destroyEffects.length && ["p", "s"].some((d) => changes[d])) {
       this.__schedule_setupData();
     }

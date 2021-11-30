@@ -53,6 +53,15 @@ export default class List extends ListInput {
     return item.key;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["items"] && changes["items"].currentValue === undefined) {
+      this.items = [];
+    }
+    if (changes["keyExpr"] && changes["keyExpr"].currentValue === undefined) {
+      this.keyExpr = "value";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

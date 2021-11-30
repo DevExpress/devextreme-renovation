@@ -221,6 +221,26 @@ export default class Widget extends WidgetPropsType {
   ngAfterViewInit() {
     this._detectChanges();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["text"] && changes["text"].currentValue === undefined) {
+      this.text = new WidgetProps().text;
+    }
+    if (changes["texts1"] && changes["texts1"].currentValue === undefined) {
+      this.texts1 = new WidgetProps().texts1;
+    }
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = new WidgetProps().height;
+    }
+    if (changes["width"] && changes["width"].currentValue === undefined) {
+      this.width = new WidgetProps().width;
+    }
+    if (
+      changes["expressionDefault"] &&
+      changes["expressionDefault"].currentValue === undefined
+    ) {
+      this.expressionDefault = new ExpressionProps().expressionDefault;
+    }
+  }
 
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;

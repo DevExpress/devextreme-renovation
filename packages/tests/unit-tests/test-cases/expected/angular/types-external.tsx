@@ -46,6 +46,27 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["data"] && changes["data"].currentValue === undefined) {
+      this.data = "data";
+    }
+    if (changes["union"] && changes["union"].currentValue === undefined) {
+      this.union = "uniontext";
+    }
+    if (changes["obj"] && changes["obj"].currentValue === undefined) {
+      this.obj = { number: 123, text: "sda" };
+    }
+    if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
+      this.strArr = ["ba", "ab"];
+    }
+    if (changes["s"] && changes["s"].currentValue === undefined) {
+      this.s = "";
+    }
+    if (changes["strDate"] && changes["strDate"].currentValue === undefined) {
+      this.strDate = new Date();
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

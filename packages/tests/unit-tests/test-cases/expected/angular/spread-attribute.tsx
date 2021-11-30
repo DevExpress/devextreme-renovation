@@ -89,6 +89,9 @@ export default class Widget extends WidgetInput {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["prop"] && changes["prop"].currentValue === undefined) {
+      this.prop = {};
+    }
     if (["prop"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }

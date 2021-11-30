@@ -133,6 +133,12 @@ export default class InnerWidget
     this.touched = fn;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["value"] && changes["value"].currentValue === undefined) {
+      this.value = 14;
+    }
+  }
+
   _onSelect: any;
   _valueChange: any;
   @ViewChild("widgetTemplate", { static: true })

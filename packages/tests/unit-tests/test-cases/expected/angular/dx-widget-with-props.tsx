@@ -41,6 +41,15 @@ export class WidgetWithProps extends WidgetWithPropsInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["value"] && changes["value"].currentValue === undefined) {
+      this.value = "default text";
+    }
+    if (changes["number"] && changes["number"].currentValue === undefined) {
+      this.number = 42;
+    }
+  }
+
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;

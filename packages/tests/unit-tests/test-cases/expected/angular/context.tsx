@@ -90,6 +90,11 @@ export default class Widget extends Props {
   } = {};
   _destroyContext: Array<() => void> = [];
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["p1"] && changes["p1"].currentValue === undefined) {
+      this.p1 = 10;
+    }
+  }
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
   }

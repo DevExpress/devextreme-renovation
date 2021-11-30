@@ -80,6 +80,15 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (
+      changes["stringToRender"] &&
+      changes["stringToRender"].currentValue === undefined
+    ) {
+      this.stringToRender = "strCompDefault";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

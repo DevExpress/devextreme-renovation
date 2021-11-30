@@ -113,6 +113,13 @@ class Widget extends WidgetProps {
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
+      this.someProp = "";
+    }
+    if (changes["type"] && changes["type"].currentValue === undefined) {
+      this.type = "";
+    }
+
     if (["someProp"].some((d) => changes[d])) {
       this.__getterCache["arrayFromObj"] = undefined;
     }

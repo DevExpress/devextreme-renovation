@@ -50,6 +50,18 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["loading"] && changes["loading"].currentValue === undefined) {
+      this.loading = true;
+    }
+    if (
+      changes["greetings"] &&
+      changes["greetings"].currentValue === undefined
+    ) {
+      this.greetings = "Hello";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

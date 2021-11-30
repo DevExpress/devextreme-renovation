@@ -46,6 +46,15 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+    if (changes["width"] && changes["width"].currentValue === undefined) {
+      this.width = 10;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

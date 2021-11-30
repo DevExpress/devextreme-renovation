@@ -49,6 +49,15 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+    if (changes["selected"] && changes["selected"].currentValue === undefined) {
+      this.selected = false;
+    }
+  }
+
   _selectedChange: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;

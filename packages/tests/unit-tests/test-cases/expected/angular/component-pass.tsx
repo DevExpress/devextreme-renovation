@@ -96,6 +96,12 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["mode"] && changes["mode"].currentValue === undefined) {
+      this.mode = false;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

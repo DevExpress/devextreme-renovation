@@ -86,6 +86,42 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["height"] && changes["height"].currentValue === undefined) {
+      this.height = 10;
+    }
+    if (changes["export"] && changes["export"].currentValue === undefined) {
+      this.export = {};
+    }
+    if (changes["array"] && changes["array"].currentValue === undefined) {
+      this.array = ["1"];
+    }
+    if (
+      changes["expressionDefault"] &&
+      changes["expressionDefault"].currentValue === undefined
+    ) {
+      this.expressionDefault = device === "ios" ? "yes" : "no";
+    }
+    if (
+      changes["expressionDefault1"] &&
+      changes["expressionDefault1"].currentValue === undefined
+    ) {
+      this.expressionDefault1 = !device;
+    }
+    if (
+      changes["expressionDefault2"] &&
+      changes["expressionDefault2"].currentValue === undefined
+    ) {
+      this.expressionDefault2 = isDevice() || "test";
+    }
+    if (
+      changes["stringValue"] &&
+      changes["stringValue"].currentValue === undefined
+    ) {
+      this.stringValue = "";
+    }
+  }
+
   _onClick: any;
   _onSomething: any;
   _stringValueChange: any;

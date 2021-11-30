@@ -54,6 +54,12 @@ export default class SlotPass extends WidgetInput {
     return { children: this.children };
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["p"] && changes["p"].currentValue === undefined) {
+      this.p = "";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

@@ -41,6 +41,12 @@ export class TextSvgElement extends TextSvgElementProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["text"] && changes["text"].currentValue === undefined) {
+      this.text = "";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

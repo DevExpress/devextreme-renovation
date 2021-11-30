@@ -43,6 +43,15 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["data"] && changes["data"].currentValue === undefined) {
+      this.data = new Props().data;
+    }
+    if (changes["info"] && changes["info"].currentValue === undefined) {
+      this.info = new Props().info;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

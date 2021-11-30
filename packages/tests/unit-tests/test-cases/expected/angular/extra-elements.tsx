@@ -45,6 +45,12 @@ export class ExtraElement extends Props {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["prop"] && changes["prop"].currentValue === undefined) {
+      this.prop = 0;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

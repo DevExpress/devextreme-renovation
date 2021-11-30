@@ -70,6 +70,66 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["str"] && changes["str"].currentValue === undefined) {
+      this.str = "";
+    }
+    if (changes["num"] && changes["num"].currentValue === undefined) {
+      this.num = 1;
+    }
+    if (changes["bool"] && changes["bool"].currentValue === undefined) {
+      this.bool = true;
+    }
+    if (changes["arr"] && changes["arr"].currentValue === undefined) {
+      this.arr = [];
+    }
+    if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
+      this.strArr = ["a", "b"];
+    }
+    if (changes["obj"] && changes["obj"].currentValue === undefined) {
+      this.obj = {};
+    }
+    if (changes["date"] && changes["date"].currentValue === undefined) {
+      this.date = new Date();
+    }
+    if (changes["func"] && changes["func"].currentValue === undefined) {
+      this.func = () => {};
+    }
+    if (changes["symbol"] && changes["symbol"].currentValue === undefined) {
+      this.symbol = Symbol("x");
+    }
+    if (
+      changes["externalEnum"] &&
+      changes["externalEnum"].currentValue === undefined
+    ) {
+      this.externalEnum = "data";
+    }
+    if (
+      changes["externalUnion"] &&
+      changes["externalUnion"].currentValue === undefined
+    ) {
+      this.externalUnion = 0;
+    }
+    if (
+      changes["externalObj"] &&
+      changes["externalObj"].currentValue === undefined
+    ) {
+      this.externalObj = { number: 0, text: "text" };
+    }
+    if (
+      changes["externalArray"] &&
+      changes["externalArray"].currentValue === undefined
+    ) {
+      this.externalArray = ["s1", "s2"];
+    }
+    if (
+      changes["externalString"] &&
+      changes["externalString"].currentValue === undefined
+    ) {
+      this.externalString = "someValue";
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(

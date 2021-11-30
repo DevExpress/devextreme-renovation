@@ -612,7 +612,7 @@ export class AngularComponent extends Component {
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[],
+  compileGetterCache(ngOnChangesStatements: string[],
     options?: toStringOptions,
     resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
@@ -655,9 +655,9 @@ export class AngularComponent extends Component {
             );
           }
           if (propsDependency.includes('props')) {
-            ngOnChanges.push(deleteCacheStatement);
+            ngOnChangesStatements.push(deleteCacheStatement);
           } else if (conditionArray.length) {
-            ngOnChanges.push(`
+            ngOnChangesStatements.push(`
                         if (${conditionArray.join('&&')}) {
                             ${deleteCacheStatement}
                         }`);
@@ -1495,6 +1495,19 @@ export class AngularComponent extends Component {
         }));
   }
 
+  compileDefaultInputValues(): string[] {
+    const propsWithDefualt = this.members.filter((m) => m instanceof Property
+    && (m.isState || m._hasDecorator(Decorators.OneWay))
+    && m.initializer && m.initializer.toString()) as Property[];
+
+    return propsWithDefualt.map((prop) => {
+      const name = prop.name;
+      return `if (changes["${name}"] && changes["${name}"].currentValue === undefined){
+        this.${name} = ${prop.initializer};
+      }`;
+    });
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1545,6 +1558,10 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       isSVG: this.isSVGComponent,
     };
+    const defaultInputValues = this.compileDefaultInputValues().join('\n');
+    if (defaultInputValues) {
+      ngOnChangesStatements.push(defaultInputValues);
+    }
 
     const implementedInterfaces: string[] = [];
 
