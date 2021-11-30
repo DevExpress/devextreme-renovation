@@ -1,5 +1,6 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() visible?: boolean;
   @Input() value?: boolean;
@@ -36,6 +37,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
       #innerwidget2
+      style="display: contents"
       [value]="value"
       (valueChange)="_valueChange($event)"
     ></dx-inner-widget

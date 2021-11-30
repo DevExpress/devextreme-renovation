@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class TextSvgElementProps {
   __textInternalValue?: string | null = "";
   @Input()

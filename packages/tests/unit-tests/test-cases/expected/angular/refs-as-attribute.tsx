@@ -1,6 +1,7 @@
 import HelperWidget, { DxHelperWidgetModule } from "./refs-as-attribute-helper";
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetProps {
   @Input() refProp?: HTMLDivElement;
   @Input() forwardRefProp?: (
@@ -35,6 +36,7 @@ import { CommonModule } from "@angular/common";
           forwardRefProp ? forwardRefProp()?.nativeElement : undefined
         "
         #helperwidget1
+        style="display: contents"
       ></dx-helper-widget
       ><ng-content
         *ngTemplateOutlet="helperwidget1?.widgetTemplate"

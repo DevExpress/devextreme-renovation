@@ -3,7 +3,8 @@ import {
   InnerComponentProps,
   DxInnerComponentModule,
 } from "./inner-component";
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class InnerLayoutProps {
   @Input() innerComponentTemplate: TemplateRef<any> | null = null;
 }

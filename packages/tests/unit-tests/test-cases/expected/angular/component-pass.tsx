@@ -1,6 +1,7 @@
 import WidgetOne, { DxWidgetOneModule } from "./component-pass-one";
 import { WidgetTwo, DxWidgetTwoModule } from "./component-pass-two";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   __modeInternalValue?: boolean = false;
   @Input()
@@ -34,24 +35,25 @@ import { CommonModule } from "@angular/common";
   inputs: ["mode", "firstText", "secondText"],
   template: `<ng-template #widgetTemplate
     ><ng-container *ngIf="mode"
-      ><dx-widget-one [text]="firstText" #widgetone1
+      ><dx-widget-one [text]="firstText" #widgetone1 style="display: contents"
         ><div>Slot content</div></dx-widget-one
       ><ng-content
         *ngTemplateOutlet="widgetone1?.widgetTemplate"
       ></ng-content></ng-container
     ><ng-container *ngIf="!mode"
-      ><dx-widget-two [text]="firstText" #widgettwo1
+      ><dx-widget-two [text]="firstText" #widgettwo1 style="display: contents"
         ><div>Slot content</div></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="widgettwo1?.widgetTemplate"
       ></ng-content></ng-container
-    ><dx-widget-one [text]="secondText" #widgetone2
+    ><dx-widget-one [text]="secondText" #widgetone2 style="display: contents"
       ><div>Children go here</div></dx-widget-one
     ><ng-content *ngTemplateOutlet="widgetone2?.widgetTemplate"></ng-content
     ><ng-container *ngIf="mode"
       ><dx-widget-one
         text="self closing by condition"
         #widgetone3
+        style="display: contents"
       ></dx-widget-one
       ><ng-content
         *ngTemplateOutlet="widgetone3?.widgetTemplate"
@@ -60,19 +62,32 @@ import { CommonModule } from "@angular/common";
       ><dx-widget-two
         text="self closing by condition"
         #widgettwo2
+        style="display: contents"
       ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="widgettwo2?.widgetTemplate"
       ></ng-content></ng-container
-    ><dx-widget-two text="self closing" #widgettwo3></dx-widget-two
+    ><dx-widget-two
+      text="self closing"
+      #widgettwo3
+      style="display: contents"
+    ></dx-widget-two
     ><ng-content *ngTemplateOutlet="widgettwo3?.widgetTemplate"></ng-content
     ><ng-container *ngIf="mode"
-      ><dx-widget-one [text]="secondText" #widgetone4></dx-widget-one
+      ><dx-widget-one
+        [text]="secondText"
+        #widgetone4
+        style="display: contents"
+      ></dx-widget-one
       ><ng-content
         *ngTemplateOutlet="widgetone4?.widgetTemplate"
       ></ng-content></ng-container
     ><ng-container *ngIf="!mode"
-      ><dx-widget-two [text]="secondText" #widgettwo4></dx-widget-two
+      ><dx-widget-two
+        [text]="secondText"
+        #widgettwo4
+        style="display: contents"
+      ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="widgettwo4?.widgetTemplate"
       ></ng-content></ng-container

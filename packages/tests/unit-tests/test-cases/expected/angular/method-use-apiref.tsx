@@ -1,5 +1,6 @@
 import BaseWidget, { DxWidgetModule } from "./method";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetWithApiRefInput {
   @Input() prop1?: number;
 }
@@ -22,7 +23,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop1"],
   template: `<ng-template #widgetTemplate
-    ><dx-widget #baseRef [prop1]="prop1"></dx-widget
+    ><dx-widget #baseRef [prop1]="prop1" style="display: contents"></dx-widget
     ><ng-content *ngTemplateOutlet="baseRef?.widgetTemplate"></ng-content
   ></ng-template>`,
 })

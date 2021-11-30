@@ -6,7 +6,8 @@ import {
   StringType,
   WidgetProps as ExternalWidgetProps,
 } from "./types-external";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   __strInternalValue?: String = "";
   @Input()
@@ -214,6 +215,7 @@ export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
 
 import { CustomType } from "./types-external";
+@Injectable()
 class BaseViewPropsType {
   __strArrInternalValue?: Array<String> = new WidgetProps().strArr;
   @Input()

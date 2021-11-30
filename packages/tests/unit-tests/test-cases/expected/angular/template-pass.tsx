@@ -2,6 +2,8 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
+import { Injectable } from "@angular/core";
+@Injectable()
 export class WidgetProps {}
 
 import {
@@ -26,6 +28,7 @@ import { CommonModule } from "@angular/common";
       [componentTemplate]="InnerWidget"
       [arrowTemplate]="__arrowTemplate__generated"
       #widgetwithtemplate2
+      style="display: contents"
       ><ng-template
         #InnerWidget
         let-selected="selected"
@@ -46,6 +49,7 @@ import { CommonModule } from "@angular/common";
               : InnerWidgetDefaults.valueChange)($event)
           "
           #innerwidget3
+          style="display: contents"
         ></dx-inner-widget
         ><ng-content
           *ngTemplateOutlet="innerwidget3?.widgetTemplate"

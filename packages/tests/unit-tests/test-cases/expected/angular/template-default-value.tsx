@@ -2,7 +2,8 @@ import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;

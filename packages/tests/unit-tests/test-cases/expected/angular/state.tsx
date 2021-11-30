@@ -1,5 +1,6 @@
 import BaseState, { DxModelWidgetModule } from "./model";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetInput {
   __state1InternalValue?: boolean = false;
   @Input()
@@ -52,6 +53,7 @@ import { CommonModule } from "@angular/common";
       }}<dx-model-widget
         (baseStatePropChange)="__stateChange($event)"
         #basestate1
+        style="display: contents"
       ></dx-model-widget
       ><ng-content
         *ngTemplateOutlet="basestate1?.widgetTemplate"

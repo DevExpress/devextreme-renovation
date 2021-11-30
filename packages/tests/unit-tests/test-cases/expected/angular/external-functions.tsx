@@ -10,7 +10,8 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
 const getValue: (cell: Cell) => string = (cell) => cell.text;
 const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   __cellsInternalValue?: Cell[] = [];
   @Input()

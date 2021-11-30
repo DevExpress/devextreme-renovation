@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class FakeNested {
   __numberPropInternalValue?: number = 2;
   @Input()
@@ -18,6 +19,7 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() oneWayProp?: number;
   @Input() twoWayProp?: number;

@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class ModelWidgetInput {
   @Input() disabled?: boolean;
   @Input() value?: boolean;

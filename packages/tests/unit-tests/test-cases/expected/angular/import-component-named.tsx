@@ -1,5 +1,6 @@
 import { Widget, DxWidgetModule } from "./export-named";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class ChildInput {
   __heightInternalValue?: number = 10;
   @Input()
@@ -30,7 +31,7 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height"],
   template: `<ng-template #widgetTemplate
-    ><dx-widget [prop]="true" #widget2></dx-widget
+    ><dx-widget [prop]="true" #widget2 style="display: contents"></dx-widget
     ><ng-content *ngTemplateOutlet="widget2?.widgetTemplate"></ng-content
   ></ng-template>`,
 })
