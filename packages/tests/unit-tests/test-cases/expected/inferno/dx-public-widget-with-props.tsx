@@ -4,7 +4,7 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
-function view({ props: { optionalValue, value } }: WidgetWithProps) {
+function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
@@ -19,6 +19,7 @@ export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   number: 42,
 };
 import { createElement as h } from "inferno-compat";
+import { createReRenderEffect } from "@devextreme/runtime/inferno";
 declare type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -26,7 +27,7 @@ declare type RestProps = {
   ref?: any;
 };
 
-export class WidgetWithProps extends BaseInfernoComponent<any> {
+export class PublicWidgetWithProps extends InfernoWrapperComponent<any> {
   state = {};
   refs: any;
 
@@ -34,6 +35,10 @@ export class WidgetWithProps extends BaseInfernoComponent<any> {
     super(props);
 
     this.doSomething = this.doSomething.bind(this);
+  }
+
+  createEffects() {
+    return [createReRenderEffect()];
   }
 
   get restAttributes(): RestProps {
@@ -48,8 +53,8 @@ export class WidgetWithProps extends BaseInfernoComponent<any> {
     return view({
       props: { ...props },
       restAttributes: this.restAttributes,
-    } as WidgetWithProps);
+    } as PublicWidgetWithProps);
   }
 }
 
-WidgetWithProps.defaultProps = WidgetWithPropsInput;
+PublicWidgetWithProps.defaultProps = WidgetWithPropsInput;
