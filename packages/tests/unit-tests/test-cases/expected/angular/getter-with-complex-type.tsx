@@ -21,18 +21,9 @@ class SimpleContext {
 type UserType = "user" | "not";
 
 import { Injectable, Input } from "@angular/core";
-
 @Injectable()
 export class Props {
-  __pInternalValue?: number = 10;
-  @Input()
-  set p(value: number | undefined) {
-    if (value !== undefined) this.__pInternalValue = value;
-    else this.__pInternalValue = 10;
-  }
-  get p() {
-    return this.__pInternalValue;
-  }
+  @Input() p: number = 10;
 }
 
 import {

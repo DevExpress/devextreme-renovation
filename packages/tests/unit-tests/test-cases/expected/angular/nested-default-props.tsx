@@ -1,15 +1,7 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class GridCell {
-  __gridDataInternalValue?: string = "defaultValue";
-  @Input()
-  set gridData(value: string | undefined) {
-    if (value !== undefined) this.__gridDataInternalValue = value;
-    else this.__gridDataInternalValue = "defaultValue";
-  }
-  get gridData() {
-    return this.__gridDataInternalValue;
-  }
+  @Input() gridData: string = "defaultValue";
 }
 
 @Injectable()

@@ -2,16 +2,7 @@ import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 export class InnerWidgetProps {
   @Input() selected?: boolean;
-
-  __valueInternalValue?: number = 14;
-  @Input()
-  set value(value: number | undefined) {
-    if (value !== undefined) this.__valueInternalValue = value;
-    else this.__valueInternalValue = 14;
-  }
-  get value() {
-    return this.__valueInternalValue;
-  }
+  @Input() value: number = 14;
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() valueChange: EventEmitter<number> = new EventEmitter();
 }

@@ -66,26 +66,7 @@ export class Property extends BaseProperty {
     const eventDecorator = this.decorators.find(
       (d) => d.name === Decorators.Event,
     );
-    if (
-      (this._hasDecorator(Decorators.OneWay) || this.isState)
-      && this.initializer && this.initializer.toString()) {
-      const name = this.name;
-      const typeWithQuestion = compileType(
-        this.type.toString(),
-        SyntaxKind.QuestionToken,
-      );
 
-      return `
-        __${name}InternalValue${typeWithQuestion} = ${this.initializer};
-        ${this.modifiers.join(' ')}${this.decorators.map((d) => d.toString()).join(' ')}
-        set ${name}(value${compileType(this.type.toString())} | undefined) {
-          if (value !== undefined) this.__${name}InternalValue = value;
-          else this.__${name}InternalValue = ${this.initializer}
-        }
-        get ${name}(){
-          return this.__${name}InternalValue;
-        }`;
-    }
     if (eventDecorator) {
       return `${eventDecorator} ${this.name}:EventEmitter${parseEventType(
         this.type,

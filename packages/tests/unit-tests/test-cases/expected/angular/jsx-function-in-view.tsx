@@ -1,25 +1,8 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class WidgetInput {
-  __loadingInternalValue?: boolean = true;
-  @Input()
-  set loading(value: boolean | undefined) {
-    if (value !== undefined) this.__loadingInternalValue = value;
-    else this.__loadingInternalValue = true;
-  }
-  get loading() {
-    return this.__loadingInternalValue;
-  }
-
-  __greetingsInternalValue?: string = "Hello";
-  @Input()
-  set greetings(value: string | undefined) {
-    if (value !== undefined) this.__greetingsInternalValue = value;
-    else this.__greetingsInternalValue = "Hello";
-  }
-  get greetings() {
-    return this.__greetingsInternalValue;
-  }
+  @Input() loading: boolean = true;
+  @Input() greetings: string = "Hello";
 }
 
 import {

@@ -1,15 +1,7 @@
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 class WidgetInput {
-  __propStateInternalValue?: number = 1;
-  @Input()
-  set propState(value: number | undefined) {
-    if (value !== undefined) this.__propStateInternalValue = value;
-    else this.__propStateInternalValue = 1;
-  }
-  get propState() {
-    return this.__propStateInternalValue;
-  }
+  @Input() propState: number = 1;
   @Output() propStateChange: EventEmitter<number> = new EventEmitter();
 }
 

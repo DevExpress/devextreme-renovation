@@ -4,25 +4,8 @@ import { Injectable, Input } from "@angular/core";
 import { AdditionalOptions } from "./types.d";
 @Injectable()
 class WidgetProps {
-  __dataInternalValue?: Options = new Props().data;
-  @Input()
-  set data(value: Options | undefined) {
-    if (value !== undefined) this.__dataInternalValue = value;
-    else this.__dataInternalValue = new Props().data;
-  }
-  get data() {
-    return this.__dataInternalValue;
-  }
-
-  __infoInternalValue?: AdditionalOptions = new Props().info;
-  @Input()
-  set info(value: AdditionalOptions | undefined) {
-    if (value !== undefined) this.__infoInternalValue = value;
-    else this.__infoInternalValue = new Props().info;
-  }
-  get info() {
-    return this.__infoInternalValue;
-  }
+  @Input() data?: Options = new Props().data;
+  @Input() info?: AdditionalOptions = new Props().info;
 }
 
 import {

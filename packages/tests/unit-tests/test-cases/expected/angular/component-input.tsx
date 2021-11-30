@@ -2,25 +2,8 @@ export const COMPONENT_INPUT_CLASS = "c3";
 import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
 @Injectable()
 export class WidgetProps {
-  __heightInternalValue?: number = 10;
-  @Input()
-  set height(value: number | undefined) {
-    if (value !== undefined) this.__heightInternalValue = value;
-    else this.__heightInternalValue = 10;
-  }
-  get height() {
-    return this.__heightInternalValue;
-  }
-
-  __widthInternalValue?: number = 10;
-  @Input()
-  set width(value: number | undefined) {
-    if (value !== undefined) this.__widthInternalValue = value;
-    else this.__widthInternalValue = 10;
-  }
-  get width() {
-    return this.__widthInternalValue;
-  }
+  @Input() height?: number = 10;
+  @Input() width?: number = 10;
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {

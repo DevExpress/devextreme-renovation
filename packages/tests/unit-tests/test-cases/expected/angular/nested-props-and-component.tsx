@@ -1,15 +1,7 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class FakeNested {
-  __numberPropInternalValue?: number = 2;
-  @Input()
-  set numberProp(value: number | undefined) {
-    if (value !== undefined) this.__numberPropInternalValue = value;
-    else this.__numberPropInternalValue = 2;
-  }
-  get numberProp() {
-    return this.__numberPropInternalValue;
-  }
+  @Input() numberProp: number = 2;
 }
 
 import {

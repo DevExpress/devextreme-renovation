@@ -10,15 +10,7 @@ interface WidgetI {
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 class WidgetInput extends BaseProps {
-  __pInternalValue?: string = "10";
-  @Input()
-  set p(value: string | undefined) {
-    if (value !== undefined) this.__pInternalValue = value;
-    else this.__pInternalValue = "10";
-  }
-  get p() {
-    return this.__pInternalValue;
-  }
+  @Input() p: string = "10";
 }
 
 import {

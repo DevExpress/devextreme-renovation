@@ -1,25 +1,8 @@
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 export class GridColumnProps {
-  __nameInternalValue?: string = "";
-  @Input()
-  set name(value: string | undefined) {
-    if (value !== undefined) this.__nameInternalValue = value;
-    else this.__nameInternalValue = "";
-  }
-  get name() {
-    return this.__nameInternalValue;
-  }
-
-  __indexInternalValue?: number = 0;
-  @Input()
-  set index(value: number | undefined) {
-    if (value !== undefined) this.__indexInternalValue = value;
-    else this.__indexInternalValue = 0;
-  }
-  get index() {
-    return this.__indexInternalValue;
-  }
+  @Input() name: string = "";
+  @Input() index: number = 0;
   private __editing__?: ColumnEditingProps;
   @Input() set editing(value: ColumnEditingProps | undefined) {
     this.__editing__ = value;
@@ -45,15 +28,7 @@ export class AnotherCustomProps {}
 
 @Injectable()
 export class EditingProps {
-  __editEnabledInternalValue?: boolean = false;
-  @Input()
-  set editEnabled(value: boolean | undefined) {
-    if (value !== undefined) this.__editEnabledInternalValue = value;
-    else this.__editEnabledInternalValue = false;
-  }
-  get editEnabled() {
-    return this.__editEnabledInternalValue;
-  }
+  @Input() editEnabled?: boolean = false;
   private __custom__?: CustomProps[];
   @Input() set custom(value: CustomProps[] | undefined) {
     this.__custom__ = value;
@@ -72,15 +47,7 @@ export class EditingProps {
 
 @Injectable()
 export class ColumnEditingProps {
-  __editEnabledInternalValue?: boolean = false;
-  @Input()
-  set editEnabled(value: boolean | undefined) {
-    if (value !== undefined) this.__editEnabledInternalValue = value;
-    else this.__editEnabledInternalValue = false;
-  }
-  get editEnabled() {
-    return this.__editEnabledInternalValue;
-  }
+  @Input() editEnabled?: boolean = false;
 }
 
 @Injectable()

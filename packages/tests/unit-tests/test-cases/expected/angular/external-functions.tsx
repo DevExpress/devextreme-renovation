@@ -13,15 +13,7 @@ const CLASS_NAME = arrowFunction();
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class WidgetProps {
-  __cellsInternalValue?: Cell[] = [];
-  @Input()
-  set cells(value: Cell[] | undefined) {
-    if (value !== undefined) this.__cellsInternalValue = value;
-    else this.__cellsInternalValue = [];
-  }
-  get cells() {
-    return this.__cellsInternalValue;
-  }
+  @Input() cells: Cell[] = [];
 }
 
 import {

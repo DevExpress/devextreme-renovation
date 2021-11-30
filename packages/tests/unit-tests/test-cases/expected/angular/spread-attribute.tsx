@@ -1,15 +1,7 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class WidgetInput {
-  __propInternalValue?: any = {};
-  @Input()
-  set prop(value: any | undefined) {
-    if (value !== undefined) this.__propInternalValue = value;
-    else this.__propInternalValue = {};
-  }
-  get prop() {
-    return this.__propInternalValue;
-  }
+  @Input() prop: any = {};
 }
 
 import {

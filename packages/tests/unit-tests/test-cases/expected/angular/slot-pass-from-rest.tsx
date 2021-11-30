@@ -2,15 +2,7 @@ import Widget, { DxWidgetModule } from "./slots";
 import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
 @Injectable()
 class WidgetInput {
-  __pInternalValue?: string = "";
-  @Input()
-  set p(value: string | undefined) {
-    if (value !== undefined) this.__pInternalValue = value;
-    else this.__pInternalValue = "";
-  }
-  get p() {
-    return this.__pInternalValue;
-  }
+  @Input() p: string = "";
   __slotChildren?: ElementRef<HTMLDivElement>;
 
   get children() {

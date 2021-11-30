@@ -1,45 +1,10 @@
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 class WidgetProps {
-  __somePropInternalValue?: string = "";
-  @Input()
-  set someProp(value: string | undefined) {
-    if (value !== undefined) this.__somePropInternalValue = value;
-    else this.__somePropInternalValue = "";
-  }
-  get someProp() {
-    return this.__somePropInternalValue;
-  }
-
-  __typeInternalValue?: string = "";
-  @Input()
-  set type(value: string | undefined) {
-    if (value !== undefined) this.__typeInternalValue = value;
-    else this.__typeInternalValue = "";
-  }
-  get type() {
-    return this.__typeInternalValue;
-  }
-
-  __gridCompatibilityInternalValue?: boolean = true;
-  @Input()
-  set gridCompatibility(value: boolean | undefined) {
-    if (value !== undefined) this.__gridCompatibilityInternalValue = value;
-    else this.__gridCompatibilityInternalValue = true;
-  }
-  get gridCompatibility() {
-    return this.__gridCompatibilityInternalValue;
-  }
-
-  __pageIndexInternalValue?: number = 1;
-  @Input()
-  set pageIndex(value: number | undefined) {
-    if (value !== undefined) this.__pageIndexInternalValue = value;
-    else this.__pageIndexInternalValue = 1;
-  }
-  get pageIndex() {
-    return this.__pageIndexInternalValue;
-  }
+  @Input() someProp: string = "";
+  @Input() type?: string = "";
+  @Input() gridCompatibility?: boolean = true;
+  @Input() pageIndex: number = 1;
   @Output() pageIndexChange: EventEmitter<number> = new EventEmitter();
 }
 import {

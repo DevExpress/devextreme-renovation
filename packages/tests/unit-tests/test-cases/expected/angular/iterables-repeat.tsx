@@ -1,25 +1,8 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class ListInput {
-  __itemsInternalValue?: any[] = [];
-  @Input()
-  set items(value: any[] | undefined) {
-    if (value !== undefined) this.__itemsInternalValue = value;
-    else this.__itemsInternalValue = [];
-  }
-  get items() {
-    return this.__itemsInternalValue;
-  }
-
-  __keyExprInternalValue?: string = "value";
-  @Input()
-  set keyExpr(value: string | undefined) {
-    if (value !== undefined) this.__keyExprInternalValue = value;
-    else this.__keyExprInternalValue = "value";
-  }
-  get keyExpr() {
-    return this.__keyExprInternalValue;
-  }
+  @Input() items?: any[] = [];
+  @Input() keyExpr?: string = "value";
 }
 import {
   Component,

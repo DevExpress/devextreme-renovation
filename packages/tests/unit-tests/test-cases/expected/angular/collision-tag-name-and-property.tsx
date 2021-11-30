@@ -1,15 +1,7 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class TextSvgElementProps {
-  __textInternalValue?: string | null = "";
-  @Input()
-  set text(value: string | null | undefined) {
-    if (value !== undefined) this.__textInternalValue = value;
-    else this.__textInternalValue = "";
-  }
-  get text() {
-    return this.__textInternalValue;
-  }
+  @Input() text?: string | null = "";
 }
 
 import {

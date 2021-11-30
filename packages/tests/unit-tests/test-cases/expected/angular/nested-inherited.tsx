@@ -1,28 +1,12 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class FakeNested {
-  __basePropInternalValue?: number = 0;
-  @Input()
-  set baseProp(value: number | undefined) {
-    if (value !== undefined) this.__basePropInternalValue = value;
-    else this.__basePropInternalValue = 0;
-  }
-  get baseProp() {
-    return this.__basePropInternalValue;
-  }
+  @Input() baseProp: number = 0;
 }
 
 @Injectable()
 export class WidgetProps {
-  __basePropInternalValue?: number = 0;
-  @Input()
-  set baseProp(value: number | undefined) {
-    if (value !== undefined) this.__basePropInternalValue = value;
-    else this.__basePropInternalValue = 0;
-  }
-  get baseProp() {
-    return this.__basePropInternalValue;
-  }
+  @Input() baseProp: number = 0;
   private __someProp__?: FakeNested;
   @Input() set someProp(value: FakeNested) {
     this.__someProp__ = value;
@@ -38,15 +22,7 @@ export class WidgetProps {
 
 @Injectable()
 export class TooltipProps {
-  __tooltipValueInternalValue?: number = 0;
-  @Input()
-  set tooltipValue(value: number | undefined) {
-    if (value !== undefined) this.__tooltipValueInternalValue = value;
-    else this.__tooltipValueInternalValue = 0;
-  }
-  get tooltipValue() {
-    return this.__tooltipValueInternalValue;
-  }
+  @Input() tooltipValue: number = 0;
   private __tooltipNested__?: WidgetProps[];
   @Input() set tooltipNested(value: WidgetProps[]) {
     this.__tooltipNested__ = value;
@@ -64,15 +40,7 @@ export class TooltipProps {
 
 @Injectable()
 export class BulletProps extends WidgetProps {
-  __valueInternalValue?: number = 0;
-  @Input()
-  set value(value: number | undefined) {
-    if (value !== undefined) this.__valueInternalValue = value;
-    else this.__valueInternalValue = 0;
-  }
-  get value() {
-    return this.__valueInternalValue;
-  }
+  @Input() value: number = 0;
   private __tooltip__?: TooltipProps;
   @Input() set tooltip(value: TooltipProps | undefined) {
     this.__tooltip__ = value;

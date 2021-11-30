@@ -2,15 +2,7 @@ import { Widget, DxWidgetModule } from "./export-named";
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 class ChildInput {
-  __heightInternalValue?: number = 10;
-  @Input()
-  set height(value: number | undefined) {
-    if (value !== undefined) this.__heightInternalValue = value;
-    else this.__heightInternalValue = 10;
-  }
-  get height() {
-    return this.__heightInternalValue;
-  }
+  @Input() height: number = 10;
 }
 
 import {

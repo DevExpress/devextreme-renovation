@@ -1,26 +1,9 @@
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 export class WidgetWithPropsInput {
-  __valueInternalValue?: string = "default text";
-  @Input()
-  set value(value: string | undefined) {
-    if (value !== undefined) this.__valueInternalValue = value;
-    else this.__valueInternalValue = "default text";
-  }
-  get value() {
-    return this.__valueInternalValue;
-  }
+  @Input() value: string = "default text";
   @Input() optionalValue?: string;
-
-  __numberInternalValue?: number = 42;
-  @Input()
-  set number(value: number | undefined) {
-    if (value !== undefined) this.__numberInternalValue = value;
-    else this.__numberInternalValue = 42;
-  }
-  get number() {
-    return this.__numberInternalValue;
-  }
+  @Input() number?: number = 42;
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 

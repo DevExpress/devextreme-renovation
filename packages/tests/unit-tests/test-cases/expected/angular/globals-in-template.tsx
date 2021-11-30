@@ -10,15 +10,7 @@ const getKey = (item: Item) => item.key;
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class WidgetProps {
-  __itemsInternalValue?: Item[] = [];
-  @Input()
-  set items(value: Item[] | undefined) {
-    if (value !== undefined) this.__itemsInternalValue = value;
-    else this.__itemsInternalValue = [];
-  }
-  get items() {
-    return this.__itemsInternalValue;
-  }
+  @Input() items: Item[] = [];
 }
 
 import {

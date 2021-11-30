@@ -1,25 +1,8 @@
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 class WidgetProps {
-  __somePropInternalValue?: string = "";
-  @Input()
-  set someProp(value: string | undefined) {
-    if (value !== undefined) this.__somePropInternalValue = value;
-    else this.__somePropInternalValue = "";
-  }
-  get someProp() {
-    return this.__somePropInternalValue;
-  }
-
-  __typeInternalValue?: string = "";
-  @Input()
-  set type(value: string | undefined) {
-    if (value !== undefined) this.__typeInternalValue = value;
-    else this.__typeInternalValue = "";
-  }
-  get type() {
-    return this.__typeInternalValue;
-  }
+  @Input() someProp: string = "";
+  @Input() type?: string = "";
   @Input() objectProp?: { someField: number };
 }
 

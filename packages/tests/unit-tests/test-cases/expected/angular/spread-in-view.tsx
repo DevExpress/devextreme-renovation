@@ -1,25 +1,8 @@
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
 export class WidgetProps {
-  __aInternalValue?: Array<Number> = [1, 2, 3];
-  @Input()
-  set a(value: Array<Number> | undefined) {
-    if (value !== undefined) this.__aInternalValue = value;
-    else this.__aInternalValue = [1, 2, 3];
-  }
-  get a() {
-    return this.__aInternalValue;
-  }
-
-  __idInternalValue?: string = "1";
-  @Input()
-  set id(value: string | undefined) {
-    if (value !== undefined) this.__idInternalValue = value;
-    else this.__idInternalValue = "1";
-  }
-  get id() {
-    return this.__idInternalValue;
-  }
+  @Input() a: Array<Number> = [1, 2, 3];
+  @Input() id: string = "1";
   @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 

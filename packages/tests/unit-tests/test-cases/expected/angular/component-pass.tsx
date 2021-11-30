@@ -3,15 +3,7 @@ import { WidgetTwo, DxWidgetTwoModule } from "./component-pass-two";
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class WidgetProps {
-  __modeInternalValue?: boolean = false;
-  @Input()
-  set mode(value: boolean | undefined) {
-    if (value !== undefined) this.__modeInternalValue = value;
-    else this.__modeInternalValue = false;
-  }
-  get mode() {
-    return this.__modeInternalValue;
-  }
+  @Input() mode?: boolean = false;
   @Input() firstText?: string;
   @Input() secondText?: string;
 }

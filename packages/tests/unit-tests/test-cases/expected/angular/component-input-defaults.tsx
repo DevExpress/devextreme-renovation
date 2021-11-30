@@ -9,26 +9,8 @@ import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class BaseProps {
   @Input() empty?: string;
-
-  __heightInternalValue?: number = 10;
-  @Input()
-  set height(value: number | undefined) {
-    if (value !== undefined) this.__heightInternalValue = value;
-    else this.__heightInternalValue = 10;
-  }
-  get height() {
-    return this.__heightInternalValue;
-  }
-
-  __widthInternalValue?: number = isMaterial() ? 20 : 10;
-  @Input()
-  set width(value: number | undefined) {
-    if (value !== undefined) this.__widthInternalValue = value;
-    else this.__widthInternalValue = isMaterial() ? 20 : 10;
-  }
-  get width() {
-    return this.__widthInternalValue;
-  }
+  @Input() height?: number = 10;
+  @Input() width?: number = isMaterial() ? 20 : 10;
   private __baseNested__?: TextsProps | string;
   @Input() set baseNested(value: TextsProps | string) {
     this.__baseNested__ = value;
@@ -44,52 +26,19 @@ export class BaseProps {
 
 @Injectable()
 export class TextsProps {
-  __textInternalValue?: string = format("text");
-  @Input()
-  set text(value: string | undefined) {
-    if (value !== undefined) this.__textInternalValue = value;
-    else this.__textInternalValue = format("text");
-  }
-  get text() {
-    return this.__textInternalValue;
-  }
+  @Input() text?: string = format("text");
 }
 
 @Injectable()
 export class ExpressionProps {
-  __expressionDefaultInternalValue?: any = isMaterial() ? 20 : 10;
-  @Input()
-  set expressionDefault(value: any | undefined) {
-    if (value !== undefined) this.__expressionDefaultInternalValue = value;
-    else this.__expressionDefaultInternalValue = isMaterial() ? 20 : 10;
-  }
-  get expressionDefault() {
-    return this.__expressionDefaultInternalValue;
-  }
+  @Input() expressionDefault?: any = isMaterial() ? 20 : 10;
 }
 
 import { TemplateRef } from "@angular/core";
 @Injectable()
 export class WidgetProps extends BaseProps {
-  __textInternalValue?: string = format("text");
-  @Input()
-  set text(value: string | undefined) {
-    if (value !== undefined) this.__textInternalValue = value;
-    else this.__textInternalValue = format("text");
-  }
-  get text() {
-    return this.__textInternalValue;
-  }
-
-  __texts1InternalValue?: TextsProps = { text: format("text") };
-  @Input()
-  set texts1(value: TextsProps | undefined) {
-    if (value !== undefined) this.__texts1InternalValue = value;
-    else this.__texts1InternalValue = { text: format("text") };
-  }
-  get texts1() {
-    return this.__texts1InternalValue;
-  }
+  @Input() text?: string = format("text");
+  @Input() texts1?: TextsProps = { text: format("text") };
   private __texts2__?: TextsProps;
   @Input() set texts2(value: TextsProps | undefined) {
     this.__texts2__ = value;
@@ -130,25 +79,8 @@ export class WidgetProps extends BaseProps {
 
 @Injectable()
 class WidgetPropsType {
-  __textInternalValue?: string = new WidgetProps().text;
-  @Input()
-  set text(value: string | undefined) {
-    if (value !== undefined) this.__textInternalValue = value;
-    else this.__textInternalValue = new WidgetProps().text;
-  }
-  get text() {
-    return this.__textInternalValue;
-  }
-
-  __texts1InternalValue?: TextsProps = new WidgetProps().texts1;
-  @Input()
-  set texts1(value: TextsProps | undefined) {
-    if (value !== undefined) this.__texts1InternalValue = value;
-    else this.__texts1InternalValue = new WidgetProps().texts1;
-  }
-  get texts1() {
-    return this.__texts1InternalValue;
-  }
+  @Input() text?: string = new WidgetProps().text;
+  @Input() texts1?: TextsProps = new WidgetProps().texts1;
   private __texts2__?: TextsProps;
   @Input() set texts2(value: TextsProps | undefined) {
     this.__texts2__ = value;
@@ -171,26 +103,8 @@ class WidgetPropsType {
   }
   @Input() template?: TemplateRef<any> | null = null;
   @Input() empty?: string;
-
-  __heightInternalValue?: number = new WidgetProps().height;
-  @Input()
-  set height(value: number | undefined) {
-    if (value !== undefined) this.__heightInternalValue = value;
-    else this.__heightInternalValue = new WidgetProps().height;
-  }
-  get height() {
-    return this.__heightInternalValue;
-  }
-
-  __widthInternalValue?: number = new WidgetProps().width;
-  @Input()
-  set width(value: number | undefined) {
-    if (value !== undefined) this.__widthInternalValue = value;
-    else this.__widthInternalValue = new WidgetProps().width;
-  }
-  get width() {
-    return this.__widthInternalValue;
-  }
+  @Input() height?: number = new WidgetProps().height;
+  @Input() width?: number = new WidgetProps().width;
   private __baseNested__?: TextsProps | string;
   @Input() set baseNested(value: TextsProps | string) {
     this.__baseNested__ = value;
@@ -201,19 +115,7 @@ class WidgetPropsType {
     }
     return this.__baseNested__;
   }
-
-  __expressionDefaultInternalValue?: any = new ExpressionProps()
-    .expressionDefault;
-  @Input()
-  set expressionDefault(value: any | undefined) {
-    if (value !== undefined) this.__expressionDefaultInternalValue = value;
-    else
-      this.__expressionDefaultInternalValue =
-        new ExpressionProps().expressionDefault;
-  }
-  get expressionDefault() {
-    return this.__expressionDefaultInternalValue;
-  }
+  @Input() expressionDefault?: any = new ExpressionProps().expressionDefault;
   public static __defaultNestedValues: any = {
     texts2: new WidgetProps().texts2,
     texts3: new WidgetProps().texts3,

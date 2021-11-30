@@ -3,15 +3,7 @@ import { InnerComponent, DxInnerComponentModule } from "./inner-component";
 import { Injectable, Input } from "@angular/core";
 @Injectable()
 export class Props {
-  __propInternalValue?: number = 0;
-  @Input()
-  set prop(value: number | undefined) {
-    if (value !== undefined) this.__propInternalValue = value;
-    else this.__propInternalValue = 0;
-  }
-  get prop() {
-    return this.__propInternalValue;
-  }
+  @Input() prop: number = 0;
 }
 
 import {

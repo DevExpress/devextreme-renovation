@@ -7,15 +7,7 @@ import {
 import { Injectable, Input, TemplateRef } from "@angular/core";
 @Injectable()
 export class WidgetInput {
-  __somePropInternalValue?: boolean = false;
-  @Input()
-  set someProp(value: boolean | undefined) {
-    if (value !== undefined) this.__somePropInternalValue = value;
-    else this.__somePropInternalValue = false;
-  }
-  get someProp() {
-    return this.__somePropInternalValue;
-  }
+  @Input() someProp: boolean = false;
   @Input() headerTemplate: TemplateRef<any> | null = null;
   @Input() template: TemplateRef<any> | null = null;
   @Input() contentTemplate: TemplateRef<any> | null = null;

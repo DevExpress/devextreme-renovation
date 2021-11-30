@@ -34,18 +34,9 @@ class GetterContext {
 }
 
 import { Injectable, Input } from "@angular/core";
-
 @Injectable()
 class Props {
-  __p1InternalValue?: number = 10;
-  @Input()
-  set p1(value: number | undefined) {
-    if (value !== undefined) this.__p1InternalValue = value;
-    else this.__p1InternalValue = 10;
-  }
-  get p1() {
-    return this.__p1InternalValue;
-  }
+  @Input() p1: number = 10;
 }
 
 import {
