@@ -107,6 +107,12 @@ export default class List extends ListInput {
   ) {
     super();
   }
+
+  WidgetWithPropsDefaults = {
+    value: "default text",
+    number: 42,
+    onClick: (e: any) => void 0,
+  };
 }
 @NgModule({
   declarations: [List],

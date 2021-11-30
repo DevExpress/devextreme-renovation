@@ -64,9 +64,9 @@ export function compileCoreImports(
   if (
     members.some((m) => m.decorators.some(
       (d) => d.name === Decorators.OneWay
-          || d.name === Decorators.RefProp
-          || d.name === Decorators.Nested
-          || d.name === Decorators.ForwardRefProp,
+        || d.name === Decorators.RefProp
+        || d.name === Decorators.Nested
+        || d.name === Decorators.ForwardRefProp,
     ))
   ) {
     imports.push('Input');
@@ -270,9 +270,7 @@ export class AngularComponent extends Component {
         if (nested && nested.length) {
           return nested${indexGetter};
         }
-        ${
-  initializer
-    ? `return ${componentName}.__defaultNestedValues.${name}`
+        ${initializer ? `return ${componentName}.__defaultNestedValues.${name}`
     : ''
 }`),
         ],
@@ -420,23 +418,12 @@ export class AngularComponent extends Component {
             new Block(
               [
                 new SimpleExpression(
-                  `return (function(this: ${
-                    this.name
-                  }, ${parameter}): ${returnType}{
+                  `return (function(this: ${this.name}, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${
-  !isOptional ? '!' : ''
-};
-                      ${
-  m.isForwardRefProp
-    ? `this.${m.name}
-                        ${questionDotTokenIfNeed}(ref)`
-    : ''
-}
+                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${!isOptional ? '!' : ''};
+                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(ref)` : ''}
                     }
-                  return this.${m.name}${
-  m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''
-}
+                  return this.${m.name}${m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''}
                 }).bind(this)`,
                 ),
               ],
@@ -650,8 +637,7 @@ export class AngularComponent extends Component {
           );
           if (dependenciesWithoutContext.length) {
             conditionArray.push(
-              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${
-                ngOnChangesParameters[0]
+              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${ngOnChangesParameters[0]
               }[d])`,
             );
           }
@@ -736,8 +722,7 @@ export class AngularComponent extends Component {
           const conditionArray = ['this.__destroyEffects.length'];
           if (propsDependency.indexOf('props') === -1) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`).join(',')}].some(d=>${
-                ngOnChangesParameters[0]
+              `[${propsDependency.map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`).join(',')}].some(d=>${ngOnChangesParameters[0]
               }[d])`,
             );
           }
@@ -900,10 +885,9 @@ export class AngularComponent extends Component {
 
           allDependency.push(...getDependencyFromViewExpression(o.expression, options));
 
-          const refString = `${
-            o.refExpression instanceof SimpleExpression
-              ? `this.${o.refExpression.toString()}`
-              : o.refExpression.toString(options)
+          const refString = `${o.refExpression instanceof SimpleExpression
+            ? `this.${o.refExpression.toString()}`
+            : o.refExpression.toString(options)
           }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
             coreImports.push('ViewChild', 'ElementRef');
@@ -958,9 +942,7 @@ export class AngularComponent extends Component {
             ngOnChangesStatements.push(`if([${propsDependency
               .map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`)
               .join(',')}].some(d=>
-              ${ngOnChangesParameters[0]}[d] && !${
-  ngOnChangesParameters[0]
-}[d].firstChange)){
+              ${ngOnChangesParameters[0]}[d] && !${ngOnChangesParameters[0]}[d].firstChange)){
                 this.${scheduledApplyAttributes} = true;
             }`);
           }
@@ -1040,8 +1022,7 @@ export class AngularComponent extends Component {
             this._detectChanges();
         }
 
-        ${
-  disabledProp
+        ${disabledProp
     ? `setDisabledState(isDisabled: boolean): void {
             this.disabled = isDisabled;
         }`
@@ -1153,12 +1134,7 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=(e:any) => {
             this.${e.name}.emit(e);
-            ${
-  this.members.some(
-    (m) => m.isState && e.name === `${m.name}Change`,
-  )
-    ? 'this._detectChanges();'
-    : ''
+            ${this.members.some((m) => m.isState && e.name === `${m.name}Change`) ? 'this._detectChanges();' : ''
 }
           }`,
         );
@@ -1548,6 +1524,7 @@ export class AngularComponent extends Component {
       members: this.members,
       newComponentContext: this.viewModel ? '_viewModel' : '',
       disableTemplates: true,
+      templateComponents: [],
       isSVG: this.isSVGComponent,
     };
 
@@ -1623,12 +1600,9 @@ export class AngularComponent extends Component {
         ${this.compileDefaultOptions(constructorStatements)}
         ${this.compileValueAccessor(implementedInterfaces)}
         ${componentDecorator}
-        ${this.modifiers.join(' ')} class ${this.name} ${
-  props.length ? `extends ${props.join(' ')}` : ''
-} ${
-  implementedInterfaces.length
-    ? `implements ${implementedInterfaces.join(',')}`
-    : ''
+        ${this.modifiers.join(' ')} class ${this.name} ${props.length ? `extends ${props.join(' ')}` : ''} ${implementedInterfaces.length
+  ? `implements ${implementedInterfaces.join(',')}`
+  : ''
 } {
             ${this.extractGlobalsFromTemplate(
     componentDecorator + trackBy,
@@ -1684,7 +1658,7 @@ export class AngularComponent extends Component {
             ${this.compileLifeCycle(
     'constructor',
     (constructorStatements.length || constructorArguments.length)
-                && this.heritageClauses.length
+              && this.heritageClauses.length
       ? ['super()'].concat(constructorStatements)
       : constructorStatements,
     constructorArguments,
@@ -1700,8 +1674,7 @@ export class AngularComponent extends Component {
             imports: [
                 ${modules.join(',\n')}
             ],
-            ${
-  entryComponents.length
+            ${entryComponents.length
     ? `entryComponents: [
               ${entryComponents.join(',\n')}
             ],`
