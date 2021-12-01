@@ -28,6 +28,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
   @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
   get __attr1(): any {
@@ -89,11 +90,11 @@ export default class Widget extends WidgetInput {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["prop"] && changes["prop"].currentValue === undefined) {
-      this.prop = {};
-    }
     if (["prop"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
+    }
+    if (changes["prop"] && changes["prop"].currentValue === undefined) {
+      this.prop = this.propsDefaults.prop;
     }
   }
 

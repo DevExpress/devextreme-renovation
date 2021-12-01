@@ -32,6 +32,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
   >`,
 })
 export default class Widget extends Props {
+  propsDefaults = new Props();
   get __restAttributes(): any {
     return {};
   }
@@ -44,13 +45,13 @@ export default class Widget extends Props {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = { value: "" };
+      this.data = this.propsDefaults.data;
     }
     if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = { index: 0 };
+      this.info = this.propsDefaults.info;
     }
   }
 

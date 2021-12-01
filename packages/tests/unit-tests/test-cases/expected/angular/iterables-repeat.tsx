@@ -36,6 +36,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class List extends ListInput {
+  propsDefaults = new ListInput();
   get __restAttributes(): any {
     return {};
   }
@@ -55,10 +56,10 @@ export default class List extends ListInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["items"] && changes["items"].currentValue === undefined) {
-      this.items = [];
+      this.items = this.propsDefaults.items;
     }
     if (changes["keyExpr"] && changes["keyExpr"].currentValue === undefined) {
-      this.keyExpr = "value";
+      this.keyExpr = this.propsDefaults.keyExpr;
     }
   }
 

@@ -35,6 +35,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   i: number = 10;
   j: number = 20;
   __setupData(): any {
@@ -105,13 +106,13 @@ export default class Widget extends WidgetInput {
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = "10";
+      this.p = this.propsDefaults.p;
     }
     if (changes["r"] && changes["r"].currentValue === undefined) {
-      this.r = "20";
+      this.r = this.propsDefaults.r;
     }
     if (changes["s"] && changes["s"].currentValue === undefined) {
-      this.s = 10;
+      this.s = this.propsDefaults.s;
     }
 
     if (this.__destroyEffects.length && ["p", "s"].some((d) => changes[d])) {

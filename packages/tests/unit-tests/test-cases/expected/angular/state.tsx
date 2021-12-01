@@ -44,6 +44,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   internalState: number = 0;
   innerData?: string;
   __updateState(): any {
@@ -78,10 +79,10 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["state1"] && changes["state1"].currentValue === undefined) {
-      this.state1 = false;
+      this.state1 = this.propsDefaults.state1;
     }
     if (changes["state2"] && changes["state2"].currentValue === undefined) {
-      this.state2 = false;
+      this.state2 = this.propsDefaults.state2;
     }
   }
 

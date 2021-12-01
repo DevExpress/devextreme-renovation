@@ -47,6 +47,7 @@ import { CommonModule } from "@angular/common";
 export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
   global_getKey = getKey;
+  propsDefaults = new WidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -63,7 +64,7 @@ export default class WidgetWithGlobals extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["items"] && changes["items"].currentValue === undefined) {
-      this.items = [];
+      this.items = this.propsDefaults.items;
     }
   }
 

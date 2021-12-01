@@ -60,6 +60,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends Props {
+  propsDefaults = new Props();
   contextConsumerConsumer: number;
   get __sum(): any {
     return this.provider.value + this.contextConsumerConsumer;
@@ -92,7 +93,7 @@ export default class Widget extends Props {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["p1"] && changes["p1"].currentValue === undefined) {
-      this.p1 = 10;
+      this.p1 = this.propsDefaults.p1;
     }
   }
   ngOnDestroy() {

@@ -36,6 +36,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -48,22 +49,22 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = "data";
+      this.data = this.propsDefaults.data;
     }
     if (changes["union"] && changes["union"].currentValue === undefined) {
-      this.union = "uniontext";
+      this.union = this.propsDefaults.union;
     }
     if (changes["obj"] && changes["obj"].currentValue === undefined) {
-      this.obj = { number: 123, text: "sda" };
+      this.obj = this.propsDefaults.obj;
     }
     if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
-      this.strArr = ["ba", "ab"];
+      this.strArr = this.propsDefaults.strArr;
     }
     if (changes["s"] && changes["s"].currentValue === undefined) {
-      this.s = "";
+      this.s = this.propsDefaults.s;
     }
     if (changes["strDate"] && changes["strDate"].currentValue === undefined) {
-      this.strDate = new Date();
+      this.strDate = this.propsDefaults.strDate;
     }
   }
 

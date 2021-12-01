@@ -30,6 +30,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -60,14 +61,14 @@ export default class Widget extends WidgetProps {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["a"] && changes["a"].currentValue === undefined) {
-      this.a = [1, 2, 3];
-    }
-    if (changes["id"] && changes["id"].currentValue === undefined) {
-      this.id = "1";
-    }
     if (["id", "onClick"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
+    }
+    if (changes["a"] && changes["a"].currentValue === undefined) {
+      this.a = this.propsDefaults.a;
+    }
+    if (changes["id"] && changes["id"].currentValue === undefined) {
+      this.id = this.propsDefaults.id;
     }
   }
 

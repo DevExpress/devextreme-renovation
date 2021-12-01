@@ -28,6 +28,7 @@ import { CommonModule } from "@angular/common";
   </svg:text>`,
 })
 export class TextSvgElement extends TextSvgElementProps {
+  propsDefaults = new TextSvgElementProps();
   get __computedProps(): TextSvgElementProps {
     return this;
   }
@@ -43,7 +44,7 @@ export class TextSvgElement extends TextSvgElementProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["text"] && changes["text"].currentValue === undefined) {
-      this.text = "";
+      this.text = this.propsDefaults.text;
     }
   }
 

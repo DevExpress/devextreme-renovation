@@ -108,6 +108,7 @@ export default class InnerWidget
   extends InnerWidgetProps
   implements ControlValueAccessor
 {
+  propsDefaults = new InnerWidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -135,7 +136,7 @@ export default class InnerWidget
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["value"] && changes["value"].currentValue === undefined) {
-      this.value = 14;
+      this.value = this.propsDefaults.value;
     }
   }
 

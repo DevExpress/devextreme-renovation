@@ -28,6 +28,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Child extends ChildInput {
+  propsDefaults = new ChildInput();
   get __restAttributes(): any {
     return {};
   }
@@ -40,7 +41,7 @@ export default class Child extends ChildInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
   }
 

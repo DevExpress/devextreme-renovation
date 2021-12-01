@@ -55,6 +55,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   __getHeight(): number {
     this._onClick(10);
     this._onClick(11);
@@ -88,37 +89,37 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["export"] && changes["export"].currentValue === undefined) {
-      this.export = {};
+      this.export = this.propsDefaults.export;
     }
     if (changes["array"] && changes["array"].currentValue === undefined) {
-      this.array = ["1"];
+      this.array = this.propsDefaults.array;
     }
     if (
       changes["expressionDefault"] &&
       changes["expressionDefault"].currentValue === undefined
     ) {
-      this.expressionDefault = device === "ios" ? "yes" : "no";
+      this.expressionDefault = this.propsDefaults.expressionDefault;
     }
     if (
       changes["expressionDefault1"] &&
       changes["expressionDefault1"].currentValue === undefined
     ) {
-      this.expressionDefault1 = !device;
+      this.expressionDefault1 = this.propsDefaults.expressionDefault1;
     }
     if (
       changes["expressionDefault2"] &&
       changes["expressionDefault2"].currentValue === undefined
     ) {
-      this.expressionDefault2 = isDevice() || "test";
+      this.expressionDefault2 = this.propsDefaults.expressionDefault2;
     }
     if (
       changes["stringValue"] &&
       changes["stringValue"].currentValue === undefined
     ) {
-      this.stringValue = "";
+      this.stringValue = this.propsDefaults.stringValue;
     }
   }
 

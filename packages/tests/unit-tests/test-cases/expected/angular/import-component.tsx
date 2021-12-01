@@ -36,6 +36,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Child extends ChildInput {
+  propsDefaults = new ChildInput();
   __getProps(): WidgetProps {
     return { height: this.height } as WidgetProps;
   }
@@ -51,10 +52,10 @@ export default class Child extends ChildInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["width"] && changes["width"].currentValue === undefined) {
-      this.width = 10;
+      this.width = this.propsDefaults.width;
     }
   }
 

@@ -35,6 +35,7 @@ style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
 })
 export class ExtraElement extends Props {
+  propsDefaults = new Props();
   get __restAttributes(): any {
     return {};
   }
@@ -47,7 +48,7 @@ export class ExtraElement extends Props {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["prop"] && changes["prop"].currentValue === undefined) {
-      this.prop = 0;
+      this.prop = this.propsDefaults.prop;
     }
   }
 

@@ -70,6 +70,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
+  propsDefaults = new TemplateDefaultValueProps();
   get __restAttributes(): any {
     return {};
   }
@@ -85,7 +86,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
       changes["stringToRender"] &&
       changes["stringToRender"].currentValue === undefined
     ) {
-      this.stringToRender = "strCompDefault";
+      this.stringToRender = this.propsDefaults.stringToRender;
     }
   }
 

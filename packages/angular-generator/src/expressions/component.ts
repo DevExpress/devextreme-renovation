@@ -1495,17 +1495,25 @@ export class AngularComponent extends Component {
         }));
   }
 
-  compileDefaultInputValues(): string[] {
-    const propsWithDefualt = this.members.filter((m) => m instanceof Property
+  compileDefaultInputValues(ngOnChangesStatements: string[]): string {
+    const propsWithDefault = this.members.filter((m) => m instanceof Property
     && (m.isState || m._hasDecorator(Decorators.OneWay))
     && m.initializer && m.initializer.toString()) as Property[];
 
-    return propsWithDefualt.map((prop) => {
-      const name = prop.name;
-      return `if (changes["${name}"] && changes["${name}"].currentValue === undefined){
-        this.${name} = ${prop.initializer};
-      }`;
-    });
+    if (propsWithDefault.length) {
+      const propsClass = this.heritageClauses
+        .filter((h) => h.isJsxComponent)
+        .map((h) => h.types.map((t) => t.type.toString()))[0];
+      const statements = propsWithDefault.map((prop) => {
+        const name = prop.name;
+        return `if (changes["${name}"] && changes["${name}"].currentValue === undefined){
+            this.${name} = this.propsDefaults.${name};
+          }`;
+      });
+      ngOnChangesStatements.push(...statements);
+      return `propsDefaults = new ${propsClass}()`;
+    }
+    return '';
   }
 
   toString() {
@@ -1558,10 +1566,6 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       isSVG: this.isSVGComponent,
     };
-    const defaultInputValues = this.compileDefaultInputValues().join('\n');
-    if (defaultInputValues) {
-      ngOnChangesStatements.push(defaultInputValues);
-    }
 
     const implementedInterfaces: string[] = [];
 
@@ -1646,6 +1650,7 @@ export class AngularComponent extends Component {
     componentDecorator + trackBy,
     ' = ',
   ).join(';\n')}
+            ${this.compileDefaultInputValues(ngOnChangesStatements)}
             ${this.members
     .filter((m) => !m.inherited && !(m instanceof SetAccessor))
     .map((m) => m.toString({

@@ -36,6 +36,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   someState: string = "";
   get __arrayFromObj(): (string | undefined)[] {
     if (this.__getterCache["arrayFromObj"] !== undefined) {
@@ -114,10 +115,10 @@ class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
-      this.someProp = "";
+      this.someProp = this.propsDefaults.someProp;
     }
     if (changes["type"] && changes["type"].currentValue === undefined) {
-      this.type = "";
+      this.type = this.propsDefaults.type;
     }
 
     if (["someProp"].some((d) => changes[d])) {

@@ -32,6 +32,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   innerData: Options = { value: "" };
   get __restAttributes(): any {
     return {};
@@ -45,10 +46,10 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = new Props().data;
+      this.data = this.propsDefaults.data;
     }
     if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = new Props().info;
+      this.info = this.propsDefaults.info;
     }
   }
 

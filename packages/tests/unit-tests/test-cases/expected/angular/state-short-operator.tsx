@@ -26,6 +26,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   innerState: number = 0;
   __updateState(): any {
     this._innerState = this.innerState + 1;
@@ -52,7 +53,7 @@ export default class Widget extends WidgetInput {
       changes["propState"] &&
       changes["propState"].currentValue === undefined
     ) {
-      this.propState = 1;
+      this.propState = this.propsDefaults.propState;
     }
   }
 

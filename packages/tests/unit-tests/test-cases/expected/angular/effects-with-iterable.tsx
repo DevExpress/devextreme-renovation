@@ -25,6 +25,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   internalArray: string[] = [];
   internalObject: object = {};
   keys: string[] = [];
@@ -124,13 +125,13 @@ export default class Widget extends WidgetInput {
       changes["propArray"] &&
       changes["propArray"].currentValue === undefined
     ) {
-      this.propArray = [];
+      this.propArray = this.propsDefaults.propArray;
     }
     if (
       changes["propObject"] &&
       changes["propObject"].currentValue === undefined
     ) {
-      this.propObject = {};
+      this.propObject = this.propsDefaults.propObject;
     }
 
     if (

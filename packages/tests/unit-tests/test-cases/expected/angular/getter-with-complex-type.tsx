@@ -47,6 +47,7 @@ import { CommonModule } from "@angular/common";
   template: `<div></div>`,
 })
 export default class Widget extends Props {
+  propsDefaults = new Props();
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {
@@ -109,7 +110,7 @@ export default class Widget extends Props {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = 10;
+      this.p = this.propsDefaults.p;
     }
 
     if (["p"].some((d) => changes[d])) {

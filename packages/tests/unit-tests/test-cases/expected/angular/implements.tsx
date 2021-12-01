@@ -33,6 +33,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   __onClick(): void {}
   get __restAttributes(): any {
     return {};
@@ -46,16 +47,16 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = "10";
+      this.p = this.propsDefaults.p;
     }
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = { value: "" };
+      this.data = this.propsDefaults.data;
     }
     if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = { index: 0 };
+      this.info = this.propsDefaults.info;
     }
   }
 

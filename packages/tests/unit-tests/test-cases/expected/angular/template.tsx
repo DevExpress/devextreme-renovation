@@ -101,6 +101,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetInput {
+  propsDefaults = new WidgetInput();
   get __restAttributes(): any {
     return {};
   }
@@ -113,7 +114,7 @@ export default class WidgetWithTemplate extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
-      this.someProp = false;
+      this.someProp = this.propsDefaults.someProp;
     }
   }
 

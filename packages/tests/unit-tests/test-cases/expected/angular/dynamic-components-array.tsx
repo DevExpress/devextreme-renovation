@@ -148,6 +148,7 @@ export class DynamicComponentDirective {
   ></ng-template>`,
 })
 export default class DynamicComponentCreator extends Props {
+  propsDefaults = new Props();
   get __Components(): any[] {
     if (this.__getterCache["Components"] !== undefined) {
       return this.__getterCache["Components"];
@@ -184,7 +185,7 @@ export default class DynamicComponentCreator extends Props {
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
   }
 

@@ -33,6 +33,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   __onClick(): any {
     const v = this.height;
   }
@@ -48,10 +49,10 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["width"] && changes["width"].currentValue === undefined) {
-      this.width = 10;
+      this.width = this.propsDefaults.width;
     }
   }
 

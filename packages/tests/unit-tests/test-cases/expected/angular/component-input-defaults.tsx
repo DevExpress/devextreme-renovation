@@ -171,6 +171,7 @@ class DxWidgetTexts2 extends TextsProps {}
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetPropsType {
+  propsDefaults = new WidgetPropsType();
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
@@ -223,22 +224,22 @@ export default class Widget extends WidgetPropsType {
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["text"] && changes["text"].currentValue === undefined) {
-      this.text = new WidgetProps().text;
+      this.text = this.propsDefaults.text;
     }
     if (changes["texts1"] && changes["texts1"].currentValue === undefined) {
-      this.texts1 = new WidgetProps().texts1;
+      this.texts1 = this.propsDefaults.texts1;
     }
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = new WidgetProps().height;
+      this.height = this.propsDefaults.height;
     }
     if (changes["width"] && changes["width"].currentValue === undefined) {
-      this.width = new WidgetProps().width;
+      this.width = this.propsDefaults.width;
     }
     if (
       changes["expressionDefault"] &&
       changes["expressionDefault"].currentValue === undefined
     ) {
-      this.expressionDefault = new ExpressionProps().expressionDefault;
+      this.expressionDefault = this.propsDefaults.expressionDefault;
     }
   }
 

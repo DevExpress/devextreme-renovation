@@ -47,6 +47,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   ></ng-template>`,
 })
 export class ExternalLayout extends Props {
+  propsDefaults = new Props();
   get __restAttributes(): any {
     return {};
   }
@@ -59,7 +60,7 @@ export class ExternalLayout extends Props {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["prop"] && changes["prop"].currentValue === undefined) {
-      this.prop = 0;
+      this.prop = this.propsDefaults.prop;
     }
   }
 

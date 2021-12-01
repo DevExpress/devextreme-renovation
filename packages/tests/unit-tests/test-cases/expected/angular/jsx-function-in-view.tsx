@@ -34,6 +34,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   get __loadingProps(): any {
     return { text: "Loading..." };
   }
@@ -52,13 +53,13 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["loading"] && changes["loading"].currentValue === undefined) {
-      this.loading = true;
+      this.loading = this.propsDefaults.loading;
     }
     if (
       changes["greetings"] &&
       changes["greetings"].currentValue === undefined
     ) {
-      this.greetings = "Hello";
+      this.greetings = this.propsDefaults.greetings;
     }
   }
 

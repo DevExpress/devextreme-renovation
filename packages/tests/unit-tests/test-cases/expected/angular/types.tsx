@@ -60,6 +60,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -72,61 +73,61 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["str"] && changes["str"].currentValue === undefined) {
-      this.str = "";
+      this.str = this.propsDefaults.str;
     }
     if (changes["num"] && changes["num"].currentValue === undefined) {
-      this.num = 1;
+      this.num = this.propsDefaults.num;
     }
     if (changes["bool"] && changes["bool"].currentValue === undefined) {
-      this.bool = true;
+      this.bool = this.propsDefaults.bool;
     }
     if (changes["arr"] && changes["arr"].currentValue === undefined) {
-      this.arr = [];
+      this.arr = this.propsDefaults.arr;
     }
     if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
-      this.strArr = ["a", "b"];
+      this.strArr = this.propsDefaults.strArr;
     }
     if (changes["obj"] && changes["obj"].currentValue === undefined) {
-      this.obj = {};
+      this.obj = this.propsDefaults.obj;
     }
     if (changes["date"] && changes["date"].currentValue === undefined) {
-      this.date = new Date();
+      this.date = this.propsDefaults.date;
     }
     if (changes["func"] && changes["func"].currentValue === undefined) {
-      this.func = () => {};
+      this.func = this.propsDefaults.func;
     }
     if (changes["symbol"] && changes["symbol"].currentValue === undefined) {
-      this.symbol = Symbol("x");
+      this.symbol = this.propsDefaults.symbol;
     }
     if (
       changes["externalEnum"] &&
       changes["externalEnum"].currentValue === undefined
     ) {
-      this.externalEnum = "data";
+      this.externalEnum = this.propsDefaults.externalEnum;
     }
     if (
       changes["externalUnion"] &&
       changes["externalUnion"].currentValue === undefined
     ) {
-      this.externalUnion = 0;
+      this.externalUnion = this.propsDefaults.externalUnion;
     }
     if (
       changes["externalObj"] &&
       changes["externalObj"].currentValue === undefined
     ) {
-      this.externalObj = { number: 0, text: "text" };
+      this.externalObj = this.propsDefaults.externalObj;
     }
     if (
       changes["externalArray"] &&
       changes["externalArray"].currentValue === undefined
     ) {
-      this.externalArray = ["s1", "s2"];
+      this.externalArray = this.propsDefaults.externalArray;
     }
     if (
       changes["externalString"] &&
       changes["externalString"].currentValue === undefined
     ) {
-      this.externalString = "someValue";
+      this.externalString = this.propsDefaults.externalString;
     }
   }
 

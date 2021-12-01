@@ -127,6 +127,7 @@ export default class Widget extends WidgetProps {
   global_getValue = getValue;
   global_SomeClass = SomeClass;
   global_array = array;
+  propsDefaults = new WidgetProps();
   __addPostfix(index: number): any {
     return `_#${index}`;
   }
@@ -149,7 +150,7 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["cells"] && changes["cells"].currentValue === undefined) {
-      this.cells = [];
+      this.cells = this.propsDefaults.cells;
     }
   }
 

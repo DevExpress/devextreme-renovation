@@ -27,6 +27,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  propsDefaults = new WidgetInput();
   __getHeight(): number {
     const { height } = this;
     const { height: _height } = this;
@@ -51,10 +52,10 @@ export default class Widget extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
     if (changes["selected"] && changes["selected"].currentValue === undefined) {
-      this.selected = false;
+      this.selected = this.propsDefaults.selected;
     }
   }
 

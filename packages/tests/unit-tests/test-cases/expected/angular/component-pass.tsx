@@ -86,6 +86,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  propsDefaults = new WidgetProps();
   get __restAttributes(): any {
     return {};
   }
@@ -98,7 +99,7 @@ export default class Widget extends WidgetProps {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["mode"] && changes["mode"].currentValue === undefined) {
-      this.mode = false;
+      this.mode = this.propsDefaults.mode;
     }
   }
 

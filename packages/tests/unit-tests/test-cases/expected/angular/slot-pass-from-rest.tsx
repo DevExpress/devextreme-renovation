@@ -41,6 +41,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
+  propsDefaults = new WidgetInput();
   get __restAttributes(): any {
     return {};
   }
@@ -56,7 +57,7 @@ export default class SlotPass extends WidgetInput {
 
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = "";
+      this.p = this.propsDefaults.p;
     }
   }
 

@@ -255,6 +255,7 @@ export class DynamicComponentDirective {
   >`,
 })
 export default class DynamicComponentCreator extends Props {
+  propsDefaults = new Props();
   internalStateValue: number = 0;
   get __Component(): typeof DynamicComponent {
     return DynamicComponent;
@@ -292,7 +293,7 @@ export default class DynamicComponentCreator extends Props {
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = 10;
+      this.height = this.propsDefaults.height;
     }
   }
 
