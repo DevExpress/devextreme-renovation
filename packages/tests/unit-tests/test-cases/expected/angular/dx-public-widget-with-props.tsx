@@ -28,6 +28,7 @@ import { CommonModule } from "@angular/common";
   template: `<div>{{ optionalValue || value }}</div>`,
 })
 export class PublicWidgetWithProps extends WidgetWithPropsInput {
+  propsDefaults = new WidgetWithPropsInput();
   doSomething(): any {}
   get __restAttributes(): any {
     return {};
@@ -37,6 +38,15 @@ export class PublicWidgetWithProps extends WidgetWithPropsInput {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
         this.changeDetection.detectChanges();
     });
+  }
+
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (changes["value"] && changes["value"].currentValue === undefined) {
+      this.value = this.propsDefaults.value;
+    }
+    if (changes["number"] && changes["number"].currentValue === undefined) {
+      this.number = this.propsDefaults.number;
+    }
   }
 
   _onClick: any;
