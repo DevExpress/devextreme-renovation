@@ -53,7 +53,9 @@ import { CommonModule } from "@angular/common";
       #defaultCompTemplateDefault
       let-optionalValue="optionalValue"
       let-value="value"
-      ><dx-widget-with-props
+    >
+      <dx-widget-with-props
+        #compRef
         [optionalValue]="
           optionalValue !== undefined
             ? optionalValue
@@ -61,6 +63,7 @@ import { CommonModule } from "@angular/common";
         "
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
+      <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
     </ng-template>
     <ng-template #defaultFuncTemplateDefault let-value="value">
       <div

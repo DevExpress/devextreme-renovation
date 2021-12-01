@@ -70,12 +70,12 @@ export class ObjectLiteral extends Expression {
     this.multiLine = multiLine;
   }
 
-  getProperty(propertyName: string) {
+  getProperty<T = Expression>(propertyName: string): T | null | undefined {
     const property = this.properties.find(
       (p) => p.key && p.key.toString() === propertyName,
     );
     if (property) {
-      return property.value;
+      return property.value as T | null;
     }
     return undefined;
   }

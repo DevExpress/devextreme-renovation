@@ -273,7 +273,11 @@ mocha.describe("react-generation", function () {
   mocha.it("svg-element", function () {
     this.testGenerator(this.test!.title);
   });
-
+  
+  mocha.it("dx-public-widget-with-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+  
   mocha.it("dx-widget-with-props", function () {
     this.testGenerator(this.test!.title);
   });
