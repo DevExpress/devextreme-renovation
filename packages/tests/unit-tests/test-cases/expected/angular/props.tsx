@@ -32,6 +32,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -55,7 +59,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   __getHeight(): number {
     this._onClick(10);
     this._onClick(11);
@@ -88,39 +92,11 @@ export default class Widget extends WidgetInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
-    if (changes["export"] && changes["export"].currentValue === undefined) {
-      this.export = this.propsDefaults.export;
-    }
-    if (changes["array"] && changes["array"].currentValue === undefined) {
-      this.array = this.propsDefaults.array;
-    }
-    if (
-      changes["expressionDefault"] &&
-      changes["expressionDefault"].currentValue === undefined
-    ) {
-      this.expressionDefault = this.propsDefaults.expressionDefault;
-    }
-    if (
-      changes["expressionDefault1"] &&
-      changes["expressionDefault1"].currentValue === undefined
-    ) {
-      this.expressionDefault1 = this.propsDefaults.expressionDefault1;
-    }
-    if (
-      changes["expressionDefault2"] &&
-      changes["expressionDefault2"].currentValue === undefined
-    ) {
-      this.expressionDefault2 = this.propsDefaults.expressionDefault2;
-    }
-    if (
-      changes["stringValue"] &&
-      changes["stringValue"].currentValue === undefined
-    ) {
-      this.stringValue = this.propsDefaults.stringValue;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   _onClick: any;
@@ -134,6 +110,16 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = [
+      "height",
+      "export",
+      "array",
+      "expressionDefault",
+      "expressionDefault1",
+      "expressionDefault2",
+      "stringValue",
+    ].map((key) => ({ key, value: defaultProps[key] }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);
     };

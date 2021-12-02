@@ -137,6 +137,10 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxo-base-nested",
@@ -171,7 +175,7 @@ class DxWidgetTexts2 extends TextsProps {}
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetPropsType {
-  propsDefaults = new WidgetPropsType();
+  defaultEntries: DefaultEntries;
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
@@ -223,24 +227,7 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["text"] && changes["text"].currentValue === undefined) {
-      this.text = this.propsDefaults.text;
-    }
-    if (changes["texts1"] && changes["texts1"].currentValue === undefined) {
-      this.texts1 = this.propsDefaults.texts1;
-    }
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
-    if (changes["width"] && changes["width"].currentValue === undefined) {
-      this.width = this.propsDefaults.width;
-    }
-    if (
-      changes["expressionDefault"] &&
-      changes["expressionDefault"].currentValue === undefined
-    ) {
-      this.expressionDefault = this.propsDefaults.expressionDefault;
-    }
+    updateUndefinedFromDefaults(this as Record<string, unknown>, changes, this.defaultEntries);
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -251,6 +238,14 @@ export default class Widget extends WidgetPropsType {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetPropsType() as { [key: string]: any };
+    this.defaultEntries = [
+      "text",
+      "texts1",
+      "height",
+      "width",
+      "expressionDefault",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
   @Input() set texts2(value: DxWidgetTexts2 | undefined) {
     this.__texts2 = value;

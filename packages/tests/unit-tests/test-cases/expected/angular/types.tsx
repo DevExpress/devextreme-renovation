@@ -37,6 +37,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -60,7 +64,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  propsDefaults = new WidgetProps();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -72,63 +76,11 @@ export default class Widget extends WidgetProps {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["str"] && changes["str"].currentValue === undefined) {
-      this.str = this.propsDefaults.str;
-    }
-    if (changes["num"] && changes["num"].currentValue === undefined) {
-      this.num = this.propsDefaults.num;
-    }
-    if (changes["bool"] && changes["bool"].currentValue === undefined) {
-      this.bool = this.propsDefaults.bool;
-    }
-    if (changes["arr"] && changes["arr"].currentValue === undefined) {
-      this.arr = this.propsDefaults.arr;
-    }
-    if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
-      this.strArr = this.propsDefaults.strArr;
-    }
-    if (changes["obj"] && changes["obj"].currentValue === undefined) {
-      this.obj = this.propsDefaults.obj;
-    }
-    if (changes["date"] && changes["date"].currentValue === undefined) {
-      this.date = this.propsDefaults.date;
-    }
-    if (changes["func"] && changes["func"].currentValue === undefined) {
-      this.func = this.propsDefaults.func;
-    }
-    if (changes["symbol"] && changes["symbol"].currentValue === undefined) {
-      this.symbol = this.propsDefaults.symbol;
-    }
-    if (
-      changes["externalEnum"] &&
-      changes["externalEnum"].currentValue === undefined
-    ) {
-      this.externalEnum = this.propsDefaults.externalEnum;
-    }
-    if (
-      changes["externalUnion"] &&
-      changes["externalUnion"].currentValue === undefined
-    ) {
-      this.externalUnion = this.propsDefaults.externalUnion;
-    }
-    if (
-      changes["externalObj"] &&
-      changes["externalObj"].currentValue === undefined
-    ) {
-      this.externalObj = this.propsDefaults.externalObj;
-    }
-    if (
-      changes["externalArray"] &&
-      changes["externalArray"].currentValue === undefined
-    ) {
-      this.externalArray = this.propsDefaults.externalArray;
-    }
-    if (
-      changes["externalString"] &&
-      changes["externalString"].currentValue === undefined
-    ) {
-      this.externalString = this.propsDefaults.externalString;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -139,6 +91,23 @@ export default class Widget extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = [
+      "str",
+      "num",
+      "bool",
+      "arr",
+      "strArr",
+      "obj",
+      "date",
+      "func",
+      "symbol",
+      "externalEnum",
+      "externalUnion",
+      "externalObj",
+      "externalArray",
+      "externalString",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }
 @NgModule({

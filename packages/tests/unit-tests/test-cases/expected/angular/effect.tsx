@@ -26,6 +26,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -35,7 +39,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   i: number = 10;
   j: number = 20;
   __setupData(): any {
@@ -105,15 +109,11 @@ export default class Widget extends WidgetInput {
     }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = this.propsDefaults.p;
-    }
-    if (changes["r"] && changes["r"].currentValue === undefined) {
-      this.r = this.propsDefaults.r;
-    }
-    if (changes["s"] && changes["s"].currentValue === undefined) {
-      this.s = this.propsDefaults.s;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
 
     if (this.__destroyEffects.length && ["p", "s"].some((d) => changes[d])) {
       this.__schedule_setupData();
@@ -140,6 +140,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p", "r", "s"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._sChange = (e: any) => {
       this.sChange.emit(e);
       this._detectChanges();

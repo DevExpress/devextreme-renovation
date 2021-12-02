@@ -25,6 +25,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -33,7 +37,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   __onClick(): void {}
   get __restAttributes(): any {
     return {};
@@ -46,18 +50,11 @@ export default class Widget extends WidgetInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = this.propsDefaults.p;
-    }
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
-    if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = this.propsDefaults.data;
-    }
-    if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = this.propsDefaults.info;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -68,6 +65,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p", "height", "data", "info"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

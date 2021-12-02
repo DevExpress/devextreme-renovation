@@ -24,6 +24,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -44,7 +48,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   internalState: number = 0;
   innerData?: string;
   __updateState(): any {
@@ -78,12 +82,11 @@ export default class Widget extends WidgetInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["state1"] && changes["state1"].currentValue === undefined) {
-      this.state1 = this.propsDefaults.state1;
-    }
-    if (changes["state2"] && changes["state2"].currentValue === undefined) {
-      this.state2 = this.propsDefaults.state2;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   _state1Change: any;
@@ -97,6 +100,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["state1", "state2"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._state1Change = (e: any) => {
       this.state1Change.emit(e);
       this._detectChanges();

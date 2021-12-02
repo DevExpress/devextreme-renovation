@@ -27,6 +27,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -255,7 +259,7 @@ export class DynamicComponentDirective {
   >`,
 })
 export default class DynamicComponentCreator extends Props {
-  propsDefaults = new Props();
+  defaultEntries: DefaultEntries;
   internalStateValue: number = 0;
   get __Component(): typeof DynamicComponent {
     return DynamicComponent;
@@ -292,9 +296,11 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   ngAfterViewChecked() {
@@ -309,6 +315,11 @@ export default class DynamicComponentCreator extends Props {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["height"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   set _internalStateValue(internalStateValue: number) {
     this.internalStateValue = internalStateValue;

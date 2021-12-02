@@ -51,6 +51,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -60,7 +64,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends Props {
-  propsDefaults = new Props();
+  defaultEntries: DefaultEntries;
   contextConsumerConsumer: number;
   get __sum(): any {
     return this.provider.value + this.contextConsumerConsumer;
@@ -92,9 +96,11 @@ export default class Widget extends Props {
   _destroyContext: Array<() => void> = [];
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["p1"] && changes["p1"].currentValue === undefined) {
-      this.p1 = this.propsDefaults.p1;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
@@ -115,6 +121,11 @@ export default class Widget extends Props {
     @Host() private contextProviderProvider: GetterContext
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["p1"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     if (!contextConsumer) {
       this.contextConsumer = new P1Context();
     } else {

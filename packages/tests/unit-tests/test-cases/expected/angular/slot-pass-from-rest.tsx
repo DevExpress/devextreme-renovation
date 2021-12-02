@@ -22,6 +22,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-slot-pass",
@@ -41,7 +45,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -56,9 +60,11 @@ export default class SlotPass extends WidgetInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["p"] && changes["p"].currentValue === undefined) {
-      this.p = this.propsDefaults.p;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -69,6 +75,11 @@ export default class SlotPass extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>

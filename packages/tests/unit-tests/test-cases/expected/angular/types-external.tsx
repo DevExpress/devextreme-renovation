@@ -28,6 +28,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -36,7 +40,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  propsDefaults = new WidgetProps();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -48,24 +52,11 @@ export default class Widget extends WidgetProps {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = this.propsDefaults.data;
-    }
-    if (changes["union"] && changes["union"].currentValue === undefined) {
-      this.union = this.propsDefaults.union;
-    }
-    if (changes["obj"] && changes["obj"].currentValue === undefined) {
-      this.obj = this.propsDefaults.obj;
-    }
-    if (changes["strArr"] && changes["strArr"].currentValue === undefined) {
-      this.strArr = this.propsDefaults.strArr;
-    }
-    if (changes["s"] && changes["s"].currentValue === undefined) {
-      this.s = this.propsDefaults.s;
-    }
-    if (changes["strDate"] && changes["strDate"].currentValue === undefined) {
-      this.strDate = this.propsDefaults.strDate;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -76,6 +67,15 @@ export default class Widget extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = [
+      "data",
+      "union",
+      "obj",
+      "strArr",
+      "s",
+      "strDate",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }
 @NgModule({

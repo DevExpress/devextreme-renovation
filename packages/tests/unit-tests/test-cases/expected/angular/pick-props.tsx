@@ -20,6 +20,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -32,7 +36,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetProps {
-  propsDefaults = new WidgetProps();
+  defaultEntries: DefaultEntries;
   innerData: Options = { value: "" };
   get __restAttributes(): any {
     return {};
@@ -45,12 +49,11 @@ export default class Widget extends WidgetProps {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = this.propsDefaults.data;
-    }
-    if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = this.propsDefaults.info;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -61,6 +64,11 @@ export default class Widget extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["data", "info"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   set _innerData(innerData: Options) {
     this.innerData = innerData;

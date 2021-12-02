@@ -31,6 +31,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -40,7 +44,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 class Widget extends WidgetProps {
-  propsDefaults = new WidgetProps();
+  defaultEntries: DefaultEntries;
   get __internalInterfaceGetter(): internalInterface {
     if (this.__getterCache["internalInterfaceGetter"] !== undefined) {
       return this.__getterCache["internalInterfaceGetter"];
@@ -102,18 +106,11 @@ class Widget extends WidgetProps {
   } = {};
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["someProp"] && changes["someProp"].currentValue === undefined) {
-      this.someProp = this.propsDefaults.someProp;
-    }
-    if (changes["type"] && changes["type"].currentValue === undefined) {
-      this.type = this.propsDefaults.type;
-    }
-    if (
-      changes["currentDate"] &&
-      changes["currentDate"].currentValue === undefined
-    ) {
-      this.currentDate = this.propsDefaults.currentDate;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
 
     if (["someProp"].some((d) => changes[d])) {
       this.__getterCache["internalInterfaceGetter"] = undefined;
@@ -133,6 +130,11 @@ class Widget extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["someProp", "type", "currentDate"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._currentDateChange = (e: any) => {
       this.currentDateChange.emit(e);
       this._detectChanges();

@@ -17,6 +17,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -34,7 +38,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   get __loadingProps(): any {
     return { text: "Loading..." };
   }
@@ -52,15 +56,11 @@ export default class Widget extends WidgetInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["loading"] && changes["loading"].currentValue === undefined) {
-      this.loading = this.propsDefaults.loading;
-    }
-    if (
-      changes["greetings"] &&
-      changes["greetings"].currentValue === undefined
-    ) {
-      this.greetings = this.propsDefaults.greetings;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -71,6 +71,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["loading", "greetings"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

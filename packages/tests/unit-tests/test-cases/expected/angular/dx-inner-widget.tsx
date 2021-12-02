@@ -22,6 +22,10 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -108,7 +112,7 @@ export default class InnerWidget
   extends InnerWidgetProps
   implements ControlValueAccessor
 {
-  propsDefaults = new InnerWidgetProps();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -135,9 +139,11 @@ export default class InnerWidget
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["value"] && changes["value"].currentValue === undefined) {
-      this.value = this.propsDefaults.value;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   _onSelect: any;
@@ -150,6 +156,11 @@ export default class InnerWidget
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new InnerWidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["value"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);
     };

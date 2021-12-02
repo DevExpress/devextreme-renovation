@@ -17,6 +17,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-child",
@@ -28,7 +32,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Child extends ChildInput {
-  propsDefaults = new ChildInput();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -40,9 +44,11 @@ export default class Child extends ChildInput {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -53,6 +59,11 @@ export default class Child extends ChildInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new ChildInput() as { [key: string]: any };
+    this.defaultEntries = ["height"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

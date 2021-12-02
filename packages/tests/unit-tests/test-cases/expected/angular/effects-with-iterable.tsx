@@ -17,6 +17,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -25,7 +29,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  propsDefaults = new WidgetInput();
+  defaultEntries: DefaultEntries;
   internalArray: string[] = [];
   internalObject: object = {};
   keys: string[] = [];
@@ -121,18 +125,11 @@ export default class Widget extends WidgetInput {
     }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (
-      changes["propArray"] &&
-      changes["propArray"].currentValue === undefined
-    ) {
-      this.propArray = this.propsDefaults.propArray;
-    }
-    if (
-      changes["propObject"] &&
-      changes["propObject"].currentValue === undefined
-    ) {
-      this.propObject = this.propsDefaults.propObject;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
 
     if (
       this.__destroyEffects.length &&
@@ -192,6 +189,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["propArray", "propObject"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   set _internalArray(internalArray: string[]) {
     this.internalArray = internalArray;

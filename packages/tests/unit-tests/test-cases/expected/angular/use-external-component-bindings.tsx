@@ -15,6 +15,10 @@ import {
   convertRulesToOptions,
   DefaultOptionsRule,
 } from "../../../../jquery-helpers/default_options";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 type WidgetOptionRule = DefaultOptionsRule<Partial<Props>>;
 
@@ -32,7 +36,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
   >`,
 })
 export default class Widget extends Props {
-  propsDefaults = new Props();
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -44,15 +48,11 @@ export default class Widget extends Props {
   }
 
   ngOnChanges(changes: { [name: string]: any }) {
-    if (changes["height"] && changes["height"].currentValue === undefined) {
-      this.height = this.propsDefaults.height;
-    }
-    if (changes["data"] && changes["data"].currentValue === undefined) {
-      this.data = this.propsDefaults.data;
-    }
-    if (changes["info"] && changes["info"].currentValue === undefined) {
-      this.info = this.propsDefaults.info;
-    }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })
@@ -68,6 +68,11 @@ export default class Widget extends Props {
     Object.keys(defaultOptions).forEach((option) => {
       (this as any)[option] = (defaultOptions as any)[option];
     });
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["height", "data", "info"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({
