@@ -6368,8 +6368,10 @@ mocha.describe("Angular generator", function () {
                 import {Injectable, Input} from "@angular/core"
                 @Injectable()
                 export default class ComponentInput {
-                    @Input() p1?:number = 10;
-                    @Input() p2?:number = 11;
+                    @Input()
+                    p1?: number = 10;
+                    @Input()
+                    p2?: number = 11;
                 }`)
       );
     });
@@ -6621,7 +6623,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(property.toString()),
-        getResult(`@Input() pressed?:boolean = false`)
+        getResult(`@Input()
+                  pressed?:boolean = false;`)
       );
     });
 
@@ -6868,7 +6871,6 @@ mocha.describe("Angular generator", function () {
         [],
         []
       );
-
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`

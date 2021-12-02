@@ -16,6 +16,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-list",
@@ -36,6 +40,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class List extends ListInput {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -53,6 +58,14 @@ export default class List extends ListInput {
     return item.key;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -61,6 +74,11 @@ export default class List extends ListInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new ListInput() as { [key: string]: any };
+    this.defaultEntries = ["items", "keyExpr"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

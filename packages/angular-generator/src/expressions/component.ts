@@ -596,11 +596,19 @@ export class AngularComponent extends Component {
     ];
 
     this.compileDefaultOptionsImport(imports);
+    this.compileDefaultPropsImport(imports);
 
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[],
+  compileDefaultPropsImport(imports: string[]): void {
+    const propsWithDefault = this.getPropsWithDefault();
+    if (propsWithDefault.length) {
+      imports.push("import {updateUndefinedFromDefaults, DefaultEntries} from '@devextreme/runtime/angular'");
+    }
+  }
+
+  compileGetterCache(ngOnChangesStatements: string[],
     options?: toStringOptions,
     resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
@@ -642,9 +650,9 @@ export class AngularComponent extends Component {
             );
           }
           if (propsDependency.includes('props')) {
-            ngOnChanges.push(deleteCacheStatement);
+            ngOnChangesStatements.push(deleteCacheStatement);
           } else if (conditionArray.length) {
-            ngOnChanges.push(`
+            ngOnChangesStatements.push(`
                         if (${conditionArray.join('&&')}) {
                             ${deleteCacheStatement}
                         }`);
@@ -1472,6 +1480,35 @@ export class AngularComponent extends Component {
         }));
   }
 
+  getPropsWithDefault(): Property[] {
+    return this.members.filter((m) => m instanceof Property
+    && (m.isState || m._hasDecorator(Decorators.OneWay))
+    && m.initializer && m.initializer.toString()) as Property[];
+  }
+
+  compileDefaultInputValues(
+    ngOnChangesStatements: string[],
+    constructorStatements: string[],
+  ): string {
+    const propsWithDefault = this.getPropsWithDefault();
+
+    if (propsWithDefault.length) {
+      ngOnChangesStatements.push('updateUndefinedFromDefaults(this as Record<string, unknown>, changes, this.defaultEntries)');
+
+      const propsClass = this.heritageClauses
+        .filter((h) => h.isJsxComponent)
+        .map((h) => h.types.map((t) => t.type.toString()))[0];
+
+      constructorStatements.push(
+        `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
+        `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
+      );
+
+      return 'defaultEntries: DefaultEntries';
+    }
+    return '';
+  }
+
   getContentTemplateOutlet(refName: string): string {
     return `<ng-content *ngTemplateOutlet="${refName}?.widgetTemplate"></ng-content>`;
   }
@@ -1608,6 +1645,7 @@ export class AngularComponent extends Component {
     componentDecorator + trackBy,
     ' = ',
   ).join(';\n')}
+            ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
             ${this.members
     .filter((m) => !m.inherited && !(m instanceof SetAccessor))
     .map((m) => m.toString({

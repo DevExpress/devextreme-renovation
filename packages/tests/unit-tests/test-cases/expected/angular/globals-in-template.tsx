@@ -25,6 +25,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget-with-globals",
@@ -47,6 +51,7 @@ import { CommonModule } from "@angular/common";
 export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
   global_getKey = getKey;
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -61,6 +66,14 @@ export default class WidgetWithGlobals extends WidgetProps {
     return this.global_getKey(item);
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -69,6 +82,11 @@ export default class WidgetWithGlobals extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["items"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({
