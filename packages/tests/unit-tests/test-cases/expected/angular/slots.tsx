@@ -1,10 +1,17 @@
 import { Injectable, ViewChild, ElementRef } from "@angular/core";
 @Injectable()
-class WidgetInput {
+class SlotsWidgetProps {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
 
   get namedSlot() {
     const childNodes = this.__slotNamedSlot?.nativeElement?.childNodes;
+    return childNodes && childNodes.length > 2;
+  }
+  __slotNamedSlotWithSelector?: ElementRef<HTMLDivElement>;
+
+  get namedSlotWithSelector() {
+    const childNodes =
+      this.__slotNamedSlotWithSelector?.nativeElement?.childNodes;
     return childNodes && childNodes.length > 2;
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -28,10 +35,15 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-slots-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><div
+      ><div
+        ><div #slotNamedSlotWithSelector style="display: contents"
+          ><ng-container
+            [ngTemplateOutlet]="dxnamedSlotWithSelector"
+          ></ng-container></div></div
       ><div
         ><div #slotNamedSlot style="display: contents"
           ><ng-container
@@ -43,11 +55,13 @@ import { CommonModule } from "@angular/common";
             [ngTemplateOutlet]="dxchildren"
           ></ng-container></div></div></div
     ><ng-template #dxnamedSlot
-      ><ng-content select="[namedSlot]"></ng-content></ng-template
+      ><ng-content select="[data-namedslot]"></ng-content></ng-template
+    ><ng-template #dxnamedSlotWithSelector
+      ><ng-content select=".namedSlot"></ng-content></ng-template
     ><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,
 })
-export default class Widget extends WidgetInput {
+export default class SlotsWidget extends SlotsWidgetProps {
   get __restAttributes(): any {
     return {};
   }
@@ -77,6 +91,16 @@ export default class Widget extends WidgetInput {
       this._detectChanges();
     }
   }
+  @ViewChild("slotNamedSlotWithSelector") set slotNamedSlotWithSelector(
+    slot: ElementRef<HTMLDivElement>
+  ) {
+    const oldValue = this.namedSlotWithSelector;
+    this.__slotNamedSlotWithSelector = slot;
+    const newValue = this.namedSlotWithSelector;
+    if (!!oldValue !== !!newValue) {
+      this._detectChanges();
+    }
+  }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
@@ -89,10 +113,10 @@ export default class Widget extends WidgetInput {
   }
 }
 @NgModule({
-  declarations: [Widget],
+  declarations: [SlotsWidget],
   imports: [CommonModule],
 
-  exports: [Widget],
+  exports: [SlotsWidget],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxSlotsWidgetModule {}
+export { SlotsWidget as DxSlotsWidgetComponent };

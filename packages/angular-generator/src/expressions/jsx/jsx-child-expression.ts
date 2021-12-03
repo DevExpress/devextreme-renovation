@@ -220,7 +220,7 @@ export class JsxChildExpression extends JsxExpression {
     return options?.members
       .filter((m) => m.isSlot)
       .find(
-        (s) => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1,
+        (s) => (stringValue === s.getter(options.newComponentContext)),
       ) as Property | undefined;
   }
 

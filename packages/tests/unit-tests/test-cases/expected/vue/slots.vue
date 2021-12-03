@@ -1,13 +1,14 @@
 <template>
   <div
+    ><div><slot name="namedSlotWithSelector"></slot></div
     ><div><slot name="namedSlot"></slot></div><div><slot></slot></div
   ></div>
 </template>
 <script>
-const WidgetInput = {};
-export const DxWidget = {
-  name: "Widget",
-  props: WidgetInput,
+const SlotsWidgetProps = {};
+export const DxSlotsWidget = {
+  name: "SlotsWidget",
+  props: SlotsWidgetProps,
   computed: {
     __restAttributes() {
       return {};
@@ -15,10 +16,11 @@ export const DxWidget = {
     props() {
       return {
         namedSlot: this.$slots.namedSlot,
+        namedSlotWithSelector: this.$slots.namedSlotWithSelector,
         children: this.$slots.default,
       };
     },
   },
 };
-export default DxWidget;
+export default DxSlotsWidget;
 </script>
