@@ -1,6 +1,6 @@
 <template>
   <div
-    ><div><slot name="namedSlotWithSelector"></slot></div
+    ><div><slot name="selectorNamedSlot"></slot></div
     ><div><slot name="namedSlot"></slot></div><div><slot></slot></div
   ></div>
 </template>
@@ -16,7 +16,7 @@ export const DxSlotsWidget = {
     props() {
       return {
         namedSlot: this.$slots.namedSlot,
-        namedSlotWithSelector: this.$slots.namedSlotWithSelector,
+        selectorNamedSlot: this.$slots.selectorNamedSlot,
         children: this.$slots.default,
       };
     },

@@ -1,7 +1,7 @@
 function view(viewModel: SlotsWidget) {
   return (
     <div>
-      <div>{viewModel.props.namedSlotWithSelector}</div>
+      <div>{viewModel.props.selectorNamedSlot}</div>
 
       <div>{viewModel.props.namedSlot}</div>
 
@@ -12,7 +12,7 @@ function view(viewModel: SlotsWidget) {
 
 export declare type SlotsWidgetPropsType = {
   namedSlot?: any;
-  namedSlotWithSelector?: any;
+  selectorNamedSlot?: any;
   children?: any;
 };
 const SlotsWidgetProps: SlotsWidgetPropsType = {};
@@ -35,8 +35,7 @@ export default function SlotsWidget(
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, namedSlot, namedSlotWithSelector, ...restProps } =
-        props;
+      const { children, namedSlot, selectorNamedSlot, ...restProps } = props;
       return restProps;
     },
     [props]

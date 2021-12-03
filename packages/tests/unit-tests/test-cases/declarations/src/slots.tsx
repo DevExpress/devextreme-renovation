@@ -8,7 +8,7 @@ import {
 function view(viewModel: SlotsWidget) {
   return (
     <div>
-      <div>{viewModel.props.namedSlotWithSelector}</div>
+      <div>{viewModel.props.selectorNamedSlot}</div>
       <div>{viewModel.props.namedSlot}</div>
       <div>{viewModel.props.children}</div>
     </div>
@@ -18,7 +18,7 @@ function view(viewModel: SlotsWidget) {
 @ComponentBindings()
 class SlotsWidgetProps {
   @Slot() namedSlot?: JSX.Element;
-  @Slot({ selector: '.namedSlot' }) namedSlotWithSelector?: JSX.Element;
+  @Slot({ selector: '.namedSlot' }) selectorNamedSlot?: JSX.Element;
   @Slot() children?: JSX.Element;
 }
 @Component({

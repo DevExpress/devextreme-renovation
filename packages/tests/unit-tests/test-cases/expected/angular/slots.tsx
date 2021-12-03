@@ -7,11 +7,10 @@ class SlotsWidgetProps {
     const childNodes = this.__slotNamedSlot?.nativeElement?.childNodes;
     return childNodes && childNodes.length > 2;
   }
-  __slotNamedSlotWithSelector?: ElementRef<HTMLDivElement>;
+  __slotSelectorNamedSlot?: ElementRef<HTMLDivElement>;
 
-  get namedSlotWithSelector() {
-    const childNodes =
-      this.__slotNamedSlotWithSelector?.nativeElement?.childNodes;
+  get selectorNamedSlot() {
+    const childNodes = this.__slotSelectorNamedSlot?.nativeElement?.childNodes;
     return childNodes && childNodes.length > 2;
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -40,9 +39,9 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><div
       ><div
-        ><div #slotNamedSlotWithSelector style="display: contents"
+        ><div #slotSelectorNamedSlot style="display: contents"
           ><ng-container
-            [ngTemplateOutlet]="dxnamedSlotWithSelector"
+            [ngTemplateOutlet]="dxselectorNamedSlot"
           ></ng-container></div></div
       ><div
         ><div #slotNamedSlot style="display: contents"
@@ -56,7 +55,7 @@ import { CommonModule } from "@angular/common";
           ></ng-container></div></div></div
     ><ng-template #dxnamedSlot
       ><ng-content select="[data-namedslot]"></ng-content></ng-template
-    ><ng-template #dxnamedSlotWithSelector
+    ><ng-template #dxselectorNamedSlot
       ><ng-content select=".namedSlot"></ng-content></ng-template
     ><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,
@@ -91,12 +90,12 @@ export default class SlotsWidget extends SlotsWidgetProps {
       this._detectChanges();
     }
   }
-  @ViewChild("slotNamedSlotWithSelector") set slotNamedSlotWithSelector(
+  @ViewChild("slotSelectorNamedSlot") set slotSelectorNamedSlot(
     slot: ElementRef<HTMLDivElement>
   ) {
-    const oldValue = this.namedSlotWithSelector;
-    this.__slotNamedSlotWithSelector = slot;
-    const newValue = this.namedSlotWithSelector;
+    const oldValue = this.selectorNamedSlot;
+    this.__slotSelectorNamedSlot = slot;
+    const newValue = this.selectorNamedSlot;
     if (!!oldValue !== !!newValue) {
       this._detectChanges();
     }
