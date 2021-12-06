@@ -75,6 +75,7 @@ import { CommonModule } from "@angular/common";
 })
 export default class List extends ListInput {
   global_noop = noop;
+
   get __restAttributes(): any {
     return {};
   }

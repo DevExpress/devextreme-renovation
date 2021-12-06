@@ -27,6 +27,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -46,10 +47,12 @@ export default class Widget extends WidgetProps {
   @ViewChild("divRefLink", { static: false })
   divRef?: ElementRef<HTMLDivElement>;
   @ViewChild("refLink", { static: false }) ref?: ElementRef<HTMLDivElement>;
-  forwardRef?: ElementRef<HTMLDivElement>;
+  forwardRef: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   @ViewChild("existingRefLink", { static: false })
   existingRef!: ElementRef<HTMLDivElement>;
-  existingForwardRef!: ElementRef<HTMLDivElement>;
+  existingForwardRef: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   __writeRefs(): any {
     let someRef;
     if (this.refProp) {

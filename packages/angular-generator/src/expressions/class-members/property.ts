@@ -120,9 +120,7 @@ export class Property extends BaseProperty {
     if (this.isForwardRef) {
       return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(' ')} ${this.name}${this.questionOrExclamationToken}:ElementRef<${
-        this.type
-      }>`;
+        .join(' ')} ${this.name}:ElementRef<${this.type}> = new UndefinedNativeElementRef<${this.type}>()`;
     }
 
     if (this.isTemplate) {

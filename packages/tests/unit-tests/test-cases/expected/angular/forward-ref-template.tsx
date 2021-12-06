@@ -16,6 +16,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-ref-on-children-template",
@@ -31,7 +32,8 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class RefOnChildrenTemplate extends Props {
-  child!: ElementRef<HTMLDivElement>;
+  child: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   __effect(): any {
     if (this.child.nativeElement) {
       this.child.nativeElement.innerHTML += "ParentText";

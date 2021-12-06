@@ -603,8 +603,13 @@ export class AngularComponent extends Component {
 
   compileDefaultPropsImport(imports: string[]): void {
     const propsWithDefault = this.getPropsWithDefault();
-    if (propsWithDefault.length) {
-      imports.push("import {updateUndefinedFromDefaults, DefaultEntries} from '@devextreme/runtime/angular'");
+    const hasForwardRefProperty = this.members.some((m) => m.isForwardRef);
+    const runTimeImports = [
+      ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
+      ...(hasForwardRefProperty ? ['UndefinedNativeElementRef'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
     }
   }
 
