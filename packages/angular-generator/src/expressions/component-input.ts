@@ -10,6 +10,7 @@ import {
   SimpleExpression,
   SyntaxKind,
   TypeExpression,
+  Decorator as BaseDecorator,
 } from '@devextreme-generator/core';
 
 import { AngularGeneratorContext } from '../types';
@@ -112,7 +113,7 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   createNestedPropertySetter(
-    decorator: Decorator[],
+    decorator: BaseDecorator[],
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,

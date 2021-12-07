@@ -384,9 +384,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       elementString = `<ng-container *ngTemplateOutlet="${contextExpr}${name}||${name}Default${contextString}">
       </ng-container>`;
       if (initializerComponent) {
-        options.templateComponents = options.templateComponents
-          ? [...new Set([...options.templateComponents, initializerComponent])]
-          : [initializerComponent];
+        if (!options.templateComponents) {
+          throw new Error('options.templateComponents should be initialized by component');
+        }
+        if (options.templateComponents.indexOf(initializerComponent) === -1) {
+          options.templateComponents.push(initializerComponent);
+        }
       }
       const contextElementsStr = contextElements.map((el) => el.key.toString());
       options.defaultTemplates = options.defaultTemplates || {};

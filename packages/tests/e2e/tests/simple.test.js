@@ -460,3 +460,23 @@ cloneTest("Cached getters reset if dependency updated", async (t) => {
     .expect((await getterCacheValue.textContent).trim())
     .eql('31 1 31 1 3')
 })
+
+cloneTest("Default prop value if undefined in parent", async (t) => {
+  const undefinedPropDefaults = Selector("#undefinedPropDefaults");
+  const undefPropsButton = Selector("#undefinedPropsButton");
+  await t
+    .expect((await undefinedPropDefaults.textContent).trim())
+    .eql('oneWayDefault twoWayDefault')
+  
+  await t.click(undefPropsButton)
+
+  await t
+    .expect((await undefinedPropDefaults.textContent).trim())
+    .eql('changedOneWay changedTwoWay')
+
+  await t.click(undefPropsButton)
+
+  await t
+    .expect((await undefinedPropDefaults.textContent).trim())
+    .eql('oneWayDefault twoWayDefault')
+})

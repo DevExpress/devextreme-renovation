@@ -21,7 +21,6 @@ class SimpleContext {
 type UserType = "user" | "not";
 
 import { Injectable, Input } from "@angular/core";
-
 @Injectable()
 export class Props {
   @Input() p: number = 10;
@@ -39,6 +38,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -48,6 +51,7 @@ import { CommonModule } from "@angular/common";
   template: `<div></div>`,
 })
 export default class Widget extends Props {
+  defaultEntries: DefaultEntries;
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {
@@ -109,6 +113,12 @@ export default class Widget extends Props {
   _destroyContext: Array<() => void> = [];
 
   ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+
     if (["p"].some((d) => changes[d])) {
       this.__getterCache["g1"] = undefined;
     }
@@ -131,6 +141,11 @@ export default class Widget extends Props {
     @SkipSelf() @Optional() private cons: SimpleContext
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["p"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     if (!cons) {
       this.cons = new SimpleContext();
     } else {

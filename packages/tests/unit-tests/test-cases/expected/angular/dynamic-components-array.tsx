@@ -23,6 +23,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "[dynamicComponent]",
@@ -148,6 +152,7 @@ export class DynamicComponentDirective {
   ></ng-template>`,
 })
 export default class DynamicComponentCreator extends Props {
+  defaultEntries: DefaultEntries;
   get __Components(): any[] {
     if (this.__getterCache["Components"] !== undefined) {
       return this.__getterCache["Components"];
@@ -182,6 +187,13 @@ export default class DynamicComponentCreator extends Props {
   ngAfterViewInit() {
     this.createDynamicComponents();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
 
   ngAfterViewChecked() {
     this.createDynamicComponents();
@@ -195,6 +207,11 @@ export default class DynamicComponentCreator extends Props {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["height"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

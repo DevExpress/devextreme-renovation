@@ -1,11 +1,10 @@
-import Props from "./component-bindings-only";
-import { Options } from "./types.d";
-import { Injectable, Input } from "@angular/core";
-import { AdditionalOptions } from "./types.d";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
 @Injectable()
-class WidgetProps {
-  @Input() data?: Options = new Props().data;
-  @Input() info?: AdditionalOptions = new Props().info;
+export class WidgetWithPropsInput {
+  @Input() value: string = "default text";
+  @Input() optionalValue?: string;
+  @Input() number?: number = 42;
+  @Output() onClick: EventEmitter<any> = new EventEmitter();
 }
 
 import {
@@ -26,18 +25,15 @@ import {
 } from "@devextreme/runtime/angular";
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-public-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["data", "info"],
-  template: `<ng-template #widgetTemplate
-    ><div>{{
-      data === undefined || data === null ? undefined : data.value
-    }}</div></ng-template
-  >`,
+  inputs: ["value", "optionalValue", "number"],
+  outputs: ["onClick"],
+  template: `<div>{{ optionalValue || value }}</div>`,
 })
-export default class Widget extends WidgetProps {
+export class PublicWidgetWithProps extends WidgetWithPropsInput {
   defaultEntries: DefaultEntries;
-  innerData: Options = { value: "" };
+  doSomething(): any {}
   get __restAttributes(): any {
     return {};
   }
@@ -56,6 +52,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
+  _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -64,22 +61,22 @@ export default class Widget extends WidgetProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
-    const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["data", "info"].map((key) => ({
+    const defaultProps = new WidgetWithPropsInput() as { [key: string]: any };
+    this.defaultEntries = ["value", "number"].map((key) => ({
       key,
       value: defaultProps[key],
     }));
-  }
-  set _innerData(innerData: Options) {
-    this.innerData = innerData;
-    this._detectChanges();
+    this._onClick = (e: any) => {
+      this.onClick.emit(e);
+    };
   }
 }
 @NgModule({
-  declarations: [Widget],
+  declarations: [PublicWidgetWithProps],
   imports: [CommonModule],
 
-  exports: [Widget],
+  exports: [PublicWidgetWithProps],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxPublicWidgetWithPropsModule {}
+export { PublicWidgetWithProps as DxPublicWidgetWithPropsComponent };
+export default PublicWidgetWithProps;
