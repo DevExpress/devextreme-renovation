@@ -1,4 +1,6 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
+import { Injectable } from "@angular/core";
+@Injectable()
 export class WidgetInput {}
 
 import {
@@ -20,6 +22,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
       #innerwidget1
+      style="display: contents"
       [selected]="__attr1.selected !== undefined ? __attr1.selected : false"
       [value]="__attr1.value"
       (onSelect)="__attr1.onSelect($event)"
@@ -46,7 +49,7 @@ export default class Widget extends WidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

@@ -1,5 +1,6 @@
 import DynamicComponent, { WidgetInput, DxWidgetModule } from "./props";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class Props {
   @Input() height: number = 10;
 }
@@ -22,6 +23,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "[dynamicComponent]",
@@ -147,6 +152,7 @@ export class DynamicComponentDirective {
   ></ng-template>`,
 })
 export default class DynamicComponentCreator extends Props {
+  defaultEntries: DefaultEntries;
   get __Components(): any[] {
     if (this.__getterCache["Components"] !== undefined) {
       return this.__getterCache["Components"];
@@ -181,6 +187,13 @@ export default class DynamicComponentCreator extends Props {
   ngAfterViewInit() {
     this.createDynamicComponents();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
 
   ngAfterViewChecked() {
     this.createDynamicComponents();
@@ -190,10 +203,15 @@ export default class DynamicComponentCreator extends Props {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["height"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

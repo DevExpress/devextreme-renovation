@@ -11,10 +11,13 @@ export class Decorator {
 
   viewParameter?: Expression | null;
 
+  readonly isSvg: boolean = false;
+
   constructor(expression: Call, context: GeneratorContext) {
     this.expression = expression;
     this.context = context;
     if (this.name === 'Component') {
+      this.isSvg = this.getParameter('isSVG')?.valueOf().toString() === 'true';
       this.viewParameter = this.getParameter('view');
     }
   }

@@ -16,8 +16,8 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.2",

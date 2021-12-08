@@ -1,3 +1,4 @@
+import { PublicWidgetWithProps } from "./dx-public-widget-with-props";
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
 
 export declare type WidgetInputType = {
@@ -12,6 +13,10 @@ export declare type WidgetInputType = {
   >;
   footerTemplate: React.FunctionComponent<Partial<{ someProp: boolean }>>;
   componentTemplate: React.FunctionComponent<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
+  publicComponentTemplate: React.FunctionComponent<
     Partial<Omit<typeof WidgetWithPropsInput, "value">> &
       Required<Pick<typeof WidgetWithPropsInput, "value">>
   >;
@@ -41,6 +46,14 @@ export declare type WidgetInputType = {
     Partial<Omit<typeof WidgetWithPropsInput, "value">> &
       Required<Pick<typeof WidgetWithPropsInput, "value">>
   >;
+  publicComponentRender?: React.FunctionComponent<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
+  publicComponentComponent?: React.JSXElementConstructor<
+    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
+      Required<Pick<typeof WidgetWithPropsInput, "value">>
+  >;
 };
 export const WidgetInput: WidgetInputType = {
   someProp: false,
@@ -49,6 +62,7 @@ export const WidgetInput: WidgetInputType = {
   contentTemplate: (props) => <div>{props.data.p1}</div>,
   footerTemplate: () => <div></div>,
   componentTemplate: WidgetWithProps,
+  publicComponentTemplate: PublicWidgetWithProps,
 };
 import * as React from "react";
 import { useCallback } from "react";
@@ -64,6 +78,7 @@ interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
 }
+
 export default function WidgetWithTemplate(
   props: typeof WidgetInput & RestProps
 ) {
@@ -83,6 +98,9 @@ export default function WidgetWithTemplate(
         headerComponent,
         headerRender,
         headerTemplate,
+        publicComponentComponent,
+        publicComponentRender,
+        publicComponentTemplate,
         render,
         someProp,
         template,
@@ -117,6 +135,11 @@ export default function WidgetWithTemplate(
         props.componentRender,
         props.componentComponent
       ),
+      publicComponentTemplate: getTemplate(
+        props.publicComponentTemplate,
+        props.publicComponentRender,
+        props.publicComponentComponent
+      ),
     },
     restAttributes: __restAttributes(),
   });
@@ -127,6 +150,7 @@ function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;
+  const PublicComponentTemplate = viewModel.props.publicComponentTemplate;
   return (
     <div>
       {viewModel.props.headerTemplate({})}
@@ -143,6 +167,8 @@ function view(viewModel: WidgetWithTemplate) {
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
       {ComponentTemplate({ value: "Test Value" })}
+
+      {PublicComponentTemplate({ value: "Test Value" })}
     </div>
   );
 }

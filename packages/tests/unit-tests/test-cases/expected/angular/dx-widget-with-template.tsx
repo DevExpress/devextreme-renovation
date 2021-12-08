@@ -1,4 +1,5 @@
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class WidgetWithTemplateInput {
   @Input() template?: TemplateRef<any> | null = null;
   @Input() componentTemplate?: TemplateRef<any> | null = null;
@@ -43,7 +44,7 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

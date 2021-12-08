@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() height: number = 10;
   @Input() selected: boolean = false;
@@ -17,6 +18,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -26,6 +31,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  defaultEntries: DefaultEntries;
   __getHeight(): number {
     const { height } = this;
     const { height: _height } = this;
@@ -48,15 +54,28 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _selectedChange: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["height", "selected"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._selectedChange = (e: any) => {
       this.selectedChange.emit(e);
       this._detectChanges();

@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
   @Output() baseStatePropChange: EventEmitter<boolean | undefined> =
@@ -77,7 +78,7 @@ export default class ModelWidget
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

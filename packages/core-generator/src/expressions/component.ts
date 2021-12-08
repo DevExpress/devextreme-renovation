@@ -70,7 +70,7 @@ export class Component extends Class implements Heritable {
 
   viewModel: any;
 
-  isSVGComponent: boolean;
+  readonly isSVGComponent: boolean;
 
   context: GeneratorContext;
 
@@ -185,17 +185,18 @@ export class Component extends Class implements Heritable {
       (d) => d.name === 'OneWay' || d.name === 'Event' || d.name === 'Template',
     )) as Property[];
 
-    const refs = (currentMembers.filter((m) => m.isRef) as Property[]).reduce(
+    const refs = (currentMembers.filter((m) => m.isRef || m.isForwardRefProp || m.isForwardRef) as Property[]).reduce(
       (r: { refs: Property[]; apiRefs: Property[] }, p) => {
         if (
           context.components
           && context.components[p.compileRefType()] instanceof Component
+          && context.components[p.compileRefType()].members.some((m) => m.isApiMethod)
         ) {
           p.decorators.find(
-            (d) => d.name === 'Ref',
+            (d) => d.name === 'Ref' || 'ForwardRef' || 'ForwardRefProp',
           )!.expression.expression = new SimpleExpression('ApiRef');
           r.apiRefs.push(p as Property);
-        } else {
+        } else if (!(p.isForwardRef || p.isForwardRefProp)) {
           r.refs.push(p as Property);
         }
         return r;
@@ -241,7 +242,7 @@ export class Component extends Class implements Heritable {
 
     this.defaultOptionRules = decorator.getParameter('defaultOptionRules');
 
-    this.isSVGComponent = decorator.getParameter('isSVG')?.valueOf().toString() === 'true';
+    this.isSVGComponent = decorator.isSvg;
 
     this.context = context;
 

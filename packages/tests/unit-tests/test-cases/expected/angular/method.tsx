@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() prop1?: number;
   @Input() prop2?: number;
@@ -51,7 +52,7 @@ export default class Widget extends WidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

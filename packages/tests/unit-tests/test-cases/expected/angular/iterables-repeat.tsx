@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class ListInput {
   @Input() items?: any[] = [];
   @Input() keyExpr?: string = "value";
@@ -15,6 +16,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-list",
@@ -35,6 +40,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class List extends ListInput {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -52,14 +58,27 @@ export default class List extends ListInput {
     return item.key;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new ListInput() as { [key: string]: any };
+    this.defaultEntries = ["items", "keyExpr"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

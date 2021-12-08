@@ -6,7 +6,8 @@ import {
   StringType,
   WidgetProps as ExternalWidgetProps,
 } from "./types-external";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() str: String = "";
   @Input() num: Number = 1;
@@ -36,6 +37,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -59,6 +64,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -69,14 +75,39 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = [
+      "str",
+      "num",
+      "bool",
+      "arr",
+      "strArr",
+      "obj",
+      "date",
+      "func",
+      "symbol",
+      "externalEnum",
+      "externalUnion",
+      "externalObj",
+      "externalArray",
+      "externalString",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }
 @NgModule({
@@ -89,6 +120,7 @@ export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
 
 import { CustomType } from "./types-external";
+@Injectable()
 class BaseViewPropsType {
   @Input() strArr: Array<String> = new WidgetProps().strArr;
   @Input() customTypeField?: { name: string; customField: CustomType }[];

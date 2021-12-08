@@ -1,7 +1,8 @@
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
 import { AdditionalOptions } from "./types.d";
+@Injectable()
 class WidgetProps {
   @Input() data?: Options = new Props().data;
   @Input() info?: AdditionalOptions = new Props().info;
@@ -19,6 +20,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -31,6 +36,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   innerData: Options = { value: "" };
   get __restAttributes(): any {
     return {};
@@ -42,14 +48,27 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["data", "info"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   set _innerData(innerData: Options) {
     this.innerData = innerData;

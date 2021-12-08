@@ -5,7 +5,8 @@ function format(key: string) {
   return "localized_" + key;
 }
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class BaseProps {
   @Input() empty?: string;
   @Input() height?: number = 10;
@@ -23,15 +24,18 @@ export class BaseProps {
   public static __defaultNestedValues: any = { baseNested: { text: "3" } };
 }
 
+@Injectable()
 export class TextsProps {
   @Input() text?: string = format("text");
 }
 
+@Injectable()
 export class ExpressionProps {
   @Input() expressionDefault?: any = isMaterial() ? 20 : 10;
 }
 
 import { TemplateRef } from "@angular/core";
+@Injectable()
 export class WidgetProps extends BaseProps {
   @Input() text?: string = format("text");
   @Input() texts1?: TextsProps = { text: format("text") };
@@ -73,6 +77,7 @@ export class WidgetProps extends BaseProps {
   }
 }
 
+@Injectable()
 class WidgetPropsType {
   @Input() text?: string = new WidgetProps().text;
   @Input() texts1?: TextsProps = new WidgetProps().texts1;
@@ -132,6 +137,10 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxo-base-nested",
@@ -166,6 +175,7 @@ class DxWidgetTexts2 extends TextsProps {}
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetPropsType {
+  defaultEntries: DefaultEntries;
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
@@ -216,15 +226,26 @@ export default class Widget extends WidgetPropsType {
   ngAfterViewInit() {
     this._detectChanges();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(this as Record<string, unknown>, changes, this.defaultEntries);
+  }
 
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetPropsType() as { [key: string]: any };
+    this.defaultEntries = [
+      "text",
+      "texts1",
+      "height",
+      "width",
+      "expressionDefault",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
   @Input() set texts2(value: DxWidgetTexts2 | undefined) {
     this.__texts2 = value;

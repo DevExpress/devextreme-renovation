@@ -1,10 +1,12 @@
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class NestedProps {
   @Input() field1?: number;
   @Input() fieldTemplate?: TemplateRef<any> | null = null;
   @Input() field3?: number;
 }
 
+@Injectable()
 export class BaseProps {
   private __nestedProp__?: NestedProps;
   @Input() set nestedProp(value: NestedProps | undefined) {
@@ -19,6 +21,7 @@ export class BaseProps {
   public static __defaultNestedValues: any = { nestedProp: {} };
 }
 
+@Injectable()
 export class SomeProps {
   private __nestedProp__?: NestedProps;
   @Input() set nestedProp(value: NestedProps | undefined) {

@@ -7,11 +7,11 @@ import { VueGenerator } from '@devextreme-generator/vue';
 import { getOptions } from 'loader-utils';
 import path from 'path';
 import ts from 'typescript';
-import { loader } from 'webpack';
+import { LoaderContext } from 'webpack';
 
 import { getTsConfig } from './typescript-utils';
 
-export default function (this: loader.LoaderContext, source: string) {
+export default function (this: LoaderContext<{}>, source: string) {
   const {
     platform,
     defaultOptionsModule,

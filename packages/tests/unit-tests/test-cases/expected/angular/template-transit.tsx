@@ -2,7 +2,8 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class TemplateTransitWidgetInput {
   @Input() templateProp?: TemplateRef<any> | null = null;
   @Input() componentTemplateProp?: TemplateRef<any> | null = null;
@@ -29,6 +30,7 @@ import { CommonModule } from "@angular/common";
       [template]="templateProp"
       [componentTemplate]="componentTemplateProp"
       #widgetwithtemplate1
+      style="display: contents"
     ></dx-widget-with-template
     ><ng-content
       *ngTemplateOutlet="widgetwithtemplate1?.widgetTemplate"
@@ -50,7 +52,7 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

@@ -1,5 +1,6 @@
 import { InnerLayout as Child, DxInnerLayoutModule } from "./inner-layout";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class Props {
   @Input() prop: number = 0;
   @Input() rf?: Child;
@@ -17,18 +18,28 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-extra-element",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
   template: `<pre><ng-container *ngIf="rf"><dx-inner-layout #rf
-[prop]="3"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
-[prop]="4"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
-#child2></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
-#child3></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
+[prop]="3"
+style="display: contents"
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
+[prop]="4"
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content><div id="secondDiv"></div><dx-inner-layout [prop]="2"
+#child2
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
+#child3
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
 })
 export class ExtraElement extends Props {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -39,14 +50,27 @@ export class ExtraElement extends Props {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["prop"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

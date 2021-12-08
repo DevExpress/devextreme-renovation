@@ -1,5 +1,6 @@
 export const COMPONENT_INPUT_CLASS = "c3";
-import { Input, ViewChild, ElementRef } from "@angular/core";
+import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() height?: number = 10;
   @Input() width?: number = 10;
@@ -22,6 +23,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -32,6 +37,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   __onClick(): any {
     const v = this.height;
   }
@@ -45,14 +51,27 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["height", "width"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>

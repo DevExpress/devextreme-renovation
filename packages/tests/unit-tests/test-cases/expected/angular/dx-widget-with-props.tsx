@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetWithPropsInput {
   @Input() value: string = "default text";
   @Input() optionalValue?: string;
@@ -18,6 +19,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget-with-props",
@@ -29,6 +34,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export class WidgetWithProps extends WidgetWithPropsInput {
+  defaultEntries: DefaultEntries;
   doSomething(): any {}
   get __restAttributes(): any {
     return {};
@@ -40,15 +46,28 @@ export class WidgetWithProps extends WidgetWithPropsInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetWithPropsInput() as { [key: string]: any };
+    this.defaultEntries = ["value", "number"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);
     };

@@ -4,7 +4,8 @@ export declare type ObjType = { number: number; text: string };
 export declare type StringArr = Array<String>;
 export declare type StringType = String;
 export declare type StrDate = string | Date;
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() data: EnumType = "data";
   @Input() union: Union = "uniontext";
@@ -27,6 +28,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -35,6 +40,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -45,14 +51,31 @@ export default class Widget extends WidgetProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = [
+      "data",
+      "union",
+      "obj",
+      "strArr",
+      "s",
+      "strDate",
+    ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }
 @NgModule({

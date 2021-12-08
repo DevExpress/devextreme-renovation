@@ -7,7 +7,8 @@ export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() items: Item[] = [];
 }
@@ -24,6 +25,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget-with-globals",
@@ -32,7 +37,10 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><div [class]="global_CLASS_NAME"
       ><span [class]="global_CLASS_NAME"></span
-      ><dx-widget-two #externalcomponent1></dx-widget-two
+      ><dx-widget-two
+        #externalcomponent1
+        style="display: contents"
+      ></dx-widget-two
       ><ng-content
         *ngTemplateOutlet="externalcomponent1?.widgetTemplate"
       ></ng-content
@@ -43,6 +51,7 @@ import { CommonModule } from "@angular/common";
 export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
   global_getKey = getKey;
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -57,14 +66,27 @@ export default class WidgetWithGlobals extends WidgetProps {
     return this.global_getKey(item);
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["items"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

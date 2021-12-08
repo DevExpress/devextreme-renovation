@@ -4,7 +4,8 @@ function isDevice() {
   return true;
 }
 
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
@@ -31,6 +32,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -54,6 +59,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class Widget extends WidgetInput {
+  defaultEntries: DefaultEntries;
   __getHeight(): number {
     this._onClick(10);
     this._onClick(11);
@@ -85,6 +91,14 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _onClick: any;
   _onSomething: any;
   _stringValueChange: any;
@@ -92,10 +106,20 @@ export default class Widget extends WidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = [
+      "height",
+      "export",
+      "array",
+      "expressionDefault",
+      "expressionDefault1",
+      "expressionDefault2",
+      "stringValue",
+    ].map((key) => ({ key, value: defaultProps[key] }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);
     };

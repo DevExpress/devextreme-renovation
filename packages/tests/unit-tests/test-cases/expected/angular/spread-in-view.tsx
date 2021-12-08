@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() a: Array<Number> = [1, 2, 3];
   @Input() id: string = "1";
@@ -18,6 +19,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -29,6 +34,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -62,6 +68,11 @@ export default class Widget extends WidgetProps {
     if (["id", "onClick"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   ngAfterViewChecked() {
@@ -76,10 +87,15 @@ export default class Widget extends WidgetProps {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["a", "id"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);
     };

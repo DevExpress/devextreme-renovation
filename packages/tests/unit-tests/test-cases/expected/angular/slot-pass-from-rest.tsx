@@ -1,5 +1,6 @@
 import Widget, { DxWidgetModule } from "./slots";
-import { Input, ViewChild, ElementRef } from "@angular/core";
+import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() p: string = "";
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -21,6 +22,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-slot-pass",
@@ -28,7 +33,7 @@ import { CommonModule } from "@angular/common";
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-widget #widget1
+      ><dx-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"
@@ -40,6 +45,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -53,14 +59,27 @@ export default class SlotPass extends WidgetInput {
     return { children: this.children };
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>

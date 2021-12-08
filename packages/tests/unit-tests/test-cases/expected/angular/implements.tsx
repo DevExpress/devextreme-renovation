@@ -7,7 +7,8 @@ interface WidgetI {
   onClick(): void;
 }
 
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class WidgetInput extends BaseProps {
   @Input() p: string = "10";
 }
@@ -24,6 +25,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -32,6 +37,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  defaultEntries: DefaultEntries;
   __onClick(): void {}
   get __restAttributes(): any {
     return {};
@@ -43,14 +49,27 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p", "height", "data", "info"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

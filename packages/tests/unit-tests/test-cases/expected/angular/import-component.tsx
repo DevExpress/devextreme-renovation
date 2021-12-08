@@ -1,5 +1,6 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
   @Output() onClick: EventEmitter<number> = new EventEmitter();
@@ -18,6 +19,10 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-child",
@@ -25,12 +30,17 @@ import { CommonModule } from "@angular/common";
   inputs: ["height", "width"],
   outputs: ["onClick"],
   template: `<ng-template #widgetTemplate
-    ><dx-widget [height]="__getProps().height" #base1></dx-widget
+    ><dx-widget
+      [height]="__getProps().height"
+      #base1
+      style="display: contents"
+    ></dx-widget
     ><ng-content *ngTemplateOutlet="base1?.widgetTemplate"></ng-content
     ><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,
 })
 export default class Child extends ChildInput {
+  defaultEntries: DefaultEntries;
   __getProps(): WidgetProps {
     return { height: this.height } as WidgetProps;
   }
@@ -44,15 +54,28 @@ export default class Child extends ChildInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new ChildInput() as { [key: string]: any };
+    this.defaultEntries = ["height", "width"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);
     };

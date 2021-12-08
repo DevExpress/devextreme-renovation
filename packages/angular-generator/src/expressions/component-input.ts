@@ -10,6 +10,7 @@ import {
   SimpleExpression,
   SyntaxKind,
   TypeExpression,
+  Decorator as BaseDecorator,
 } from '@devextreme-generator/core';
 
 import { AngularGeneratorContext } from '../types';
@@ -47,15 +48,16 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   compileImports() {
-    const imports: string[] = [
+    const imports = [
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
         this.context,
+        ['Injectable'],
       )}`,
     ];
     const missedImports = this.getImports(this.context);
 
-    return imports.concat(missedImports.map((i) => i.toString())).join(';\n');
+    return [...imports, ...missedImports.map((i) => i.toString())].join(';\n');
   }
 
   processNestedProperty(property: Property) {
@@ -111,7 +113,7 @@ export class ComponentInput extends BaseComponentInput {
   }
 
   createNestedPropertySetter(
-    decorator: Decorator[],
+    decorator: BaseDecorator[],
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
@@ -199,6 +201,7 @@ export class ComponentInput extends BaseComponentInput {
 
     return `
         ${this.compileImports()}
+        @Injectable()
         ${this.modifiers.join(' ')} class ${
   this.name
 } ${this.heritageClauses.map((h) => h.toString()).join(' ')} {

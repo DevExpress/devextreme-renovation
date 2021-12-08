@@ -1,6 +1,7 @@
 import type { Options } from "./types.d";
 import type { CustomClass } from "./types.d";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class ImportProps {
   @Input() Test?: Options;
 }
@@ -43,7 +44,7 @@ export default class Import extends ImportProps {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

@@ -8,7 +8,8 @@ interface TemplateInput {
   inputInt: number;
 }
 
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 class Props {
   @Input() PropFromClass?: ClassTemplateInput;
   @Input() PropFromInterface?: TemplateInput;
@@ -118,7 +119,7 @@ export default class Widget extends Props {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

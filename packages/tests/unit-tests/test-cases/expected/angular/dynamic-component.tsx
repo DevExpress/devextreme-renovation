@@ -3,7 +3,8 @@ import DynamicComponentWithTemplate, {
   WidgetInput as PropsWithTemplate,
   DxWidgetWithTemplateModule,
 } from "./template";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 class Props {
   @Input() height: number = 10;
 }
@@ -26,6 +27,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -254,6 +259,7 @@ export class DynamicComponentDirective {
   >`,
 })
 export default class DynamicComponentCreator extends Props {
+  defaultEntries: DefaultEntries;
   internalStateValue: number = 0;
   get __Component(): typeof DynamicComponent {
     return DynamicComponent;
@@ -289,6 +295,13 @@ export default class DynamicComponentCreator extends Props {
   ngAfterViewInit() {
     this.createDynamicComponents();
   }
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
 
   ngAfterViewChecked() {
     this.createDynamicComponents();
@@ -298,10 +311,15 @@ export default class DynamicComponentCreator extends Props {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["height"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   set _internalStateValue(internalStateValue: number) {
     this.internalStateValue = internalStateValue;

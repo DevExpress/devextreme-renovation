@@ -1,4 +1,5 @@
-import { ViewChild, ElementRef } from "@angular/core";
+import { Injectable, ViewChild, ElementRef } from "@angular/core";
+@Injectable()
 class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
 
@@ -44,7 +45,7 @@ export default class Widget extends WidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

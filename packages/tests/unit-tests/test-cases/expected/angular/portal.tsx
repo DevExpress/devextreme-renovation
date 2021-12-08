@@ -1,4 +1,5 @@
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() someRef?: HTMLElement;
 }
@@ -137,7 +138,7 @@ export default class Widget extends WidgetProps {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

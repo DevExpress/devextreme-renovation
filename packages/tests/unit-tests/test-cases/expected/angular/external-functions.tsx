@@ -10,7 +10,8 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
 const getValue: (cell: Cell) => string = (cell) => cell.text;
 const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class WidgetProps {
   @Input() cells: Cell[] = [];
 }
@@ -27,6 +28,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -126,6 +131,7 @@ export default class Widget extends WidgetProps {
   global_getValue = getValue;
   global_SomeClass = SomeClass;
   global_array = array;
+  defaultEntries: DefaultEntries;
   __addPostfix(index: number): any {
     return `_#${index}`;
   }
@@ -146,14 +152,27 @@ export default class Widget extends WidgetProps {
     return i;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["cells"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 
   __processNgStyle(value: any) {

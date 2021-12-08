@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 export class InnerWidgetProps {
   @Input() selected?: boolean;
   @Input() value: number = 14;
@@ -21,6 +22,10 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -107,6 +112,7 @@ export default class InnerWidget
   extends InnerWidgetProps
   implements ControlValueAccessor
 {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -132,16 +138,29 @@ export default class InnerWidget
     this.touched = fn;
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _onSelect: any;
   _valueChange: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new InnerWidgetProps() as { [key: string]: any };
+    this.defaultEntries = ["value"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._onSelect = (e: any) => {
       this.onSelect.emit(e);
     };

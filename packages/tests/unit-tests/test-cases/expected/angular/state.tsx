@@ -1,5 +1,6 @@
 import BaseState, { DxModelWidgetModule } from "./model";
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;
@@ -23,6 +24,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -35,6 +40,7 @@ import { CommonModule } from "@angular/common";
       }}<dx-model-widget
         (baseStatePropChange)="__stateChange($event)"
         #basestate1
+        style="display: contents"
       ></dx-model-widget
       ><ng-content
         *ngTemplateOutlet="basestate1?.widgetTemplate"
@@ -42,6 +48,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  defaultEntries: DefaultEntries;
   internalState: number = 0;
   innerData?: string;
   __updateState(): any {
@@ -74,6 +81,14 @@ export default class Widget extends WidgetInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;
@@ -81,10 +96,15 @@ export default class Widget extends WidgetInput {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["state1", "state2"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
     this._state1Change = (e: any) => {
       this.state1Change.emit(e);
       this._detectChanges();

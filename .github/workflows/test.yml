@@ -10,6 +10,8 @@ on:
   pull_request:
     branches:
       - '**'
+env:
+  nodeVersion: 15
 
 jobs:
   tests:
@@ -19,6 +21,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.nodeVersion }}
 
       - name: Install packages
         run: npm install --no-audit --no-fund --ignore-scripts
@@ -46,5 +53,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: screenshots
-          path: ${{ github.workspace }}//e2e/tests/temp/**/*
+          path: ${{ github.workspace }}/packages/tests/e2e/tests/temp/**/*
           if-no-files-found: ignore

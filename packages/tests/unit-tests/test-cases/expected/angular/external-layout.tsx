@@ -1,6 +1,7 @@
 import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
 import { InnerComponent, DxInnerComponentModule } from "./inner-component";
-import { Input } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
+@Injectable()
 export class Props {
   @Input() prop: number = 0;
 }
@@ -17,6 +18,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
 
@@ -25,7 +30,10 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop"],
   template: `<ng-template #widgetTemplate
-    ><dx-inner-layout [innerComponentTemplate]="InnerComponent" #innerlayout1
+    ><dx-inner-layout
+      [innerComponentTemplate]="InnerComponent"
+      #innerlayout1
+      style="display: contents"
       ><ng-template #InnerComponent let-someTemplate="someTemplate"
         ><dx-inner-component
           [someTemplate]="
@@ -34,6 +42,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
               : InnerComponentDefaults.someTemplate
           "
           #innercomponent1
+          style="display: contents"
         ></dx-inner-component
         ><ng-content
           *ngTemplateOutlet="innercomponent1?.widgetTemplate"
@@ -42,6 +51,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   ></ng-template>`,
 })
 export class ExternalLayout extends Props {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -52,14 +62,27 @@ export class ExternalLayout extends Props {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["prop"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 
   InnerComponentDefaults = { someTemplate: InnerWidget };

@@ -1,4 +1,5 @@
-import { Input, Output, EventEmitter } from "@angular/core";
+import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+@Injectable()
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
@@ -18,6 +19,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -27,6 +32,7 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 class Widget extends WidgetProps {
+  defaultEntries: DefaultEntries;
   someState: number = 0;
   get __g7(): any {
     return this.__g6;
@@ -135,6 +141,12 @@ class Widget extends WidgetProps {
     }, 0);
   }
   ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+
     if (
       this.__destroyEffects.length &&
       ["someProp", "type"].some((d) => changes[d])
@@ -167,10 +179,17 @@ class Widget extends WidgetProps {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetProps() as { [key: string]: any };
+    this.defaultEntries = [
+      "someProp",
+      "type",
+      "gridCompatibility",
+      "pageIndex",
+    ].map((key) => ({ key, value: defaultProps[key] }));
     this._pageIndexChange = (e: any) => {
       this.pageIndexChange.emit(e);
       this._detectChanges();

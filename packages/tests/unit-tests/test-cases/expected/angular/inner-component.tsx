@@ -2,7 +2,8 @@ import InnerWidget, {
   InnerWidgetProps,
   DxInnerWidgetModule,
 } from "./dx-inner-widget";
-import { Input, TemplateRef } from "@angular/core";
+import { Injectable, Input, TemplateRef } from "@angular/core";
+@Injectable()
 export class InnerComponentProps {
   @Input() someTemplate: TemplateRef<any> | null = null;
 }
@@ -40,7 +41,7 @@ export class InnerComponent extends InnerComponentProps {
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
-    private render: Renderer2,
+    private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
     super();

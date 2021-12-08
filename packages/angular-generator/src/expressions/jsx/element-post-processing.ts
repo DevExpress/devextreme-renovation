@@ -1,13 +1,12 @@
 import { toStringOptions } from '@devextreme-generator/core';
+// import { AngularDirective } from './angular-directive';
 import type { JsxOpeningElement } from './jsx-opening-element';
 import { tryToGetContent } from './ng-content-generator';
 
 export const elementPostProcess = (element: JsxOpeningElement, options?: toStringOptions): { prefix: string, postfix: string } => {
-  const { content, elementDirective, condition } = tryToGetContent(element);
+  const { content, elementDirectives, condition } = tryToGetContent(element);
 
-  if (elementDirective !== null) {
-    element.attributes.push(elementDirective);
-  }
+  elementDirectives?.forEach((e) => element.addAttribute(e));
 
   return {
     prefix: condition ? `<ng-container ${condition.toString(options)}>` : '',
