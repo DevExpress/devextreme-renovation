@@ -74,10 +74,10 @@ export function Component(arg: ComponentParameters) {
  * Class can contains only properties with decorators OneWay, TwoWay, Slot, Template.
  */
 export function ComponentBindings() {
-  return function ComponentBindings(_constructor: Function) {};
+  return function ComponentBindings(_constructor: Function) { };
 }
 
-const propertyDecorator = function (_target: any, _propertyKey: string) {};
+const propertyDecorator = function (_target: any, _propertyKey: string) { };
 
 /**
  * Property Decorator.
@@ -119,6 +119,10 @@ export const Template = () => propertyDecorator;
  */
 export const Slot = (_args?: {
   /**
+   * Specify CSS selector for ng-contnent. If selector is not specified the "[data-${propName.toLowercase()}]" is used.
+   */
+  selector?: string;
+  /**
    * Specify whether to pass content as svg
    */
   isSVG?: boolean;
@@ -144,7 +148,7 @@ export const InternalState = () => propertyDecorator;
  */
 export const Mutable = () => propertyDecorator;
 
-class Context {}
+class Context { }
 
 export const Provider = (_Context: Context) => propertyDecorator;
 
@@ -182,7 +186,7 @@ interface JSXComponentBase<_P> {
   state(): any;
   isReactComponent: any;
 }
-class JSXComponentBase<_P> {}
+class JSXComponentBase<_P> { }
 /**
  * A function that returns base class for any Component.
  * Pass ComponentBindings as an argument
@@ -193,7 +197,7 @@ export function JSXComponent<
   keyof PropsType,
   keyof PropsType
   >,
->(Props?: { new (): PropsType & { ref?: React.Component<PropsType> } }) {
+  >(Props?: { new(): PropsType & { ref?: React.Component<PropsType> } }) {
   type DefaultPropsType = Omit<PropsType, RequiredProps> & {
     [name: string]: any;
   };
@@ -229,10 +233,10 @@ export type JSXTemplate<
   keyof PropsType,
   keyof PropsType
   >,
-> = React.JSXElementConstructor<
-Partial<Omit<PropsType, RequiredProps>> &
-Required<Pick<PropsType, RequiredProps>>
->;
+  > = React.JSXElementConstructor<
+  Partial<Omit<PropsType, RequiredProps>> &
+  Required<Pick<PropsType, RequiredProps>>
+  >;
 
 /**
  * Type for styles.

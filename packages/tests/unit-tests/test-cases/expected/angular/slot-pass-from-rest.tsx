@@ -1,4 +1,4 @@
-import Widget, { DxWidgetModule } from "./slots";
+import Widget, { DxSlotsWidgetModule } from "./slots";
 import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
 @Injectable()
 class WidgetInput {
@@ -33,11 +33,11 @@ import {
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-widget #widget1 style="display: contents"
+      ><dx-slots-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"
-          ></ng-container></div></dx-widget
+          ></ng-container></div></dx-slots-widget
       ><ng-content
         *ngTemplateOutlet="widget1?.widgetTemplate"
       ></ng-content></div
@@ -94,7 +94,7 @@ export default class SlotPass extends WidgetInput {
 }
 @NgModule({
   declarations: [SlotPass],
-  imports: [DxWidgetModule, CommonModule],
+  imports: [DxSlotsWidgetModule, CommonModule],
   entryComponents: [Widget],
   exports: [SlotPass],
 })

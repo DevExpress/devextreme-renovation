@@ -217,11 +217,13 @@ export class JsxChildExpression extends JsxExpression {
   }
 
   getSlot(stringValue: string, options?: toStringOptions) {
-    return options?.members
-      .filter((m) => m.isSlot)
-      .find(
-        (s) => stringValue.indexOf(s.getter(options.newComponentContext)) !== -1,
-      ) as Property | undefined;
+    const possibleSlots = options?.members
+      .filter((m) => m.isSlot
+      && (stringValue.indexOf(m.getter(options.newComponentContext)) !== -1));
+    if ((stringValue.indexOf('children') === -1) && possibleSlots && possibleSlots.length > 1) {
+      throw new Error(`Slot name '${stringValue}' overlap for slot: ${possibleSlots.map((m) => m.name)}`);
+    }
+    return possibleSlots && possibleSlots[0] as Property | undefined;
   }
 
   addCallParameters(

@@ -69,6 +69,12 @@ export class BaseClassMember extends Expression {
     return true;
   }
 
+  public getDecoratorParameter<E extends Expression>(decoratorType: Decorators,
+    paramName: string): E | null | undefined {
+    const decorator = this.decorators.find((d) => d.name === decoratorType);
+    return decorator?.getParameter(paramName) as E;
+  }
+
   get isInternalState() {
     return false;
   }
@@ -77,86 +83,85 @@ export class BaseClassMember extends Expression {
     return this.decorators.some((d) => d.name === name);
   }
 
-  get isEvent() {
+  get isEvent(): boolean {
     return this._hasDecorator(Decorators.Event);
   }
 
-  get isState() {
+  get isState(): boolean {
     return this._hasDecorator(Decorators.TwoWay);
   }
 
-  get isRef() {
+  get isRef(): boolean {
     return this._hasDecorator(Decorators.Ref);
   }
 
-  get isRefProp() {
+  get isRefProp(): boolean {
     return this._hasDecorator(Decorators.RefProp);
   }
 
-  get isNested() {
+  get isNested(): boolean {
     return this._hasDecorator(Decorators.Nested);
   }
 
-  get isNestedComp() {
+  get isNestedComp(): boolean {
     return this._hasDecorator(Decorators.NestedComp);
   }
 
-  get isSlot() {
+  get isSlot(): boolean {
     return (
       this._hasDecorator(Decorators.Slot)
       || this._hasDecorator(Decorators.ViewChild)
     );
   }
 
-  get isSvgSlot() {
-    const decorator = this.decorators.find((d) => d.name === Decorators.Slot);
-    return decorator?.getParameter('isSVG')?.toString() === 'true';
+  get isSvgSlot(): boolean {
+    return this.getDecoratorParameter(Decorators.Slot, 'isSVG')?.toString() === 'true';
   }
 
-  get isTemplate() {
+  get isTemplate(): boolean {
     return this._hasDecorator(Decorators.Template);
   }
 
-  get isApiMethod() {
+  get isApiMethod(): boolean {
     return this._hasDecorator(Decorators.Method);
   }
 
-  get isEffect() {
+  get isEffect(): boolean {
     return this._hasDecorator(Decorators.Effect);
   }
 
-  get isForwardRefProp() {
+  get isForwardRefProp(): boolean {
     return this._hasDecorator(Decorators.ForwardRefProp);
   }
 
-  get isForwardRef() {
+  get isForwardRef(): boolean {
     return this._hasDecorator(Decorators.ForwardRef);
   }
 
-  get isConsumer() {
+  get isConsumer(): boolean {
     return this._hasDecorator(Decorators.Consumer);
   }
 
-  get isProvider() {
+  get isProvider(): boolean {
     return this._hasDecorator(Decorators.Provider);
   }
 
-  get isApiRef() {
+  get isApiRef(): boolean {
     return this._hasDecorator(Decorators.ApiRef);
   }
 
-  get isMutable() {
+  get isMutable(): boolean {
     return this._hasDecorator(Decorators.Mutable);
   }
 
-  get context() {
+  get context(): Expression {
     const decorator = this.decorators.find(
       (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider,
     ) as Decorator;
     return decorator.expression.arguments[0];
   }
 
-  get canBeDestructured() {
+  get canBeDestructured(): boolean {
     return this.name === this._name.toString();
   }
 
@@ -168,7 +173,7 @@ export class BaseClassMember extends Expression {
     return [this._name.toString()];
   }
 
-  get isPrivate() {
+  get isPrivate():boolean {
     return this.modifiers.indexOf(SyntaxKind.PrivateKeyword) !== -1;
   }
 }
@@ -226,16 +231,14 @@ export class Method extends BaseClassMember {
   }
 
   typeDeclaration() {
-    return `${this._name}${
-      this.questionToken
+    return `${this._name}${this.questionToken
     }:${this.compileTypeParameters()}(${this.parameters
       .map((p) => p.typeDeclaration())
       .join(',')})=>${this.type}`;
   }
 
   declaration(options?: toStringOptions) {
-    return `function ${this.name}${this.compileTypeParameters()}(${
-      this.parameters
+    return `function ${this.name}${this.compileTypeParameters()}(${this.parameters
     })${compileType(this.type.toString())}${this.body?.toString(options)}`;
   }
 
@@ -310,8 +313,7 @@ export class Method extends BaseClassMember {
   }
 
   toString(options?: toStringOptions): string {
-    return `${this.decorators.join(' ')}${this.compileModifiers()} ${
-      this.name
+    return `${this.decorators.join(' ')}${this.compileModifiers()} ${this.name
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type.toString(),
     )}${this.compileBody(options)}`;
@@ -372,8 +374,8 @@ export class GetAccessor extends Method {
       const containMutableDep = depMembers
         .some((dep) => mutables?.includes(dep));
       return !containMutableDep
-      && (isComplexType(this.type, this.contextTypes, dependencies.length > 0)
-        || this.isProvider);
+        && (isComplexType(this.type, this.contextTypes, dependencies.length > 0)
+          || this.isProvider);
     }
     return false;
   }
@@ -469,10 +471,9 @@ export class Property extends BaseClassMember {
   toString(_options?: toStringOptions) {
     return `${this.modifiers.join(' ')} ${this.decorators
       .map((d) => d.toString())
-      .join(' ')} ${this.typeDeclaration()} ${
-      this.initializer && this.initializer.toString()
-        ? `= ${this.initializer.toString()}`
-        : ''
+      .join(' ')} ${this.typeDeclaration()} ${this.initializer && this.initializer.toString()
+      ? `= ${this.initializer.toString()}`
+      : ''
     }`;
   }
 
@@ -501,12 +502,11 @@ export class Constructor {
     public modifiers: string[] = [],
     public parameters: Parameter[],
     public body: Block | undefined,
-  ) {}
+  ) { }
 
   toString() {
     return `${this.decorators.join(' ')}
-      ${this.modifiers.join(' ')} constructor(${this.parameters})${
-  this.body || '{}'
+      ${this.modifiers.join(' ')} constructor(${this.parameters})${this.body || '{}'
 }
     `;
   }
