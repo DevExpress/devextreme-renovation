@@ -33,10 +33,10 @@ export default class Widget extends JSXComponent<
   WidgetProps,
   "requiredRefProp" | "requiredForwardRefProp"
 >(WidgetProps) {
-  @Ref() divRef?: RefObject<HTMLDivElement>;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
-  @Ref() ref?: RefObject<HTMLDivElement>;
-  @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
+  @Ref() ref!: RefObject<HTMLDivElement>;
+  @ForwardRef() forwardRef!: RefObject<HTMLDivElement>;
   @Ref() existingRef!: RefObject<HTMLDivElement>;
   @ForwardRef() existingForwardRef!: RefObject<HTMLDivElement>;
 

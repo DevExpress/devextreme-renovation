@@ -26,7 +26,7 @@ declare type RestProps = {
 };
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
-  baseRef?: any;
+  baseRef: any;
   restAttributes: RestProps;
 }
 
@@ -51,7 +51,7 @@ const WidgetWithApiRef = forwardRef<
     function __getSomething(): string {
       return `${props.prop1} + ${__baseRef?.current?.getHeight(1, undefined)}`;
     },
-    [props.prop1, __baseRef]
+    [props.prop1]
   );
 
   useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [

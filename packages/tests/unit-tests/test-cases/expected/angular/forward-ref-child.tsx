@@ -23,6 +23,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-ref-on-children-child",
@@ -46,9 +47,9 @@ export default class RefOnChildrenChild extends Props {
     return {};
   }
   @ViewChild("childRef__Ref__", { static: false })
-  childRef__Ref__!: ElementRef<HTMLDivElement>;
+  childRef__Ref__: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
   @ViewChild("nullableRef__Ref__", { static: false })
-  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
+  nullableRef__Ref__?: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
   get forwardRef_childRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {

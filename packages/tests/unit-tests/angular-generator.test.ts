@@ -6441,7 +6441,7 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        `@ViewChild("hostLink", {static: false}) host?:ElementRef<HTMLDivElement>`
+        `@ViewChild("hostLink", {static: false}) host:ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();`
       );
     });
 
@@ -6847,13 +6847,14 @@ mocha.describe("Angular generator", function () {
           generator.createProperty(
             [createDecorator(Decorators.Ref)],
             [],
-            generator.createIdentifier("p")
+            generator.createIdentifier("p"),
+            "!"
           ),
         ]) as AngularComponent;
         assert.strictEqual(
           getResult(component.compileImports()),
           getResult(
-            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`
+            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"; import {UndefinedNativeElementRef} from "@devextreme/runtime/angular"`
           )
         );
       });

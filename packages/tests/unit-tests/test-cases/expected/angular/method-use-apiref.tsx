@@ -28,7 +28,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class WidgetWithApiRef extends WidgetWithApiRefInput {
-  @ViewChild("baseRef", { static: false }) baseRef?: BaseWidget;
+  @ViewChild("baseRef", { static: false }) baseRef!: BaseWidget;
   getSomething(): string {
     return `${this.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
   }

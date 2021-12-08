@@ -20,6 +20,7 @@ import { CommonModule } from "@angular/common";
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
+  UndefinedNativeElementRef,
 } from "@devextreme/runtime/angular";
 
 @Component({
@@ -33,8 +34,10 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
-  @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
-  @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
+  @ViewChild("hostLink", { static: false }) host: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
+  @ViewChild("i1Link", { static: false }) i1: ElementRef<HTMLInputElement> =
+    new UndefinedNativeElementRef<HTMLInputElement>();
   get __attr1(): any {
     return {};
   }

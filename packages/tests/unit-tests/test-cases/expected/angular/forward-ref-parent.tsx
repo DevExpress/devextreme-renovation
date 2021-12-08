@@ -50,7 +50,8 @@ export default class RefOnChildrenParent extends Props {
   get __restAttributes(): any {
     return {};
   }
-  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
+  nullableRef__Ref__?: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {

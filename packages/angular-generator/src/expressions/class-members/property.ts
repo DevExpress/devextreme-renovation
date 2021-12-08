@@ -73,15 +73,17 @@ export class Property extends BaseProperty {
       )} = new EventEmitter();`;
     }
     if (this.isRef) {
+      const sourceRefProps = options?.members?.filter(
+        (forwardRef) => `${forwardRef.name}__Ref__` === this.name,
+      );
+      const possibleQuestionToken = (sourceRefProps?.[0] as Property)?.questionOrExclamationToken === '?' ? '?' : '';
       const decoratorString = !options?.forwardRefs?.some(
         (forwardRef) => `${forwardRef.name}__Ref__` === this.name,
       )
-        && options?.members
-          .filter((m) => m.isForwardRefProp || m.isForwardRef)
-          .some((forwardRef) => `${forwardRef.name}__Ref__` === this.name)
+        && sourceRefProps?.some((m) => m.isForwardRefProp || m.isForwardRef)
         ? ''
         : `@ViewChild("${this.name}${this.name.endsWith('__Ref__') ? '' : 'Link'}", {static: false}) `;
-      return `${decoratorString}${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
+      return `${decoratorString}${this.name}${possibleQuestionToken}:ElementRef<${this.type}> = new UndefinedNativeElementRef<${this.type}>();`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
@@ -120,7 +122,7 @@ export class Property extends BaseProperty {
     if (this.isForwardRef) {
       return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(' ')} ${this.name}:ElementRef<${this.type}> = new UndefinedNativeElementRef<${this.type}>()`;
+        .join(' ')} ${this.name}:ElementRef<${this.type}> = new UndefinedNativeElementRef<${this.type}>();`;
     }
 
     if (this.isTemplate) {

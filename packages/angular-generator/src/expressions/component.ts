@@ -367,7 +367,7 @@ export class AngularComponent extends Component {
           ],
           [],
           new Identifier(`${m.name}__Ref__`),
-          m.questionOrExclamationToken,
+          '!',
           m.type,
         ),
       ),
@@ -603,10 +603,10 @@ export class AngularComponent extends Component {
 
   compileDefaultPropsImport(imports: string[]): void {
     const propsWithDefault = this.getPropsWithDefault();
-    const hasForwardRefProperty = this.members.some((m) => m.isForwardRef);
+    const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
     const runTimeImports = [
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
-      ...(hasForwardRefProperty ? ['UndefinedNativeElementRef'] : []),
+      ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
     ];
     if (runTimeImports.length) {
       imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);

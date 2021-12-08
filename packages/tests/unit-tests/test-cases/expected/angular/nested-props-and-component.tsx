@@ -64,6 +64,7 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxi-another-nested-prop-init",
@@ -153,7 +154,8 @@ export default class UndefWidget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
-  someForwardRef__Ref__?: ElementRef<any>;
+  someForwardRef__Ref__?: ElementRef<any> =
+    new UndefinedNativeElementRef<any>();
   get forwardRef_someForwardRef(): (
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined {
