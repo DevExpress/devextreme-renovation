@@ -158,7 +158,7 @@ export class Property extends BaseProperty {
       )})`;
     }
     if (this.isNested) {
-      return `__getNested${capitalizeFirstLetter(this.name)}()`;
+      return `__getNested${capitalizeFirstLetter(this.name)}`;
     }
     if (this.isProvider || this.isConsumer) {
       return this.name;
@@ -201,7 +201,7 @@ export class Property extends BaseProperty {
       return [getPropName(this.name), getLocalStateName(this.name)];
     }
     if (this.isNested) {
-      return [getPropName(this.name), getPropName('children')];
+      return [`__getNested${capitalizeFirstLetter(this.name)}`];
     }
     if (this.isProvider || this.isConsumer || this.isMutable) {
       return [this.name];

@@ -364,6 +364,9 @@ export class GetAccessor extends Method {
     if (this.isProvider && !needToMemorizeProvider) {
       return false;
     }
+    if (this.name.startsWith('__getNested')) {
+      return true;
+    }
     if (options) {
       const mutables = options?.members.filter((m) => m.isMutable) as BaseClassMember[];
       const dependencies = this.getDependency(options);
