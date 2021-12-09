@@ -1,6 +1,8 @@
-function view(viewModel: Widget) {
+function view(viewModel: SlotsWidget) {
   return (
     <div>
+      <div>{viewModel.props.selectorNamedSlot}</div>
+
       <div>{viewModel.props.namedSlot}</div>
 
       <div>{viewModel.props.children}</div>
@@ -8,11 +10,12 @@ function view(viewModel: Widget) {
   );
 }
 
-export declare type WidgetInputType = {
+export declare type SlotsWidgetPropsType = {
   namedSlot?: any;
+  selectorNamedSlot?: any;
   children?: any;
 };
-const WidgetInput: WidgetInputType = {};
+const SlotsWidgetProps: SlotsWidgetPropsType = {};
 import * as Preact from "preact";
 import { useCallback } from "preact/hooks";
 
@@ -22,15 +25,17 @@ declare type RestProps = {
   key?: any;
   ref?: any;
 };
-interface Widget {
-  props: typeof WidgetInput & RestProps;
+interface SlotsWidget {
+  props: typeof SlotsWidgetProps & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function SlotsWidget(
+  props: typeof SlotsWidgetProps & RestProps
+) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, namedSlot, ...restProps } = props;
+      const { children, namedSlot, selectorNamedSlot, ...restProps } = props;
       return restProps;
     },
     [props]
@@ -39,4 +44,4 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = WidgetInput;
+SlotsWidget.defaultProps = SlotsWidgetProps;
