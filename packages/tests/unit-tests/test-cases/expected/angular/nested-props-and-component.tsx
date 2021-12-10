@@ -21,7 +21,6 @@ export class WidgetProps {
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined;
   __slotSlotProp?: ElementRef<HTMLDivElement>;
-
   get slotProp() {
     const childNodes = this.__slotSlotProp?.nativeElement?.childNodes;
     return childNodes && childNodes.length > 2;
@@ -154,8 +153,7 @@ export default class UndefWidget extends WidgetProps {
   get __restAttributes(): any {
     return {};
   }
-  someForwardRef__Ref__?: ElementRef<any> =
-    new UndefinedNativeElementRef<any>();
+  someForwardRef__Ref__?: ElementRef<any>;
   get forwardRef_someForwardRef(): (
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined {
@@ -170,8 +168,12 @@ export default class UndefWidget extends WidgetProps {
         ref?: ElementRef<any>
       ): ElementRef<any> | undefined {
         if (arguments.length) {
-          this.someForwardRef__Ref__ = ref;
-          this.someForwardRef?.(ref);
+          if (ref) {
+            this.someForwardRef__Ref__ = ref;
+          } else {
+            this.someForwardRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.someForwardRef?.(this.someForwardRef__Ref__);
         }
         return this.someForwardRef?.();
       }.bind(this);

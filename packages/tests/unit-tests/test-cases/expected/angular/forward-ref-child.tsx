@@ -47,9 +47,9 @@ export default class RefOnChildrenChild extends Props {
     return {};
   }
   @ViewChild("childRef__Ref__", { static: false })
-  childRef__Ref__: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
+  childRef__Ref__!: ElementRef<HTMLDivElement>;
   @ViewChild("nullableRef__Ref__", { static: false })
-  nullableRef__Ref__?: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
+  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_childRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
@@ -64,8 +64,12 @@ export default class RefOnChildrenChild extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.childRef__Ref__ = ref!;
-          this.childRef(ref);
+          if (ref) {
+            this.childRef__Ref__ = ref;
+          } else {
+            this.childRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.childRef(this.childRef__Ref__);
         }
         return this.childRef();
       }.bind(this);
@@ -85,8 +89,12 @@ export default class RefOnChildrenChild extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.nullableRef__Ref__ = ref;
-          this.nullableRef?.(ref);
+          if (ref) {
+            this.nullableRef__Ref__ = ref;
+          } else {
+            this.nullableRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.nullableRef?.(this.nullableRef__Ref__);
         }
         return this.nullableRef?.();
       }.bind(this);

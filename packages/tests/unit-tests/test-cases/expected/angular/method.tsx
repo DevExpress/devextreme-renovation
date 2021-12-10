@@ -30,7 +30,12 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
-  divRef: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
   getHeight(p: number = 10, p1: any): string {
     return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement?.innerHTML} + ${p}`;
   }

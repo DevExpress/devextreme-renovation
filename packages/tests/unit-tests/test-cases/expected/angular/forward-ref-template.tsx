@@ -56,7 +56,11 @@ export default class RefOnChildrenTemplate extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.child = ref!;
+          if (ref) {
+            this.child = ref;
+          } else {
+            this.child = new UndefinedNativeElementRef();
+          }
         }
         return this.child;
       }.bind(this);

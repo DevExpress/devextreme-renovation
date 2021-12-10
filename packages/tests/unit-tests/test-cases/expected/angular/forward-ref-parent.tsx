@@ -50,8 +50,7 @@ export default class RefOnChildrenParent extends Props {
   get __restAttributes(): any {
     return {};
   }
-  nullableRef__Ref__?: ElementRef<HTMLDivElement> =
-    new UndefinedNativeElementRef<HTMLDivElement>();
+  nullableRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
@@ -66,7 +65,11 @@ export default class RefOnChildrenParent extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.child = ref!;
+          if (ref) {
+            this.child = ref;
+          } else {
+            this.child = new UndefinedNativeElementRef();
+          }
         }
         return this.child;
       }.bind(this);
@@ -86,8 +89,12 @@ export default class RefOnChildrenParent extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.nullableRef__Ref__ = ref;
-          this.nullableRef?.(ref);
+          if (ref) {
+            this.nullableRef__Ref__ = ref;
+          } else {
+            this.nullableRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.nullableRef?.(this.nullableRef__Ref__);
         }
         return this.nullableRef?.();
       }.bind(this);

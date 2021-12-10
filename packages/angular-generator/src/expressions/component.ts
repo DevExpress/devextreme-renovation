@@ -369,6 +369,9 @@ export class AngularComponent extends Component {
           new Identifier(`${m.name}__Ref__`),
           '!',
           m.type,
+          undefined,
+          false,
+          m,
         ),
       ),
     );
@@ -391,6 +394,7 @@ export class AngularComponent extends Component {
         .filter((m) => m.isForwardRef || m.isForwardRefProp)
         .map((m) => {
           const property = m as Property;
+          const forwardRefPropertyName = `this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''}`;
           const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
           const isOptional = property.questionOrExclamationToken === SyntaxKind.QuestionToken;
           const questionDotTokenIfNeed = isOptional
@@ -420,8 +424,12 @@ export class AngularComponent extends Component {
                 new SimpleExpression(
                   `return (function(this: ${this.name}, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${!isOptional ? '!' : ''};
-                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(ref)` : ''}
+                      if(ref) {
+                        ${forwardRefPropertyName} = ref;
+                      } else {
+                        ${forwardRefPropertyName} = new UndefinedNativeElementRef();
+                      }
+                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(${forwardRefPropertyName})` : ''}
                     }
                   return this.${m.name}${m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''}
                 }).bind(this)`,

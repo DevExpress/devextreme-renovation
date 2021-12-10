@@ -41,7 +41,12 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
-  divRef: ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
   __getDirectly(): any {
     const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
     const nullableRefOuter = this.nullableRef?.outerHTML ?? "";

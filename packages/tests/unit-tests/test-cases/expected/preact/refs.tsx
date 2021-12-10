@@ -68,9 +68,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       if (props.forwardRefProp && !props.forwardRefProp.current) {
         props.forwardRefProp.current = __divRef!.current;
       }
-      if (__ref && !__ref.current) {
-        __ref.current = __divRef!.current;
-      }
     },
     [props.refProp, props.forwardRefProp, props.outerDivRef]
   );
