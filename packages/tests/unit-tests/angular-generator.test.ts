@@ -6441,7 +6441,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        `@ViewChild("hostLink", {static: false}) host:ElementRef<HTMLDivElement> = new UndefinedNativeElementRef<HTMLDivElement>();`
+        `@ViewChild("hostLink", {static: false}) __host!:ElementRef<HTMLDivElement>;
+            get host():ElementRef<HTMLDivElement> { return (this.__host) ? this.__host : (new UndefinedNativeElementRef<HTMLDivElement>()); }`
       );
     });
 
