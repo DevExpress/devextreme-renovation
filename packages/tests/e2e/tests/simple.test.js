@@ -354,7 +354,7 @@ cloneTest("Set forward ref", async (t) => {
   await t
     .expect((await content.textContent).trim())
     .eql(
-      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
+      "non-object-ref-value: 10truecontent in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
     );
 });
 
