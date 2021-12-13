@@ -256,13 +256,13 @@ cloneTest("Changing current in forward ref", async (t) => {
   const el = Selector(".ref-forwarding");
   await t
     .expect(el.innerText).eql("true")
-    .expect(el.nextSibling("dx-set-forward-ref").innerText).eql("content in forwardRef")
+    .expect(el.nextSibling(".set-forward-ref").innerText).eql("content in forwardRef")
     .click(el)
     .expect(el.innerText).eql("false")
-    .expect(el.nextSibling("dx-set-forward-ref").innerText).notEql("content in forwardRef")
+    .expect(el.nextSibling(".set-forward-ref").exists).notOk()
     .click(el)
     .expect(el.innerText).eql("true")
-    .expect(el.nextSibling("dx-set-forward-ref").innerText).eql("content in forwardRef")
+    .expect(el.nextSibling(".set-forward-ref").innerText).eql("content in forwardRef")
 });
 
 cloneTest("Check templates passing with events binding", async (t) => {

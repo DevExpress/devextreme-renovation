@@ -13,10 +13,10 @@ import {
 import SetForwardRef from "./set-forward-child";
 
 function view({ ref, hostHasCurrent, host, visible }: SetForwardRefParent) {
-  return <Fragment>
+  return <div>
     <div ref={ref} className='ref-forwarding'>{hostHasCurrent.toString()}</div>
     <SetForwardRef forwardHost={host} visible={visible} />
-  </Fragment>;
+  </div>;
 }
 
 @ComponentBindings()

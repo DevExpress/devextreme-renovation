@@ -93,20 +93,6 @@ export class Property extends BaseProperty {
       const decoratorString = `@ViewChild("${this.name}Link", {static: false}) `;
       return `${decoratorString}__${this.name}!:ElementRef<${this.type}>;
             get ${this.name}():ElementRef<${this.type}> { return (this.__${this.name}) ? this.__${this.name} : (new UndefinedNativeElementRef<${this.type}>()); }`;
-
-      /*      const forwardRefUsedInView = options?.forwardRefs?.some((forwardRef) => forwardRef.name === sourceProperty.name);
-      const isForwardRef = sourceProperty?.isForwardRefProp || sourceProperty?.isForwardRef;
-      const refFromView = forwardRefUsedInView || !isForwardRef;
-      if (refFromView) {
-        const isPropRef = (sourceRefProps?.[0] as Property)?.isRefProp || (sourceRefProps?.[0] as Property)?.isForwardRefProp;
-        if (isPropRef) {
-          return `@ViewChild("${this.name}", {static: false})${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>;`;
-        }
-        const decoratorString = `@ViewChild("${this.name}'Link'", {static: false}) `;
-        return `${decoratorString}__${this.name}!:ElementRef<${this.type}>;
-          get ${this.name}():ElementRef<${this.type}> { return (this.__${this.name}) ? this.__${this.name} : (new UndefinedNativeElementRef<${this.type}>()); }`;
-      }
-      return `${this.name}${sourceProperty.questionOrExclamationToken}:ElementRef<${this.type}>;`; */
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
