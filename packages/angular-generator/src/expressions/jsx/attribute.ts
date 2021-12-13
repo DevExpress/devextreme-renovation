@@ -16,8 +16,6 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxExpression } from './jsx-expression';
 
-const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
-
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
     super(
@@ -82,7 +80,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         return 'ngStyle';
       }
 
-      if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {
+      if (name.startsWith('aria-')) {
         return `attr.${name}`;
       }
 
