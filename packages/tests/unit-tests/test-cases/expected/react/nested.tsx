@@ -4,33 +4,10 @@ function view(model: Widget) {
   return <div />;
 }
 
+import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
-function __collectChildren(children: React.ReactNode): Record<string, any> {
-  return (
-    React.Children.toArray(children).filter(
-      (child) => React.isValidElement(child) && typeof child.type !== "string"
-    ) as (React.ReactElement & { type: { propName: string } })[]
-  ).reduce((acc: Record<string, any>, child) => {
-    const {
-      children: childChildren,
-      __defaultNestedValues,
-      ...childProps
-    } = child.props;
-    const collectedChildren = __collectChildren(childChildren);
-    const childPropsValue = Object.keys(childProps).length
-      ? childProps
-      : __defaultNestedValues;
-    const allChild = { ...childPropsValue, ...collectedChildren };
-    return {
-      ...acc,
-      [child.type.propName]: acc[child.type.propName]
-        ? [...acc[child.type.propName], allChild]
-        : [allChild],
-    };
-  }, {});
-}
 import {
   EditingProps,
   CustomProps,
@@ -78,59 +55,57 @@ interface Widget {
   props: typeof PickedProps & RestProps;
   __getNestedEditing: typeof EditingProps;
   __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
-  nestedChildren: () => Record<string, any>;
   getColumns: () => any;
   isEditable: any;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof PickedProps & RestProps) {
-  const __getNestedEditing = useCallback(
+  const cachedNested = useRef<any>(__collectChildren(props.children));
+
+  const __getNestedEditing = useMemo(
     function __getNestedEditing(): typeof EditingProps {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.editing
         ? props.editing
-        : nested.editing
-        ? nested.editing?.[0]
+        : cachedNested.current.editing
+        ? cachedNested.current.editing?.[0]
         : props?.__defaultNestedValues?.editing;
     },
     [props.editing, props.children]
   );
-  const __getNestedColumns = useCallback(
+  const __getNestedColumns = useMemo(
     function __getNestedColumns():
       | Array<typeof GridColumnProps | string>
       | undefined {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.columns
         ? props.columns
-        : nested.columns
-        ? nested.columns
+        : cachedNested.current.columns
+        ? cachedNested.current.columns
         : undefined;
     },
     [props.columns, props.children]
   );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
-  );
   const __getColumns = useCallback(
     function __getColumns(): any {
-      return __getNestedColumns()?.map((el) =>
+      return __getNestedColumns?.map((el) =>
         typeof el === "string" ? el : el.name
       );
     },
-    [props.columns, props.children]
+    [__getNestedColumns]
   );
   const __isEditable = useCallback(
     function __isEditable(): any {
       return (
-        __getNestedEditing().editEnabled || __getNestedEditing().custom?.length
+        __getNestedEditing.editEnabled || __getNestedEditing.custom?.length
       );
     },
-    [props.editing, props.children]
+    [__getNestedEditing]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -142,8 +117,8 @@ export default function Widget(props: typeof PickedProps & RestProps) {
         ...restProps
       } = {
         ...props,
-        columns: __getNestedColumns(),
-        editing: __getNestedEditing(),
+        columns: __getNestedColumns,
+        editing: __getNestedEditing,
       };
       return restProps;
     },
@@ -153,12 +128,11 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   return view({
     props: {
       ...props,
-      columns: __getNestedColumns(),
-      editing: __getNestedEditing(),
+      columns: __getNestedColumns,
+      editing: __getNestedEditing,
     },
-    __getNestedEditing: __getNestedEditing(),
-    __getNestedColumns: __getNestedColumns(),
-    nestedChildren: __nestedChildren,
+    __getNestedEditing,
+    __getNestedColumns,
     getColumns: __getColumns,
     isEditable: __isEditable(),
     restAttributes: __restAttributes(),

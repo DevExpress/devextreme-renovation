@@ -91,7 +91,7 @@ class DxUndefWidgetNestedProp extends FakeNested {}
   template: `<ng-template #widgetTemplate
     ><div></div
     ><ng-template #dxslotProp
-      ><ng-content select="[slotProp]"></ng-content></ng-template
+      ><ng-content select="[data-slotprop]"></ng-content></ng-template
   ></ng-template>`,
 })
 export default class UndefWidget extends WidgetProps {

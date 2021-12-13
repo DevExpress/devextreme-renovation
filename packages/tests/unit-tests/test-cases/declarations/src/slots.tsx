@@ -5,9 +5,10 @@ import {
   JSXComponent,
 } from "@devextreme-generator/declarations";
 
-function view(viewModel: Widget) {
+function view(viewModel: SlotsWidget) {
   return (
     <div>
+      <div>{viewModel.props.selectorNamedSlot}</div>
       <div>{viewModel.props.namedSlot}</div>
       <div>{viewModel.props.children}</div>
     </div>
@@ -15,11 +16,12 @@ function view(viewModel: Widget) {
 }
 
 @ComponentBindings()
-class WidgetInput {
+class SlotsWidgetProps {
   @Slot() namedSlot?: JSX.Element;
+  @Slot({ selector: '.namedSlot' }) selectorNamedSlot?: JSX.Element;
   @Slot() children?: JSX.Element;
 }
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetInput) {}
+export default class SlotsWidget extends JSXComponent(SlotsWidgetProps) { }
