@@ -21,7 +21,6 @@
     "@devextreme-generator/inferno": "3.1.0-next",
     "@devextreme-generator/preact": "3.1.0-next",
     "@devextreme-generator/react": "3.1.0-next",
-    "@devextreme-generator/vue": "3.1.0-next",
     "loader-utils": "^2.0.0",
     "typescript": "3.8",
     "vinyl": "^2.2.1",
