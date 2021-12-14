@@ -5,6 +5,7 @@ import {
   Method as BaseMethod,
   Dependency,
 } from '@devextreme-generator/core';
+import { getPropName } from './property';
 
 export class GetAccessor extends BaseGetAccessor {
   getter(componentContext?: string, options?: toStringOptions): string {
@@ -40,6 +41,9 @@ export class GetAccessor extends BaseGetAccessor {
       if (dep instanceof BaseClassMember) {
         if (dep instanceof BaseMethod) {
           return [...arr, dep.name];
+        }
+        if (dep.isNested && this.name.startsWith('__getNested')) {
+          return [...arr, getPropName(dep.name), getPropName('children')];
         }
         return [...arr, ...dep.getDependencyString(options)];
       }

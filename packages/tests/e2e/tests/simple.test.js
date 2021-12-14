@@ -252,6 +252,19 @@ cloneTest("Forward refs", async (t) => {
     .eql("rgb(0, 0, 128)");
 });
 
+cloneTest("Changing current in forward ref", async (t) => {
+  const el = Selector(".ref-forwarding");
+  await t
+    .expect(el.innerText).eql("true")
+    .expect(el.nextSibling(".set-forward-ref").innerText).eql("content in forwardRef")
+    .click(el)
+    .expect(el.innerText).eql("false")
+    .expect(el.nextSibling(".set-forward-ref").exists).notOk()
+    .click(el)
+    .expect(el.innerText).eql("true")
+    .expect(el.nextSibling(".set-forward-ref").innerText).eql("content in forwardRef")
+});
+
 cloneTest("Check templates passing with events binding", async (t) => {
   const el = Selector("#template-app-clicks");
 
@@ -304,7 +317,7 @@ cloneTest("Render slot conditionally", async (t) => {
     const content = Selector("#render-slot-condition-content");
     await t.expect((await content.textContent).trim()).eql("content");
     const buttonEl = Selector("#render-slot-condition-in-button").exists;
-    if (button) {
+    if(button) {
       await t.expect(buttonEl).ok();
     } else {
       await t.expect(buttonEl).notOk();
@@ -341,7 +354,7 @@ cloneTest("Set forward ref", async (t) => {
   await t
     .expect((await content.textContent).trim())
     .eql(
-      "non-object-ref-value: 10content in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
+      "non-object-ref-value: 10truecontent in forwardRefcontent in forwardRefDeepconsumer is rendered:element passed"
     );
 });
 
@@ -359,7 +372,7 @@ cloneTest("Dynamic components", async (t) => {
   const checkContent = async (value, conditionIsVisible) => {
     await t.expect((await dynamicComponent.textContent).trim()).eql(`${value}`);
 
-    if (conditionIsVisible) {
+    if(conditionIsVisible) {
       await t
         .expect((await dynamicComponentCondition.textContent).trim())
         .eql(`${value + 1}`);
@@ -421,13 +434,13 @@ cloneTest("Styles unification", async (t) => {
 
 cloneTest("Synchronize InternalState setting on effect after TwoWay prop changed", async (t) => {
   const buttonWithSyncState = Selector("#button-with-sync-state");
-  
+
   await t
     .expect((await buttonWithSyncState.textContent).trim())
     .eql(`Unpressed - Internal State is Synchronized`);
 
   await t.click(buttonWithSyncState)
-  
+
   await t
     .expect((await buttonWithSyncState.textContent).trim())
     .eql(`Pressed - Internal State is Synchronized`);
@@ -441,7 +454,7 @@ cloneTest("Cached getters reset if dependency updated", async (t) => {
   await t
     .expect((await getterCacheValue.textContent).trim())
     .eql('20 0 20 0 2')
-  
+
   await t.click(updatePropButton)
 
   await t
@@ -449,11 +462,11 @@ cloneTest("Cached getters reset if dependency updated", async (t) => {
     .eql('21 0 21 0 2')
 
   await t.click(updateStateButton)
-    
+
   await t
     .expect((await getterCacheValue.textContent).trim())
     .eql('21 1 21 1 2')
-  
+
   await t.click(updateContextButton)
 
   await t
@@ -467,7 +480,7 @@ cloneTest("Default prop value if undefined in parent", async (t) => {
   await t
     .expect((await undefinedPropDefaults.textContent).trim())
     .eql('oneWayDefault twoWayDefault')
-  
+
   await t.click(undefPropsButton)
 
   await t

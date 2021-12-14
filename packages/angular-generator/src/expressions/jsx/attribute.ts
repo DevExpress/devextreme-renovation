@@ -115,7 +115,7 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   compileBase(name: string, value: string) {
-    return `[${name}]="${value}"`;
+    return name.startsWith('data-') ? `${name.toLocaleLowerCase()}="${value}"` : `[${name}]="${value}"`;
   }
 
   isStringLiteralValue() {

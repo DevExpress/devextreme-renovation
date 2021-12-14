@@ -367,8 +367,11 @@ export class AngularComponent extends Component {
           ],
           [],
           new Identifier(`${m.name}__Ref__`),
-          m.questionOrExclamationToken,
+          '!',
           m.type,
+          undefined,
+          false,
+          m,
         ),
       ),
     );
@@ -391,6 +394,7 @@ export class AngularComponent extends Component {
         .filter((m) => m.isForwardRef || m.isForwardRefProp)
         .map((m) => {
           const property = m as Property;
+          const forwardRefPropertyName = `this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''}`;
           const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
           const isOptional = property.questionOrExclamationToken === SyntaxKind.QuestionToken;
           const questionDotTokenIfNeed = isOptional
@@ -420,8 +424,12 @@ export class AngularComponent extends Component {
                 new SimpleExpression(
                   `return (function(this: ${this.name}, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${!isOptional ? '!' : ''};
-                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(ref)` : ''}
+                      if(ref) {
+                        ${forwardRefPropertyName} = ref;
+                      } else {
+                        ${forwardRefPropertyName} = new UndefinedNativeElementRef();
+                      }
+                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(${forwardRefPropertyName})` : ''}
                     }
                   return this.${m.name}${m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''}
                 }).bind(this)`,
@@ -603,8 +611,13 @@ export class AngularComponent extends Component {
 
   compileDefaultPropsImport(imports: string[]): void {
     const propsWithDefault = this.getPropsWithDefault();
-    if (propsWithDefault.length) {
-      imports.push("import {updateUndefinedFromDefaults, DefaultEntries} from '@devextreme/runtime/angular'");
+    const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
+    const runTimeImports = [
+      ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
+      ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
     }
   }
 

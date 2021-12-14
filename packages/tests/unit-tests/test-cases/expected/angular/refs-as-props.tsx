@@ -20,6 +20,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -40,7 +41,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
-  divRef!: ElementRef<HTMLDivElement>;
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
   __getDirectly(): any {
     const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
     const nullableRefOuter = this.nullableRef?.outerHTML ?? "";

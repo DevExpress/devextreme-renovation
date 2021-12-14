@@ -10,6 +10,7 @@ import {
   Identifier,
   ObjectLiteral,
   Property,
+  SimpleExpression,
   StringLiteral,
   TemplateExpression,
 } from '@devextreme-generator/core';
@@ -184,7 +185,9 @@ function compileSlots(options?: toStringOptions): string[] {
     options?.members
       .filter((m) => m instanceof Property && m.isSlot)
       .map((slot) => {
-        const selector = slot.name.toString() === 'children' ? '' : `select="[${slot.name}]"`;
+        const cssSelector = slot.getDecoratorParameter<SimpleExpression>(Decorators.Slot, 'selector')?.expression
+        || `[data-${slot.name.toLocaleLowerCase()}]`;
+        const selector = slot.name.toString() === 'children' ? '' : `select="${cssSelector}"`;
         return `<ng-template #dx${slot.name}><ng-content ${selector}></ng-content></ng-template>`;
       }) || []
   );

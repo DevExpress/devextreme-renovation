@@ -26,8 +26,6 @@ import {
   SimpleTypeExpression,
   isTypeArray,
   TypeExpression,
-  Parameter,
-  Function,
   capitalizeFirstLetter,
   lowerizeFirstLetter,
   processComponentContext,
@@ -35,6 +33,8 @@ import {
   ShorthandPropertyAssignment,
   Dependency,
   isComponentWrapper,
+  If,
+  Decorators,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method, calculateMethodDependencyString } from './class-members/method';
@@ -113,9 +113,6 @@ export class ReactComponent extends Component {
       return p;
     });
 
-    if (members.some((m) => m.isNested)) {
-      members.unshift(this.createNestedChildrenGetter());
-    }
     (members.filter((m) => m.isNested) as Property[]).forEach((m) => {
       if (m.initializer) {
         m.questionOrExclamationToken = SyntaxKind.QuestionToken;
@@ -123,53 +120,25 @@ export class ReactComponent extends Component {
       members.unshift(this.createNestedPropertyGetter(m));
     });
 
+    if (members.some((m) => m.isNested)) {
+      members.unshift(this.createNestedCache());
+    }
+
     return members;
   }
 
-  createNestedChildrenGetter(): Method {
-    const statements = [
-      new VariableStatement(
-        undefined,
-        new VariableDeclarationList(
-          [
-            new VariableDeclaration(
-              new BindingPattern(
-                [
-                  new BindingElement(
-                    undefined,
-                    undefined,
-                    new Identifier('children'),
-                  ),
-                ],
-                'object',
-              ),
-              undefined,
-              new PropertyAccess(
-                new SimpleExpression('this'),
-                new Identifier('props'),
-              ),
-            ),
-          ],
-          SyntaxKind.ConstKeyword,
-        ),
+  createNestedCache(): Property {
+    return new Property([
+      new Decorator(
+        new Call(new Identifier(Decorators.Mutable), [], []),
+        this.context,
       ),
-      new ReturnStatement(new SimpleExpression('__collectChildren(children)')),
-    ];
-    const method = new Method(
-      [],
-      undefined,
-      undefined,
-      new Identifier('nestedChildren'),
-      undefined,
-      [],
-      [],
-      new SimpleTypeExpression('Record<string, any>'),
-      new Block(statements, true),
-    );
-
-    method.prefix = '__';
-
-    return method;
+    ],
+    [],
+    new Identifier('cachedNested'),
+    undefined,
+    undefined,
+    new SimpleExpression('__collectChildren(props.children)'));
   }
 
   createGetAccessor(
@@ -237,51 +206,6 @@ export class ReactComponent extends Component {
       new Identifier('restAttributes'),
       new SimpleTypeExpression('RestProps'),
       new Block(statements, true),
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  createNestedChildrenCollector(): Function {
-    const statements = [
-      new ReturnStatement(
-        new SimpleExpression(`(
-              React.Children.toArray(children).filter(
-                (child) => React.isValidElement(child) && typeof child.type !== "string"
-              ) as (React.ReactElement & { type: { propName: string } })[]
-            )
-              .reduce((acc: Record<string, any>, child) => {
-                const { children: childChildren, __defaultNestedValues, ...childProps } = child.props;
-                const collectedChildren = __collectChildren(childChildren);
-                const childPropsValue = Object.keys(childProps).length ? childProps : __defaultNestedValues;
-                const allChild = { ...childPropsValue, ...collectedChildren };
-                return {
-                  ...acc,
-                  [child.type.propName]: acc[child.type.propName] ? [...acc[child.type.propName], allChild] : [allChild],
-                };
-              }, {})`),
-      ),
-    ];
-
-    return new Function(
-      undefined,
-      undefined,
-      '',
-      new Identifier('__collectChildren'),
-      [],
-      [
-        new Parameter(
-          [],
-          [],
-          '',
-          new Identifier('children'),
-          undefined,
-          'React.ReactNode',
-          undefined,
-        ),
-      ],
-      new SimpleTypeExpression('Record<string, any>'),
-      new Block(statements, true),
-      this.context,
     );
   }
 
@@ -368,6 +292,10 @@ export class ReactComponent extends Component {
     if (this.members.filter((a) => a.isApiMethod).length) {
       hooks.push('useImperativeHandle');
       compats.push('forwardRef');
+    }
+
+    if (this.members.some((m) => m.isNested)) {
+      imports.push("import { __collectChildren, equalByValue } from '@devextreme/runtime/react'");
     }
 
     this.compileApiRefImports(imports);
@@ -750,19 +678,21 @@ export class ReactComponent extends Component {
             new VariableDeclaration(
               new Identifier('nested'),
               undefined,
-              new SimpleExpression('__nestedChildren()'),
+              new SimpleExpression('__collectChildren(props.children)'),
             ),
           ],
           SyntaxKind.ConstKeyword,
         ),
       ),
+      new If(new SimpleExpression('!equalByValue(cachedNested.current, nested)'),
+        new SimpleExpression('cachedNested.current = nested')),
       new ReturnStatement(
         new Conditional(
           new SimpleExpression(propName),
           new SimpleExpression(propName),
           new Conditional(
-            new SimpleExpression(`nested.${property.name}`),
-            new SimpleExpression(`nested.${property.name}${indexGetter}`),
+            new SimpleExpression(`cachedNested.current.${property.name}`),
+            new SimpleExpression(`cachedNested.current.${property.name}${indexGetter}`),
             new SimpleExpression(
               `${property.initializer
                 ? `props?.__defaultNestedValues?.${property.name}`
@@ -974,10 +904,6 @@ export class ReactComponent extends Component {
               ${this.compileImports()}
               ${this.compileStyleNormalizer()}
               ${this.compilePortalComponent()}
-              ${this.members.some((m) => m.isNested)
-    ? this.createNestedChildrenCollector()
-    : ''
-}
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}

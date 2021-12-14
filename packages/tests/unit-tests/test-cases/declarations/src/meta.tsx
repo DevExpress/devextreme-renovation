@@ -41,7 +41,7 @@ class MetaWidgetInput {
 })
 export default class MetaWidget extends JSXComponent(MetaWidgetInput) {
   @Ref()
-  baseRef?: RefObject<AnotherWidget>;
+  baseRef!: RefObject<AnotherWidget>;
 
   @Method()
   apiMethod1() {

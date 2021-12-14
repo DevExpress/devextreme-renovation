@@ -227,7 +227,11 @@ export default class Widget extends WidgetPropsType {
     this._detectChanges();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    updateUndefinedFromDefaults(this as Record<string, unknown>, changes, this.defaultEntries);
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   @ViewChild("widgetTemplate", { static: true })

@@ -21,7 +21,6 @@ export class WidgetProps {
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined;
   __slotSlotProp?: ElementRef<HTMLDivElement>;
-
   get slotProp() {
     const childNodes = this.__slotSlotProp?.nativeElement?.childNodes;
     return childNodes && childNodes.length > 2;
@@ -64,6 +63,7 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxi-another-nested-prop-init",
@@ -91,7 +91,7 @@ class DxUndefWidgetNestedProp extends FakeNested {}
   template: `<ng-template #widgetTemplate
     ><div></div
     ><ng-template #dxslotProp
-      ><ng-content select="[slotProp]"></ng-content></ng-template
+      ><ng-content select="[data-slotprop]"></ng-content></ng-template
   ></ng-template>`,
 })
 export default class UndefWidget extends WidgetProps {
@@ -168,8 +168,12 @@ export default class UndefWidget extends WidgetProps {
         ref?: ElementRef<any>
       ): ElementRef<any> | undefined {
         if (arguments.length) {
-          this.someForwardRef__Ref__ = ref;
-          this.someForwardRef?.(ref);
+          if (ref) {
+            this.someForwardRef__Ref__ = ref;
+          } else {
+            this.someForwardRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.someForwardRef?.(this.someForwardRef__Ref__);
         }
         return this.someForwardRef?.();
       }.bind(this);
