@@ -67,7 +67,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: 12.x
+          node-version: ${{ env.nodeVersion }}
 
       - name: Get DevExtreme
         run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
