@@ -27,6 +27,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -44,12 +45,29 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetProps {
   @ViewChild("divRefLink", { static: false })
-  divRef?: ElementRef<HTMLDivElement>;
-  @ViewChild("refLink", { static: false }) ref?: ElementRef<HTMLDivElement>;
-  forwardRef?: ElementRef<HTMLDivElement>;
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
+  @ViewChild("refLink", { static: false }) __ref!: ElementRef<HTMLDivElement>;
+  get ref(): ElementRef<HTMLDivElement> {
+    return this.__ref
+      ? this.__ref
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
+  forwardRef: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   @ViewChild("existingRefLink", { static: false })
-  existingRef!: ElementRef<HTMLDivElement>;
-  existingForwardRef!: ElementRef<HTMLDivElement>;
+  __existingRef!: ElementRef<HTMLDivElement>;
+  get existingRef(): ElementRef<HTMLDivElement> {
+    return this.__existingRef
+      ? this.__existingRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
+  existingForwardRef: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   __writeRefs(): any {
     let someRef;
     if (this.refProp) {
@@ -69,9 +87,6 @@ export default class Widget extends WidgetProps {
       this.forwardRef_forwardRefProp(
         new ElementRef(this.divRef!.nativeElement)
       );
-    }
-    if (this.ref && !this.ref.nativeElement) {
-      this.ref = new ElementRef(this.divRef!.nativeElement);
     }
   }
   __readRefs(): any {
@@ -113,19 +128,23 @@ export default class Widget extends WidgetProps {
   requiredForwardRefProp__Ref__!: ElementRef<HTMLDivElement>;
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>
-  ) => ElementRef<HTMLDivElement> | undefined {
+  ) => ElementRef<HTMLDivElement> {
     if (this.__getterCache["forwardRef_forwardRef"] !== undefined) {
       return this.__getterCache["forwardRef_forwardRef"];
     }
     return (this.__getterCache["forwardRef_forwardRef"] = ((): ((
       ref?: ElementRef<HTMLDivElement>
-    ) => ElementRef<HTMLDivElement> | undefined) => {
+    ) => ElementRef<HTMLDivElement>) => {
       return function (
         this: Widget,
         ref?: ElementRef<HTMLDivElement>
-      ): ElementRef<HTMLDivElement> | undefined {
+      ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.forwardRef = ref;
+          if (ref) {
+            this.forwardRef = ref;
+          } else {
+            this.forwardRef = new UndefinedNativeElementRef();
+          }
         }
         return this.forwardRef;
       }.bind(this);
@@ -145,7 +164,11 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.existingForwardRef = ref!;
+          if (ref) {
+            this.existingForwardRef = ref;
+          } else {
+            this.existingForwardRef = new UndefinedNativeElementRef();
+          }
         }
         return this.existingForwardRef;
       }.bind(this);
@@ -165,8 +188,12 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.outerDivRef__Ref__ = ref;
-          this.outerDivRef?.(ref);
+          if (ref) {
+            this.outerDivRef__Ref__ = ref;
+          } else {
+            this.outerDivRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.outerDivRef?.(this.outerDivRef__Ref__);
         }
         return this.outerDivRef?.();
       }.bind(this);
@@ -186,8 +213,12 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.forwardRefProp__Ref__ = ref;
-          this.forwardRefProp?.(ref);
+          if (ref) {
+            this.forwardRefProp__Ref__ = ref;
+          } else {
+            this.forwardRefProp__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.forwardRefProp?.(this.forwardRefProp__Ref__);
         }
         return this.forwardRefProp?.();
       }.bind(this);
@@ -207,8 +238,13 @@ export default class Widget extends WidgetProps {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.requiredForwardRefProp__Ref__ = ref!;
-          this.requiredForwardRefProp(ref);
+          if (ref) {
+            this.requiredForwardRefProp__Ref__ = ref;
+          } else {
+            this.requiredForwardRefProp__Ref__ =
+              new UndefinedNativeElementRef();
+          }
+          this.requiredForwardRefProp(this.requiredForwardRefProp__Ref__);
         }
         return this.requiredForwardRefProp();
       }.bind(this);
@@ -224,7 +260,7 @@ export default class Widget extends WidgetProps {
   __getterCache: {
     forwardRef_forwardRef?: (
       ref?: ElementRef<HTMLDivElement>
-    ) => ElementRef<HTMLDivElement> | undefined;
+    ) => ElementRef<HTMLDivElement>;
     forwardRef_existingForwardRef?: (
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>;

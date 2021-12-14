@@ -26,9 +26,9 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof WidgetProps & RestProps;
-  divRef?: any;
-  ref?: any;
-  forwardRef?: any;
+  divRef: any;
+  ref: any;
+  forwardRef: any;
   existingRef: any;
   existingForwardRef: any;
   writeRefs: () => any;
@@ -68,11 +68,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       if (props.forwardRefProp && !props.forwardRefProp.current) {
         props.forwardRefProp.current = __divRef!.current;
       }
-      if (__ref && !__ref.current) {
-        __ref.current = __divRef!.current;
-      }
     },
-    [props.refProp, props.forwardRefProp, props.outerDivRef, __divRef, __ref]
+    [props.refProp, props.forwardRefProp, props.outerDivRef]
   );
   const __readRefs = useCallback(
     function __readRefs(): any {
@@ -85,7 +82,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
       const outer_7 = props.requiredRefProp.current?.outerHTML;
       const outer_8 = props.requiredForwardRefProp.current?.outerHTML;
     },
-    [props.refProp, props.forwardRefProp, __ref, __forwardRef]
+    [props.refProp, props.forwardRefProp]
   );
   const __getRestRefs = useCallback(
     function __getRestRefs(): {

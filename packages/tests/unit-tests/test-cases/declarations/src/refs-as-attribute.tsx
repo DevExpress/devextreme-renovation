@@ -31,8 +31,8 @@ function view(model: Widget) {
 })
 export default class Widget extends JSXComponent(WidgetProps) {
   
-  @Ref() someRef?: RefObject<HTMLDivElement>;
-  @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
+  @Ref() someRef!: RefObject<HTMLDivElement>;
+  @ForwardRef() forwardRef!: RefObject<HTMLDivElement>;
   get forwardRefCurrent() {
       return this.forwardRef?.current;
   }
