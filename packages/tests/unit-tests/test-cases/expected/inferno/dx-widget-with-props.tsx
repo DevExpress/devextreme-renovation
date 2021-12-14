@@ -4,6 +4,9 @@ import {
   InfernoWrapperComponent,
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
+function view({ props: { optionalValue, value } }: WidgetWithProps) {
+  return <div>{optionalValue || value}</div>;
+}
 
 export declare type WidgetWithPropsInputType = {
   value: string;
@@ -50,6 +53,3 @@ export class WidgetWithProps extends BaseInfernoComponent<any> {
 }
 
 WidgetWithProps.defaultProps = WidgetWithPropsInput;
-function view({ props: { optionalValue, value } }: WidgetWithProps) {
-  return <div>{optionalValue || value}</div>;
-}

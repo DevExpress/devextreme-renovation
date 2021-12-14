@@ -18,6 +18,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-extra-element",
@@ -35,6 +39,7 @@ style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
 })
 export class ExtraElement extends Props {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -45,6 +50,14 @@ export class ExtraElement extends Props {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -53,6 +66,11 @@ export class ExtraElement extends Props {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["prop"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({

@@ -18,6 +18,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
 
@@ -47,6 +51,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
   ></ng-template>`,
 })
 export class ExternalLayout extends Props {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -57,6 +62,14 @@ export class ExternalLayout extends Props {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -65,6 +78,11 @@ export class ExternalLayout extends Props {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new Props() as { [key: string]: any };
+    this.defaultEntries = ["prop"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 
   InnerComponentDefaults = { someTemplate: InnerWidget };

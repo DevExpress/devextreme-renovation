@@ -48,8 +48,8 @@ import RefParent from "./refs-as-attributes/ref-parent";
 import DynamicComponent from "./dynamic-components/dynamic-component";
 import StylesWidget from "./styles";
 import ButtonWithInternalState from "./internal-state-change-on-effect";
-import GetterCache from './getter-cache/getter-cache-parent';
-
+import GetterCache from "./getter-cache/getter-cache-parent";
+import UndefPropParent from "./undefined-prop-parent";
 function view(model: App) {
   return (
     <div>
@@ -167,6 +167,12 @@ function view(model: App) {
       <StylesWidget />
       <RefParent />
       <GetterCache />
+      <div>
+        <UndefPropParent  
+        oneWayProp={model.undefinedProps.oneWayProp} 
+        twoWayProp={model.undefinedProps.twoWayProp} />
+        <ButtonComponent id="undefinedPropsButton" onClick={model.changeUndefProps}>Change Undef Props</ButtonComponent>
+      </div>
     </div>
   );
 }
@@ -209,6 +215,7 @@ export default class App extends JSXComponent(AppInput) {
 
   @InternalState() synchronizedValue: boolean = false;
 
+  @InternalState() undefinedProps: {oneWayProp?: string, twoWayProp?: string} = {oneWayProp: undefined, twoWayProp: undefined};
   onSynchronizeValueChange(newValue: boolean) {
     this.synchronizedValue = newValue;
   }
@@ -253,5 +260,13 @@ export default class App extends JSXComponent(AppInput) {
 
   get arrayForSum(): number[] {
     return [1, 5, 10];
+  }
+
+  changeUndefProps(){
+    if (this.undefinedProps.oneWayProp){
+      this.undefinedProps = {oneWayProp: undefined, twoWayProp: undefined}
+      
+    }
+    else this.undefinedProps = {oneWayProp: "changedOneWay", twoWayProp: "changedTwoWay"}
   }
 }

@@ -1,4 +1,4 @@
-import Widget, { DxWidgetModule } from "./slots";
+import Widget, { DxSlotsWidgetModule } from "./slots";
 import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
 @Injectable()
 class WidgetInput {
@@ -22,6 +22,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-slot-pass",
@@ -29,11 +33,11 @@ import { CommonModule } from "@angular/common";
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-widget #widget1 style="display: contents"
+      ><dx-slots-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"
           ><ng-container
             [ngTemplateOutlet]="dxchildren"
-          ></ng-container></div></dx-widget
+          ></ng-container></div></dx-slots-widget
       ><ng-content
         *ngTemplateOutlet="widget1?.widgetTemplate"
       ></ng-content></div
@@ -41,6 +45,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class SlotPass extends WidgetInput {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -54,6 +59,14 @@ export default class SlotPass extends WidgetInput {
     return { children: this.children };
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -62,6 +75,11 @@ export default class SlotPass extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["p"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
   @ViewChild("slotChildren") set slotChildren(
     slot: ElementRef<HTMLDivElement>
@@ -76,7 +94,7 @@ export default class SlotPass extends WidgetInput {
 }
 @NgModule({
   declarations: [SlotPass],
-  imports: [DxWidgetModule, CommonModule],
+  imports: [DxSlotsWidgetModule, CommonModule],
   entryComponents: [Widget],
   exports: [SlotPass],
 })

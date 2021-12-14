@@ -17,6 +17,11 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+  UndefinedNativeElementRef,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -28,8 +33,19 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
-  @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
+  defaultEntries: DefaultEntries;
+  @ViewChild("hostLink", { static: false }) __host!: ElementRef<HTMLDivElement>;
+  get host(): ElementRef<HTMLDivElement> {
+    return this.__host
+      ? this.__host
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
+  @ViewChild("i1Link", { static: false }) __i1!: ElementRef<HTMLInputElement>;
+  get i1(): ElementRef<HTMLInputElement> {
+    return this.__i1
+      ? this.__i1
+      : new UndefinedNativeElementRef<HTMLInputElement>();
+  }
   get __attr1(): any {
     return {};
   }
@@ -92,6 +108,11 @@ export default class Widget extends WidgetInput {
     if (["prop"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
   }
 
   ngAfterViewChecked() {
@@ -109,6 +130,11 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new WidgetInput() as { [key: string]: any };
+    this.defaultEntries = ["prop"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({
