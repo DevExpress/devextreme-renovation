@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/vue",
-  "version": "2.3.13",
+  "version": "2.3.14",
   "description": "DevExtreme vue component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,8 +16,8 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/angular": "2.3.13",
-    "@devextreme-generator/core": "2.3.13",
+    "@devextreme-generator/angular": "2.3.14",
+    "@devextreme-generator/core": "2.3.14",
     "prettier": "^2.1.0"
   },
   "devDependencies": {
