@@ -30,7 +30,8 @@
     "publish:patch": "npm run prepare-release-branch && lerna version patch --exact --force-publish",
     "publish:minor": "npm run prepare-release-branch && lerna version minor --exact --force-publish",
     "publish:major": "npm run prepare-release-branch && lerna version major --exact --force-publish",
-    "prepare-release-branch": "git checkout -b release && git push origin release"
+    "prepare-release-branch": "git checkout -b release && git push origin release",
+    "install-generators": "npm run clear && gulp install-generators --to '../devextreme'"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.4.1",
@@ -47,6 +48,8 @@
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-spellcheck": "0.0.14",
+    "gulp": "^4.0.2",
+    "gulp-run": "^1.7.1",
     "lerna": "^4.0.0"
   }
 }
