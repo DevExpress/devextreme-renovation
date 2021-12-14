@@ -1,6 +1,6 @@
 import Generator, { Expression, Method, Property } from '@devextreme-generator/core';
 
-export default function (generator: Generator) {
+export default function <G extends Generator>(generator: G) {
   function createComponentDecorator(parameters: { [name: string]: any }) {
     return generator.createDecorator(
       generator.createCall(
@@ -18,7 +18,7 @@ export default function (generator: Generator) {
           ),
         ]
       )
-    );
+    ) as ReturnType<G["createDecorator"]>;;
   }
 
   function createDecorator(name: string, parameters?: { [name: string]: any }) {
@@ -37,7 +37,7 @@ export default function (generator: Generator) {
         ];
     return generator.createDecorator(
       generator.createCall(generator.createIdentifier(name), [], params)
-    );
+    ) as ReturnType<G["createDecorator"]>;
   }
 
   function createComponent(
@@ -51,7 +51,7 @@ export default function (generator: Generator) {
       [],
       [],
       properties
-    );
+    ) as ReturnType<G["createClassDeclaration"]>;
   }
 
   return {

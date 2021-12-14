@@ -1,3 +1,7 @@
+function view({ props: { optionalValue, value } }: WidgetWithProps) {
+  return <div>{optionalValue || value}</div>;
+}
+
 export declare type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
@@ -50,6 +54,3 @@ const WidgetWithProps = forwardRef<
 export { WidgetWithProps };
 
 WidgetWithProps.defaultProps = WidgetWithPropsInput;
-function view({ props: { optionalValue, value } }: WidgetWithProps) {
-  return <div>{optionalValue || value}</div>;
-}

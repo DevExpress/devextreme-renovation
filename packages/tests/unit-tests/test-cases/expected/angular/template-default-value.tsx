@@ -21,6 +21,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-template-default-value",
@@ -53,7 +57,9 @@ import { CommonModule } from "@angular/common";
       #defaultCompTemplateDefault
       let-optionalValue="optionalValue"
       let-value="value"
-      ><dx-widget-with-props
+    >
+      <dx-widget-with-props
+        #compRef
         [optionalValue]="
           optionalValue !== undefined
             ? optionalValue
@@ -61,6 +67,7 @@ import { CommonModule } from "@angular/common";
         "
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
+      <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
     </ng-template>
     <ng-template #defaultFuncTemplateDefault let-value="value">
       <div
@@ -70,6 +77,7 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
+  defaultEntries: DefaultEntries;
   get __restAttributes(): any {
     return {};
   }
@@ -80,6 +88,14 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -88,6 +104,13 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new TemplateDefaultValueProps() as {
+      [key: string]: any;
+    };
+    this.defaultEntries = ["stringToRender"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 
   WidgetWithPropsDefaults = {

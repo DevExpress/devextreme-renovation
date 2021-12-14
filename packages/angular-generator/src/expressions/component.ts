@@ -32,6 +32,7 @@ import {
   SimpleTypeExpression,
   StringLiteral,
   SyntaxKind,
+  Decorator as BaseDecorator,
 } from '@devextreme-generator/core';
 import path from 'path';
 
@@ -63,9 +64,9 @@ export function compileCoreImports(
   if (
     members.some((m) => m.decorators.some(
       (d) => d.name === Decorators.OneWay
-          || d.name === Decorators.RefProp
-          || d.name === Decorators.Nested
-          || d.name === Decorators.ForwardRefProp,
+        || d.name === Decorators.RefProp
+        || d.name === Decorators.Nested
+        || d.name === Decorators.ForwardRefProp,
     ))
   ) {
     imports.push('Input');
@@ -216,7 +217,7 @@ export class AngularComponent extends Component {
   }
 
   createNestedPropertySetter(
-    decorator: Decorator[],
+    decorator: BaseDecorator[],
     modifiers: string[],
     name: string,
     questionOrExclamationToken: string,
@@ -269,9 +270,7 @@ export class AngularComponent extends Component {
         if (nested && nested.length) {
           return nested${indexGetter};
         }
-        ${
-  initializer
-    ? `return ${componentName}.__defaultNestedValues.${name}`
+        ${initializer ? `return ${componentName}.__defaultNestedValues.${name}`
     : ''
 }`),
         ],
@@ -368,8 +367,11 @@ export class AngularComponent extends Component {
           ],
           [],
           new Identifier(`${m.name}__Ref__`),
-          m.questionOrExclamationToken,
+          '!',
           m.type,
+          undefined,
+          false,
+          m,
         ),
       ),
     );
@@ -392,6 +394,7 @@ export class AngularComponent extends Component {
         .filter((m) => m.isForwardRef || m.isForwardRefProp)
         .map((m) => {
           const property = m as Property;
+          const forwardRefPropertyName = `this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''}`;
           const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
           const isOptional = property.questionOrExclamationToken === SyntaxKind.QuestionToken;
           const questionDotTokenIfNeed = isOptional
@@ -419,23 +422,16 @@ export class AngularComponent extends Component {
             new Block(
               [
                 new SimpleExpression(
-                  `return (function(this: ${
-                    this.name
-                  }, ${parameter}): ${returnType}{
+                  `return (function(this: ${this.name}, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${
-  !isOptional ? '!' : ''
-};
-                      ${
-  m.isForwardRefProp
-    ? `this.${m.name}
-                        ${questionDotTokenIfNeed}(ref)`
-    : ''
-}
+                      if(ref) {
+                        ${forwardRefPropertyName} = ref;
+                      } else {
+                        ${forwardRefPropertyName} = new UndefinedNativeElementRef();
+                      }
+                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(${forwardRefPropertyName})` : ''}
                     }
-                  return this.${m.name}${
-  m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''
-}
+                  return this.${m.name}${m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''}
                 }).bind(this)`,
                 ),
               ],
@@ -608,11 +604,24 @@ export class AngularComponent extends Component {
     ];
 
     this.compileDefaultOptionsImport(imports);
+    this.compileDefaultPropsImport(imports);
 
     return imports.join(';\n');
   }
 
-  compileGetterCache(ngOnChanges: string[],
+  compileDefaultPropsImport(imports: string[]): void {
+    const propsWithDefault = this.getPropsWithDefault();
+    const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
+    const runTimeImports = [
+      ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
+      ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
+    }
+  }
+
+  compileGetterCache(ngOnChangesStatements: string[],
     options?: toStringOptions,
     resetDependantGetters: string[] = []): string {
     const getters = this.members.filter(
@@ -649,15 +658,14 @@ export class AngularComponent extends Component {
           );
           if (dependenciesWithoutContext.length) {
             conditionArray.push(
-              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${
-                ngOnChangesParameters[0]
+              `[${dependenciesWithoutContext.map((d) => `"${d instanceof BaseClassMember ? d._name : d}"`).join(',')}].some(d=>${ngOnChangesParameters[0]
               }[d])`,
             );
           }
           if (propsDependency.includes('props')) {
-            ngOnChanges.push(deleteCacheStatement);
+            ngOnChangesStatements.push(deleteCacheStatement);
           } else if (conditionArray.length) {
-            ngOnChanges.push(`
+            ngOnChangesStatements.push(`
                         if (${conditionArray.join('&&')}) {
                             ${deleteCacheStatement}
                         }`);
@@ -735,8 +743,7 @@ export class AngularComponent extends Component {
           const conditionArray = ['this.__destroyEffects.length'];
           if (propsDependency.indexOf('props') === -1) {
             conditionArray.push(
-              `[${propsDependency.map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`).join(',')}].some(d=>${
-                ngOnChangesParameters[0]
+              `[${propsDependency.map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`).join(',')}].some(d=>${ngOnChangesParameters[0]
               }[d])`,
             );
           }
@@ -899,10 +906,9 @@ export class AngularComponent extends Component {
 
           allDependency.push(...getDependencyFromViewExpression(o.expression, options));
 
-          const refString = `${
-            o.refExpression instanceof SimpleExpression
-              ? `this.${o.refExpression.toString()}`
-              : o.refExpression.toString(options)
+          const refString = `${o.refExpression instanceof SimpleExpression
+            ? `this.${o.refExpression.toString()}`
+            : o.refExpression.toString(options)
           }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
             coreImports.push('ViewChild', 'ElementRef');
@@ -957,9 +963,7 @@ export class AngularComponent extends Component {
             ngOnChangesStatements.push(`if([${propsDependency
               .map((d) => `"${d instanceof BaseClassMember ? d._name.toString() : d}"`)
               .join(',')}].some(d=>
-              ${ngOnChangesParameters[0]}[d] && !${
-  ngOnChangesParameters[0]
-}[d].firstChange)){
+              ${ngOnChangesParameters[0]}[d] && !${ngOnChangesParameters[0]}[d].firstChange)){
                 this.${scheduledApplyAttributes} = true;
             }`);
           }
@@ -1039,8 +1043,7 @@ export class AngularComponent extends Component {
             this._detectChanges();
         }
 
-        ${
-  disabledProp
+        ${disabledProp
     ? `setDisabledState(isDisabled: boolean): void {
             this.disabled = isDisabled;
         }`
@@ -1152,12 +1155,7 @@ export class AngularComponent extends Component {
         constructorStatements.push(
           `this._${e.name}=(e:any) => {
             this.${e.name}.emit(e);
-            ${
-  this.members.some(
-    (m) => m.isState && e.name === `${m.name}Change`,
-  )
-    ? 'this._detectChanges();'
-    : ''
+            ${this.members.some((m) => m.isState && e.name === `${m.name}Change`) ? 'this._detectChanges();' : ''
 }
           }`,
         );
@@ -1495,6 +1493,39 @@ export class AngularComponent extends Component {
         }));
   }
 
+  getPropsWithDefault(): Property[] {
+    return this.members.filter((m) => m instanceof Property
+    && (m.isState || m._hasDecorator(Decorators.OneWay))
+    && m.initializer && m.initializer.toString()) as Property[];
+  }
+
+  compileDefaultInputValues(
+    ngOnChangesStatements: string[],
+    constructorStatements: string[],
+  ): string {
+    const propsWithDefault = this.getPropsWithDefault();
+
+    if (propsWithDefault.length) {
+      ngOnChangesStatements.push('updateUndefinedFromDefaults(this as Record<string, unknown>, changes, this.defaultEntries)');
+
+      const propsClass = this.heritageClauses
+        .filter((h) => h.isJsxComponent)
+        .map((h) => h.types.map((t) => t.type.toString()))[0];
+
+      constructorStatements.push(
+        `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
+        `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
+      );
+
+      return 'defaultEntries: DefaultEntries';
+    }
+    return '';
+  }
+
+  getContentTemplateOutlet(refName: string): string {
+    return `<ng-content *ngTemplateOutlet="${refName}?.widgetTemplate"></ng-content>`;
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1543,6 +1574,7 @@ export class AngularComponent extends Component {
       members: this.members,
       newComponentContext: this.viewModel ? '_viewModel' : '',
       disableTemplates: true,
+      templateComponents: [],
       isSVG: this.isSVGComponent,
     };
 
@@ -1618,17 +1650,15 @@ export class AngularComponent extends Component {
         ${this.compileDefaultOptions(constructorStatements)}
         ${this.compileValueAccessor(implementedInterfaces)}
         ${componentDecorator}
-        ${this.modifiers.join(' ')} class ${this.name} ${
-  props.length ? `extends ${props.join(' ')}` : ''
-} ${
-  implementedInterfaces.length
-    ? `implements ${implementedInterfaces.join(',')}`
-    : ''
+        ${this.modifiers.join(' ')} class ${this.name} ${props.length ? `extends ${props.join(' ')}` : ''} ${implementedInterfaces.length
+  ? `implements ${implementedInterfaces.join(',')}`
+  : ''
 } {
             ${this.extractGlobalsFromTemplate(
     componentDecorator + trackBy,
     ' = ',
   ).join(';\n')}
+            ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
             ${this.members
     .filter((m) => !m.inherited && !(m instanceof SetAccessor))
     .map((m) => m.toString({
@@ -1679,7 +1709,7 @@ export class AngularComponent extends Component {
             ${this.compileLifeCycle(
     'constructor',
     (constructorStatements.length || constructorArguments.length)
-                && this.heritageClauses.length
+              && this.heritageClauses.length
       ? ['super()'].concat(constructorStatements)
       : constructorStatements,
     constructorArguments,
@@ -1695,8 +1725,7 @@ export class AngularComponent extends Component {
             imports: [
                 ${modules.join(',\n')}
             ],
-            ${
-  entryComponents.length
+            ${entryComponents.length
     ? `entryComponents: [
               ${entryComponents.join(',\n')}
             ],`

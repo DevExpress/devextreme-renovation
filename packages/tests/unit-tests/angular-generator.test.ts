@@ -6368,8 +6368,10 @@ mocha.describe("Angular generator", function () {
                 import {Injectable, Input} from "@angular/core"
                 @Injectable()
                 export default class ComponentInput {
-                    @Input() p1?:number = 10;
-                    @Input() p2?:number = 11;
+                    @Input()
+                    p1?: number = 10;
+                    @Input()
+                    p2?: number = 11;
                 }`)
       );
     });
@@ -6439,7 +6441,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        `@ViewChild("hostLink", {static: false}) host?:ElementRef<HTMLDivElement>`
+        `@ViewChild("hostLink", {static: false}) __host!:ElementRef<HTMLDivElement>;
+            get host():ElementRef<HTMLDivElement> { return (this.__host) ? this.__host : (new UndefinedNativeElementRef<HTMLDivElement>()); }`
       );
     });
 
@@ -6621,7 +6624,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(property.toString()),
-        getResult(`@Input() pressed?:boolean = false`)
+        getResult(`@Input()
+                  pressed?:boolean = false;`)
       );
     });
 
@@ -6844,13 +6848,14 @@ mocha.describe("Angular generator", function () {
           generator.createProperty(
             [createDecorator(Decorators.Ref)],
             [],
-            generator.createIdentifier("p")
+            generator.createIdentifier("p"),
+            "!"
           ),
         ]) as AngularComponent;
         assert.strictEqual(
           getResult(component.compileImports()),
           getResult(
-            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`
+            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"; import {UndefinedNativeElementRef} from "@devextreme/runtime/angular"`
           )
         );
       });
@@ -6868,7 +6873,6 @@ mocha.describe("Angular generator", function () {
         [],
         []
       );
-
       assert.strictEqual(
         getResult(component.toString()),
         getResult(`

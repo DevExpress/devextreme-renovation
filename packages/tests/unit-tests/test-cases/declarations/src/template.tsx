@@ -6,7 +6,9 @@ import {
   OneWay,
   JSXTemplate,
 } from "@devextreme-generator/declarations";
+import { PublicWidgetWithProps } from './dx-public-widget-with-props';
 import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+
 
 @ComponentBindings()
 export class WidgetInput {
@@ -27,22 +29,20 @@ export class WidgetInput {
   @Template() footerTemplate: JSXTemplate<{
     someProp: boolean;
   }> = () => <div></div>;
-  @Template()
-  componentTemplate: JSXTemplate<
-    WidgetWithPropsInput,
-    "value"
-  > = WidgetWithProps;
+  @Template() componentTemplate: JSXTemplate<WidgetWithPropsInput, "value"> = WidgetWithProps;
+  @Template() publicComponentTemplate: JSXTemplate<WidgetWithPropsInput, "value"> = PublicWidgetWithProps;
 }
 
 @Component({
   view: view,
 })
-export default class WidgetWithTemplate extends JSXComponent(WidgetInput) {}
+export default class WidgetWithTemplate extends JSXComponent(WidgetInput) { }
 
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;
   const FooterTemplate = viewModel.props.footerTemplate;
   const ComponentTemplate = viewModel.props.componentTemplate;
+  const PublicComponentTemplate = viewModel.props.publicComponentTemplate;
   return (
     <div>
       <viewModel.props.headerTemplate />
@@ -57,6 +57,7 @@ function view(viewModel: WidgetWithTemplate) {
       )}
       {FooterTemplate && <FooterTemplate someProp={myvar}></FooterTemplate>}
       <ComponentTemplate value="Test Value" />
+      <PublicComponentTemplate value="Test Value" />
     </div>
   );
 }

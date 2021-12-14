@@ -168,7 +168,7 @@ export class AngularGenerator extends Generator {
     return new VariableDeclaration(name, type, initializer);
   }
 
-  createDecorator(expression: Call) {
+  createDecorator(expression: Call): Decorator {
     return new Decorator(expression, this.getContext());
   }
 

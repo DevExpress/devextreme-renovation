@@ -141,6 +141,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dx-public-widget-with-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("dx-widget-with-props", function () {
     this.testGenerator(this.test!.title);
   });

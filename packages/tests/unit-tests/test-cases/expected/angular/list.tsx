@@ -58,19 +58,24 @@ import { CommonModule } from "@angular/common";
             "
           >
           </ng-container> </ng-container></ng-container></div
-    ><ng-template #ListItemDefault let-value="value" let-onClick="onClick"
-      ><dx-widget-with-props
+    ><ng-template #ListItemDefault let-value="value" let-onClick="onClick">
+      <dx-widget-with-props
+        #compRef
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
         (onClick)="
           onClick !== undefined
             ? onClick($event)
             : WidgetWithPropsDefaults.onClick($event)
         "
-      ></dx-widget-with-props> </ng-template
+      ></dx-widget-with-props>
+      <ng-content
+        *ngTemplateOutlet="compRef?.widgetTemplate"
+      ></ng-content> </ng-template
   ></ng-template>`,
 })
 export default class List extends ListInput {
   global_noop = noop;
+
   get __restAttributes(): any {
     return {};
   }
@@ -103,6 +108,12 @@ export default class List extends ListInput {
   ) {
     super();
   }
+
+  WidgetWithPropsDefaults = {
+    value: "default text",
+    number: 42,
+    onClick: (e: any) => void 0,
+  };
 }
 @NgModule({
   declarations: [List],

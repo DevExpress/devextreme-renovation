@@ -16,6 +16,10 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "g [TextSvgElement]",
@@ -28,6 +32,7 @@ import { CommonModule } from "@angular/common";
   </svg:text>`,
 })
 export class TextSvgElement extends TextSvgElementProps {
+  defaultEntries: DefaultEntries;
   get __computedProps(): TextSvgElementProps {
     return this;
   }
@@ -41,6 +46,14 @@ export class TextSvgElement extends TextSvgElementProps {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -49,6 +62,11 @@ export class TextSvgElement extends TextSvgElementProps {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+    const defaultProps = new TextSvgElementProps() as { [key: string]: any };
+    this.defaultEntries = ["text"].map((key) => ({
+      key,
+      value: defaultProps[key],
+    }));
   }
 }
 @NgModule({
