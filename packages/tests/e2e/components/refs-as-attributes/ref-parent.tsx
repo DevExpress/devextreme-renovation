@@ -19,8 +19,8 @@ function view(model:RefParent){
 })
 export default class RefParent extends JSXComponent(RefParentProps) {
     showRefHelper = false;
-    @ForwardRef() forwardRefProp?: RefObject<HTMLDivElement>;
-    @Ref() refProp?: RefObject<HTMLDivElement>;
+    @ForwardRef() forwardRefProp!: RefObject<HTMLDivElement>;
+    @Ref() refProp!: RefObject<HTMLDivElement>;
     @InternalState() buttonText: string = 'rerender';
 
     @Effect({run:'once'}) updateShowRefVisibility(){

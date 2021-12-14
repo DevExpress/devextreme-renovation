@@ -254,6 +254,9 @@ export class Component extends Class implements Heritable {
   }
 
   validate(): void {
+    function formatMemebers(members: Component['members']): string {
+      return members.map(({ name }) => `"${name}"`).join(', ');
+    }
     const mutableMemberNames = this.members.filter((m) => m.isMutable).map((m) => m.name);
     if (mutableMemberNames.length) {
       const parameterIntersectedMethods = this.members
@@ -269,6 +272,12 @@ export class Component extends Class implements Heritable {
         throw new Error(`React does not support parameters intersection with class mutable members.
 The "${this.name}" component wrong methods: ${parameterIntersectedMethods.map(({ name }) => `"${name}"`)}`);
       }
+    }
+    const wrongOptionalRefs = this.members.filter((m) => (m.isRef || m.isForwardRef)
+      && (m as Property).questionOrExclamationToken !== SyntaxKind.ExclamationToken);
+    if (wrongOptionalRefs.length) {
+      throw new Error(`Ref or ForwardRef is always initialized so it should be declared with non-null assertion operator (!). 
+The "${this.name}" component wrong props: ${formatMemebers(wrongOptionalRefs)}`);
     }
   }
 
