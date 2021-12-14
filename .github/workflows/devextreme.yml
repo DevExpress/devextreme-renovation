@@ -67,7 +67,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ env.nodeVersion }}
+          node-version: 12.x
 
       - name: Get DevExtreme
         run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
@@ -85,14 +85,14 @@ jobs:
       - name: Install Generators
         run: |
           cd ./DevExtreme
-          npm i ../runtime/package.tgz --legacy-peer-deps
-          npm i ../declarations/package.tgz --legacy-peer-deps
-          npm i ../core-generator/package.tgz --legacy-peer-deps
-          npm i ../angular-generator/package.tgz --legacy-peer-deps
-          npm i ../react-generator/package.tgz --legacy-peer-deps
-          npm i ../preact-generator/package.tgz --legacy-peer-deps
-          npm i ../inferno-generator/package.tgz --legacy-peer-deps
-          npm i ../build-helpers/package.tgz --legacy-peer-deps
+          npm i ../runtime/package.tgz
+          npm i ../declarations/package.tgz
+          npm i ../core-generator/package.tgz
+          npm i ../angular-generator/package.tgz
+          npm i ../react-generator/package.tgz
+          npm i ../preact-generator/package.tgz
+          npm i ../inferno-generator/package.tgz
+          npm i ../build-helpers/package.tgz
 
       - name: Check - ${{ matrix.TASK }}
         env:
