@@ -3,7 +3,6 @@ import * as CorePackage from '@devextreme-generator/core';
 import { InfernoGenerator } from '@devextreme-generator/inferno';
 import { PreactGenerator } from '@devextreme-generator/preact';
 import { ReactGenerator } from '@devextreme-generator/react';
-import { VueGenerator } from '@devextreme-generator/vue';
 import assert from 'assert';
 import fs from 'fs';
 import path from 'path';
@@ -95,15 +94,6 @@ mocha.describe("webpack-loader", function () {
 
       const args = this.codeCompilerStub.lastCall.args;
       assert.ok(args[0] instanceof AngularGenerator);
-    });
-
-    mocha.it("vue", async function () {
-      await compiler(fixtureFileName, {
-        platform: "vue",
-      });
-
-      const args = this.codeCompilerStub.lastCall.args;
-      assert.ok(args[0] instanceof VueGenerator);
     });
 
     mocha.it("inferno", async function () {
