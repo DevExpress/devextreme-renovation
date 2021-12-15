@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "typeRoots": ["node_modules/inferno"],
+    // "typeRoots": ["node_modules/inferno"],
     "jsx": "react"
   },
 }
