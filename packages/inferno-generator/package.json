@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/inferno",
-  "version": "2.3.12",
+  "version": "3.1.0-next",
   "description": "DevExtreme inferno component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,10 +16,10 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/angular": "2.3.12",
-    "@devextreme-generator/core": "2.3.12",
-    "@devextreme-generator/preact": "2.3.12",
-    "@devextreme-generator/react": "2.3.12"
+    "@devextreme-generator/angular": "3.1.0-next",
+    "@devextreme-generator/core": "3.1.0-next",
+    "@devextreme-generator/preact": "3.1.0-next",
+    "@devextreme-generator/react": "3.1.0-next"
   },
   "devDependencies": {
     "shx": "^0.3.3",

@@ -16,13 +16,6 @@ const servers = [
     instance: null,
   },
   {
-    platform: "Vue",
-    port: 3002,
-    contentBase: path.join(__dirname, "./platforms/vue/app/dist/"),
-    config: require("./platforms/vue/webpack.config"),
-    instance: null,
-  },
-  {
     platform: "Preact",
     port: 3003,
     contentBase: path.join(__dirname, "./platforms/preact/app/dist/"),
