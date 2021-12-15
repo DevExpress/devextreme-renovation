@@ -3,7 +3,6 @@ import { compileCode, GeneratorOptions } from '@devextreme-generator/core';
 import { InfernoGenerator } from '@devextreme-generator/inferno';
 import { PreactGenerator } from '@devextreme-generator/preact';
 import { ReactGenerator } from '@devextreme-generator/react';
-import { VueGenerator } from '@devextreme-generator/vue';
 import { getOptions } from 'loader-utils';
 import path from 'path';
 import ts from 'typescript';
@@ -29,9 +28,6 @@ export default function (this: LoaderContext<{}>, source: string) {
       break;
     case 'angular':
       generator = new AngularGenerator();
-      break;
-    case 'vue':
-      generator = new VueGenerator();
       break;
     case 'preact':
       generator = new PreactGenerator();
