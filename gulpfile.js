@@ -4,11 +4,11 @@ const run = require('gulp-run');
 const installTo = process.argv[process.argv.indexOf("--to") + 1];
 const relativePath = installTo.match(/(\.*\/)+/g)[0];
 const packages = [
+  'core-generator',
   'angular-generator',
   'react-generator',
   'preact-generator',
   'inferno-generator',
-  'core-generator',
   'declarations',
   'build-helpers',
   'runtime'
