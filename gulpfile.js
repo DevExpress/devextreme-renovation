@@ -30,7 +30,7 @@ gulp.task('install', gulp.series(
   packages.map((package) => `install:${package}`),
 ));
 
-gulp.task('install-generators', gulp.series(
+gulp.task('add-generators', gulp.series(
     'pack',
     'install')
 );
