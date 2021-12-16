@@ -1,5 +1,6 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
 import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;

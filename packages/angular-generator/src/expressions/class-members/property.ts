@@ -100,9 +100,8 @@ export class Property extends BaseProperty {
     if (this.isSlot) {
       const selector = `slot${capitalizeFirstLetter(this.name)}`;
       return `__${selector}?: ElementRef<HTMLDivElement>;
-            get ${this.name}(){
-                const childNodes =  this.__${selector}?.nativeElement?.childNodes;
-                return childNodes && childNodes.length > 2;
+            get ${this.name}():boolean {
+              return !isSlotEmpty(this.__${selector});
             }`;
     }
     if (this.isNestedComp) {

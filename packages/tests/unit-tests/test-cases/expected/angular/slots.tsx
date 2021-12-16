@@ -1,23 +1,18 @@
 import { Injectable, ViewChild, ElementRef } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 class SlotsWidgetProps {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
-
-  get namedSlot() {
-    const childNodes = this.__slotNamedSlot?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get namedSlot(): boolean {
+    return !isSlotEmpty(this.__slotNamedSlot);
   }
   __slotSelectorNamedSlot?: ElementRef<HTMLDivElement>;
-
-  get selectorNamedSlot() {
-    const childNodes = this.__slotSelectorNamedSlot?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get selectorNamedSlot(): boolean {
+    return !isSlotEmpty(this.__slotSelectorNamedSlot);
   }
   __slotChildren?: ElementRef<HTMLDivElement>;
-
-  get children() {
-    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get children(): boolean {
+    return !isSlotEmpty(this.__slotChildren);
   }
 }
 
@@ -39,20 +34,17 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><div
       ><div
-        ><div #slotSelectorNamedSlot style="display: contents"
-          ><ng-container
-            [ngTemplateOutlet]="dxselectorNamedSlot"
-          ></ng-container></div></div
+        ><div #slotSelectorNamedSlot style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxselectorNamedSlot"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div
       ><div
-        ><div #slotNamedSlot style="display: contents"
-          ><ng-container
-            [ngTemplateOutlet]="dxnamedSlot"
-          ></ng-container></div></div
+        ><div #slotNamedSlot style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxnamedSlot"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div
       ><div
-        ><div #slotChildren style="display: contents"
-          ><ng-container
-            [ngTemplateOutlet]="dxchildren"
-          ></ng-container></div></div></div
+        ><div #slotChildren style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div></div
     ><ng-template #dxnamedSlot
       ><ng-content select="[data-namedslot]"></ng-content></ng-template
     ><ng-template #dxselectorNamedSlot
