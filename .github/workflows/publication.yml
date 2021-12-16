@@ -87,6 +87,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.nodeVersion }}
+          registry-url: https://registry.npmjs.org/
 
       - uses: actions/download-artifact@master
         with:
