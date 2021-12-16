@@ -400,7 +400,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("first", function () {
+  mocha.it("first", function () {
     this.testGenerator(this.test!.title);
   });
 

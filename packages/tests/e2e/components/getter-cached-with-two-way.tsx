@@ -5,8 +5,6 @@ import {
 export const viewFunction = (viewModel: First): JSX.Element => (
   <div>
     {viewModel.currentDateGetter.toLocaleString()}
-    --- Actual Twoway
-      {viewModel.props.currentDate.toLocaleString()}
   </div>
 
 );

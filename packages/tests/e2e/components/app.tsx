@@ -50,7 +50,7 @@ import StylesWidget from "./styles";
 import ButtonWithInternalState from "./internal-state-change-on-effect";
 import GetterCache from "./getter-cache/getter-cache-parent";
 import UndefPropParent from "./undefined-prop-parent";
-import FirstComponent from './first';
+import CachedGetterWithTwoWay from './getter-cached-with-two-way';
 function view(model: App) {
   return (
     <div>
@@ -174,7 +174,7 @@ function view(model: App) {
         twoWayProp={model.undefinedProps.twoWayProp} />
         <ButtonComponent id="undefinedPropsButton" onClick={model.changeUndefProps}>Change Undef Props</ButtonComponent>
       </div>
-      <FirstComponent />
+      <CachedGetterWithTwoWay />
     </div>
   );
 }
