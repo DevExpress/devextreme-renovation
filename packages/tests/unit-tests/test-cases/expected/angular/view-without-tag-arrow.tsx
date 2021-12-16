@@ -1,4 +1,5 @@
 import { Injectable, ViewChild, ElementRef } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -18,15 +19,14 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
-    ><div #slotChildren style="display: contents"></div
-    ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container
-    ><div class="dx-slot-end" style="display: contents"></div
+    ><div #slotChildren style="display: contents"></div>
+    <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+    <div class="dx-slot-end" style="display: contents"></div
     ><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,
 })

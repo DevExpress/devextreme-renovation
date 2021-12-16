@@ -1,5 +1,6 @@
 import Widget, { DxSlotsWidgetModule } from "./slots";
 import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 class WidgetInput {
   @Input() p: string = "";
@@ -23,7 +24,6 @@ import { CommonModule } from "@angular/common";
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-  isSlotEmpty,
 } from "@devextreme/runtime/angular";
 
 @Component({
@@ -33,9 +33,9 @@ import {
   template: `<ng-template #widgetTemplate
     ><div
       ><dx-slots-widget #widget1 style="display: contents"
-        ><div #slotChildren style="display: contents"></div
-        ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container
-        ><div
+        ><div #slotChildren style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+        <div
           class="dx-slot-end"
           style="display: contents"
         ></div></dx-slots-widget

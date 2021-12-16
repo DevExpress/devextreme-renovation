@@ -1,4 +1,5 @@
 import { Injectable, ViewChild, ElementRef } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 class SlotsWidgetProps {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
@@ -26,7 +27,6 @@ import {
   TemplateRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-slots-widget",
@@ -34,17 +34,17 @@ import { isSlotEmpty } from "@devextreme/runtime/angular";
   template: `<ng-template #widgetTemplate
     ><div
       ><div
-        ><div #slotSelectorNamedSlot style="display: contents"></div
-        ><ng-container [ngTemplateOutlet]="dxselectorNamedSlot"></ng-container
-        ><div class="dx-slot-end" style="display: contents"></div></div
+        ><div #slotSelectorNamedSlot style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxselectorNamedSlot"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div
       ><div
-        ><div #slotNamedSlot style="display: contents"></div
-        ><ng-container [ngTemplateOutlet]="dxnamedSlot"></ng-container
-        ><div class="dx-slot-end" style="display: contents"></div></div
+        ><div #slotNamedSlot style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxnamedSlot"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div
       ><div
-        ><div #slotChildren style="display: contents"></div
-        ><ng-container [ngTemplateOutlet]="dxchildren"></ng-container
-        ><div class="dx-slot-end" style="display: contents"></div></div></div
+        ><div #slotChildren style="display: contents"></div>
+        <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+        <div class="dx-slot-end" style="display: contents"></div></div></div
     ><ng-template #dxnamedSlot
       ><ng-content select="[data-namedslot]"></ng-content></ng-template
     ><ng-template #dxselectorNamedSlot

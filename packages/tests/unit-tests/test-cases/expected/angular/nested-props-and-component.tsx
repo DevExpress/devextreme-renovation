@@ -11,6 +11,7 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 export class WidgetProps {
   @Input() oneWayProp?: number;
@@ -62,10 +63,7 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  UndefinedNativeElementRef,
-  isSlotEmpty,
-} from "@devextreme/runtime/angular";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxi-another-nested-prop-init",
