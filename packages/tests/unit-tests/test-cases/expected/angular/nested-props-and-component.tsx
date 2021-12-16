@@ -11,6 +11,7 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
 @Injectable()
 export class WidgetProps {
   @Input() oneWayProp?: number;
@@ -21,9 +22,8 @@ export class WidgetProps {
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined;
   __slotSlotProp?: ElementRef<HTMLDivElement>;
-  get slotProp() {
-    const childNodes = this.__slotSlotProp?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get slotProp(): boolean {
+    return !isSlotEmpty(this.__slotSlotProp);
   }
   @Input() templateProp?: TemplateRef<any> | null = null;
   private __nestedProp__?: FakeNested[];

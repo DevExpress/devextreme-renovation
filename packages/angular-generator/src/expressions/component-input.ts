@@ -56,8 +56,19 @@ export class ComponentInput extends BaseComponentInput {
       )}`,
     ];
     const missedImports = this.getImports(this.context);
+    const defaultImport: string[] = [];
+    this.compileDefaultPropsImport(defaultImport);
+    return [...imports, ...missedImports.map((i) => i.toString()), ...defaultImport].join(';\n');
+  }
 
-    return [...imports, ...missedImports.map((i) => i.toString())].join(';\n');
+  compileDefaultPropsImport(imports: string[]): void {
+    const hasSlotProperty = this.members.some((m) => m.isSlot);
+    const runTimeImports = [
+      ...(hasSlotProperty ? ['isSlotEmpty'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
+    }
   }
 
   processNestedProperty(property: Property) {
@@ -208,7 +219,7 @@ export class ComponentInput extends BaseComponentInput {
             ${membersWithNestedReplaced
     .filter(
       (p) => (p instanceof Property || SetAccessor || GetAccessor)
-                  && !p.inherited,
+            && !p.inherited,
     )
     .map((m) => m.toString())
     .filter((m) => m)
