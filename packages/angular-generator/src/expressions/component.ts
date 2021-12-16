@@ -612,9 +612,11 @@ export class AngularComponent extends Component {
   compileDefaultPropsImport(imports: string[]): void {
     const propsWithDefault = this.getPropsWithDefault();
     const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
+    const hasSlotProperty = this.members.some((m) => m.isSlot);
     const runTimeImports = [
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
       ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
+      ...(hasSlotProperty ? ['isSlotEmpty'] : []),
     ];
     if (runTimeImports.length) {
       imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);

@@ -22,6 +22,7 @@ import { CommonModule } from "@angular/common";
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
+  isSlotEmpty,
 } from "@devextreme/runtime/angular";
 
 @Component({

@@ -5,10 +5,8 @@ export class WidgetProps {
   @Input() height?: number = 10;
   @Input() width?: number = 10;
   __slotChildren?: ElementRef<HTMLDivElement>;
-
-  get children() {
-    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get children(): boolean {
+    return !isSlotEmpty(this.__slotChildren);
   }
 }
 
@@ -26,6 +24,7 @@ import { CommonModule } from "@angular/common";
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
+  isSlotEmpty,
 } from "@devextreme/runtime/angular";
 
 @Component({
