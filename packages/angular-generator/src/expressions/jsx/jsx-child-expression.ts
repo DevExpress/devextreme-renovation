@@ -92,15 +92,15 @@ export class JsxChildExpression extends JsxExpression {
 
   compileSlot(slot: Property, options: toStringOptions) {
     options.checkSlot?.(slot, options);
-
     const slotValue = `<ng-container [ngTemplateOutlet]="dx${slot.name}"></ng-container>`;
-
-    const wrapperTagName = options.isSVG ? 'svg:g' : 'div';
-    const wrapperStyle = options.isSVG ? '' : 'style="display: contents"';
-
-    return `<${wrapperTagName} #slot${capitalizeFirstLetter(
-      slot.name,
-    )} ${wrapperStyle}>${slotValue}</${wrapperTagName}>`;
+    if (options.isSVG) {
+      return `<svg:g #slot${capitalizeFirstLetter(
+        slot.name,
+      )} >${slotValue}</svg:g>`;
+    }
+    return `<div #slot${capitalizeFirstLetter(slot.name)} style="display: contents"></div>
+    ${slotValue}
+    <div class="dx-slot-end" style="display: contents"></div>`;
   }
 
   createIfAttribute(condition: Expression): JsxAttribute {
@@ -139,7 +139,7 @@ export class JsxChildExpression extends JsxExpression {
     if (
       slot
       && slot.getter(options?.newComponentContext)
-        === statement.toString(options)
+      === statement.toString(options)
       && condition
       && getMember(condition, options) === slot
     ) {
@@ -218,10 +218,13 @@ export class JsxChildExpression extends JsxExpression {
 
   getSlot(stringValue: string, options?: toStringOptions) {
     const possibleSlots = options?.members
-      .filter((m) => m.isSlot
-      && (stringValue.indexOf(m.getter(options.newComponentContext)) !== -1));
-    if ((stringValue.indexOf('children') === -1) && possibleSlots && possibleSlots.length > 1) {
-      throw new Error(`Slot name '${stringValue}' overlap for slot: ${possibleSlots.map((m) => m.name)}`);
+      .filter(
+        (m) => m.isSlot
+          && (stringValue.indexOf(m.getter(options.newComponentContext)) !== -1),
+      );
+    const overlapedSlots = possibleSlots?.filter((m) => !m.name.startsWith('slot'));
+    if (overlapedSlots && overlapedSlots.length > 1) {
+      throw new Error(`Slot name '${stringValue}' overlap for slot: ${overlapedSlots.map((m) => m.name)}`);
     }
     return possibleSlots && possibleSlots[0] as Property | undefined;
   }

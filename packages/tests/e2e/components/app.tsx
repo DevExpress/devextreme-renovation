@@ -56,12 +56,15 @@ function view(model: App) {
       <SimpleComponent width={25} height={25}></SimpleComponent>
       <PickPropsComponent />
       <ButtonComponent id="button-1" onClick={model.onButtonClick}>
-        {"DefaultSlot"}
+      DefaultSlot
       </ButtonComponent>
       <div id="button-1-click-counter">{model.clickCount}</div>
       <div>
         <ButtonComponent />
       </div>
+      <ButtonComponent id="empty-button-conditianal-children">
+        {false&&<div>Not visible text</div>}
+      </ButtonComponent>
       <ButtonWithState
         id="button-2"
         pressedChange={model.onButtonWithStatePressedChange}

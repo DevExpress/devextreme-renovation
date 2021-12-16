@@ -3,8 +3,9 @@ const run = require('gulp-run');
 const path = require('path');
 const pareseArgs = require('minimist');
 
-const args = pareseArgs(process.argv) || '../devextreme';
-const installTo = path.join(__dirname , args.path);
+const devextremePath = pareseArgs(process.argv, { string: ['path'] }).path || '../devextreme';
+//console.log(process.argv, pareseArgs(process.argv, { string: ['path'] }), devextremePath)
+const installTo = path.join(__dirname , devextremePath);
 const relativePath = path.relative(installTo, __dirname);
 const packages = [
   'core-generator',

@@ -1,9 +1,7 @@
 import { GetAccessor as ReactGetAccessor } from '@devextreme-generator/react';
 import {
-  toStringOptions, Identifier, Dependency, BaseClassMember,
+  toStringOptions, Identifier, Dependency, BaseClassMember, compileGetterCache,
 } from '@devextreme-generator/core';
-
-import { compileGetterCache } from '@devextreme-generator/angular';
 
 export class GetAccessor extends ReactGetAccessor {
   getter(componentContext?: string): string {
