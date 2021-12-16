@@ -3,7 +3,7 @@
   "compilerOptions": {
     "typeRoots": ["node_modules/@types"],
     "declaration": true,
-    "target": "ES5",
+    "target": "ES2016",
     "skipLibCheck": true,
     "noImplicitAny": false
   },
