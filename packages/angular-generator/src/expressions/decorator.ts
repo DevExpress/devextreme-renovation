@@ -146,14 +146,26 @@ function compileDefaultTemplates(
           const component = context.components[template.initializer.toString()] as AngularComponent;
           const ref = 'compRef';
           const componentName = getAngularSelector(component.name);
+          const templateComponent = options?.templateComponents
+            ?.find((tc) => tc.name === component.name);
+          // does this is the same as component?
+          const templateComponentProps = getProps(templateComponent?.members || [])
+            .filter((p) => p.initializer);
           const templateVariables = template.variables.map((v) => {
             const componentProp = component.heritageProperties.find(
               (p) => p.name.toString() === v,
             );
+            const defaultVariableValue = templateComponentProps.find((p) => p.name === v);
             if (componentProp?.type instanceof FunctionTypeNode) {
-              return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+              if (defaultVariableValue) {
+                return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+              }
+              return `${v}($event)"`;
             }
-            return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+            if (defaultVariableValue) {
+              return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+            }
+            return `${v}`;
           })
             .join(' ');
           const templateOutlete = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';

@@ -579,14 +579,22 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
-  componentToJsxElement(name: string, component: Component) {
+  componentToJsxElement(name: string, component: Component, options?: toStringOptions): JsxElement {
+    const templateComponent = options?.templateComponents
+      ?.find((tc) => tc.name === component.name);
+    // does this is the same as component?
+    const templateComponentProps = getProps(templateComponent?.members || [])
+      .filter((p) => p.initializer);
     const attributes = getProps(component.members).map((prop) => {
       let initializer: Expression = prop._name;
       if (prop.initializer) {
+        const defaultVariableValue = templateComponentProps
+          .find((p) => p.name === prop._name.toString());
+        const expression = defaultVariableValue
+          ? `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`
+          : `${prop._name}`;
         initializer = this.createJsxExpression(
-          new SimpleExpression(
-            `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`,
-          ),
+          new SimpleExpression(expression),
         );
       }
       return new JsxAttribute(prop._name, initializer);
@@ -693,7 +701,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       );
 
       const result = [
-        ...components.map(({ name, component }) => this.componentToJsxElement(name, component)),
+        ...components.map(({ name, component }) => this.componentToJsxElement(name, component, options)),
         ...functions.map(({ name, func }) => this.functionToJsxElement(name, func, options)),
         ...(props
           .map((t) => this.templatePropToJsxElement(t, options))
