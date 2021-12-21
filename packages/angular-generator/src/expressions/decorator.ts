@@ -160,12 +160,12 @@ function compileDefaultTemplates(
               if (defaultVariableValue) {
                 return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
               }
-              return `${v}($event)"`;
+              return `(${v})="${v}($event)"`;
             }
             if (defaultVariableValue) {
               return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
             }
-            return `${v}`;
+            return `[${v}]="${v}"`;
           })
             .join(' ');
           const templateOutlete = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';

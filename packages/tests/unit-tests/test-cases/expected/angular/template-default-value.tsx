@@ -60,7 +60,7 @@ import {
     >
       <dx-widget-with-props
         #compRef
-        optionalValue
+        [optionalValue]="optionalValue"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
       <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
