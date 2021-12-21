@@ -2,13 +2,11 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-  OneWay,
-  Template,
 } from "@devextreme-generator/declarations";
 import Button from "./button-with-template";
 import ButtonTemplate from "./button-template";
 
-function CustomTemplate(props: { text: string }) {
+function CustomTemplate(props: { text?: string }) {
   return <span style={{ backgroundColor: "#aa0000" }}>{props.text}</span>;
 }
 
