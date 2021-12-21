@@ -2,8 +2,10 @@ import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
@@ -11,7 +13,6 @@ export class TemplateDefaultValueProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

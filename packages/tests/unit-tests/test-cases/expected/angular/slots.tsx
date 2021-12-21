@@ -1,6 +1,8 @@
-import { Injectable, ViewChild, ElementRef } from "@angular/core";
+import { Component, ViewChild, ElementRef } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 class SlotsWidgetProps {
   __slotNamedSlot?: ElementRef<HTMLDivElement>;
   get namedSlot(): boolean {
@@ -17,7 +19,6 @@ class SlotsWidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

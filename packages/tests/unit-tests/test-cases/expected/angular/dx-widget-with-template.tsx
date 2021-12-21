@@ -1,5 +1,7 @@
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetWithTemplateInput {
   @Input() template?: TemplateRef<any> | null = null;
   @Input() componentTemplate?: TemplateRef<any> | null = null;
@@ -7,7 +9,6 @@ export class WidgetWithTemplateInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

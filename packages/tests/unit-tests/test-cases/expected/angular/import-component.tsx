@@ -1,14 +1,15 @@
 import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
   @Output() onClick: EventEmitter<number> = new EventEmitter();
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

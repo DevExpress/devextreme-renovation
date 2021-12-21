@@ -1,7 +1,9 @@
 import HelperWidget, { DxHelperWidgetModule } from "./refs-as-attribute-helper";
 
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() refProp?: HTMLDivElement;
   @Input() forwardRefProp?: (
@@ -9,7 +11,6 @@ class WidgetProps {
   ) => ElementRef<HTMLDivElement> | undefined;
 }
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
