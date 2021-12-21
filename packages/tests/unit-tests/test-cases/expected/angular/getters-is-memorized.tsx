@@ -138,6 +138,7 @@ class Widget extends WidgetProps {
     }));
     this._currentDateChange = (e: any) => {
       this.currentDateChange.emit(e);
+      this.__getterCache["someDate"] = undefined;
       this._detectChanges();
     };
   }
