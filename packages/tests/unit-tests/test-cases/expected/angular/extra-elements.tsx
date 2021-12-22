@@ -1,13 +1,14 @@
 import { InnerLayout as Child, DxInnerLayoutModule } from "./inner-layout";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class Props {
   @Input() prop: number = 0;
   @Input() rf?: Child;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

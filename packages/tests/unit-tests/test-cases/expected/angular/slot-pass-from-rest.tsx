@@ -1,7 +1,9 @@
 import Widget, { DxSlotsWidgetModule } from "./slots";
-import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() p: string = "";
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -11,7 +13,6 @@ class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

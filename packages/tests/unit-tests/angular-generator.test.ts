@@ -6363,8 +6363,10 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(bindings.toString()),
         getResult(`
-                import {Injectable, Input} from "@angular/core"
-                @Injectable()
+                import {Component, Input} from "@angular/core"
+                @Component({
+                  template: ''
+                })
                 export default class ComponentInput {
                     @Input()
                     p1?: number = 10;
@@ -6414,8 +6416,10 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(child.toString()),
-        getResult(`import {Injectable} from "@angular/core"
-                   @Injectable()
+        getResult(`import {Component} from "@angular/core"
+                   @Component({
+                     template: ''
+                   })
                    export default class Child extends Base {}`)
       );
     });

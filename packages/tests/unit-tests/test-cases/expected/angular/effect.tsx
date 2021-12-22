@@ -5,8 +5,10 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() p: string = "10";
   @Input() r: string = "20";
@@ -15,7 +17,6 @@ export class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

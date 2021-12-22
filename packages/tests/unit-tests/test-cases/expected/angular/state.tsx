@@ -1,6 +1,8 @@
 import BaseState, { DxModelWidgetModule } from "./model";
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() state1?: boolean = false;
   @Input() state2: boolean = false;
@@ -13,7 +15,6 @@ class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
