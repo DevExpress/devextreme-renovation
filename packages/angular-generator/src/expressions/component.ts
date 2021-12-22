@@ -1314,7 +1314,7 @@ export class AngularComponent extends Component {
     if (options.templateComponents?.length) {
       return options.templateComponents
         .map((c) => {
-          const defaults = getProps(c.members) // probably add heritage properties
+          const defaults = getProps(c.members)
             .filter((p) => p.initializer)
             .map((p) => `${p.name}: ${p.initializer}`)
             .join(',');

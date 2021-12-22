@@ -582,7 +582,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   componentToJsxElement(name: string, component: Component, options?: toStringOptions): JsxElement {
     const templateComponent = options?.templateComponents
       ?.find((tc) => tc.name === component.name);
-    // does this is the same as component?
+    
     const templateComponentProps = getProps(templateComponent?.members || [])
       .filter((p) => p.initializer);
     const attributes = getProps(component.members).map((prop) => {

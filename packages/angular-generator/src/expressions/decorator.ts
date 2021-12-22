@@ -148,7 +148,7 @@ function compileDefaultTemplates(
           const componentName = getAngularSelector(component.name);
           const templateComponent = options?.templateComponents
             ?.find((tc) => tc.name === component.name);
-          // does this is the same as component?
+          
           const templateComponentProps = getProps(templateComponent?.members || [])
             .filter((p) => p.initializer);
           const templateVariables = template.variables.map((v) => {
