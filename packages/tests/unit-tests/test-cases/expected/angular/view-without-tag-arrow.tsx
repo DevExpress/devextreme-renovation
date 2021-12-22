@@ -1,6 +1,8 @@
-import { Injectable, ViewChild, ElementRef } from "@angular/core";
+import { Component, ViewChild, ElementRef } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
   get children(): boolean {
@@ -9,7 +11,6 @@ class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

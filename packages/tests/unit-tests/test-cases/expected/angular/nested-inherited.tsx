@@ -1,10 +1,14 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class FakeNested {
   @Input() baseProp: number = 0;
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() baseProp: number = 0;
   private __someProp__?: FakeNested;
@@ -20,7 +24,9 @@ export class WidgetProps {
   public static __defaultNestedValues: any = { someProp: new FakeNested() };
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class TooltipProps {
   @Input() tooltipValue: number = 0;
   private __tooltipNested__?: WidgetProps[];
@@ -38,7 +44,9 @@ export class TooltipProps {
   };
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class BulletProps extends WidgetProps {
   @Input() value: number = 0;
   private __tooltip__?: TooltipProps;
@@ -67,7 +75,9 @@ export class BulletProps extends WidgetProps {
   }
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class BulletProps2 extends BulletProps {
   private __fakeNestedArr__?: FakeNested[];
   @Input() set fakeNestedArr(value: FakeNested[]) {
@@ -106,7 +116,9 @@ export class BulletProps2 extends BulletProps {
   }
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class BulletProps3 extends BulletProps2 {
   private __fakeNestedArr2__?: FakeNested[];
   @Input() set fakeNestedArr2(value: FakeNested[]) {
