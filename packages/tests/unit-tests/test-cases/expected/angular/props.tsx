@@ -4,8 +4,10 @@ function isDevice() {
   return true;
 }
 
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
@@ -21,7 +23,6 @@ export class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

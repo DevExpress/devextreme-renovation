@@ -7,14 +7,15 @@ interface WidgetI {
   onClick(): void;
 }
 
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput extends BaseProps {
   @Input() p: string = "10";
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

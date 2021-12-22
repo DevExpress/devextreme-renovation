@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class FakeNested {
   @Input() numberProp: number = 2;
 }
@@ -12,7 +14,9 @@ import {
   ElementRef,
 } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() oneWayProp?: number;
   @Input() twoWayProp?: number;
@@ -51,7 +55,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

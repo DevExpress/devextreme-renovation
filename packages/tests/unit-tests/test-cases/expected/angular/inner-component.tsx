@@ -2,14 +2,15 @@ import InnerWidget, {
   InnerWidgetProps,
   DxInnerWidgetModule,
 } from "./dx-inner-widget";
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class InnerComponentProps {
   @Input() someTemplate: TemplateRef<any> | null = null;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
