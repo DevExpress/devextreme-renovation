@@ -1,12 +1,13 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() propState: number = 1;
   @Output() propStateChange: EventEmitter<number> = new EventEmitter();
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

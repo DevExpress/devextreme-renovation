@@ -1,10 +1,11 @@
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Injectable } from "@angular/core";
-@Injectable()
+import { Component } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {}
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

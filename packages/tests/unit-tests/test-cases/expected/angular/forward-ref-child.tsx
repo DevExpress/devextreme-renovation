@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class Props {
   @Input() childRef!: (
     ref?: ElementRef<HTMLDivElement>
@@ -11,7 +13,6 @@ class Props {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

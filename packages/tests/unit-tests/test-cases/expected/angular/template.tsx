@@ -8,8 +8,10 @@ import {
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
 
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() someProp: boolean = false;
   @Input() headerTemplate: TemplateRef<any> | null = null;
@@ -21,7 +23,6 @@ export class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

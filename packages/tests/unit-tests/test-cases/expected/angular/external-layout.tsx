@@ -1,13 +1,14 @@
 import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
 import { InnerComponent, DxInnerComponentModule } from "./inner-component";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class Props {
   @Input() prop: number = 0;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

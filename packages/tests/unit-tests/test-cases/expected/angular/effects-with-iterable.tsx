@@ -1,12 +1,13 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() propArray: Array<string> = [];
   @Input() propObject: object = {};
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

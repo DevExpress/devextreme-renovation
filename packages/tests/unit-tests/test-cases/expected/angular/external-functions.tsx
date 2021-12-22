@@ -10,14 +10,15 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
 const getValue: (cell: Cell) => string = (cell) => cell.text;
 const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() cells: Cell[] = [];
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
