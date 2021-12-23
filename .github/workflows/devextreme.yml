@@ -270,7 +270,7 @@ jobs:
           BUILD_INPROGRESS_RENOVATION="true" npm run build:dev
 
       - name: Prepare localization
-        run: 
+        run: |
           cd ./DevExtreme
           npx gulp localization
 
