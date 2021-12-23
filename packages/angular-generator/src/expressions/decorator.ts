@@ -160,7 +160,7 @@ function compileDefaultTemplates(
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(' ')}>
-            <${componentName} #${ref} ${templateVariables}></${componentName}>
+            <${componentName} #${ref} style="display: contents" ${templateVariables}></${componentName}>
             ${templateOutlete}
             </ng-template>`;
           return templateString;

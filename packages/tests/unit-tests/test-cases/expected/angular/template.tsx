@@ -114,6 +114,7 @@ import {
     ><ng-template #componentTemplateDefault let-value="value">
       <dx-widget-with-props
         #compRef
+        style="display: contents"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
       <ng-content
@@ -122,6 +123,7 @@ import {
     ><ng-template #publicComponentTemplateDefault let-value="value">
       <dx-public-widget-with-props
         #compRef
+        style="display: contents"
         [value]="
           value !== undefined ? value : PublicWidgetWithPropsDefaults.value
         "
