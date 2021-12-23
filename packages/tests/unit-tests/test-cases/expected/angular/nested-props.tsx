@@ -1,5 +1,7 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 export class GridColumnProps {
   @Input() name: string = "";
   @Input() index: number = 0;
@@ -20,13 +22,19 @@ export class GridColumnProps {
   @Output() indexChange: EventEmitter<number> = new EventEmitter();
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class CustomProps {}
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class AnotherCustomProps {}
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class EditingProps {
   @Input() editEnabled?: boolean = false;
   private __custom__?: CustomProps[];
@@ -45,12 +53,16 @@ export class EditingProps {
   }
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class ColumnEditingProps {
   @Input() editEnabled?: boolean = false;
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class WidgetProps {
   private __columns__?: Array<GridColumnProps | string>;
   @Input() set columns(value: Array<GridColumnProps | string> | undefined) {
@@ -72,7 +84,9 @@ export class WidgetProps {
   public static __defaultNestedValues: any = { editing: new EditingProps() };
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class PickedProps {
   private __columns__?: Array<GridColumnProps | string>;
   @Input() set columns(value: Array<GridColumnProps | string> | undefined) {

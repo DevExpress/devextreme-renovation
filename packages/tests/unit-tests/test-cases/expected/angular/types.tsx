@@ -6,8 +6,10 @@ import {
   StringType,
   WidgetProps as ExternalWidgetProps,
 } from "./types-external";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() str: String = "";
   @Input() num: Number = 1;
@@ -26,7 +28,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -120,7 +121,9 @@ export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
 
 import { CustomType } from "./types-external";
-@Injectable()
+@Component({
+  template: "",
+})
 class BaseViewPropsType {
   @Input() strArr: Array<String> = new WidgetProps().strArr;
   @Input() customTypeField?: { name: string; customField: CustomType }[];

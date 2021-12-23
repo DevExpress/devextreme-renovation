@@ -1,10 +1,14 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class GridCell {
   @Input() gridData: string = "defaultValue";
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class GridRow {
   private __cells__?: (GridCell | string)[];
   @Input() set cells(value: (GridCell | string)[]) {
@@ -19,7 +23,9 @@ export class GridRow {
   public static __defaultNestedValues: any = { cells: [new GridCell()] };
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class WithNestedInput {
   private __rows__?: GridRow[];
   @Input() set rows(value: GridRow[] | undefined) {
@@ -34,10 +40,14 @@ export class WithNestedInput {
   public static __defaultNestedValues: any = { rows: [new GridRow()] };
 }
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class EmptyClass {}
 
-@Injectable()
+@Component({
+  template: "",
+})
 export class FakeNested {
   private __value__?: EmptyClass[];
   @Input() set value(value: EmptyClass[] | undefined) {

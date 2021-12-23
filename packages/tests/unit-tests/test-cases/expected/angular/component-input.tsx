@@ -1,7 +1,9 @@
 export const COMPONENT_INPUT_CLASS = "c3";
-import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
+import { Component, Input, ViewChild, ElementRef } from "@angular/core";
 import { isSlotEmpty } from "@devextreme/runtime/angular";
-@Injectable()
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() height?: number = 10;
   @Input() width?: number = 10;
@@ -12,7 +14,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

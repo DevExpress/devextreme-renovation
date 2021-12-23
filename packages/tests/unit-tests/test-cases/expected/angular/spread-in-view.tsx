@@ -1,5 +1,7 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() a: Array<Number> = [1, 2, 3];
   @Input() id: string = "1";
@@ -7,7 +9,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

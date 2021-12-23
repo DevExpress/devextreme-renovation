@@ -52,7 +52,7 @@ export class ComponentInput extends BaseComponentInput {
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
         this.context,
-        ['Injectable'],
+        ['Component'],
       )}`,
     ];
     const missedImports = this.getImports(this.context);
@@ -212,7 +212,9 @@ export class ComponentInput extends BaseComponentInput {
 
     return `
         ${this.compileImports()}
-        @Injectable()
+        @Component({
+          template: ''
+        })
         ${this.modifiers.join(' ')} class ${
   this.name
 } ${this.heritageClauses.map((h) => h.toString()).join(' ')} {

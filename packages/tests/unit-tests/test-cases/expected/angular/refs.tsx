@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() outerDivRef?: (
     ref?: ElementRef<HTMLDivElement>
@@ -15,7 +17,6 @@ class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

@@ -4,15 +4,16 @@ import {
 } from "./dx-widget-with-props";
 const noop = (e: any) => {};
 
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class ListInput {
   @Input() items?: Array<{ key: number; text: string }>;
   @Input() ListItem: TemplateRef<any> | null = null;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
