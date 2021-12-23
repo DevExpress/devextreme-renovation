@@ -56,6 +56,10 @@ function setComponentProperty(
 
 function isInnerComponent(decorator: Decorator): boolean {
   const parameters = decorator.expression.arguments[0] as ObjectLiteral;
+  const isInnerComponentValue = parameters?.getProperty?.<ObjectLiteral>('angular')?.getProperty?.('innerComponent')?.toString();
+  if (isInnerComponentValue) {
+    return isInnerComponentValue === 'true';
+  }
   return !(parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true');
 }
 
@@ -125,6 +129,7 @@ export class Decorator extends BaseDecorator {
         'isSVG',
         'name',
         'components',
+        'angular',
       ].forEach((name) => parameters.removeProperty(name));
     } else if (isOutputDecorator(this.name)) {
       return '@Output()';
@@ -186,7 +191,7 @@ function compileSlots(options?: toStringOptions): string[] {
       .filter((m) => m instanceof Property && m.isSlot)
       .map((slot) => {
         const cssSelector = slot.getDecoratorParameter<SimpleExpression>(Decorators.Slot, 'selector')?.expression
-        || `[data-${slot.name.toLocaleLowerCase()}]`;
+          || `[data-${slot.name.toLocaleLowerCase()}]`;
         const selector = slot.name.toString() === 'children' ? '' : `select="${cssSelector}"`;
         return `<ng-template #dx${slot.name}><ng-content ${selector}></ng-content></ng-template>`;
       }) || []
