@@ -270,11 +270,14 @@ jobs:
           BUILD_INPROGRESS_RENOVATION="true" npm run build:dev
 
       - name: Prepare localization
-        run: npx gulp localization
+        run: 
+          cd ./DevExtreme
+          npx gulp localization
 
       - name: Prepare renovation playground
         if: matrix.ARGS.componentFolder == 'renovation'
         run: |
+          cd ./DevExtreme
           pushd testing/renovation
           npm install --no-audit --no-fund --legacy-peer-deps
           popd
@@ -289,6 +292,7 @@ jobs:
           [ "${{ matrix.ARGS.platform }}" != "" ] && PLATFORM="--platform ${{ matrix.ARGS.platform }}"
           all_args="--concurrency 2 --browsers=chrome:headless --componentFolder ${{ matrix.ARGS.componentFolder }} --quarantineMode ${{ matrix.ARGS.quarantineMode}} $META_RENOVATION $INDICES $PLATFORM"
           echo "$all_args"
+          cd ./DevExtreme
           npm run test-testcafe -- $all_args
 
       - name: Copy compared screenshot artifacts
