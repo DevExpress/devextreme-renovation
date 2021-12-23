@@ -267,7 +267,7 @@ jobs:
         run: |
           cd ./DevExtreme
           npm install --no-audit --no-fund
-          npm BUILD_INPROGRESS_RENOVATION="true" run build:dev
+          BUILD_INPROGRESS_RENOVATION="true" npm run build:dev
 
       - name: Prepare localization
         run: npx gulp localization
