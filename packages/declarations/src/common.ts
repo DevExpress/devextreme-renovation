@@ -35,7 +35,16 @@ export type ComponentParameters = {
    * Set to `true` if component is SVG-based
    */
   isSVG?: boolean;
-
+  /**
+   * Angular wrapper specific settings
+   */
+  angular?: {
+    /**
+     * If used as a child of some registered component.
+     * If jQuery.registred true it's false by default.
+     */
+    innerComponent?: boolean;
+  }
   /**
    * jQuery wrapper specific settings
    */
