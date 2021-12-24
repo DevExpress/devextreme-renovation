@@ -6091,6 +6091,7 @@ mocha.describe("Angular generator", function () {
           view: true,
           defaultOptionRules: true,
           jQuery: true,
+          angular: true,
         };
 
         const decorator = generator.createDecorator(
