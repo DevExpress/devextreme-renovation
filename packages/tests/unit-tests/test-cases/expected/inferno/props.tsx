@@ -24,6 +24,7 @@ export declare type WidgetInputType = {
   height: number;
   export: object;
   array: any;
+  currentDate: any;
   expressionDefault: string;
   expressionDefault1: boolean;
   expressionDefault2: boolean | string;
@@ -36,12 +37,9 @@ export declare type WidgetInputType = {
 };
 export const WidgetInput: WidgetInputType = {
   height: 10,
-  get export() {
-    return {};
-  },
-  get array() {
-    return ["1"];
-  },
+  export: Object.freeze({}) as any,
+  array: Object.freeze(["1"]) as any,
+  currentDate: Object.freeze(new Date()) as any,
   get expressionDefault() {
     return device === "ios" ? "yes" : "no";
   },
@@ -100,6 +98,7 @@ export default class Widget extends BaseInfernoComponent<any> {
   get restAttributes(): RestProps {
     const {
       array,
+      currentDate,
       defaultStringValue,
       export: exportProp,
       expressionDefault,

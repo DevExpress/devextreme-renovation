@@ -25,9 +25,7 @@ export const BaseProps: BasePropsType = {
   get width() {
     return isMaterial() ? 20 : 10;
   },
-  get baseNested() {
-    return { text: "3" };
-  },
+  baseNested: Object.freeze({ text: "3" }) as any,
 };
 export declare type TextsPropsType = {
   text?: string;
@@ -60,15 +58,9 @@ export const WidgetProps: WidgetPropsType = Object.create(
       get text() {
         return format("text");
       },
-      get texts1() {
-        return { text: format("text") };
-      },
-      get texts2() {
-        return { text: format("text") };
-      },
-      get texts3() {
-        return TextsProps;
-      },
+      texts1: Object.freeze({ text: format("text") }) as any,
+      texts2: Object.freeze({ text: format("text") }) as any,
+      texts3: Object.freeze(TextsProps) as any,
       template: () => <div></div>,
     })
   )

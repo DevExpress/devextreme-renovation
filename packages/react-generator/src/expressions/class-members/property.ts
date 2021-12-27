@@ -11,6 +11,9 @@ import {
   SyntaxKind,
   toStringOptions,
   TypeExpression,
+  ObjectLiteral,
+  ArrayLiteral,
+  New,
 } from '@devextreme-generator/core';
 
 import {
@@ -53,12 +56,22 @@ export function compileJSXTemplateType(
 }
 
 export class Property extends BaseProperty {
+  get hasObjectLiteralInitializer(): boolean {
+    const { initializer } = this;
+    return initializer instanceof ObjectLiteral
+      || initializer instanceof ArrayLiteral
+      || initializer instanceof New;
+  }
+
   defaultProps(options?: toStringOptions) {
     const { initializer } = this;
     const isSimpleExpression = initializer instanceof SimpleExpression;
     const isFunction = initializer instanceof BaseFunction;
     const isComplexExpression = !(isSimpleExpression || isFunction);
     if (isComplexExpression || options?.fromType) {
+      if (this.hasObjectLiteralInitializer) {
+        return `${this.name}: Object.freeze(${initializer?.toString(options)}) as any`;
+      }
       return `get ${this.name}() { return ${initializer?.toString(options)} }`;
     }
     return this.defaultDeclaration(options);
