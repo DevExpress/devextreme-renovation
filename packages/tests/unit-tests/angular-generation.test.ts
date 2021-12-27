@@ -429,5 +429,8 @@ mocha.describe("angular-generation", function () {
     mocha.it("use-external-component-bindings", function () {
       this.testGenerator(this.test!.title);
     });
+    mocha.it("angular-inner-component", function () {
+      this.testGenerator(this.test!.title);
+    });
   });
 });
