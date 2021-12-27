@@ -34,9 +34,7 @@ export declare type WidgetPropsType = {
   editing: typeof EditingProps;
 };
 export const WidgetProps: WidgetPropsType = {
-  get editing() {
-    return EditingProps;
-  },
+  editing: Object.freeze(EditingProps) as any,
 };
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
