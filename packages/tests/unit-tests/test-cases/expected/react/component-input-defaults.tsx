@@ -21,9 +21,7 @@ export const BaseProps: BasePropsType = {
   get width() {
     return isMaterial() ? 20 : 10;
   },
-  get __defaultNestedValues() {
-    return { baseNested: { text: "3" } };
-  },
+  __defaultNestedValues: Object.freeze({ baseNested: { text: "3" } }) as any,
 };
 export declare type TextsPropsType = {
   text?: string;
@@ -59,17 +57,13 @@ export const WidgetProps: WidgetPropsType = Object.create(
       get text() {
         return format("text");
       },
-      get texts1() {
-        return { text: format("text") };
-      },
+      texts1: Object.freeze({ text: format("text") }) as any,
       template: () => <div></div>,
-      get __defaultNestedValues() {
-        return {
-          texts2: { text: format("text") },
-          texts3: TextsProps,
-          baseNested: BaseProps?.__defaultNestedValues.baseNested,
-        };
-      },
+      __defaultNestedValues: Object.freeze({
+        texts2: { text: format("text") },
+        texts3: TextsProps,
+        baseNested: BaseProps?.__defaultNestedValues.baseNested,
+      }) as any,
     })
   )
 );
@@ -96,13 +90,11 @@ const WidgetPropsType: WidgetPropsTypeType = {
   height: WidgetProps.height,
   width: WidgetProps.width,
   expressionDefault: ExpressionProps.expressionDefault,
-  get __defaultNestedValues() {
-    return {
-      texts2: WidgetProps.texts2,
-      texts3: WidgetProps.texts3,
-      baseNested: WidgetProps.baseNested,
-    };
-  },
+  __defaultNestedValues: Object.freeze({
+    texts2: WidgetProps.texts2,
+    texts3: WidgetProps.texts3,
+    baseNested: WidgetProps.baseNested,
+  }) as any,
 };
 import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
 import * as React from "react";
