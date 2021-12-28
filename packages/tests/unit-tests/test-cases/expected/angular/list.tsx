@@ -62,6 +62,7 @@ import { CommonModule } from "@angular/common";
     ><ng-template #ListItemDefault let-value="value" let-onClick="onClick">
       <dx-widget-with-props
         #compRef
+        style="display: contents"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
         (onClick)="
           onClick !== undefined

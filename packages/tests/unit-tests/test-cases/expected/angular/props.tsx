@@ -12,6 +12,7 @@ export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
   @Input() array: any = ["1"];
+  @Input() currentDate: any = new Date();
   @Input() expressionDefault: string = device === "ios" ? "yes" : "no";
   @Input() expressionDefault1: boolean = !device;
   @Input() expressionDefault2: boolean | string = isDevice() || "test";
@@ -45,6 +46,7 @@ import {
     "height",
     "export",
     "array",
+    "currentDate",
     "expressionDefault",
     "expressionDefault1",
     "expressionDefault2",
@@ -71,6 +73,7 @@ export default class Widget extends WidgetInput {
       height: this.height,
       export: this.export,
       array: this.array,
+      currentDate: this.currentDate,
       expressionDefault: this.expressionDefault,
       expressionDefault1: this.expressionDefault1,
       expressionDefault2: this.expressionDefault2,
@@ -116,6 +119,7 @@ export default class Widget extends WidgetInput {
       "height",
       "export",
       "array",
+      "currentDate",
       "expressionDefault",
       "expressionDefault1",
       "expressionDefault2",
@@ -129,6 +133,7 @@ export default class Widget extends WidgetInput {
     };
     this._stringValueChange = (e: any) => {
       this.stringValueChange.emit(e);
+
       this._detectChanges();
     };
   }

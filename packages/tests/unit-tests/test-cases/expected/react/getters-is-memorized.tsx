@@ -13,9 +13,7 @@ export declare type WidgetPropsType = {
 const WidgetProps: WidgetPropsType = {
   someProp: "",
   type: "",
-  get defaultCurrentDate() {
-    return new Date();
-  },
+  defaultCurrentDate: Object.freeze(new Date()) as any,
   currentDateChange: () => {},
 } as any as WidgetPropsType;
 interface internalInterface {

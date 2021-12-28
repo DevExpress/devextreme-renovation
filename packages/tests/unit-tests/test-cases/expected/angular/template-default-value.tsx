@@ -61,6 +61,7 @@ import {
     >
       <dx-widget-with-props
         #compRef
+        style="display: contents"
         [optionalValue]="
           optionalValue !== undefined
             ? optionalValue
