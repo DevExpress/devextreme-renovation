@@ -34,10 +34,9 @@ import {
   template: `<ng-template #widgetTemplate
     ><div
       >TemplateDefaultValue<ng-container
-        *ngTemplateOutlet="
-          defaultCompTemplate || defaultCompTemplateDefault;
-          context: { optionalValue: stringToRender, value: 'twdComp' }
-        "
+        *ngTemplateOutlet="defaultCompTemplate||defaultCompTemplateDefault; context:{optionalValue:stringToRender,value:'twdComp',onClick: () => {
+      
+    }}"
       >
       </ng-container
       ><ng-container
@@ -58,12 +57,18 @@ import {
       #defaultCompTemplateDefault
       let-optionalValue="optionalValue"
       let-value="value"
+      let-onClick="onClick"
     >
       <dx-widget-with-props
         #compRef
         style="display: contents"
         [optionalValue]="optionalValue"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
+        (onClick)="
+          onClick !== undefined
+            ? onClick($event)
+            : WidgetWithPropsDefaults.onClick($event)
+        "
       ></dx-widget-with-props>
       <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
     </ng-template>
