@@ -39,11 +39,7 @@ import { CommonModule } from "@angular/common";
         ><dx-inner-widget
           [selected]="selected"
           [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-          (onSelect)="
-            (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
-              $event
-            )
-          "
+          (onSelect)="onSelect($event)"
           (valueChange)="
             (valueChange !== undefined
               ? valueChange
@@ -86,11 +82,7 @@ export default class Widget extends WidgetProps {
     super();
   }
 
-  InnerWidgetDefaults = {
-    value: 14,
-    onSelect: (e: any) => void 0,
-    valueChange: () => {},
-  };
+  InnerWidgetDefaults = { value: 14, valueChange: () => {} };
 }
 @NgModule({
   declarations: [Widget],

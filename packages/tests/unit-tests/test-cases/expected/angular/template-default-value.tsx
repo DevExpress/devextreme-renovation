@@ -64,11 +64,7 @@ import {
         style="display: contents"
         [optionalValue]="optionalValue"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-        (onClick)="
-          onClick !== undefined
-            ? onClick($event)
-            : WidgetWithPropsDefaults.onClick($event)
-        "
+        (onClick)="onClick($event)"
       ></dx-widget-with-props>
       <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
     </ng-template>
@@ -116,11 +112,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     }));
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [TemplateDefaultValue],

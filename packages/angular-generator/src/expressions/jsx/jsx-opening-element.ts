@@ -584,7 +584,9 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       let initializer: Expression = prop._name;
       if (prop.initializer) {
         initializer = this.createJsxExpression(
-          new SimpleExpression(`(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`),
+          new SimpleExpression(
+            `(${prop._name} !== undefined ? ${prop._name} : ${component.name}Defaults.${prop._name})`
+          ),
         );
       }
       return new JsxAttribute(prop._name, initializer);
