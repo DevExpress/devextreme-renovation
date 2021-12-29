@@ -7,7 +7,6 @@ import {
   FunctionTypeNode,
   Identifier,
   Property as BaseProperty,
-  // SimpleExpression,
   SyntaxKind,
   TypeExpression,
 } from '@devextreme-generator/core';
@@ -51,9 +50,6 @@ export class Property extends BaseProperty {
         ? ''
         : questionOrExclamationToken;
     }
-    // if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
-    //   initializer = new SimpleExpression('(e: any) => void 0');
-    // }
     super(
       decorators,
       modifiers,
