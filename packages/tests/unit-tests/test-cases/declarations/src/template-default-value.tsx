@@ -14,6 +14,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
     <model.props.defaultCompTemplate
       optionalValue={model.props.stringToRender}
       value={"twdComp"}
+      onClick={()=>{}}
     />
     <model.props.defaultCompTemplate value={model.props.stringToRender} />
     <model.props.defaultFuncTemplate value={model.props.stringToRender} />
@@ -25,6 +26,7 @@ export class TemplateDefaultValueProps {
   @Template() defaultCompTemplate: JSXTemplate<
     {
       optionalValue?: string | undefined;
+      onClick?: (e: any) => void;
       value: string;
     },
     "value"

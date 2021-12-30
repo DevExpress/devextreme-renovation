@@ -151,22 +151,30 @@ function compileDefaultTemplates(
           const component = context.components[template.initializer.toString()] as AngularComponent;
           const ref = 'compRef';
           const componentName = getAngularSelector(component.name);
+
           const templateVariables = template.variables.map((v) => {
             const componentProp = component.heritageProperties.find(
               (p) => p.name.toString() === v,
             );
+
             if (componentProp?.type instanceof FunctionTypeNode) {
-              return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+              if (componentProp.initializer) {
+                return `(${v})="${v} !== undefined ? ${v}($event) : ${component.name}Defaults.${v}($event)"`;
+              }
+              return `(${v})="${v}($event)"`;
             }
-            return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+            if (componentProp?.initializer) {
+              return `[${v}]="${v} !== undefined ? ${v} : ${component.name}Defaults.${v}"`;
+            }
+            return `[${v}]="${v}"`;
           })
             .join(' ');
-          const templateOutlete = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
+          const templateOutlet = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(' ')}>
             <${componentName} #${ref} style="display: contents" ${templateVariables}></${componentName}>
-            ${templateOutlete}
+            ${templateOutlet}
             </ng-template>`;
           return templateString;
         }

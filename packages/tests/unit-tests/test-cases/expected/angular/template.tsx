@@ -165,16 +165,8 @@ export default class WidgetWithTemplate extends WidgetInput {
     }));
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
-  PublicWidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
+  PublicWidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [WidgetWithTemplate],
