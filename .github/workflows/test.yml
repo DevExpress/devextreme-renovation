@@ -48,7 +48,7 @@ jobs:
       - name: e2e tests
         run: npm run test:testcafe-headless
         
-      - name: Copy screenshots artifacts
+      - name: Copy test-result artifacts
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
