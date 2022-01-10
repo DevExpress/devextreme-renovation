@@ -948,7 +948,7 @@ export class AngularComponent extends Component {
               (p) => p.name === `_${name}`,
             ) as SetAccessor;
             if (setter) {
-              const expression = `this.${scheduledApplyAttributes} = this`;
+              const expression = `this.${scheduledApplyAttributes} = true`;
               if (
                 !setter.body?.statements.some(
                   (expr) => expr.toString() === expression,

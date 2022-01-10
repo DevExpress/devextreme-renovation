@@ -17,6 +17,7 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
+  ElementRef,
   TemplateRef,
   forwardRef,
   HostListener,
@@ -43,12 +44,18 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
       (valueChange)="_valueChange($event)"
     ></dx-inner-widget
     ><ng-content *ngTemplateOutlet="innerwidget2?.widgetTemplate"></ng-content
+    ><div #_auto_ref_0></div
   ></ng-template>`,
 })
 export default class Widget
   extends WidgetInput
   implements ControlValueAccessor
 {
+  counter: number = 1;
+  notUsedValue: number = 1;
+  get __attributes(): any {
+    return { visible: this.visible, value: this.counter };
+  }
   get __restAttributes(): any {
     return {};
   }
@@ -57,6 +64,19 @@ export default class Widget
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
         this.changeDetection.detectChanges();
     });
+  }
+  @ViewChild("_auto_ref_0", { static: false })
+  _auto_ref_0?: ElementRef<HTMLDivElement>;
+
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    const _attr_0: { [name: string]: any } = (this.__attributes as any) || {};
+    const _ref_0 = this._auto_ref_0?.nativeElement;
+    if (_ref_0) {
+      for (let key in _attr_0) {
+        _ref_0.setAttribute(key, _attr_0[key].toString());
+      }
+    }
   }
 
   @HostListener("valueChange", ["$event"]) change() {}
@@ -74,6 +94,22 @@ export default class Widget
     this.touched = fn;
   }
 
+  ngAfterViewInit() {
+    this.__applyAttributes__();
+  }
+  ngOnChanges(changes: { [name: string]: any }) {
+    if (["visible"].some((d) => changes[d] && !changes[d].firstChange)) {
+      this.scheduledApplyAttributes = true;
+    }
+  }
+
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
+
   _valueChange: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
@@ -85,8 +121,18 @@ export default class Widget
     super();
     this._valueChange = (e: any) => {
       this.valueChange.emit(e);
+
       this._detectChanges();
     };
+  }
+  set _counter(counter: number) {
+    this.counter = counter;
+    this._detectChanges();
+    this.scheduledApplyAttributes = true;
+  }
+  set _notUsedValue(notUsedValue: number) {
+    this.notUsedValue = notUsedValue;
+    this._detectChanges();
   }
 }
 @NgModule({
