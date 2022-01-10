@@ -6319,7 +6319,7 @@ mocha.describe("Angular generator", function () {
             getResult(`{
               this.attr=attr;
               this._detectChanges();
-              this.scheduledApplyAttributes = this;
+              this.scheduledApplyAttributes = true;
             }`)
           );
         });
