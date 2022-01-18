@@ -1590,6 +1590,7 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       templateComponents: [],
       isSVG: this.isSVGComponent,
+      isFunctionalComponent: this.isFunctional,
     };
 
     const implementedInterfaces: string[] = [];
@@ -1681,6 +1682,7 @@ export class AngularComponent extends Component {
       newComponentContext: SyntaxKind.ThisKeyword,
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
+      isFunctionalComponent: this.isFunctional,
     }))
     .filter((m) => m)
     .join('\n')}
@@ -1751,5 +1753,13 @@ export class AngularComponent extends Component {
         export { ${this.name} as Dx${this.name}Component };
         ${this.compileDefaultComponentExport()}
         `;
+  }
+}
+
+export class AngularFunctionalComponent extends AngularComponent {
+  isFunctional = true;
+
+  addPrefixToMembers(members: Array<Property | Method>) {
+    return members;
   }
 }

@@ -30,6 +30,7 @@ export interface toStringOptions extends BaseToStringOptions {
   forwardRefs?: BaseClassMember[];
   hasDynamicComponents?: boolean;
   isSVG?: boolean;
+  isFunctionalComponent?: boolean;
   checkSlot?: (slot: Property, options: toStringOptions) => void;
 }
 

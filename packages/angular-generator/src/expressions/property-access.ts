@@ -65,7 +65,9 @@ export class PropertyAccess extends BasePropertyAccess {
       }
       return `this.${property.name} = ${setValue}`;
     }
-
+    if (options.isFunctionalComponent) {
+      return `this.${property.name}=${value}\nthis._detectChanges();`;
+    }
     return `this._${property.name}=${value}`;
   }
 

@@ -14,12 +14,13 @@ import Generator, {
   TypeParameterDeclaration,
   VariableDeclarationList,
   VariableStatement,
+  Component,
 } from '@devextreme-generator/core';
 import { counter } from './counter';
 import { AsExpression } from './expressions/as-expression';
 import { GetAccessor } from './expressions/class-members/get-accessor';
 import { Property } from './expressions/class-members/property';
-import { AngularComponent } from './expressions/component';
+import { AngularComponent, AngularFunctionalComponent } from './expressions/component';
 import { ComponentInput } from './expressions/component-input';
 import { ContextDeclaration } from './expressions/context-declaration';
 import { Decorator } from './expressions/decorator';
@@ -261,6 +262,25 @@ export class AngularGenerator extends Generator {
     members: Array<Property | Method>,
   ) {
     return new AngularComponent(
+      componentDecorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      this.getContext(),
+    );
+  }
+
+  createFunctionalComponent(
+    componentDecorator: Decorator,
+    modifiers: string[],
+    name: Identifier,
+    typeParameters: any,
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>,
+  ): Component {
+    return new AngularFunctionalComponent(
       componentDecorator,
       modifiers,
       name,

@@ -387,6 +387,14 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("counter", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("counter_new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

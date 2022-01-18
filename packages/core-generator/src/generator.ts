@@ -34,7 +34,9 @@ import {
 import { Decorator } from './expressions/decorator';
 import { Enum, EnumMember } from './expressions/enum';
 import { ExportDeclaration, ExportSpecifier, NamedExports } from './expressions/export';
-import { ArrowFunction, Function, Parameter } from './expressions/functions';
+import {
+  ArrowFunction, Function, Parameter,
+} from './expressions/functions';
 import {
   ImportClause,
   ImportDeclaration,
@@ -331,7 +333,7 @@ export class Generator implements GeneratorAPI {
     type: TypeExpression | string | undefined,
     body: Block,
   ) {
-    const functionDeclaration = this.createFunctionDeclarationCore(
+    const func = this.createFunctionDeclarationCore(
       decorators,
       modifiers,
       asteriskToken,
@@ -341,11 +343,141 @@ export class Generator implements GeneratorAPI {
       type,
       body,
     );
+
     this.addViewFunction(
-      functionDeclaration.name!.toString(),
-      functionDeclaration,
+      func.name!.toString(),
+      func,
     );
-    return functionDeclaration;
+
+    if (func.isJsx()) {
+      const componentDecorator = func.decorators.find(
+        (d) => d.name === Decorators.Component,
+      );
+      if (componentDecorator && func.name) {
+        componentDecorator.viewParameter = new Identifier(func.name.toString());
+        componentDecorator.addParameter('view', componentDecorator.viewParameter);
+
+        const members: (Property | Method)[] = [];
+
+        const variableStatements = body.statements.filter(
+          (statement) => statement instanceof VariableStatement,
+        ) as VariableStatement[];
+
+        const states: VariableDeclaration[] = [];
+        const callbacks: VariableDeclaration[] = [];
+
+        variableStatements.forEach((statement: VariableStatement) => {
+          statement.declarationList.declarations.forEach((variable: VariableDeclaration) => {
+            if (variable.initializer instanceof Call) {
+              if (variable.initializer.expression.toString() === 'useState') {
+                states.push(variable);
+              }
+
+              if (variable.initializer.expression.toString() === 'useCallback') {
+                callbacks.push(variable);
+              }
+            }
+          });
+        });
+        states.forEach((state) => {
+          if (state.name instanceof BindingPattern && state.name.elements.length > 0) {
+            const stateName = state.name.elements[0].name;
+            if (stateName instanceof Identifier && state.initializer instanceof Call) {
+              const argumentsArray = state.initializer.argumentsArray;
+              members.push(this.createProperty(
+                [this.createDecorator(new Call(new Identifier('InternalState'), undefined, []))],
+                undefined,
+                stateName,
+                undefined,
+                undefined,
+                argumentsArray[0], // TODO process model
+              ));
+              const setStateName = state.name.elements[1]?.name;
+
+              if (setStateName instanceof Identifier) {
+                members.push(this.createMethod(
+                  undefined,
+                  undefined,
+                  undefined,
+                  setStateName,
+                  undefined,
+                  undefined,
+                  [new Parameter(
+                    [],
+                    [],
+                    undefined,
+                    new Identifier('__val__'),
+                    undefined,
+                    'any',
+                    undefined,
+                  )],
+                  new SimpleTypeExpression('void'),
+                  this.createBlock(
+                    [this.createExpressionStatement(this.createBinary(
+                      this.createPropertyAccess(
+                        this.createThis(),
+                        stateName,
+                      ),
+                      this.createToken(this.SyntaxKind.EqualsToken),
+                      this.createIdentifier('__val__'),
+                    ))],
+                    true,
+                  ),
+                ));
+              }
+            }
+          }
+        });
+
+        callbacks.forEach((callback) => {
+          if (callback.name instanceof Identifier
+            && callback.initializer instanceof Call) {
+            const callbackFunc = callback.initializer.argumentsArray[0];
+            if (callbackFunc instanceof ArrowFunction) {
+              members.push(this.createMethod(
+                undefined,
+                undefined,
+                undefined,
+                callback.name,
+                undefined,
+                callbackFunc.typeParameters,
+                callbackFunc.parameters,
+                callbackFunc.type as TypeExpression, // TODO
+                callbackFunc.body as Block, // TODO
+              ));
+            }
+          }
+        });
+
+        const heritages = [this.createHeritageClause(
+          this.SyntaxKind.ExtendsKeyword,
+          [this.createExpressionWithTypeArguments(
+            undefined,
+            this.createCall(
+              this.createIdentifier('JSXComponent'),
+              undefined,
+              func.parameters?.[0].type instanceof TypeExpression
+                ? [func.parameters[0].type] : [],
+            ),
+          )],
+        )];
+
+        const result = this.createFunctionalComponent(
+          componentDecorator,
+          func.modifiers,
+          func.name,
+          func.typeParameters,
+          heritages, // heritageClauses,
+          members, // members,
+        );
+
+        this.addComponent(name.toString(), result as Component);
+
+        return result as unknown as typeof func;
+      }
+    }
+
+    return func;
   }
 
   createFunctionDeclarationCore(
@@ -704,6 +836,27 @@ export class Generator implements GeneratorAPI {
     );
   }
 
+  createFunctionalComponent(
+    componentDecorator: Decorator,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: TypeExpression[] | string[] | undefined,
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>,
+  ): Component {
+    const result = this.createComponent(
+      componentDecorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+    );
+    result.isFunctional = true;
+
+    return result;
+  }
+
   createComponentBindings(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -770,6 +923,7 @@ export class Generator implements GeneratorAPI {
     } else if (
       decorators.find((d) => d.name === Decorators.ComponentBindings)
     ) {
+      debugger;
       const componentInput = this.createComponentBindings(
         decorators,
         modifiers,

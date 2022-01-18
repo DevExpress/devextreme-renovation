@@ -257,3 +257,6 @@ export type CSSAttributes = React.CSSProperties;
  * Import it for testing purpose
  */
 export const h = react.createElement;
+
+export const useState = react.useState;
+export const useCallback = react.useCallback;

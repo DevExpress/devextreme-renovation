@@ -9,6 +9,7 @@ import {
   StringLiteral,
   TypeExpression,
   TypeParameterDeclaration,
+  Component,
 } from '@devextreme-generator/core';
 import { PreactGenerator } from '@devextreme-generator/preact';
 import { HeritageClause } from '@devextreme-generator/react';
@@ -17,7 +18,7 @@ import { GetAccessor } from './expressions/class-members/get-accessor';
 import { Method } from './expressions/class-members/method';
 import { Property } from './expressions/class-members/property';
 import { ImportDeclaration } from './expressions/import-declaration';
-import { InfernoComponent } from './expressions/inferno-component';
+import { InfernoComponent, InfernoFunctionalComponent } from './expressions/inferno-component';
 import { JsxClosingElement } from './expressions/jsx/jsx-closing-element';
 import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { PropertyAccess } from './expressions/property-access';
@@ -39,6 +40,25 @@ export class InfernoGenerator extends PreactGenerator {
     members: Array<Property | Method>,
   ) {
     return new InfernoComponent(
+      componentDecorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      this.getContext(),
+    );
+  }
+
+  createFunctionalComponent(
+    componentDecorator: Decorator,
+    modifiers: string[],
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>,
+  ): Component {
+    return new InfernoFunctionalComponent(
       componentDecorator,
       modifiers,
       name,

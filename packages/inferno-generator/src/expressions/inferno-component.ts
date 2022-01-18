@@ -419,3 +419,7 @@ export class InfernoComponent extends PreactComponent {
         `;
   }
 }
+
+export class InfernoFunctionalComponent extends InfernoComponent {
+  isFunctional = true;
+}

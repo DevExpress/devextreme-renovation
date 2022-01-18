@@ -11,6 +11,7 @@ import BaseGenerator, {
   TypeExpression,
   JsxSpreadAttribute,
   JsxExpression,
+  Component,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './expressions/class-members/get-accessor';
 import { Method } from './expressions/class-members/method';
@@ -23,7 +24,7 @@ import { JsxElement } from './expressions/jsx/jsx-element';
 import { JsxOpeningElement } from './expressions/jsx/jsx-opening-element';
 import { JsxSelfClosingElement } from './expressions/jsx/jsx-self-closing-element';
 import { PropertyAccess } from './expressions/property-access';
-import { ReactComponent } from './expressions/react-component';
+import { ReactComponent, ReactFunctionalComponent } from './expressions/react-component';
 import { ComponentInput } from './expressions/react-component-input';
 import { TypeReferenceNode } from './expressions/type-reference-node';
 import { New, Call } from './expressions/common';
@@ -46,6 +47,25 @@ export class ReactGenerator extends BaseGenerator {
     members: Array<Property | Method>,
   ) {
     return new ReactComponent(
+      componentDecorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+      this.getContext(),
+    );
+  }
+
+  createFunctionalComponent(
+    componentDecorator: Decorator,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: string[],
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>,
+  ): Component {
+    return new ReactFunctionalComponent(
       componentDecorator,
       modifiers,
       name,
