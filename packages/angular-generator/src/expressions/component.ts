@@ -1570,15 +1570,12 @@ export class AngularComponent extends Component {
       'ViewContainerRef',
       'Renderer2',
       'ViewRef',
-      'ElementRef',
       'NodeDef',
     ];
     const constructorArguments: string[] = [
       'private changeDetection: ChangeDetectorRef',
       'private renderer: Renderer2',
       'private viewContainerRef: ViewContainerRef',
-      'private elementRef: ElementRef',
-      'private nodeDef: NodeDef',
     ];
 
     const cdkImports: string[] = [];
