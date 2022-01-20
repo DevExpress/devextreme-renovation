@@ -35,7 +35,7 @@ import { Decorator } from './expressions/decorator';
 import { Enum, EnumMember } from './expressions/enum';
 import { ExportDeclaration, ExportSpecifier, NamedExports } from './expressions/export';
 import {
-  ArrowFunction, Function, Parameter,
+  ArrowFunction, BaseFunction, Function, Parameter,
 } from './expressions/functions';
 import {
   ImportClause,
@@ -106,6 +106,7 @@ import {
   GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression,
 } from './types';
 import { getExpression } from './utils/expressions';
+import { createFunctionalComponentParameters } from './utils/functional-component-helper';
 import { getModuleRelativePath, resolveModule } from './utils/path-utils';
 
 export class Generator implements GeneratorAPI {
@@ -175,10 +176,60 @@ export class Generator implements GeneratorAPI {
     return new VariableDeclarationList(declarations, flags);
   }
 
+  isFunctionalComponent(
+    name: Identifier,
+    func?: Expression,
+  ): func is BaseFunction {
+    const firstChar = name.toString()[0];
+    const isUpperCaseName = firstChar === firstChar.toUpperCase();
+    return func instanceof BaseFunction
+        && func.isJsx() && isUpperCaseName && name.toString() !== 'View';
+  }
+
+  createFunctionalComponent(
+    name: Identifier,
+    func: BaseFunction,
+  ) {
+    this.addViewFunction(name.toString(), func);
+
+    const {
+      decorator,
+      heritageClauses,
+      members,
+    } = createFunctionalComponentParameters(this, name.toString(), func);
+
+    const result = this.createFunctionalComponentCore(
+      decorator,
+      func.modifiers,
+      name,
+      func.typeParameters,
+      heritageClauses,
+      members,
+    );
+
+    this.addComponent(name.toString(), result);
+
+    return result;
+  }
+
   createVariableStatement(
     modifiers: string[] | undefined,
     declarationList: VariableDeclarationList,
   ) {
+    // const declarations = declarationList.declarations;
+    // const declaration = declarationList.declarations[0];
+    // if (declarations.length === 1
+    //   && declaration.name instanceof Identifier
+    //   && this.isFunctionalComponent(declaration.name, declaration.initializer)
+    // ) {
+    //   const name = declaration.name;
+    //   const func = declaration.initializer;
+
+    //   this.addViewFunction(name.toString(), func);
+
+    //   return this.createFunctionalComponent(name, func);
+    // }
+
     return new VariableStatement(modifiers, declarationList);
   }
 
@@ -344,138 +395,14 @@ export class Generator implements GeneratorAPI {
       body,
     );
 
+    if (func.name && this.isFunctionalComponent(func.name, func)) {
+      return this.createFunctionalComponent(func.name!, func) as unknown as Function;
+    }
+
     this.addViewFunction(
       func.name!.toString(),
       func,
     );
-
-    if (func.isJsx()) {
-      const componentDecorator = func.decorators.find(
-        (d) => d.name === Decorators.Component,
-      );
-      if (componentDecorator && func.name) {
-        componentDecorator.viewParameter = new Identifier(func.name.toString());
-        componentDecorator.addParameter('view', componentDecorator.viewParameter);
-
-        const members: (Property | Method)[] = [];
-
-        const variableStatements = body.statements.filter(
-          (statement) => statement instanceof VariableStatement,
-        ) as VariableStatement[];
-
-        const states: VariableDeclaration[] = [];
-        const callbacks: VariableDeclaration[] = [];
-
-        variableStatements.forEach((statement: VariableStatement) => {
-          statement.declarationList.declarations.forEach((variable: VariableDeclaration) => {
-            if (variable.initializer instanceof Call) {
-              if (variable.initializer.expression.toString() === 'useState') {
-                states.push(variable);
-              }
-
-              if (variable.initializer.expression.toString() === 'useCallback') {
-                callbacks.push(variable);
-              }
-            }
-          });
-        });
-        states.forEach((state) => {
-          if (state.name instanceof BindingPattern && state.name.elements.length > 0) {
-            const stateName = state.name.elements[0].name;
-            if (stateName instanceof Identifier && state.initializer instanceof Call) {
-              const argumentsArray = state.initializer.argumentsArray;
-              members.push(this.createProperty(
-                [this.createDecorator(new Call(new Identifier('InternalState'), undefined, []))],
-                undefined,
-                stateName,
-                undefined,
-                undefined,
-                argumentsArray[0], // TODO process model
-              ));
-              const setStateName = state.name.elements[1]?.name;
-
-              if (setStateName instanceof Identifier) {
-                members.push(this.createMethod(
-                  undefined,
-                  undefined,
-                  undefined,
-                  setStateName,
-                  undefined,
-                  undefined,
-                  [new Parameter(
-                    [],
-                    [],
-                    undefined,
-                    new Identifier('__val__'),
-                    undefined,
-                    'any',
-                    undefined,
-                  )],
-                  new SimpleTypeExpression('void'),
-                  this.createBlock(
-                    [this.createExpressionStatement(this.createBinary(
-                      this.createPropertyAccess(
-                        this.createThis(),
-                        stateName,
-                      ),
-                      this.createToken(this.SyntaxKind.EqualsToken),
-                      this.createIdentifier('__val__'),
-                    ))],
-                    true,
-                  ),
-                ));
-              }
-            }
-          }
-        });
-
-        callbacks.forEach((callback) => {
-          if (callback.name instanceof Identifier
-            && callback.initializer instanceof Call) {
-            const callbackFunc = callback.initializer.argumentsArray[0];
-            if (callbackFunc instanceof ArrowFunction) {
-              members.push(this.createMethod(
-                undefined,
-                undefined,
-                undefined,
-                callback.name,
-                undefined,
-                callbackFunc.typeParameters,
-                callbackFunc.parameters,
-                callbackFunc.type as TypeExpression, // TODO
-                callbackFunc.body as Block, // TODO
-              ));
-            }
-          }
-        });
-
-        const heritages = [this.createHeritageClause(
-          this.SyntaxKind.ExtendsKeyword,
-          [this.createExpressionWithTypeArguments(
-            undefined,
-            this.createCall(
-              this.createIdentifier('JSXComponent'),
-              undefined,
-              func.parameters?.[0].type instanceof TypeExpression
-                ? [func.parameters[0].type] : [],
-            ),
-          )],
-        )];
-
-        const result = this.createFunctionalComponent(
-          componentDecorator,
-          func.modifiers,
-          func.name,
-          func.typeParameters,
-          heritages, // heritageClauses,
-          members, // members,
-        );
-
-        this.addComponent(name.toString(), result as Component);
-
-        return result as unknown as typeof func;
-      }
-    }
 
     return func;
   }
@@ -836,7 +763,7 @@ export class Generator implements GeneratorAPI {
     );
   }
 
-  createFunctionalComponent(
+  createFunctionalComponentCore(
     componentDecorator: Decorator,
     modifiers: string[] | undefined,
     name: Identifier,

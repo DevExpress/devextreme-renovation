@@ -13,7 +13,7 @@ class HelperWidgetProps {
   @OneWay() forwardRefProp?: HTMLDivElement | null;
 }
 
-function HelperView(model: HelperWidget) {
+function helperView(model: HelperWidget) {
   return (
     <div>
       <div>Ref: {model.props?.someRef}</div>
@@ -25,7 +25,7 @@ function HelperView(model: HelperWidget) {
 }
 
 @Component({
-  view: HelperView,
+  view: helperView,
 })
 export default class HelperWidget extends JSXComponent(HelperWidgetProps) { 
 }

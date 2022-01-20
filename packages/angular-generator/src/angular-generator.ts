@@ -13,7 +13,6 @@ import Generator, {
   BindingPattern,
   TypeParameterDeclaration,
   VariableDeclarationList,
-  VariableStatement,
   Component,
 } from '@devextreme-generator/core';
 import { counter } from './counter';
@@ -89,7 +88,8 @@ export class AngularGenerator extends Generator {
     ) {
       return new ContextDeclaration(modifiers, declarationList);
     }
-    return new VariableStatement(modifiers, declarationList);
+
+    return super.createVariableStatement(modifiers, declarationList);
   }
 
   createJsxSelfClosingElement(
@@ -272,7 +272,7 @@ export class AngularGenerator extends Generator {
     );
   }
 
-  createFunctionalComponent(
+  createFunctionalComponentCore(
     componentDecorator: Decorator,
     modifiers: string[],
     name: Identifier,

@@ -57,7 +57,7 @@ export class ReactGenerator extends BaseGenerator {
     );
   }
 
-  createFunctionalComponent(
+  createFunctionalComponentCore(
     componentDecorator: Decorator,
     modifiers: string[] | undefined,
     name: Identifier,

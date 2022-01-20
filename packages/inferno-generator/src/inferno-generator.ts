@@ -50,7 +50,7 @@ export class InfernoGenerator extends PreactGenerator {
     );
   }
 
-  createFunctionalComponent(
+  createFunctionalComponentCore(
     componentDecorator: Decorator,
     modifiers: string[],
     name: Identifier,

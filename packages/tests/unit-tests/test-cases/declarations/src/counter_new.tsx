@@ -11,10 +11,6 @@ export class CounterInput {
   @OneWay() id?: string;
 }
 
-@Component({
-  defaultOptionRules: null,
-  jQuery: {register: true},
-})
 export default function Counter(model: CounterInput) {
   const [value, setValue] = useState(1)
   const onClick = useCallback(() => {

@@ -22,7 +22,9 @@ import { CommonModule } from "@angular/common";
   selector: "dx-counter",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["id"],
-  template: `<button [id]="id" [onClick]="onClick">{{ value }}</button>`,
+  template: `<ng-template #widgetTemplate
+    ><button [id]="id" [onClick]="onClick">{{ value }}</button></ng-template
+  >`,
 })
 export default class Counter extends CounterInput {
   value: number = 1;
