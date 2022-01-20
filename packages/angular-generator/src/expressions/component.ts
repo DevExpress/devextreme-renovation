@@ -1570,7 +1570,6 @@ export class AngularComponent extends Component {
       'ViewContainerRef',
       'Renderer2',
       'ViewRef',
-      'NodeDef',
     ];
     const constructorArguments: string[] = [
       'private changeDetection: ChangeDetectorRef',
