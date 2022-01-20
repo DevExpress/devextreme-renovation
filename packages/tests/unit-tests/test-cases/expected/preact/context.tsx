@@ -3,6 +3,7 @@ function view(model: Widget): any {
   return <span></span>;
 }
 const P1Context = createContext(5);
+const ContextForConsumer = createContext(null);
 const GetterContext = createContext("default");
 
 export declare type PropsType = {
@@ -24,6 +25,7 @@ interface Widget {
   props: typeof Props & RestProps;
   contextConsumer: number;
   provider: number;
+  consumer: any;
   sum: any;
   contextProvider: any;
   restAttributes: RestProps;
@@ -32,6 +34,7 @@ interface Widget {
 export default function Widget(props: typeof Props & RestProps) {
   const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
+  const consumer = useContext(ContextForConsumer);
   const __sum = useCallback(
     function __sum(): any {
       return provider + contextConsumer;
@@ -56,6 +59,7 @@ export default function Widget(props: typeof Props & RestProps) {
           props: { ...props },
           contextConsumer,
           provider,
+          consumer,
           sum: __sum(),
           contextProvider: __contextProvider(),
           restAttributes: __restAttributes(),
