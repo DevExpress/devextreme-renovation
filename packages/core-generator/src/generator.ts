@@ -923,7 +923,6 @@ export class Generator implements GeneratorAPI {
     } else if (
       decorators.find((d) => d.name === Decorators.ComponentBindings)
     ) {
-      debugger;
       const componentInput = this.createComponentBindings(
         decorators,
         modifiers,
