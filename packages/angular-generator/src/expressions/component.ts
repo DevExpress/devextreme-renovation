@@ -1525,11 +1525,16 @@ export class AngularComponent extends Component {
       const propsClass = this.heritageClauses
         .filter((h) => h.isJsxComponent)
         .map((h) => h.types.map((t) => t.type.toString()))[0];
-
-      constructorStatements.push(
-        `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
-        `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
-      );
+      if (propsClass) {
+        constructorStatements.push(
+          `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
+          `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
+        );
+      } else {
+        constructorStatements.push(
+          `this.defaultEntries = [${propsWithDefault.map((p) => `{ key: "${p.name}", value: ${p.initializer?.toString()} }`).join(',')}];`,
+        );
+      }
 
       return 'defaultEntries: DefaultEntries';
     }

@@ -6,12 +6,15 @@ import {
 } from '../expressions/functions';
 import { Call, Identifier } from '../expressions/common';
 import { BindingPattern } from '../expressions/binding-pattern';
-import { SimpleTypeExpression, TypeExpression } from '../expressions/type';
+import {
+  SimpleTypeExpression, TypeExpression, TypeLiteralNode, TypeReferenceNode,
+} from '../expressions/type';
 import { Block } from '../expressions/statements';
 import { Decorator } from '../expressions/decorator';
 import { HeritageClause } from '../expressions/class';
 import { Generator } from '../generator';
 import { SyntaxKind } from '../syntaxKind';
+import { Expression } from '../expressions/base';
 
 function fillFunctionalComponentStateMembers(
   generator: Generator,
@@ -28,7 +31,7 @@ function fillFunctionalComponentStateMembers(
         stateName,
         undefined,
         undefined,
-        argumentsArray[0], // TODO process model
+        argumentsArray[0],
       ));
       const setStateName = state.name.elements[1]?.name;
 
@@ -91,10 +94,48 @@ function fillFunctionalComponentCallbackMembers(
   }
 }
 
+function getDefaultValue(parameter: Parameter, name: Identifier): Expression | undefined {
+  if (parameter.name instanceof BindingPattern) {
+    const foundElement = parameter.name.elements.find(
+      (element) => element.name.toString() === name.toString(),
+    );
+    if (foundElement) {
+      return foundElement.initializer;
+    }
+  }
+  return undefined;
+}
+
+function fillPropertyMembers(
+  generator: Generator,
+  members: (Property | Method)[],
+  parameter: Parameter,
+) {
+  if (parameter.type instanceof TypeLiteralNode) {
+    parameter.type.members.forEach((propertySignature) => {
+      const defaultValue = getDefaultValue(parameter, propertySignature.name);
+      members.push(generator.createProperty(
+        [generator.createDecorator(generator.createCall(
+          generator.createIdentifier('OneWay'),
+          undefined,
+          [],
+        ))],
+        undefined,
+        propertySignature.name,
+        propertySignature.questionToken,
+        propertySignature.type,
+        defaultValue,
+      ));
+    });
+  }
+}
+
 function createMembers(
   generator: Generator, func: BaseFunction,
 ): (Property | Method)[] {
   const members: (Property | Method)[] = [];
+
+  fillPropertyMembers(generator, members, func.parameters[0]);
 
   if (func.body instanceof Block) {
     const variableStatements = func.body.statements.filter(
@@ -104,11 +145,12 @@ function createMembers(
     variableStatements.forEach((statement: VariableStatement) => {
       statement.declarationList.declarations.forEach((variable: VariableDeclaration) => {
         if (variable.initializer instanceof Call) {
-          if (variable.initializer.expression.toString() === 'useState') {
+          const callbackName = variable.initializer.expression.toString();
+          if (callbackName === 'useState') {
             fillFunctionalComponentStateMembers(generator, members, variable);
           }
 
-          if (variable.initializer.expression.toString() === 'useCallback') {
+          if (callbackName === 'useCallback') {
             fillFunctionalComponentCallbackMembers(generator, members, variable);
           }
         }
@@ -144,18 +186,18 @@ function createDecorator(
 function craeteHeritageClauses(
   generator: Generator, func: BaseFunction,
 ): HeritageClause[] {
-  return [generator.createHeritageClause(
-    SyntaxKind.ExtendsKeyword,
-    [generator.createExpressionWithTypeArguments(
-      undefined,
-      generator.createCall(
-        generator.createIdentifier('JSXComponent'),
+  return func.parameters?.[0].type instanceof TypeReferenceNode
+    ? [generator.createHeritageClause(
+      SyntaxKind.ExtendsKeyword,
+      [generator.createExpressionWithTypeArguments(
         undefined,
-        func.parameters?.[0].type instanceof TypeExpression
-          ? [func.parameters[0].type] : [],
-      ),
-    )],
-  )];
+        generator.createCall(
+          generator.createIdentifier('JSXComponent'),
+          undefined,
+          [func.parameters[0].type],
+        ),
+      )],
+    )] : [];
 }
 
 export function createFunctionalComponentParameters(

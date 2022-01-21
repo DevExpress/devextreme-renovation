@@ -1,12 +1,5 @@
-import { Component, Input } from "@angular/core";
-@Component({
-  template: "",
-})
-export class CounterInput {
-  @Input() id?: string;
-}
-
 import {
+  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,8 +8,13 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-counter",
@@ -26,7 +24,9 @@ import { CommonModule } from "@angular/common";
     ><button [id]="id" [onClick]="onClick">{{ value }}</button></ng-template
   >`,
 })
-export default class Counter extends CounterInput {
+export default class Counter {
+  defaultEntries: DefaultEntries;
+  @Input() id?: string = "default";
   value: number = 1;
   setValue(__val__: any): void {
     this.value = __val__;
@@ -45,6 +45,14 @@ export default class Counter extends CounterInput {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
@@ -52,7 +60,7 @@ export default class Counter extends CounterInput {
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
   ) {
-    super();
+    this.defaultEntries = [{ key: "id", value: "default" }];
   }
 }
 @NgModule({
