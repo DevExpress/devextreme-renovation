@@ -181,9 +181,10 @@ export class Generator implements GeneratorAPI {
     func?: Expression,
   ): func is BaseFunction {
     const firstChar = name.toString()[0];
+    const nameString = name.toString();
     const isUpperCaseName = firstChar === firstChar.toUpperCase();
     return func instanceof BaseFunction
-        && func.isJsx() && isUpperCaseName && name.toString() !== 'View';
+        && func.isJsx() && isUpperCaseName && nameString !== 'View' && !nameString.endsWith('Template');
   }
 
   createFunctionalComponent(
