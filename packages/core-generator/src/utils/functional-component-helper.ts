@@ -15,6 +15,7 @@ import { HeritageClause } from '../expressions/class';
 import { Generator } from '../generator';
 import { SyntaxKind } from '../syntaxKind';
 import { Expression } from '../expressions/base';
+import { ArrayLiteral } from '..';
 
 function fillFunctionalComponentStateMembers(
   generator: Generator,
@@ -94,6 +95,29 @@ function fillFunctionalComponentCallbackMembers(
   }
 }
 
+function fillFunctionalComponentMemoMembers(
+  generator: Generator,
+  members: (Property | Method)[],
+  callback: VariableDeclaration,
+): void {
+  if (callback.name instanceof Identifier
+    && callback.initializer instanceof Call) {
+    const memoFunc = callback.initializer.argumentsArray[0];
+    const deps = callback.initializer.argumentsArray[1];
+    if (memoFunc instanceof BaseFunction && deps instanceof ArrayLiteral) {
+      members.push(generator.createGetAccessor(
+        [],
+        [],
+        callback.name,
+        memoFunc.parameters,
+        memoFunc.type as TypeExpression, // TODO
+        memoFunc.body as Block, // TODO
+        deps.elements.map((element) => element.toString()),
+      ));
+    }
+  }
+}
+
 function getDefaultValue(parameter: Parameter, name: Identifier): Expression | undefined {
   if (parameter.name instanceof BindingPattern) {
     const foundElement = parameter.name.elements.find(
@@ -152,6 +176,10 @@ function createMembers(
 
           if (callbackName === 'useCallback') {
             fillFunctionalComponentCallbackMembers(generator, members, variable);
+          }
+
+          if (callbackName === 'useMemo') {
+            fillFunctionalComponentMemoMembers(generator, members, variable);
           }
         }
       });

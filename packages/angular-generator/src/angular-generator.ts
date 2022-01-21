@@ -249,8 +249,9 @@ export class AngularGenerator extends Generator {
     parameters: Parameter[],
     type?: TypeExpression,
     body?: Block,
+    deps?: string[],
   ) {
-    return new GetAccessor(decorators, modifiers, name, parameters, type, body);
+    return new GetAccessor(decorators, modifiers, name, parameters, type, body, deps);
   }
 
   createComponent(

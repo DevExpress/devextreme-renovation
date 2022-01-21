@@ -260,3 +260,4 @@ export const h = react.createElement;
 
 export const useState = react.useState;
 export const useCallback = react.useCallback;
+export const useMemo = react.useMemo;

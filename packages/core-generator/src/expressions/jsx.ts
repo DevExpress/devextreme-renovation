@@ -306,7 +306,7 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
         }
         if (innerExpression instanceof Call) {
           const functionName = innerExpression.expression.toString();
-          if (functionName === 'useState' || functionName === 'useCallback') {
+          if (functionName === 'useState' || functionName === 'useCallback' || functionName === 'useMemo') {
             variableExpression = undefined;
           }
         }

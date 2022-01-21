@@ -118,8 +118,9 @@ export class InfernoGenerator extends PreactGenerator {
     parameters: Parameter[],
     type?: TypeExpression,
     body?: Block,
+    deps?: string[],
   ) {
-    return new GetAccessor(decorators, modifiers, name, parameters, type, body);
+    return new GetAccessor(decorators, modifiers, name, parameters, type, body, deps);
   }
 
   createPropertyAccess(expression: Expression, name: Identifier) {

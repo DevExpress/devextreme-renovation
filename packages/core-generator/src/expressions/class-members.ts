@@ -338,6 +338,8 @@ export class Method extends BaseClassMember {
 export class GetAccessor extends Method {
   contextTypes?: { [name: string]: TypeExpression | string };
 
+  deps?: string[];
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -345,6 +347,7 @@ export class GetAccessor extends Method {
     parameters: Parameter[],
     type?: TypeExpression | string,
     body?: Block,
+    deps?: string[],
   ) {
     super(
       decorators,
@@ -357,12 +360,23 @@ export class GetAccessor extends Method {
       type,
       body || new Block([], false),
     );
+    this.deps = deps;
+  }
+
+  getDependency(options: toStringOptions): Dependency[] {
+    if (this.deps) {
+      return this.deps;
+    }
+    return super.getDependency(options);
   }
 
   isMemorized(
     options?: toStringOptions,
     needToMemorizeProvider = true,
   ): boolean {
+    if (this.deps) {
+      return true;
+    }
     if (this.isProvider && !needToMemorizeProvider) {
       return false;
     }

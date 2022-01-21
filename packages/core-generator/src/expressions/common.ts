@@ -41,7 +41,7 @@ export class Identifier extends SimpleExpression {
         }
         if (innerExpression instanceof Call) {
           const name = innerExpression.expression.toString();
-          if (name === 'useState' || name === 'useCallback') {
+          if (name === 'useState' || name === 'useCallback' || name === 'useMemo') {
             return baseValue;
           }
         }
