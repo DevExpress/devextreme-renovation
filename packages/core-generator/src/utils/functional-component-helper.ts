@@ -111,7 +111,7 @@ function fillPropertyMembers(
   members: (Property | Method)[],
   parameter: Parameter,
 ) {
-  if (parameter.type instanceof TypeLiteralNode) {
+  if (parameter && parameter.type instanceof TypeLiteralNode) {
     parameter.type.members.forEach((propertySignature) => {
       const defaultValue = getDefaultValue(parameter, propertySignature.name);
       members.push(generator.createProperty(
@@ -186,7 +186,8 @@ function createDecorator(
 function craeteHeritageClauses(
   generator: Generator, func: BaseFunction,
 ): HeritageClause[] {
-  return func.parameters?.[0].type instanceof TypeReferenceNode
+  const type = func.parameters[0]?.type;
+  return type && type instanceof TypeReferenceNode
     ? [generator.createHeritageClause(
       SyntaxKind.ExtendsKeyword,
       [generator.createExpressionWithTypeArguments(
@@ -194,7 +195,7 @@ function craeteHeritageClauses(
         generator.createCall(
           generator.createIdentifier('JSXComponent'),
           undefined,
-          [func.parameters[0].type],
+          [type],
         ),
       )],
     )] : [];

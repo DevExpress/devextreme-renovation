@@ -395,6 +395,22 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("component-props-binding-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-default-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-empty-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-model-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

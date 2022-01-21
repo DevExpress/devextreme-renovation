@@ -1,7 +1,4 @@
 import {
-  Component,
-  ComponentBindings,
-  OneWay,
   useCallback,
   useState
 } from "@devextreme-generator/declarations";
