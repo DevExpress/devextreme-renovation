@@ -1,12 +1,13 @@
 import BaseWidget, { DxWidgetModule } from "./method";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetWithApiRefInput {
   @Input() prop1?: number;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

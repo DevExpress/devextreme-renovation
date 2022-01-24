@@ -27,9 +27,9 @@ export declare type WidgetPropsType = {
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
-  get __defaultNestedValues() {
-    return { anotherNestedPropInit: [FakeNested] };
-  },
+  __defaultNestedValues: Object.freeze({
+    anotherNestedPropInit: [FakeNested],
+  }) as any,
   twoWayPropChange: () => {},
 };
 import { __collectChildren, equalByValue } from "@devextreme/runtime/react";

@@ -2,15 +2,16 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class TemplateTransitWidgetInput {
   @Input() templateProp?: TemplateRef<any> | null = null;
   @Input() componentTemplateProp?: TemplateRef<any> | null = null;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

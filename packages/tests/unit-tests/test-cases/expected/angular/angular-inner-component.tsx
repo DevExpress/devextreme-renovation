@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 @Component({
   template: "",
 })
-class WidgetInput {}
+export class Props {}
 
 import {
   NgModule,
@@ -17,19 +17,11 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-widget",
+  selector: "dx-inner-component",
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
-export default class Widget extends WidgetInput {
-  private decoratedState: string = "";
-  private simpleState: string = "";
-  private get __privateGetter(): any {
-    return this.decoratedState.concat(this.simpleState);
-  }
-  __simpleGetter(): any {
-    return this.decoratedState.concat(this.simpleState);
-  }
+export class InnerComponent extends Props {
   get __restAttributes(): any {
     return {};
   }
@@ -49,20 +41,13 @@ export default class Widget extends WidgetInput {
   ) {
     super();
   }
-  set _decoratedState(decoratedState: string) {
-    this.decoratedState = decoratedState;
-    this._detectChanges();
-  }
-  set _simpleState(simpleState: string) {
-    this.simpleState = simpleState;
-    this._detectChanges();
-  }
 }
 @NgModule({
-  declarations: [Widget],
+  declarations: [InnerComponent],
   imports: [CommonModule],
 
-  exports: [Widget],
+  exports: [InnerComponent],
 })
-export class DxWidgetModule {}
-export { Widget as DxWidgetComponent };
+export class DxInnerComponentModule {}
+export { InnerComponent as DxInnerComponentComponent };
+export default InnerComponent;

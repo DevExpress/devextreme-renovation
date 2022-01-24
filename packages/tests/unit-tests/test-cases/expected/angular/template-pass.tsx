@@ -2,12 +2,13 @@ import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from "./dx-widget-with-template";
 import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Injectable } from "@angular/core";
-@Injectable()
+import { Component } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {}
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -38,11 +39,7 @@ import { CommonModule } from "@angular/common";
         ><dx-inner-widget
           [selected]="selected"
           [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-          (onSelect)="
-            (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
-              $event
-            )
-          "
+          (onSelect)="onSelect($event)"
           (valueChange)="
             (valueChange !== undefined
               ? valueChange
@@ -85,11 +82,7 @@ export default class Widget extends WidgetProps {
     super();
   }
 
-  InnerWidgetDefaults = {
-    value: 14,
-    onSelect: (e: any) => void 0,
-    valueChange: () => {},
-  };
+  InnerWidgetDefaults = { value: 14, valueChange: () => {} };
 }
 @NgModule({
   declarations: [Widget],

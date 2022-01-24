@@ -26,7 +26,7 @@ export class WidgetInput {
   @OneWay() height = 10;
   @OneWay() export: object = {};
   @OneWay() array = ["1"];
-
+  @OneWay() currentDate = new Date();
   @OneWay() expressionDefault: string = device === "ios" ? "yes" : "no";
   @OneWay() expressionDefault1: boolean = !device;
   @OneWay() expressionDefault2: boolean | string = isDevice() || "test";

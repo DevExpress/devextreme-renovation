@@ -14,6 +14,8 @@ function view(model: Widget): JSX.Element {
 
 const P1Context = createContext(5);
 
+const ContextForConsumer = createContext(null);
+
 const GetterContext = createContext("default");
 
 @ComponentBindings()
@@ -30,6 +32,9 @@ export default class Widget extends JSXComponent<Props>() {
 
   @Provider(P1Context)
   provider: number = 10;
+
+  @Consumer(ContextForConsumer)
+  consumer!: any;
 
   get sum() {
     return this.provider + this.contextConsumer;

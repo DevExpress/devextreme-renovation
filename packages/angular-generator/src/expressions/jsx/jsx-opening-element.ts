@@ -579,7 +579,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
-  componentToJsxElement(name: string, component: Component) {
+  componentToJsxElement(name: string, component: Component): JsxElement {
     const attributes = getProps(component.members).map((prop) => {
       let initializer: Expression = prop._name;
       if (prop.initializer) {

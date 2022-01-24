@@ -8,9 +8,7 @@ export declare type BasePropsType = {
   nestedProp?: typeof NestedProps;
 };
 export const BaseProps: BasePropsType = {
-  get nestedProp() {
-    return {};
-  },
+  nestedProp: Object.freeze({}) as any,
 };
 export declare type SomePropsType = {
   nestedProp?: typeof NestedProps;

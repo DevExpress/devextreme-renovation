@@ -7,7 +7,6 @@ import {
   FunctionTypeNode,
   Identifier,
   Property as BaseProperty,
-  SimpleExpression,
   SyntaxKind,
   TypeExpression,
 } from '@devextreme-generator/core';
@@ -50,9 +49,6 @@ export class Property extends BaseProperty {
       questionOrExclamationToken = questionOrExclamationToken === SyntaxKind.ExclamationToken
         ? ''
         : questionOrExclamationToken;
-    }
-    if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
-      initializer = new SimpleExpression('(e: any) => void 0');
     }
     super(
       decorators,
@@ -100,9 +96,8 @@ export class Property extends BaseProperty {
     if (this.isSlot) {
       const selector = `slot${capitalizeFirstLetter(this.name)}`;
       return `__${selector}?: ElementRef<HTMLDivElement>;
-            get ${this.name}(){
-                const childNodes =  this.__${selector}?.nativeElement?.childNodes;
-                return childNodes && childNodes.length > 2;
+            get ${this.name}():boolean {
+              return !isSlotEmpty(this.__${selector});
             }`;
     }
     if (this.isNestedComp) {

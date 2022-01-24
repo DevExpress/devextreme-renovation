@@ -1,5 +1,7 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
@@ -8,7 +10,6 @@ class WidgetProps {
   @Output() pageIndexChange: EventEmitter<number> = new EventEmitter();
 }
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

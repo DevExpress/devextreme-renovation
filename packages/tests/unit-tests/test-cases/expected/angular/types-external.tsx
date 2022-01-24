@@ -4,8 +4,10 @@ export declare type ObjType = { number: number; text: string };
 export declare type StringArr = Array<String>;
 export declare type StringType = String;
 export declare type StrDate = string | Date;
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() data: EnumType = "data";
   @Input() union: Union = "uniontext";
@@ -17,7 +19,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

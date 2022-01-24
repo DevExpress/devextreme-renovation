@@ -948,7 +948,7 @@ export class AngularComponent extends Component {
               (p) => p.name === `_${name}`,
             ) as SetAccessor;
             if (setter) {
-              const expression = `this.${scheduledApplyAttributes} = this`;
+              const expression = `this.${scheduledApplyAttributes} = true`;
               if (
                 !setter.body?.statements.some(
                   (expr) => expr.toString() === expression,
@@ -1147,15 +1147,29 @@ export class AngularComponent extends Component {
     return '';
   }
 
-  compileBindEvents(constructorStatements: string[]) {
+  compileBindEvents(constructorStatements: string[], options: toStringOptions): string {
     const events = this.members.filter((m) => m.isEvent);
 
     return events
       .map((e) => {
+        const twoWayMember = this.members.find((m) => m.isState && e.name === `${m.name}Change`);
+        const resetGetterStatement = (name: string) => `this.__getterCache["${name}"] = undefined`;
+
+        let resetStatements: string[] = [];
+        if (twoWayMember) {
+          const dependentGetters = this.members.filter(
+            (m) => m instanceof GetAccessor
+            && m.isMemorized(options)
+            && m.getDependency(options).includes(twoWayMember),
+          );
+          resetStatements = dependentGetters.map((g) => resetGetterStatement(g._name.toString()));
+        }
+
         constructorStatements.push(
           `this._${e.name}=(e:any) => {
             this.${e.name}.emit(e);
-            ${this.members.some((m) => m.isState && e.name === `${m.name}Change`) ? 'this._detectChanges();' : ''
+            ${resetStatements.join(';\n')}
+            ${twoWayMember ? 'this._detectChanges();' : ''
 }
           }`,
         );
@@ -1206,7 +1220,7 @@ export class AngularComponent extends Component {
     let providers: string[] = [];
 
     const contextProperties = this.members.filter(
-      (m) => m.isConsumer || m.isProvider,
+      (m) => m.isProvider,
     );
 
     if (contextProperties.length) {
@@ -1704,7 +1718,7 @@ export class AngularComponent extends Component {
     ngAfterViewCheckedStatements,
   )}
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
-            ${this.compileBindEvents(constructorStatements)}
+            ${this.compileBindEvents(constructorStatements, { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword })}
             @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
             ${this.compileLifeCycle(
     'constructor',

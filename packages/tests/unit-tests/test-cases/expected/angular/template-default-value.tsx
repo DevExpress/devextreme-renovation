@@ -2,8 +2,10 @@ import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
@@ -11,7 +13,6 @@ export class TemplateDefaultValueProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -33,10 +34,9 @@ import {
   template: `<ng-template #widgetTemplate
     ><div
       >TemplateDefaultValue<ng-container
-        *ngTemplateOutlet="
-          defaultCompTemplate || defaultCompTemplateDefault;
-          context: { optionalValue: stringToRender, value: 'twdComp' }
-        "
+        *ngTemplateOutlet="defaultCompTemplate||defaultCompTemplateDefault; context:{optionalValue:stringToRender,value:'twdComp',onClick: () => {
+      
+    }}"
       >
       </ng-container
       ><ng-container
@@ -57,15 +57,14 @@ import {
       #defaultCompTemplateDefault
       let-optionalValue="optionalValue"
       let-value="value"
+      let-onClick="onClick"
     >
       <dx-widget-with-props
         #compRef
-        [optionalValue]="
-          optionalValue !== undefined
-            ? optionalValue
-            : WidgetWithPropsDefaults.optionalValue
-        "
+        style="display: contents"
+        [optionalValue]="optionalValue"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
+        (onClick)="onClick($event)"
       ></dx-widget-with-props>
       <ng-content *ngTemplateOutlet="compRef?.widgetTemplate"></ng-content>
     </ng-template>
@@ -113,11 +112,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     }));
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [TemplateDefaultValue],

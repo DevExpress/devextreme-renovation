@@ -20,16 +20,10 @@ export declare type WidgetPropsType = {
 export const WidgetProps: WidgetPropsType = {
   data: "data",
   union: "uniontext",
-  get obj() {
-    return { number: 123, text: "sda" };
-  },
-  get strArr() {
-    return ["ba", "ab"];
-  },
+  obj: Object.freeze({ number: 123, text: "sda" }) as any,
+  strArr: Object.freeze(["ba", "ab"]) as any,
   s: "",
-  get strDate() {
-    return new Date();
-  },
+  strDate: Object.freeze(new Date()) as any,
 };
 import * as React from "react";
 import { useCallback } from "react";

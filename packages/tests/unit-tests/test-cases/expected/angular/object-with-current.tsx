@@ -1,13 +1,14 @@
 type EventCallBack<Type> = (e: Type) => void;
 
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() someProp?: { current: string };
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

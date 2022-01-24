@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class FakeNested {
   @Input() numberProp: number = 2;
 }
@@ -11,7 +13,10 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
-@Injectable()
+import { isSlotEmpty } from "@devextreme/runtime/angular";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() oneWayProp?: number;
   @Input() twoWayProp?: number;
@@ -21,9 +26,8 @@ export class WidgetProps {
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined;
   __slotSlotProp?: ElementRef<HTMLDivElement>;
-  get slotProp() {
-    const childNodes = this.__slotSlotProp?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get slotProp(): boolean {
+    return !isSlotEmpty(this.__slotSlotProp);
   }
   @Input() templateProp?: TemplateRef<any> | null = null;
   private __nestedProp__?: FakeNested[];
@@ -51,7 +55,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
