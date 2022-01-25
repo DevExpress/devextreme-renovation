@@ -20,6 +20,20 @@ class P1Context {
   }
 }
 @Injectable()
+class ContextForConsumer {
+  _value: any = null;
+  change: ContextEmitter<any> = new ContextEmitter();
+  get value(): any {
+    return this._value;
+  }
+  set value(value: any) {
+    if (this._value !== value) {
+      this._value = value;
+      this.change.emit(value);
+    }
+  }
+}
+@Injectable()
 class GetterContext {
   _value: string = "default";
   change: ContextEmitter<string> = new ContextEmitter();
@@ -68,6 +82,7 @@ import {
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
   contextConsumerConsumer: number;
+  consumerConsumer: any;
   get __sum(): any {
     return this.provider.value + this.contextConsumerConsumer;
   }
@@ -120,6 +135,7 @@ export default class Widget extends Props {
     private viewContainerRef: ViewContainerRef,
     @SkipSelf() @Optional() private contextConsumer: P1Context,
     @Host() private provider: P1Context,
+    @SkipSelf() @Optional() private consumer: ContextForConsumer,
     @Host() private contextProviderProvider: GetterContext
   ) {
     super();
@@ -144,6 +160,20 @@ export default class Widget extends Props {
     this.contextConsumerConsumer = this.contextConsumer.value;
 
     this.provider.value = 10;
+    if (!consumer) {
+      this.consumer = new ContextForConsumer();
+    } else {
+      const changeHandler = (value: any) => {
+        this.consumerConsumer = value;
+
+        this._detectChanges();
+      };
+      const subscription = consumer.change.subscribe(changeHandler);
+      this._destroyContext.push(() => {
+        subscription.unsubscribe();
+      });
+    }
+    this.consumerConsumer = this.consumer.value;
   }
 }
 @NgModule({
