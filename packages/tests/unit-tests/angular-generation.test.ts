@@ -436,7 +436,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it.only("method-use-callback-new", function () {
+  mocha.it("method-use-callback-new", function () {
     this.testGenerator(this.test!.title);
   });
 

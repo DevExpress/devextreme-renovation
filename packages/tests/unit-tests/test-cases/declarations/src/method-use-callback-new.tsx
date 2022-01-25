@@ -3,7 +3,7 @@ import {
   useCallback,
 } from "@devextreme-generator/declarations";
 
-export function Widget({ prop1 }: { prop1: number }) {
+export function Widget({ prop1 = 0 }: { prop1: number }) {
   const privateMethod = useCallback(function (a: number): number {
     return a + prop1;
   }, [prop1]);

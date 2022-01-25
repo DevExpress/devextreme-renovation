@@ -1,8 +1,5 @@
 import { COMPONENT_INPUT_CLASS } from "./component-input";
-import {
-  WidgetTwo as ExternalComponent,
-  DxWidgetTwoModule,
-} from "./component-pass-two";
+import ExternalComponent, { DxCounterModule } from "./counter";
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
 export type Item = { text: string; key: number };
@@ -32,14 +29,7 @@ import {
   inputs: ["items"],
   template: `<ng-template #widgetTemplate
     ><div [class]="global_CLASS_NAME"
-      ><span [class]="global_CLASS_NAME"></span
-      ><dx-widget-two
-        #externalcomponent2
-        style="display: contents"
-      ></dx-widget-two
-      ><ng-content
-        *ngTemplateOutlet="externalcomponent2?.widgetTemplate"
-      ></ng-content
+      ><span [class]="global_CLASS_NAME"></span><dx-counter></dx-counter
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
         ><div></div></ng-container></div
   ></ng-template>`,
@@ -82,7 +72,7 @@ export class WidgetWithGlobals {
 }
 @NgModule({
   declarations: [WidgetWithGlobals],
-  imports: [DxWidgetTwoModule, CommonModule],
+  imports: [DxCounterModule, CommonModule],
   entryComponents: [ExternalComponent],
   exports: [WidgetWithGlobals],
 })

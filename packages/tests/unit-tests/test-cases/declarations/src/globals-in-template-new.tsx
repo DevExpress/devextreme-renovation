@@ -1,5 +1,5 @@
 import { COMPONENT_INPUT_CLASS } from "./component-input";
-import { WidgetTwo as ExternalComponent } from "./component-pass-two";
+import ExternalComponent from "./counter";
 
 export const PREFIX = "dx";
 export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;

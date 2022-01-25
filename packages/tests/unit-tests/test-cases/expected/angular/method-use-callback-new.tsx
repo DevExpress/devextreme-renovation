@@ -11,6 +11,10 @@ import {
   Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+  updateUndefinedFromDefaults,
+  DefaultEntries,
+} from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -19,7 +23,8 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export class Widget {
-  @Input() prop1: number;
+  defaultEntries: DefaultEntries;
+  @Input() prop1: number = 0;
   privateMethod(a: number): number {
     return a + this.prop1;
   }
@@ -39,13 +44,23 @@ export class Widget {
     });
   }
 
+  ngOnChanges(changes: { [name: string]: any }) {
+    updateUndefinedFromDefaults(
+      this as Record<string, unknown>,
+      changes,
+      this.defaultEntries
+    );
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef
-  ) {}
+  ) {
+    this.defaultEntries = [{ key: "prop1", value: 0 }];
+  }
 }
 @NgModule({
   declarations: [Widget],

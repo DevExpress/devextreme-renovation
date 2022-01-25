@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useCallback } from "react";
-export function Widget({ prop1 }: { prop1: number }) {
+export function Widget({ prop1 = 0 }: { prop1: number }) {
   const privateMethod = useCallback(
     function (a: number): number {
       return a + prop1;
