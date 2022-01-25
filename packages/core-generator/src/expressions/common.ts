@@ -4,7 +4,7 @@ import { ExpressionWithExpression, Expression, SimpleExpression } from './base';
 import { TypeExpression } from './type';
 import { compileTypeParameters } from '../utils/string';
 import { StringLiteral } from './literal';
-import { Dependency, ElementAccess } from '..';
+import { Dependency } from '..';
 
 function getIdentifierExpressionFromVariable(
   expression: Expression,
@@ -22,7 +22,7 @@ export class Identifier extends SimpleExpression {
     return this.expression;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     const baseValue = super.toString();
     const variableExpression = options?.variables?.[baseValue];
 
@@ -34,17 +34,8 @@ export class Identifier extends SimpleExpression {
       if (variableExpression.toString() === baseValue) {
         return baseValue;
       }
-      if (options?.isFunctionalComponent) {
-        let innerExpression = variableExpression;
-        if (innerExpression instanceof ElementAccess) {
-          innerExpression = innerExpression.expression;
-        }
-        if (innerExpression instanceof Call) {
-          const name = innerExpression.expression.toString();
-          if (name === 'useState' || name === 'useCallback' || name === 'useMemo') {
-            return baseValue;
-          }
-        }
+      if (options?.isFunctionalComponent && !(variableExpression instanceof Identifier)) {
+        return baseValue;
       }
       return variableExpression.toString(options);
     }

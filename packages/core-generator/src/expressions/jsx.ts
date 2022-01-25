@@ -13,7 +13,6 @@ import { PropertyAssignment, SpreadAssignment } from './property-assignment';
 import { getTemplateProperty } from '../utils/expressions';
 import { Property } from './class-members';
 import { isFunction } from './functions';
-import { ElementAccess } from '..';
 
 export function getJsxExpression(
   e: ExpressionWithExpression | Expression | undefined,
@@ -297,20 +296,9 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
     if (
       expression instanceof Identifier
       && options?.variables?.[expression.toString()]
+      && !options?.isFunctionalComponent
     ) {
       variableExpression = options.variables[expression.toString()];
-      if (options?.isFunctionalComponent) {
-        let innerExpression = variableExpression;
-        if (innerExpression instanceof ElementAccess) {
-          innerExpression = innerExpression.expression;
-        }
-        if (innerExpression instanceof Call) {
-          const functionName = innerExpression.expression.toString();
-          if (functionName === 'useState' || functionName === 'useCallback' || functionName === 'useMemo') {
-            variableExpression = undefined;
-          }
-        }
-      }
     }
 
     return getExpressionFromParens(variableExpression) || expression;

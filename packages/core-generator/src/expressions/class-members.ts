@@ -338,7 +338,7 @@ export class Method extends BaseClassMember {
 export class GetAccessor extends Method {
   contextTypes?: { [name: string]: TypeExpression | string };
 
-  deps?: string[];
+  deps?: string[] | null;
 
   constructor(
     decorators: Decorator[] = [],
@@ -347,7 +347,7 @@ export class GetAccessor extends Method {
     parameters: Parameter[],
     type?: TypeExpression | string,
     body?: Block,
-    deps?: string[],
+    deps?: string[] | null,
   ) {
     super(
       decorators,
@@ -374,6 +374,9 @@ export class GetAccessor extends Method {
     options?: toStringOptions,
     needToMemorizeProvider = true,
   ): boolean {
+    if (this.deps === null) {
+      return false;
+    }
     if (this.deps) {
       return true;
     }

@@ -1011,7 +1011,7 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type?: TypeExpression,
     body?: Block,
-    deps?: string[],
+    deps?: string[] | null,
   ) {
     return new GetAccessor(decorators, modifiers, name, parameters, type, body, deps);
   }

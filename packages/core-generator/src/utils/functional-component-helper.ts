@@ -71,6 +71,24 @@ function fillFunctionalComponentStateMembers(
   }
 }
 
+function normalizeBody(generator: Generator, body: Expression): Block {
+  if (body instanceof Block) {
+    return body;
+  }
+  return generator.createBlock([generator.createReturn(body)], true);
+}
+
+function normalizeType(type?: TypeExpression | Expression | string): TypeExpression | undefined {
+  if (type) {
+    if (type instanceof TypeExpression) {
+      return type;
+    }
+    return new SimpleTypeExpression(type.toString());
+  }
+
+  return undefined;
+}
+
 function fillFunctionalComponentCallbackMembers(
   generator: Generator,
   members: (Property | Method)[],
@@ -79,6 +97,7 @@ function fillFunctionalComponentCallbackMembers(
   if (callback.name instanceof Identifier
     && callback.initializer instanceof Call) {
     const callbackFunc = callback.initializer.argumentsArray[0];
+
     if (callbackFunc instanceof BaseFunction) {
       members.push(generator.createMethod(
         [],
@@ -88,8 +107,8 @@ function fillFunctionalComponentCallbackMembers(
         undefined,
         callbackFunc.typeParameters,
         callbackFunc.parameters,
-        callbackFunc.type as TypeExpression, // TODO
-        callbackFunc.body as Block, // TODO
+        normalizeType(callbackFunc.type),
+        normalizeBody(generator, callbackFunc.body),
       ));
     }
   }
@@ -115,6 +134,24 @@ function fillFunctionalComponentMemoMembers(
         deps.elements.map((element) => element.toString()),
       ));
     }
+  }
+}
+
+function fillFunctionalComponentGetterMembers(
+  generator: Generator,
+  members: (Property | Method)[],
+  variable: VariableDeclaration,
+): void {
+  if (variable.name instanceof Identifier && variable.initializer) {
+    members.push(generator.createGetAccessor(
+      [],
+      [],
+      variable.name,
+      [],
+      variable.type,
+      normalizeBody(generator, variable.initializer),
+      null,
+    ));
   }
 }
 
@@ -172,15 +209,15 @@ function createMembers(
           const callbackName = variable.initializer.expression.toString();
           if (callbackName === 'useState') {
             fillFunctionalComponentStateMembers(generator, members, variable);
-          }
-
-          if (callbackName === 'useCallback') {
+          } else if (callbackName === 'useCallback') {
             fillFunctionalComponentCallbackMembers(generator, members, variable);
-          }
-
-          if (callbackName === 'useMemo') {
+          } else if (callbackName === 'useMemo') {
             fillFunctionalComponentMemoMembers(generator, members, variable);
+          } else {
+            fillFunctionalComponentGetterMembers(generator, members, variable);
           }
+        } else {
+          fillFunctionalComponentGetterMembers(generator, members, variable);
         }
       });
     });
