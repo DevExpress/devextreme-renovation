@@ -18,6 +18,7 @@ import {
   VariableDeclarationList,
   VariableStatement,
   capitalizeFirstLetter,
+  BaseFunction,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
 
@@ -40,6 +41,10 @@ export class InfernoComponent extends PreactComponent {
     const coreImports = [];
     const hooksSet = new Set(hooks);
     const imports = ['import { createElement as h } from "inferno-compat";'];
+
+    if (this.isFunctional) {
+      imports.push('import { BaseInfernoComponent, InfernoComponent, InfernoWrapperComponent, normalizeStyles } from "@devextreme/runtime/inferno";');
+    }
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
@@ -76,6 +81,7 @@ export class InfernoComponent extends PreactComponent {
       ...super.getToStringOptions(),
       newComponentContext: 'this',
       isComponent: true,
+      isFunctionalComponent: this.isFunctional,
     };
   }
 
@@ -151,13 +157,17 @@ export class InfernoComponent extends PreactComponent {
         }).filter((contextConsumer) => contextConsumer) as Array<{
           name: string, contextName: string
         }>;
+
         if (allDeps.length) {
           const conditions = allDeps.map((dep) => {
-            if (dep.indexOf('props.') === 0) {
+            const member = this.members.find(((m) => m.name === dep));
+            if (dep.indexOf('props.') === 0
+            || (options?.isFunctionalComponent && member?.isOneWay)) {
               const depName = dep.replace('props.', '');
               return `this.props["${depName}"] !== nextProps["${depName}"]`;
             }
-            if (dep.indexOf('state.') === 0) {
+            if (dep.indexOf('state.') === 0
+            || (options?.isFunctionalComponent && member?.isInternalState)) {
               const depName = dep.replace('state.', '');
               return `this.state["${depName}"] !== nextState["${depName}"]`;
             }
@@ -354,13 +364,19 @@ export class InfernoComponent extends PreactComponent {
     return '';
   }
 
+  compileRenderBody() {
+    return `const props = this.props;
+      return ${this.compileViewCall()}
+    `;
+  }
+
   toString(): string {
     // TODO: uncomment after inferno fixed https://github.com/infernojs/inferno/issues/1536
     // const propsType = this.compilePropsType();
     const propsType = 'any';
 
     const properties = this.members.filter(
-      (m) => m instanceof Property && !m.inherited && !m.isInternalState,
+      (m) => m instanceof Property && !m.inherited && !m.isInternalState && !m.isOneWay,
     );
     const bindMethods = this.members
       .filter((m) => m instanceof Method && !(m instanceof GetAccessor))
@@ -408,8 +424,7 @@ export class InfernoComponent extends PreactComponent {
                 ${this.compileGetterCache(componentWillUpdate, this.getToStringOptions())}
                 ${this.compileComponentWillUpdate(componentWillUpdate, component)}
                 render(){
-                    const props = this.props;
-                    return ${this.compileViewCall()}
+                    ${this.compileRenderBody()}
                 }
             }
 
@@ -422,4 +437,69 @@ export class InfernoComponent extends PreactComponent {
 
 export class InfernoFunctionalComponent extends InfernoComponent {
   isFunctional = true;
+
+  processMembers(members: Array<Property | Method>): Array<Property | Method> {
+    return members.filter((member) => member.name !== 'restAttributes');
+  }
+
+  compileDefaultPropsObjectProperties(): string[] {
+    return [];
+  }
+
+  getToStringOptions(): toStringOptions {
+    const options = super.getToStringOptions();
+    options.variables = options.variables || {};
+    const variables = options.variables;
+
+    this.members.forEach((m) => {
+      if (m.isOneWay) {
+        variables[m.name] = new Identifier(`this.props.${m.name}`);
+      }
+      if (m.isInternalState) {
+        variables[m.name] = new Identifier(`this.state.${m.name}`);
+      }
+    });
+
+    return options;
+  }
+
+  compilerRenderBodyProps(viewFunction: BaseFunction): string {
+    const props = viewFunction.parameters[0]?.name.toString();
+    return props ? `const ${props} = this.props` : '';
+  }
+
+  compilerRenderBodyStates(): string {
+    const stateNames = this.members
+      .filter((member) => member.isInternalState)
+      .map((member) => member.name);
+    return stateNames.length ? `const { ${stateNames.join(', ')} } = this.state;` : '';
+  }
+
+  compilerRenderBodyMethods(): string {
+    const methodNames = this.members
+      .filter((member) => member instanceof Method)
+      .map((member) => member.name);
+    return methodNames.length ? `const { ${methodNames.join(', ')} } = this;` : '';
+  }
+
+  compilerRenderBodyReturn(body: Block): string {
+    return body
+      .statements
+      .filter((statement) => statement instanceof ReturnStatement)
+      .map((statement) => statement.toString()).join('\n');
+  }
+
+  compileRenderBody(): string {
+    const viewFunction = this.context.viewFunctions?.[this.view];
+    if (viewFunction && viewFunction.body instanceof Block) {
+      return [
+        this.compilerRenderBodyProps(viewFunction),
+        this.compilerRenderBodyStates(),
+        this.compilerRenderBodyMethods(),
+        this.compilerRenderBodyReturn(viewFunction.body),
+      ].join('/n');
+    }
+
+    return '';
+  }
 }

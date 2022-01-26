@@ -154,6 +154,10 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.Mutable);
   }
 
+  get isOneWay(): boolean {
+    return this._hasDecorator(Decorators.OneWay);
+  }
+
   get context(): Expression {
     const decorator = this.decorators.find(
       (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider,

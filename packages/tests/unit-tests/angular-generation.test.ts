@@ -404,7 +404,7 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("counter_new", function () {
+  mocha.it("counter-new", function () {
     this.testGenerator(this.test!.title);
   });
 
