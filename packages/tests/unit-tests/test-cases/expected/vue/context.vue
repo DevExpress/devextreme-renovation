@@ -8,6 +8,11 @@ const P1Context = (value = 5) => {
     value,
   });
 };
+const ContextForConsumer = (value = null) => {
+  return Vue.observable({
+    value,
+  });
+};
 const GetterContext = (value = "default") => {
   return Vue.observable({
     value,
@@ -42,6 +47,10 @@ export const DxWidget = {
     contextConsumer: {
       from: "P1Context",
       default: P1Context(),
+    },
+    consumer: {
+      from: "ContextForConsumer",
+      default: ContextForConsumer(),
     },
   },
   provide() {

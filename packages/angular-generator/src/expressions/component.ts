@@ -1220,7 +1220,7 @@ export class AngularComponent extends Component {
     let providers: string[] = [];
 
     const contextProperties = this.members.filter(
-      (m) => m.isConsumer || m.isProvider,
+      (m) => m.isProvider,
     );
 
     if (contextProperties.length) {

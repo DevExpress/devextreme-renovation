@@ -9,6 +9,7 @@ function view(model: Widget): any {
   return <span></span>;
 }
 const P1Context = createContext(5);
+const ContextForConsumer = createContext(null);
 const GetterContext = createContext("default");
 
 export declare type PropsType = {
@@ -35,6 +36,12 @@ export default class Widget extends BaseInfernoComponent<any> {
     return P1Context;
   }
   provider: number = 10;
+  get consumer(): any {
+    if ("ContextForConsumer" in this.context) {
+      return this.context.ContextForConsumer;
+    }
+    return ContextForConsumer;
+  }
 
   constructor(props: any) {
     super(props);
@@ -73,6 +80,7 @@ export default class Widget extends BaseInfernoComponent<any> {
       props: { ...props },
       contextConsumer: this.contextConsumer,
       provider: this.provider,
+      consumer: this.consumer,
       sum: this.sum,
       contextProvider: this.contextProvider,
       restAttributes: this.restAttributes,
