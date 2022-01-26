@@ -497,7 +497,7 @@ export class InfernoFunctionalComponent extends InfernoComponent {
         this.compilerRenderBodyStates(),
         this.compilerRenderBodyMethods(),
         this.compilerRenderBodyReturn(viewFunction.body),
-      ].join('/n');
+      ].join('\n');
     }
 
     return '';
