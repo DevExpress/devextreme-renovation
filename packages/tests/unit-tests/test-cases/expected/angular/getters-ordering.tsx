@@ -96,9 +96,6 @@ class Widget extends WidgetProps {
   __recursive2(): number {
     return requestAnimationFrame(this.__recursive1);
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -193,6 +190,7 @@ class Widget extends WidgetProps {
     ].map((key) => ({ key, value: defaultProps[key] }));
     this._pageIndexChange = (e: any) => {
       this.pageIndexChange.emit(e);
+
       this._detectChanges();
     };
   }

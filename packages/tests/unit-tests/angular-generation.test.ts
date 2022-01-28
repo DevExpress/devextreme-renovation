@@ -97,7 +97,23 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("rest-attributes", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes-component-with-ref", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("rest-styles", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("attribute-style-widget", function () {
     this.testGenerator(this.test!.title);
   });
 

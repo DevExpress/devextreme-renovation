@@ -110,7 +110,9 @@ mocha.describe("vue-generation", function () {
   mocha.it("between_props", function () {
     this.testGenerator(this.test!.title);
   });
-
+  mocha.it("rest-attributes", function () {
+    this.testGenerator(this.test!.title);
+  });
   mocha.it("rest-styles", function () {
     this.testGenerator(this.test!.title);
   });

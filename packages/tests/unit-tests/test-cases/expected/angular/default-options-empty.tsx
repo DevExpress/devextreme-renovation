@@ -35,9 +35,6 @@ export function defaultOptions(rule: WidgetOptionRule) {
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

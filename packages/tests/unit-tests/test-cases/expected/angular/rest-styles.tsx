@@ -1,3 +1,9 @@
+import WidgetWithoutStyleProp, {
+  DxWidgetOneModule,
+} from "./component-pass-one";
+import WidgetWithStyleProp, {
+  DxWidgetWithStylePropModule,
+} from "./widget-with-atyle-prop";
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
@@ -16,8 +22,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
+  Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { getAttributes } from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -90,15 +99,36 @@ const normalizeStyles = (styles: unknown) => {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><span [ngStyle]="__processNgStyle(__styles)"></span
+    ><dx-widget-one
+      [ngStyle]="__processNgStyle(__styles)"
+      #widgetwithoutstyleprop1
+      style="display: contents"
+    ></dx-widget-one
+    ><ng-content
+      *ngTemplateOutlet="widgetwithoutstyleprop1?.widgetTemplate"
+    ></ng-content
+    ><dx-widget-with-style-prop
+      [style]="__styles"
+      #widgetwithstyleprop1
+      style="display: contents"
+    ></dx-widget-with-style-prop
+    ><ng-content
+      *ngTemplateOutlet="widgetwithstyleprop1?.widgetTemplate"
+    ></ng-content
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  @Input() _restAttributes?: Record<string, unknown>;
   get __styles(): any {
     const { style } = this.__restAttributes;
     return modifyStyles(style);
   }
   get __restAttributes(): any {
-    return {};
+    const restAttributes = getAttributes(this._elementRef);
+    return {
+      ...restAttributes,
+      ...this._restAttributes,
+    };
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -112,7 +142,8 @@ export default class Widget extends WidgetInput {
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
   }
@@ -123,8 +154,8 @@ export default class Widget extends WidgetInput {
 }
 @NgModule({
   declarations: [Widget],
-  imports: [CommonModule],
-
+  imports: [DxWidgetOneModule, DxWidgetWithStylePropModule, CommonModule],
+  entryComponents: [WidgetWithoutStyleProp, WidgetWithStyleProp],
   exports: [Widget],
 })
 export class DxWidgetModule {}

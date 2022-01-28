@@ -72,9 +72,6 @@ export default class Widget extends WidgetInput {
   __stateChange(stateProp?: boolean): any {
     this._statePropChange((this.stateProp = stateProp));
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -108,14 +105,17 @@ export default class Widget extends WidgetInput {
     }));
     this._state1Change = (e: any) => {
       this.state1Change.emit(e);
+
       this._detectChanges();
     };
     this._state2Change = (e: any) => {
       this.state2Change.emit(e);
+
       this._detectChanges();
     };
     this._statePropChange = (e: any) => {
       this.statePropChange.emit(e);
+
       this._detectChanges();
     };
   }

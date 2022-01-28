@@ -1,8 +1,22 @@
+import WidgetWithoutStyleProp from "./component-pass-one";
+import WidgetWithStyleProp from "./widget-with-atyle-prop";
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
 function view({ styles }: Widget) {
-  return <span style={normalizeStyles(styles)}></span>;
+  return (
+    <React.Fragment>
+      <span style={normalizeStyles(styles)}></span>
+
+      <WidgetWithoutStyleProp
+        style={normalizeStyles(styles)}
+      ></WidgetWithoutStyleProp>
+
+      <WidgetWithStyleProp
+        style={normalizeStyles(styles)}
+      ></WidgetWithStyleProp>
+    </React.Fragment>
+  );
 }
 
 export declare type WidgetInputType = {};

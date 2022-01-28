@@ -102,9 +102,6 @@ export default class Widget extends Props {
       return { width: "40px", height: "30px" };
     })());
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

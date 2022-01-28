@@ -169,7 +169,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const properties = (component
         && getProps(component.members).filter(this.getPropertyFromSpread))
       || [];
-
     const spreadAttributesExpression = getExpression(
       spreadAttribute.expression,
       options,
@@ -278,15 +277,25 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxAttribute(name, value);
   }
 
-  processSpreadAttributesOnNativeElement() {
+  processSpreadAttributesOnNativeElement(spreadExpression: Expression) {
     const ref = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
     );
-    if (!ref && !this.component) {
+
+    if (!ref || this.component) {
       this.attributes.push(
         new JsxAttribute(
           new Identifier('ref'),
           new SimpleExpression(`_auto_ref_${counter.get()}`),
+        ),
+      );
+    }
+
+    if (this.component) {
+      this.attributes.push(
+        new JsxAttribute(
+          new Identifier('_restAttributes'),
+          spreadExpression,
         ),
       );
     }
@@ -334,7 +343,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         });
       });
 
-      this.processSpreadAttributesOnNativeElement();
+      this.processSpreadAttributesOnNativeElement(spreadAttributes[0].expression);
     }
   }
 
@@ -720,14 +729,15 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
 
   getSpreadAttributes() {
     if (this.component) {
-      return [];
+      // return [];
     }
     const result = this.attributes
       .filter((a) => a instanceof JsxSpreadAttribute)
       .map((a) => {
-        const ref = this.attributes.find(
-          (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
+        const ref = this.attributes.slice().reverse().find(
+          (a) => a instanceof JsxAttribute && (['ref'/* , '_restAttributes' */].includes(a.name.toString())),
         ) as JsxAttribute | undefined;
+
         if (ref) {
           return {
             refExpression: ref.initializer,

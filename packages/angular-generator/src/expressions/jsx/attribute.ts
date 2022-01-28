@@ -71,15 +71,18 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   compileName(options?: toStringOptions) {
     const name = this.name.toString();
-    if (!options?.jsxComponent) {
-      if (name === 'className') {
-        return options?.isSVG ? 'attr.class' : 'class';
-      }
-      if (name === 'style') {
+    if (name === 'style') {
+      const component = options?.jsxComponent;
+      if (!component || component.props.every((p) => p.name !== 'style')) {
         if (options) {
           options.hasStyle = true;
         }
         return 'ngStyle';
+      }
+    }
+    if (!options?.jsxComponent) {
+      if (name === 'className') {
+        return options?.isSVG ? 'attr.class' : 'class';
       }
 
       if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {

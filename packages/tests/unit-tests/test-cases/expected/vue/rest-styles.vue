@@ -1,7 +1,13 @@
 <template>
-  <span v-bind:style="__processStyle(__styles)"></span>
+  <div style="display: contents"
+    ><span v-bind:style="__processStyle(__styles)"></span
+    ><WidgetWithoutStyleProp :style="__styles"></WidgetWithoutStyleProp
+    ><WidgetWithStyleProp :style="__styles"></WidgetWithStyleProp
+  ></div>
 </template>
 <script>
+import WidgetWithoutStyleProp from "./component-pass-one";
+import WidgetWithStyleProp from "./widget-with-atyle-prop";
 const modifyStyles = (styles) => {
   return { height: "100px", ...styles };
 };
@@ -70,6 +76,10 @@ const normalizeStyles = (styles) => {
 
 export const DxWidget = {
   name: "Widget",
+  components: {
+    WidgetWithoutStyleProp,
+    WidgetWithStyleProp,
+  },
   props: WidgetInput,
   computed: {
     __styles() {

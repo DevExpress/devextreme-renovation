@@ -33,9 +33,6 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
   getSomething(): string {
     return `${this.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

@@ -34,9 +34,6 @@ import { CommonModule } from "@angular/common";
   >`,
 })
 export default class HelperWidget extends HelperWidgetProps {
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

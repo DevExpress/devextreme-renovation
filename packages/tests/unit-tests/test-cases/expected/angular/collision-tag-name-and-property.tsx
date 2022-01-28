@@ -37,9 +37,6 @@ export class TextSvgElement extends TextSvgElementProps {
   get __computedProps(): TextSvgElementProps {
     return this;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

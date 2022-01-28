@@ -40,9 +40,6 @@ export default class RefOnChildrenTemplate extends Props {
       this.child.nativeElement.innerHTML += "ParentText";
     }
   }
-  get __restAttributes(): any {
-    return {};
-  }
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {

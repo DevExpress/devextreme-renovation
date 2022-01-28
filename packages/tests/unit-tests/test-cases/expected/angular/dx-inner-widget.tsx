@@ -114,9 +114,6 @@ export default class InnerWidget
   implements ControlValueAccessor
 {
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -167,6 +164,7 @@ export default class InnerWidget
     };
     this._valueChange = (e: any) => {
       this.valueChange.emit(e);
+
       this._detectChanges();
     };
   }
