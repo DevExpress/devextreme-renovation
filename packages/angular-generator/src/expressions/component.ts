@@ -1665,15 +1665,6 @@ export class AngularComponent extends Component {
       decoratorToStringOptions,
     );
 
-    const memberToStringOptions: toStringOptions = {
-      members: this.members,
-      componentContext: SyntaxKind.ThisKeyword,
-      newComponentContext: SyntaxKind.ThisKeyword,
-      forwardRefs: decoratorToStringOptions.forwardRefs,
-      isComponent: true,
-      hasRestAttributes: decoratorToStringOptions.hasRestAttributes,
-    };
-
     this.members
       .filter(
         (m) => m.isForwardRefProp
@@ -1722,9 +1713,21 @@ export class AngularComponent extends Component {
 
     coreImports.push('ViewChild', 'TemplateRef');
 
+    const memberToStringOptions: toStringOptions = {
+      members: this.members,
+      componentContext: SyntaxKind.ThisKeyword,
+      newComponentContext: SyntaxKind.ThisKeyword,
+      forwardRefs: decoratorToStringOptions.forwardRefs,
+      isComponent: true,
+      hasRestAttributes: decoratorToStringOptions.hasRestAttributes,
+    };
+
     const memberStatements = this.members
       .filter((m) => !m.inherited && !(m instanceof SetAccessor))
-      .map((m) => m.toString(memberToStringOptions))
+      .map((m) => {
+        memberToStringOptions.variables = {};
+        return m.toString(memberToStringOptions);
+      })
       .filter((m) => m)
       .join('\n');
 

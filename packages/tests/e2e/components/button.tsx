@@ -20,6 +20,7 @@ function view(model: Button) {
         padding: 10,
         display: "inline-block",
       }}
+      {...model.restAttributes}
     >
       {model.props.children ? model.props.children : "Default Text"}
     </div>
