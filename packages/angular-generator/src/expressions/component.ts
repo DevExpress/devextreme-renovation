@@ -925,9 +925,9 @@ export class AngularComponent extends Component {
       const allDependency: Dependency[] = [];
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
-        const members = [];
+        const members: string[] = [];
 
-        const statements = expression.getSpreadAttributes().map((o, i) => {
+        const statements = expression.getSpreadAttributes(memberToStringOptions).map((o, i) => {
           const expressionString = o.expression.toString(options);
 
           allDependency.push(...getDependencyFromViewExpression(o.expression, options));
@@ -938,9 +938,12 @@ export class AngularComponent extends Component {
           }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
             coreImports.push('ViewChild', 'ElementRef');
-            members.push(
-              `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`,
-            );
+            const viewChildMemberString = `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`;
+            if (!members.includes(viewChildMemberString)) {
+              members.push(
+                viewChildMemberString,
+              );
+            }
           }
           return `
                     const _attr_${i}:{[name: string]:any } = ${expressionString} || {};
@@ -1654,22 +1657,22 @@ export class AngularComponent extends Component {
       decoratorToStringOptions,
     );
 
+    const spreadAttributes = this.compileSpreadAttributes(
+      ngOnChangesStatements,
+      coreImports,
+      ngAfterViewInitStatements,
+      ngAfterViewCheckedStatements,
+      decoratorToStringOptions,
+    );
+
     const memberToStringOptions: toStringOptions = {
       members: this.members,
       componentContext: SyntaxKind.ThisKeyword,
       newComponentContext: SyntaxKind.ThisKeyword,
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
-      hasRestAttributes: false,
+      hasRestAttributes: decoratorToStringOptions.hasRestAttributes,
     };
-
-    const spreadAttributes = this.compileSpreadAttributes(
-      ngOnChangesStatements,
-      coreImports,
-      ngAfterViewInitStatements,
-      ngAfterViewCheckedStatements,
-      memberToStringOptions,
-    );
 
     this.members
       .filter(

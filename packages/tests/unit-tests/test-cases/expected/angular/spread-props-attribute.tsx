@@ -44,7 +44,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
       [value]="value"
       (valueChange)="_valueChange($event)"
       #_auto_ref_0
-      [_restAttributes]="props"
+      [_restAttributes]="__restAttributes"
     ></dx-inner-widget
     ><ng-content *ngTemplateOutlet="innerwidget2?.widgetTemplate"></ng-content
     ><div #_auto_ref_1></div
@@ -77,14 +77,12 @@ export default class Widget
   }
   @ViewChild("_auto_ref_0", { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
-  @ViewChild("_auto_ref_0", { static: false })
-  _auto_ref_0?: ElementRef<HTMLDivElement>;
   @ViewChild("_auto_ref_1", { static: false })
   _auto_ref_1?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    const _attr_0: { [name: string]: any } = (this.props as any) || {};
+    const _attr_0: { [name: string]: any } = this.__restAttributes || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
@@ -92,19 +90,11 @@ export default class Widget
       }
     }
 
-    const _attr_1: { [name: string]: any } = this.__restAttributes || {};
-    const _ref_1 = this._auto_ref_0?.nativeElement;
+    const _attr_1: { [name: string]: any } = (this.__attributes as any) || {};
+    const _ref_1 = this._auto_ref_1?.nativeElement;
     if (_ref_1) {
       for (let key in _attr_1) {
         _ref_1.setAttribute(key, _attr_1[key].toString());
-      }
-    }
-
-    const _attr_2: { [name: string]: any } = (this.__attributes as any) || {};
-    const _ref_2 = this._auto_ref_1?.nativeElement;
-    if (_ref_2) {
-      for (let key in _attr_2) {
-        _ref_2.setAttribute(key, _attr_2[key].toString());
       }
     }
   }
@@ -128,9 +118,7 @@ export default class Widget
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (
-      ["props", "visible"].some((d) => changes[d] && !changes[d].firstChange)
-    ) {
+    if (["visible"].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
   }

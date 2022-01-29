@@ -7,6 +7,7 @@ import {
 } from "@devextreme-generator/declarations";
 
 import WidgetWithoutStyleProp from './component-pass-one';
+import WidgetWithStyleProp from './widget-with-style-prop';
 
 const modifyStyles = (styles: CSSAttributes) => {
   return {
@@ -17,7 +18,9 @@ const modifyStyles = (styles: CSSAttributes) => {
 
 function view({ styles }: Widget) {
   return <Fragment>
+    <span style={styles}></span>
     <WidgetWithoutStyleProp style={styles}></WidgetWithoutStyleProp>
+    <WidgetWithStyleProp style={styles}></WidgetWithStyleProp>
   </Fragment>;
 }
 

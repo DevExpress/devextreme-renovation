@@ -1,9 +1,3 @@
-import WidgetWithoutStyleProp, {
-  DxWidgetOneModule,
-} from "./component-pass-one";
-import WidgetWithStyleProp, {
-  DxWidgetWithStylePropModule,
-} from "./widget-with-atyle-prop";
 const modifyStyles = (styles: any) => {
   return { height: "100px", ...styles };
 };
@@ -99,22 +93,6 @@ const normalizeStyles = (styles: unknown) => {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><span [ngStyle]="__processNgStyle(__styles)"></span
-    ><dx-widget-one
-      [ngStyle]="__processNgStyle(__styles)"
-      #widgetwithoutstyleprop1
-      style="display: contents"
-    ></dx-widget-one
-    ><ng-content
-      *ngTemplateOutlet="widgetwithoutstyleprop1?.widgetTemplate"
-    ></ng-content
-    ><dx-widget-with-style-prop
-      [style]="__styles"
-      #widgetwithstyleprop1
-      style="display: contents"
-    ></dx-widget-with-style-prop
-    ><ng-content
-      *ngTemplateOutlet="widgetwithstyleprop1?.widgetTemplate"
-    ></ng-content
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
@@ -154,8 +132,8 @@ export default class Widget extends WidgetInput {
 }
 @NgModule({
   declarations: [Widget],
-  imports: [DxWidgetOneModule, DxWidgetWithStylePropModule, CommonModule],
-  entryComponents: [WidgetWithoutStyleProp, WidgetWithStyleProp],
+  imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

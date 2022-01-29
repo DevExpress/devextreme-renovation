@@ -4,7 +4,6 @@ import {
   CSSAttributes,
   JSXComponent,
   OneWay,
-  Slot,
 } from "@devextreme-generator/declarations";
 
 function view({ props: { style } }: WidgetWithStyleProp) {

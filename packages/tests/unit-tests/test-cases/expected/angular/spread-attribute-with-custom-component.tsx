@@ -32,7 +32,7 @@ import { getAttributes } from "@devextreme/runtime/angular";
       (onSelect)="__attr1.onSelect($event)"
       (valueChange)="__attr1.valueChange($event)"
       #_auto_ref_0
-      [_restAttributes]="__attr1"
+      [_restAttributes]="__restAttributes"
     ></dx-inner-widget
     ><ng-content *ngTemplateOutlet="innerwidget1?.widgetTemplate"></ng-content
   ></ng-template>`,
@@ -57,24 +57,14 @@ export default class Widget extends WidgetInput {
   }
   @ViewChild("_auto_ref_0", { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
-  @ViewChild("_auto_ref_0", { static: false })
-  _auto_ref_0?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    const _attr_0: { [name: string]: any } = this.__attr1 || {};
+    const _attr_0: { [name: string]: any } = this.__restAttributes || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
         _ref_0.setAttribute(key, _attr_0[key].toString());
-      }
-    }
-
-    const _attr_1: { [name: string]: any } = this.__restAttributes || {};
-    const _ref_1 = this._auto_ref_0?.nativeElement;
-    if (_ref_1) {
-      for (let key in _attr_1) {
-        _ref_1.setAttribute(key, _attr_1[key].toString());
       }
     }
   }

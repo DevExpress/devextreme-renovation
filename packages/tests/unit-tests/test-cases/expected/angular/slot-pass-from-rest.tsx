@@ -33,11 +33,7 @@ import {
   inputs: ["p"],
   template: `<ng-template #widgetTemplate
     ><div
-      ><dx-slots-widget
-        #widget1
-        style="display: contents"
-        #_auto_ref_0
-        [_restAttributes]="rest"
+      ><dx-slots-widget #widget1 style="display: contents"
         ><div #slotChildren style="display: contents"></div>
         <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
         <div
@@ -62,39 +58,13 @@ export default class SlotPass extends WidgetInput {
   get rest(): any {
     return { children: this.children };
   }
-  @ViewChild("_auto_ref_0", { static: false })
-  _auto_ref_0?: ElementRef<HTMLDivElement>;
 
-  scheduledApplyAttributes = false;
-  __applyAttributes__() {
-    const _attr_0: { [name: string]: any } = this.rest || {};
-    const _ref_0 = this._auto_ref_0?.nativeElement;
-    if (_ref_0) {
-      for (let key in _attr_0) {
-        _ref_0.setAttribute(key, _attr_0[key].toString());
-      }
-    }
-  }
-
-  ngAfterViewInit() {
-    this.__applyAttributes__();
-  }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (["children"].some((d) => changes[d] && !changes[d].firstChange)) {
-      this.scheduledApplyAttributes = true;
-    }
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
       changes,
       this.defaultEntries
     );
-  }
-
-  ngAfterViewChecked() {
-    if (this.scheduledApplyAttributes) {
-      this.__applyAttributes__();
-      this.scheduledApplyAttributes = false;
-    }
   }
 
   @ViewChild("widgetTemplate", { static: true })

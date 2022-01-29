@@ -277,12 +277,14 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxAttribute(name, value);
   }
 
-  processSpreadAttributesOnNativeElement(spreadExpression: Expression) {
+  processSpreadAttributesOnNativeElement(restAttributesExpression?: Expression) {
     const ref = this.attributes.find(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
     );
 
-    if (!ref || this.component) {
+    const needRestAttributesProp = this.component && restAttributesExpression;
+
+    if ((!this.component && !ref) || needRestAttributesProp) {
       this.attributes.push(
         new JsxAttribute(
           new Identifier('ref'),
@@ -291,11 +293,11 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       );
     }
 
-    if (this.component) {
+    if (needRestAttributesProp) {
       this.attributes.push(
         new JsxAttribute(
           new Identifier('_restAttributes'),
-          spreadExpression,
+          restAttributesExpression,
         ),
       );
     }
@@ -308,13 +310,27 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return spreadAttribute;
   }
 
+  isPropsSpreadAttribute(
+    attr: JsxAttribute | JsxSpreadAttribute,
+    options?: toStringOptions,
+  ): boolean {
+    return this.component !== undefined
+      && attr instanceof JsxSpreadAttribute
+      && this.spreadToArray(attr, options).length > 0;
+  }
+
   processSpreadAttributes(options?: toStringOptions) {
+    let restAttributesExpression: Expression | undefined;
     const spreadAttributes = this.attributes.filter(
       (a) => a instanceof JsxSpreadAttribute,
     ) as JsxSpreadAttribute[];
     if (spreadAttributes.length) {
       spreadAttributes.forEach((spreadAttr) => {
         const attributes = this.spreadToArray(spreadAttr, options);
+
+        if (attributes.length === 0) {
+          restAttributesExpression = spreadAttr.expression;
+        }
 
         const updatedSpreadAttribute = this.updateSpreadAttribute(
           spreadAttr,
@@ -343,7 +359,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         });
       });
 
-      this.processSpreadAttributesOnNativeElement(spreadAttributes[0].expression);
+      this.processSpreadAttributesOnNativeElement(restAttributesExpression);
     }
   }
 
@@ -727,15 +743,12 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return `__${templateName}__generated`;
   }
 
-  getSpreadAttributes() {
-    if (this.component) {
-      // return [];
-    }
+  getSpreadAttributes(options?: toStringOptions) {
     const result = this.attributes
-      .filter((a) => a instanceof JsxSpreadAttribute)
+      .filter((a) => a instanceof JsxSpreadAttribute && !this.isPropsSpreadAttribute(a, options))
       .map((a) => {
         const ref = this.attributes.slice().reverse().find(
-          (a) => a instanceof JsxAttribute && (['ref'/* , '_restAttributes' */].includes(a.name.toString())),
+          (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
         ) as JsxAttribute | undefined;
 
         if (ref) {
