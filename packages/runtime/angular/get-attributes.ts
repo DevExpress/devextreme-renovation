@@ -23,6 +23,7 @@ export function getAttributes(element: ElementRef<HTMLElement>): Record<string, 
       });
       return { ...attributes, style };
     }
+    delete attributes.style;
   }
   return attributes;
 }
