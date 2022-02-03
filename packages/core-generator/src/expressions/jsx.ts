@@ -134,6 +134,9 @@ export class JsxOpeningElement extends Expression {
     if (inputOptions) {
       (inputOptions as any).hasStyle = (options as any).hasStyle;
       (inputOptions as any).forwardRef = (options as any).forwardRef;
+      if (options?.hasRestAttributes) {
+        inputOptions.hasRestAttributes = true;
+      }
     }
 
     return value;

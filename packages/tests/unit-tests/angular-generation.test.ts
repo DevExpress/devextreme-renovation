@@ -109,6 +109,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("rest-attributes-component-by-condition", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-pass-one", function () {
     this.testGenerator(this.test!.title);
   });

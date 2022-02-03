@@ -278,13 +278,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   processSpreadAttributesOnNativeElement(restAttributesExpression?: Expression) {
-    const ref = this.attributes.find(
+    const refs = this.attributes.filter(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
     );
 
-    const needRestAttributesProp = this.component && restAttributesExpression;
+    const hasAutoRef = refs.some(
+      (a) => a instanceof JsxAttribute && a.initializer.toString().startsWith('_auto_ref'),
+    );
 
-    if ((!this.component && !ref) || needRestAttributesProp) {
+    const needRestAttributesProp = this.component && restAttributesExpression && !hasAutoRef;
+
+    if ((!this.component && !refs.length) || needRestAttributesProp) {
       this.attributes.push(
         new JsxAttribute(
           new Identifier('ref'),
