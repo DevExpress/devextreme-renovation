@@ -66,9 +66,13 @@ function isInnerComponent(decorator: Decorator): boolean {
 export class Decorator extends BaseDecorator {
   readonly isWrappedByTemplate: boolean;
 
+  readonly isPublicComponentWithPrivateProp: boolean;
+
   constructor(expression: Call, context: GeneratorContext) {
     super(expression, context);
-    this.isWrappedByTemplate = isInnerComponent(this) && !this.isSvg;
+
+    this.isWrappedByTemplate = !this.isSvg;
+    this.isPublicComponentWithPrivateProp = !isInnerComponent(this) && this.isWrappedByTemplate;
   }
 
   toString(options?: toStringOptions) {
@@ -115,9 +119,17 @@ export class Decorator extends BaseDecorator {
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
         if (template) {
+          let templateExpression = template;
+
+          if (this.isWrappedByTemplate) {
+            templateExpression = `<ng-template #widgetTemplate>${template}</ng-template>`;
+            if (this.isPublicComponentWithPrivateProp) {
+              templateExpression = `${templateExpression}\n<ng-container *ngTemplateOutlet="_private ? null : widgetTemplate"></ng-container>`;
+            }
+          }
           parameters.setProperty(
             'template',
-            new TemplateExpression(this.isWrappedByTemplate ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
+            new TemplateExpression(templateExpression, []),
           );
         }
       }
@@ -169,11 +181,13 @@ function compileDefaultTemplates(
             return `[${v}]="${v}"`;
           })
             .join(' ');
+
           const templateOutlet = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
+          const privateVariable = component.decorator.isPublicComponentWithPrivateProp ? '[_private]="true"' : '';
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(' ')}>
-            <${componentName} #${ref} style="display: contents" ${templateVariables}></${componentName}>
+            <${componentName} #${ref} style="display: contents" ${templateVariables}${privateVariable}></${componentName}>
             ${templateOutlet}
             </ng-template>`;
           return templateString;

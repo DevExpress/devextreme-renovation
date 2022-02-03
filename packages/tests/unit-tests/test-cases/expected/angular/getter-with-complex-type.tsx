@@ -50,10 +50,15 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
   inputs: ["p"],
-  template: `<div></div>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
+  @Input() _private = false;
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {

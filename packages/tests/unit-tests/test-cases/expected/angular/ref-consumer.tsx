@@ -26,9 +26,15 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
   selector: "dx-ref-consumer",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["elementRef"],
-  template: `<span>consumer is rendered</span>`,
+  template: `<ng-template #widgetTemplate
+      ><span>consumer is rendered</span></ng-template
+    >
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export default class RefConsumer extends Props {
+  @Input() _private = false;
   __getElementRef(): any {
     const temp = this.elementRef?.()?.nativeElement;
     return temp;

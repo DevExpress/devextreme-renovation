@@ -28,7 +28,8 @@ import {
   selector: "dx-extra-element",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
-  template: `<pre><ng-container *ngIf="rf"><dx-inner-layout #rf
+  template: `<ng-template #widgetTemplate>
+      <pre><ng-container *ngIf="rf"><dx-inner-layout #rf
 [prop]="3"
 style="display: contents"
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
@@ -37,10 +38,16 @@ style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.w
 #child2
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
 #child3
-style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>
+    </ng-template>
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export class ExtraElement extends Props {
   defaultEntries: DefaultEntries;
+
+  @Input() _private = false;
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

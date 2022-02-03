@@ -34,6 +34,9 @@ export function tryToGetContent(element: JsxOpeningElement): {
     elementDirectives.push(new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression('')));
   }
   elementDirectives.push(new AngularDirective(new Identifier('style'), new SimpleExpression('display: contents')));
+  if (component.decorator.isPublicComponentWithPrivateProp) {
+    elementDirectives.push(new AngularDirective(new Identifier('[_private]'), new SimpleExpression('true')));
+  }
   const condition = element.attributes.find(isStructDirective) as AngularDirective;
   if (element.attributes.find(isStructDirective)) {
     element.attributes = element.attributes.filter((d) => !isStructDirective(d));

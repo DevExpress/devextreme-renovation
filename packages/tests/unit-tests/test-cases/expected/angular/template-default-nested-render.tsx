@@ -56,7 +56,11 @@ import {
         [value]="
           value !== undefined ? value : PublicWidgetWithPropsDefaults.value
         "
-      ></dx-public-widget-with-props> </ng-template
+        [_private]="true"
+      ></dx-public-widget-with-props>
+      <ng-content
+        *ngTemplateOutlet="compRef?.widgetTemplate"
+      ></ng-content> </ng-template
   ></ng-template>`,
 })
 export class DateTableBody extends DateTableBodyProps {

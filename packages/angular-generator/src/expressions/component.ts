@@ -61,6 +61,7 @@ export function compileCoreImports(
   context: AngularGeneratorContext,
   imports: string[] = [],
   options?: toStringOptions,
+  isPublicComponentWithPrivateProp = false,
 ) {
   if (
     members.some((m) => m.decorators.some(
@@ -68,7 +69,7 @@ export function compileCoreImports(
         || d.name === Decorators.RefProp
         || d.name === Decorators.Nested
         || d.name === Decorators.ForwardRefProp,
-    )) || options?.mutableOptions?.hasRestAttributes
+    )) || options?.mutableOptions?.hasRestAttributes || isPublicComponentWithPrivateProp
   ) {
     imports.push('Input');
   }
@@ -596,6 +597,7 @@ export class AngularComponent extends Component {
         this.context,
         core,
         options,
+        this.decorator.isPublicComponentWithPrivateProp,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
@@ -1595,6 +1597,13 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  compilePrivateProperty(): string {
+    if (this.decorator.isPublicComponentWithPrivateProp) {
+      return '@Input() _private = false';
+    }
+    return '';
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1751,6 +1760,7 @@ export class AngularComponent extends Component {
   ).join(';\n')}
             ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
             ${this.compileRestAttributesProp(memberToStringOptions)}
+            ${this.compilePrivateProperty()}
             ${memberStatements}
             ${spreadAttributes}
             ${trackBy}

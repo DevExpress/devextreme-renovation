@@ -30,10 +30,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["value", "optionalValue", "number"],
   outputs: ["onClick"],
-  template: `<div>{{ optionalValue || value }}</div>`,
+  template: `<ng-template #widgetTemplate
+      ><div>{{ optionalValue || value }}</div></ng-template
+    >
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export class PublicWidgetWithProps extends WidgetWithPropsInput {
   defaultEntries: DefaultEntries;
+
+  @Input() _private = false;
   doSomething(): any {}
   _detectChanges(): void {
     setTimeout(() => {

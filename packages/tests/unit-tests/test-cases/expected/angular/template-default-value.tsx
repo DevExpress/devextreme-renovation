@@ -77,6 +77,7 @@ import {
 })
 export default class TemplateDefaultValue extends TemplateDefaultValueProps {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
