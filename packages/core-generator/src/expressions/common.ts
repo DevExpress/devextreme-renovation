@@ -22,17 +22,27 @@ export class Identifier extends SimpleExpression {
     return this.expression;
   }
 
-  toString(options?: toStringOptions) {
+  toString(options?: toStringOptions): string {
     const baseValue = super.toString();
-    if (options?.variables && options.variables[baseValue]) {
-      let expression = options.variables[baseValue];
+    const variableExpression = options?.variables?.[baseValue];
+
+    if (variableExpression) {
+      let expression = variableExpression;
       if (expression instanceof Paren) {
         expression = expression.expression;
       }
-      if (options.variables[baseValue].toString() === baseValue) {
+      if (variableExpression.toString() === baseValue) {
         return baseValue;
       }
-      return options.variables[baseValue].toString(options);
+      if (options?.isFunctionalComponent && !(variableExpression instanceof Identifier)) {
+        return baseValue;
+      }
+      return variableExpression.toString(options);
+    }
+
+    if (options?.isFunctionalComponent
+      && options?.members.some((m) => m.name === baseValue)) {
+      return `${options.componentContext}.${baseValue}`;
     }
     return baseValue;
   }

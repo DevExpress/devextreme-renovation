@@ -44,6 +44,8 @@ interface PropDescriptor {
 }
 
 export class Component extends Class implements Heritable {
+  isFunctional = false;
+
   props: Property[] = [];
 
   modelProp?: Property;

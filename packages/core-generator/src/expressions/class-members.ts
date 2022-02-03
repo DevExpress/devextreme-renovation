@@ -154,6 +154,10 @@ export class BaseClassMember extends Expression {
     return this._hasDecorator(Decorators.Mutable);
   }
 
+  get isOneWay(): boolean {
+    return this._hasDecorator(Decorators.OneWay);
+  }
+
   get context(): Expression {
     const decorator = this.decorators.find(
       (d) => d.name === Decorators.Consumer || d.name === Decorators.Provider,
@@ -338,6 +342,8 @@ export class Method extends BaseClassMember {
 export class GetAccessor extends Method {
   contextTypes?: { [name: string]: TypeExpression | string };
 
+  deps?: string[] | null;
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -345,6 +351,7 @@ export class GetAccessor extends Method {
     parameters: Parameter[],
     type?: TypeExpression | string,
     body?: Block,
+    deps?: string[] | null,
   ) {
     super(
       decorators,
@@ -357,12 +364,26 @@ export class GetAccessor extends Method {
       type,
       body || new Block([], false),
     );
+    this.deps = deps;
+  }
+
+  getDependency(options: toStringOptions): Dependency[] {
+    if (this.deps) {
+      return this.deps;
+    }
+    return super.getDependency(options);
   }
 
   isMemorized(
     options?: toStringOptions,
     needToMemorizeProvider = true,
   ): boolean {
+    if (this.deps === null) {
+      return false;
+    }
+    if (this.deps) {
+      return true;
+    }
     if (this.isProvider && !needToMemorizeProvider) {
       return false;
     }

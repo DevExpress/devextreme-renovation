@@ -296,6 +296,7 @@ export class JsxExpression extends ExpressionWithOptionalExpression {
     if (
       expression instanceof Identifier
       && options?.variables?.[expression.toString()]
+      && !options?.isFunctionalComponent
     ) {
       variableExpression = options.variables[expression.toString()];
     }

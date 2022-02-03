@@ -404,6 +404,58 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("counter", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("counter-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("slot-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-binding-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-default-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-empty-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-props-model-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("getters-use-memo-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("getters-expression-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("internal-state-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("method-use-callback-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("globals-in-template-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("getters-method-call-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.describe("Default option rules", function () {
     this.beforeEach(function () {
       generator.options = {

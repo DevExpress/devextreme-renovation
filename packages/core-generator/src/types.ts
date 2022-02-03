@@ -28,6 +28,7 @@ export interface toStringOptions {
   usePropsSpace?: boolean;
   componentInputs?: ComponentInput[];
   isComponent?: boolean;
+  isFunctionalComponent?: boolean;
   fromType?: boolean;
 }
 

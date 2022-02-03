@@ -31,7 +31,9 @@ export class BindingElement extends Expression {
     const key = this.propertyName
       ? `${this.propertyName}${nameString ? ':' : ''}`
       : '';
-    return `${key}${this.dotDotDotToken}${nameString}`;
+    const fullName = `${key}${this.dotDotDotToken}${nameString}`;
+    const defaultValue = this.initializer?.toString();
+    return defaultValue ? `${fullName} = ${defaultValue}` : fullName;
   }
 
   getDependency(options: toStringOptions): Dependency[] {

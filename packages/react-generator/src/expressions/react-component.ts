@@ -946,3 +946,19 @@ export class ReactComponent extends Component {
               ${this.compileDefaultOptionsMethod()}`;
   }
 }
+
+export class ReactFunctionalComponent extends ReactComponent {
+  isFunctional = true;
+
+  compileViewFunction(): string {
+    const viewFunction = this.context.viewFunctions?.[this.name];
+    return viewFunction ? viewFunction.toString() : '';
+  }
+
+  toString(): string {
+    return `
+      ${this.compileImports()}
+      ${this.compileViewFunction()}
+    `;
+  }
+}

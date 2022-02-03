@@ -34,7 +34,9 @@ import {
 import { Decorator } from './expressions/decorator';
 import { Enum, EnumMember } from './expressions/enum';
 import { ExportDeclaration, ExportSpecifier, NamedExports } from './expressions/export';
-import { ArrowFunction, Function, Parameter } from './expressions/functions';
+import {
+  ArrowFunction, BaseFunction, Function, Parameter,
+} from './expressions/functions';
 import {
   ImportClause,
   ImportDeclaration,
@@ -104,6 +106,7 @@ import {
   GeneratorCache, GeneratorContext, GeneratorOptions, VariableExpression,
 } from './types';
 import { getExpression } from './utils/expressions';
+import { createFunctionalComponentParameters } from './utils/functional-component-helper';
 import { getModuleRelativePath, resolveModule } from './utils/path-utils';
 
 export class Generator implements GeneratorAPI {
@@ -173,10 +176,61 @@ export class Generator implements GeneratorAPI {
     return new VariableDeclarationList(declarations, flags);
   }
 
+  isFunctionalComponent(
+    name: Identifier,
+    func?: Expression,
+  ): func is BaseFunction {
+    const firstChar = name.toString()[0];
+    const nameString = name.toString();
+    const isUpperCaseName = firstChar === firstChar.toUpperCase();
+    return func instanceof BaseFunction
+        && func.isJsx() && isUpperCaseName && nameString !== 'View' && !nameString.endsWith('Template');
+  }
+
+  createFunctionalComponent(
+    name: Identifier,
+    func: BaseFunction,
+  ) {
+    this.addViewFunction(name.toString(), func);
+
+    const {
+      decorator,
+      heritageClauses,
+      members,
+    } = createFunctionalComponentParameters(this, name.toString(), func);
+
+    const result = this.createFunctionalComponentCore(
+      decorator,
+      func.modifiers,
+      name,
+      func.typeParameters,
+      heritageClauses,
+      members,
+    );
+
+    this.addComponent(name.toString(), result);
+
+    return result;
+  }
+
   createVariableStatement(
     modifiers: string[] | undefined,
     declarationList: VariableDeclarationList,
   ) {
+    // const declarations = declarationList.declarations;
+    // const declaration = declarationList.declarations[0];
+    // if (declarations.length === 1
+    //   && declaration.name instanceof Identifier
+    //   && this.isFunctionalComponent(declaration.name, declaration.initializer)
+    // ) {
+    //   const name = declaration.name;
+    //   const func = declaration.initializer;
+
+    //   this.addViewFunction(name.toString(), func);
+
+    //   return this.createFunctionalComponent(name, func);
+    // }
+
     return new VariableStatement(modifiers, declarationList);
   }
 
@@ -331,7 +385,7 @@ export class Generator implements GeneratorAPI {
     type: TypeExpression | string | undefined,
     body: Block,
   ) {
-    const functionDeclaration = this.createFunctionDeclarationCore(
+    const func = this.createFunctionDeclarationCore(
       decorators,
       modifiers,
       asteriskToken,
@@ -341,11 +395,17 @@ export class Generator implements GeneratorAPI {
       type,
       body,
     );
+
+    if (func.name && this.isFunctionalComponent(func.name, func)) {
+      return this.createFunctionalComponent(func.name!, func) as unknown as Function;
+    }
+
     this.addViewFunction(
-      functionDeclaration.name!.toString(),
-      functionDeclaration,
+      func.name!.toString(),
+      func,
     );
-    return functionDeclaration;
+
+    return func;
   }
 
   createFunctionDeclarationCore(
@@ -704,6 +764,27 @@ export class Generator implements GeneratorAPI {
     );
   }
 
+  createFunctionalComponentCore(
+    componentDecorator: Decorator,
+    modifiers: string[] | undefined,
+    name: Identifier,
+    typeParameters: TypeExpression[] | string[] | undefined,
+    heritageClauses: HeritageClause[],
+    members: Array<Property | Method>,
+  ): Component {
+    const result = this.createComponent(
+      componentDecorator,
+      modifiers,
+      name,
+      typeParameters,
+      heritageClauses,
+      members,
+    );
+    result.isFunctional = true;
+
+    return result;
+  }
+
   createComponentBindings(
     decorators: Decorator[],
     modifiers: string[] | undefined,
@@ -930,8 +1011,9 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type?: TypeExpression,
     body?: Block,
+    deps?: string[] | null,
   ) {
-    return new GetAccessor(decorators, modifiers, name, parameters, type, body);
+    return new GetAccessor(decorators, modifiers, name, parameters, type, body, deps);
   }
 
   createConstructor(

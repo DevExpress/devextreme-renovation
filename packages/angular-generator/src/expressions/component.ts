@@ -1525,11 +1525,16 @@ export class AngularComponent extends Component {
       const propsClass = this.heritageClauses
         .filter((h) => h.isJsxComponent)
         .map((h) => h.types.map((t) => t.type.toString()))[0];
-
-      constructorStatements.push(
-        `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
-        `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
-      );
+      if (propsClass) {
+        constructorStatements.push(
+          `const defaultProps = new ${propsClass}() as {[key: string]: any};`,
+          `this.defaultEntries = [${propsWithDefault.map((p) => `"${p.name}"`).join(',')}].map(key=>({key, value: defaultProps[key]}))`,
+        );
+      } else {
+        constructorStatements.push(
+          `this.defaultEntries = [${propsWithDefault.map((p) => `{ key: "${p.name}", value: ${p.initializer?.toString()} }`).join(',')}];`,
+        );
+      }
 
       return 'defaultEntries: DefaultEntries';
     }
@@ -1590,6 +1595,7 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       templateComponents: [],
       isSVG: this.isSVGComponent,
+      isFunctionalComponent: this.isFunctional,
     };
 
     const implementedInterfaces: string[] = [];
@@ -1681,6 +1687,7 @@ export class AngularComponent extends Component {
       newComponentContext: SyntaxKind.ThisKeyword,
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
+      isFunctionalComponent: this.isFunctional,
     }))
     .filter((m) => m)
     .join('\n')}
@@ -1751,5 +1758,13 @@ export class AngularComponent extends Component {
         export { ${this.name} as Dx${this.name}Component };
         ${this.compileDefaultComponentExport()}
         `;
+  }
+}
+
+export class AngularFunctionalComponent extends AngularComponent {
+  isFunctional = true;
+
+  addPrefixToMembers(members: Array<Property | Method>) {
+    return members;
   }
 }
