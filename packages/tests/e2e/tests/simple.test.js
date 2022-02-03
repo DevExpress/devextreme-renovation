@@ -493,3 +493,10 @@ cloneTest("Default prop value if undefined in parent", async (t) => {
     .expect((await undefinedPropDefaults.textContent).trim())
     .eql('oneWayDefault twoWayDefault')
 })
+
+cloneTest("Default template default value with map", async (t) => {
+  const defaultTemplateMap = Selector("#defaultTemplateMap");
+  await t
+    .expect((await defaultTemplateMap.textContent).trim())
+    .eql('Default value with map')
+})
