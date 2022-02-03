@@ -200,6 +200,10 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("slot-new", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-props-binding-new", function () {
     this.testGenerator(this.test!.title);
   });

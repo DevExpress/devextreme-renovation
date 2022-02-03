@@ -175,12 +175,19 @@ function fillPropertyMembers(
   if (parameter && parameter.type instanceof TypeLiteralNode) {
     parameter.type.members.forEach((propertySignature) => {
       const defaultValue = getDefaultValue(parameter, propertySignature.name);
+      const decorators = [
+        generator.createDecorator(
+          generator.createCall(
+            generator.createIdentifier(
+              propertySignature.name.toString() === 'children' ? 'Slot' : 'OneWay',
+            ),
+            undefined,
+            [],
+          ),
+        ),
+      ];
       members.push(generator.createProperty(
-        [generator.createDecorator(generator.createCall(
-          generator.createIdentifier('OneWay'),
-          undefined,
-          [],
-        ))],
+        decorators,
         undefined,
         propertySignature.name,
         propertySignature.questionToken,
