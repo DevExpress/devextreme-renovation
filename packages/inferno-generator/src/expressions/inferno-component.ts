@@ -376,7 +376,11 @@ export class InfernoComponent extends PreactComponent {
     const propsType = 'any';
 
     const properties = this.members.filter(
-      (m) => m instanceof Property && !m.inherited && !m.isInternalState && !m.isOneWay,
+      (m) => m instanceof Property
+      && !m.inherited
+      && !m.isInternalState
+      && !m.isOneWay
+      && !m.isSlot,
     );
     const bindMethods = this.members
       .filter((m) => m instanceof Method && !(m instanceof GetAccessor))
