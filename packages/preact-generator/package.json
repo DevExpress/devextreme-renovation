@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/preact",
-  "version": "2.3.12",
+  "version": "3.1.0-next",
   "description": "DevExtreme preact component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,8 +16,8 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/core": "2.3.12",
-    "@devextreme-generator/react": "2.3.12"
+    "@devextreme-generator/core": "3.1.0-next",
+    "@devextreme-generator/react": "3.1.0-next"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",

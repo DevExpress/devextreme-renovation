@@ -3,14 +3,15 @@ import {
   InnerComponentProps,
   DxInnerComponentModule,
 } from "./inner-component";
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class InnerLayoutProps {
   @Input() innerComponentTemplate: TemplateRef<any> | null = null;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

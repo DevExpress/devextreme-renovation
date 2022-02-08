@@ -30,7 +30,7 @@ export default class WidgetWithApiRef extends JSXComponent(
   WidgetWithApiRefInput
 ) {
   @Ref()
-  baseRef?: RefObject<BaseWidget>;
+  baseRef!: RefObject<BaseWidget>;
 
   @Method()
   getSomething(): string {

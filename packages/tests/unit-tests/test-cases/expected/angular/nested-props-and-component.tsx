@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class FakeNested {
   @Input() numberProp: number = 2;
 }
@@ -11,7 +13,10 @@ import {
   ViewChild,
   ElementRef,
 } from "@angular/core";
-@Injectable()
+import { isSlotEmpty } from "@devextreme/runtime/angular";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() oneWayProp?: number;
   @Input() twoWayProp?: number;
@@ -21,10 +26,8 @@ export class WidgetProps {
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined;
   __slotSlotProp?: ElementRef<HTMLDivElement>;
-
-  get slotProp() {
-    const childNodes = this.__slotSlotProp?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get slotProp(): boolean {
+    return !isSlotEmpty(this.__slotSlotProp);
   }
   @Input() templateProp?: TemplateRef<any> | null = null;
   private __nestedProp__?: FakeNested[];
@@ -52,7 +55,6 @@ export class WidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -64,6 +66,7 @@ import {
   Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Directive({
   selector: "dxi-another-nested-prop-init",
@@ -168,8 +171,12 @@ export default class UndefWidget extends WidgetProps {
         ref?: ElementRef<any>
       ): ElementRef<any> | undefined {
         if (arguments.length) {
-          this.someForwardRef__Ref__ = ref;
-          this.someForwardRef?.(ref);
+          if (ref) {
+            this.someForwardRef__Ref__ = ref;
+          } else {
+            this.someForwardRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.someForwardRef?.(this.someForwardRef__Ref__);
         }
         return this.someForwardRef?.();
       }.bind(this);

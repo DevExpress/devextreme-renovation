@@ -27,6 +27,11 @@ export const WidgetInput = {
       return ["1"];
     },
   },
+  currentDate: {
+    default() {
+      return new Date();
+    },
+  },
   expressionDefault: {
     type: String,
     default() {
@@ -72,6 +77,7 @@ export const DxWidget = {
         height: this.height,
         export: this.export,
         array: this.array,
+        currentDate: this.currentDate,
         expressionDefault: this.expressionDefault,
         expressionDefault1: this.expressionDefault1,
         expressionDefault2: this.expressionDefault2,

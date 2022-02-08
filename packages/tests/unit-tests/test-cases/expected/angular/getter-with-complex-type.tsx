@@ -1,4 +1,5 @@
 import {
+  Injectable,
   EventEmitter as ContextEmitter,
   SkipSelf,
   Optional,
@@ -20,14 +21,15 @@ class SimpleContext {
 }
 type UserType = "user" | "not";
 
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class Props {
   @Input() p: number = 10;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

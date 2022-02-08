@@ -1,9 +1,10 @@
-import { Injectable } from "@angular/core";
-@Injectable()
+import { Component } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetProps {}
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

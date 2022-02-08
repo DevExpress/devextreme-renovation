@@ -176,6 +176,10 @@ mocha.describe("angular-generation", function () {
     }
   });
 
+  mocha.it("template-default-nested-render", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("method", function () {
     this.testGenerator(this.test!.title);
   });
@@ -427,6 +431,9 @@ mocha.describe("angular-generation", function () {
     });
 
     mocha.it("use-external-component-bindings", function () {
+      this.testGenerator(this.test!.title);
+    });
+    mocha.it("angular-inner-component", function () {
       this.testGenerator(this.test!.title);
     });
   });

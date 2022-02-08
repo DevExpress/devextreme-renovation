@@ -1,8 +1,9 @@
 <template>
-  <InnerWidget
-    v-bind="{ ...props, ...{ valueChange: undefined } }"
-    @update:value="valueChange"
-  />
+  <div style="display: contents"
+    ><InnerWidget
+      v-bind="{ ...props, ...{ valueChange: undefined } }"
+      @update:value="valueChange" /><div v-bind="__attributes"
+  /></div>
 </template>
 <script>
 import InnerWidget from "./dx-inner-widget";
@@ -32,10 +33,15 @@ export const DxWidget = {
   },
   data() {
     return {
+      counter: 1,
+      notUsedValue: 1,
       value_state: this.value,
     };
   },
   computed: {
+    __attributes() {
+      return { visible: this.visible, value: this.counter };
+    },
     __restAttributes() {
       return {};
     },

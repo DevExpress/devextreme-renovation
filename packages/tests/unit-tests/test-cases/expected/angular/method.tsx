@@ -1,12 +1,13 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() prop1?: number;
   @Input() prop2?: number;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -18,6 +19,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -29,7 +31,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
-  divRef!: ElementRef<HTMLDivElement>;
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
   getHeight(p: number = 10, p1: any): string {
     return `${this.prop1} + ${this.prop2} + ${this.divRef.nativeElement?.innerHTML} + ${p}`;
   }

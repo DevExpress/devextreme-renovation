@@ -4,6 +4,7 @@
       :name="defaultCompTemplate"
       v-bind:optionalValue="stringToRender"
       v-bind:value="'twdComp'"
+      v-bind:onClick="() => {}"
     >
       <div
         style="display: contents"
@@ -11,11 +12,13 @@
           (defaultCompTemplateDefault = {
             optionalValue: stringToRender,
             value: 'twdComp',
+            onClick: () => {},
           })
         "
         ><WidgetWithProps
           :optionalValue="defaultCompTemplateDefault.optionalValue"
           :value="defaultCompTemplateDefault.value"
+          @click="defaultCompTemplateDefault.onClick"
       /></div> </slot
     ><slot :name="defaultCompTemplate" v-bind:value="stringToRender">
       <div

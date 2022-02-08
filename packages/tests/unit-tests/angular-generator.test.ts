@@ -1866,9 +1866,9 @@ mocha.describe("Angular generator", function () {
         assert.strictEqual(
           removeSpaces(element.children[0].toString(this.toStringOptions)),
           removeSpaces(`
-            <div #slotChildren style="display:contents">
-              <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
-            </div>
+            <div #slotChildren style="display:contents"></div>
+            <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+            <div class="dx-slot-end" style="display:contents"></div>
             <ng-container *ngIf="!(children)">{{alternative}}</ng-container>
               `)
         );
@@ -2617,9 +2617,9 @@ mocha.describe("Angular generator", function () {
           ),
           removeSpaces(`
           <span >
-            <div #slotName style="display: contents">
-              <ng-container [ngTemplateOutlet]="dxname"></ng-container>
-            </div>
+            <div #slotName style="display: contents"></div>
+            <ng-container [ngTemplateOutlet]="dxname"></ng-container>
+            <div class="dx-slot-end" style="display:contents"></div>
           </span>`)
         );
       });
@@ -2662,9 +2662,9 @@ mocha.describe("Angular generator", function () {
           ),
           removeSpaces(`
           <span>
-            <div #slotName style="display: contents">
-              <ng-container [ngTemplateOutlet]="dxname"></ng-container>
-            </div>
+            <div #slotName style="display: contents"></div>
+            <ng-container [ngTemplateOutlet]="dxname"></ng-container>
+            <div class="dx-slot-end" style="display:contents"></div>
           </span>`)
         );
       });
@@ -2705,9 +2705,9 @@ mocha.describe("Angular generator", function () {
           ),
           removeSpaces(`
           <span>
-            <div #slotChildren style="display: contents">
-              <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
-            </div>
+            <div #slotChildren style="display: contents"></div>
+            <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+            <div class="dx-slot-end" style="display:contents"></div>
           </span>`)
         );
       });
@@ -3068,9 +3068,9 @@ mocha.describe("Angular generator", function () {
               ),
               removeSpaces(`
               <dx-widget #widget1 style="display:contents">
-                <div #slotChildren style="display: contents">
-                  <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
-                </div>
+                <div #slotChildren style="display: contents"></div>
+                <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+                <div class="dx-slot-end" style="display:contents"></div>
               </dx-widget>
               <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
@@ -3120,14 +3120,12 @@ mocha.describe("Angular generator", function () {
               ),
               removeSpaces(`
               <dx-widget #widget1 style="display:contents">
-                <div #slotChildrenstyle="display:contents">
-                  <ng-container [ngTemplateOutlet]="dxchildren">
-                  </ng-container>
-                </div>
-                <div #slotNamedSlot style="display:contents">
-                  <ng-container[ngTemplateOutlet]="dxnamedSlot">
-                  </ng-container>
-                </div>
+                <div #slotChildren style="display:contents"></div>
+                <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+                <div class="dx-slot-end" style="display:contents"></div>
+                <div #slotNamedSlot style="display:contents"></div>
+                <ng-container[ngTemplateOutlet]="dxnamedSlot"></ng-container>
+                <div class="dx-slot-end" style="display:contents"></div>
               </dx-widget>
               <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
@@ -3164,9 +3162,9 @@ mocha.describe("Angular generator", function () {
               ),
               removeSpaces(`
               <dx-widget #widget1 style="display:contents">
-                <div #slotChildren style="display: contents">
-                  <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
-                </div>
+                <div #slotChildren style="display: contents"></div>
+                <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+                <div class="dx-slot-end" style="display:contents"></div>
               </dx-widget>
               <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
@@ -3209,10 +3207,10 @@ mocha.describe("Angular generator", function () {
               ),
               removeSpaces(`
               <dx-widget #widget1 style="display:contents">
-                <div #slotChildren style="display: contents">
-                  <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
-                </div>
-              </dx-widget>
+                <div #slotChildren style="display: contents"></div>
+                <ng-container [ngTemplateOutlet]="dxchildren"></ng-container>
+                <div class="dx-slot-end" style="display:contents"></div>
+                </dx-widget>
               <ng-content*ngTemplateOutlet="widget1?.widgetTemplate"></ng-content>`)
             );
           });
@@ -3907,11 +3905,11 @@ mocha.describe("Angular generator", function () {
           removeSpaces(`
           <div>
             <ng-container *ngIf="!template">
-              <div #slotChildren style="display:contents">
-                <ng-container [ngTemplateOutlet]="dxchildren">
-                </ng-container>
-              </div>
-            </ng-container>
+              <div #slotChildren style="display:contents"></div>
+              <ng-container [ngTemplateOutlet]="dxchildren">
+              </ng-container>
+              <div class="dx-slot-end" style="display:contents"></div>
+          </ng-container>
           </div>`)
         );
       });
@@ -6095,6 +6093,7 @@ mocha.describe("Angular generator", function () {
           view: true,
           defaultOptionRules: true,
           jQuery: true,
+          angular: true,
         };
 
         const decorator = generator.createDecorator(
@@ -6322,7 +6321,7 @@ mocha.describe("Angular generator", function () {
             getResult(`{
               this.attr=attr;
               this._detectChanges();
-              this.scheduledApplyAttributes = this;
+              this.scheduledApplyAttributes = true;
             }`)
           );
         });
@@ -6367,8 +6366,10 @@ mocha.describe("Angular generator", function () {
       assert.strictEqual(
         getResult(bindings.toString()),
         getResult(`
-                import {Injectable, Input} from "@angular/core"
-                @Injectable()
+                import {Component, Input} from "@angular/core"
+                @Component({
+                  template: ''
+                })
                 export default class ComponentInput {
                     @Input()
                     p1?: number = 10;
@@ -6418,8 +6419,10 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         getResult(child.toString()),
-        getResult(`import {Injectable} from "@angular/core"
-                   @Injectable()
+        getResult(`import {Component} from "@angular/core"
+                   @Component({
+                     template: ''
+                   })
                    export default class Child extends Base {}`)
       );
     });
@@ -6443,7 +6446,8 @@ mocha.describe("Angular generator", function () {
 
       assert.strictEqual(
         property.toString(),
-        `@ViewChild("hostLink", {static: false}) host?:ElementRef<HTMLDivElement>`
+        `@ViewChild("hostLink", {static: false}) __host!:ElementRef<HTMLDivElement>;
+            get host():ElementRef<HTMLDivElement> { return (this.__host) ? this.__host : (new UndefinedNativeElementRef<HTMLDivElement>()); }`
       );
     });
 
@@ -6659,9 +6663,8 @@ mocha.describe("Angular generator", function () {
         getResult(`
                 __slotName?: ElementRef<HTMLDivElement>;
 
-                get name(){
-                  const childNodes =  this.__slotName?.nativeElement?.childNodes;
-                  return childNodes && childNodes.length > 2
+                get name():boolean{
+                  return !isSlotEmpty(this.__slotName);
                 }
             `)
       );
@@ -6849,13 +6852,14 @@ mocha.describe("Angular generator", function () {
           generator.createProperty(
             [createDecorator(Decorators.Ref)],
             [],
-            generator.createIdentifier("p")
+            generator.createIdentifier("p"),
+            "!"
           ),
         ]) as AngularComponent;
         assert.strictEqual(
           getResult(component.compileImports()),
           getResult(
-            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"`
+            `import { Component, NgModule, ViewChild, ElementRef } from "@angular/core"; import {CommonModule} from "@angular/common"; import {UndefinedNativeElementRef} from "@devextreme/runtime/angular"`
           )
         );
       });

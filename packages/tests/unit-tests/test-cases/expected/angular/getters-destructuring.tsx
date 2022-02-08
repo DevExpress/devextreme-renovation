@@ -1,5 +1,7 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
@@ -17,7 +19,6 @@ interface GetterType {
   propField: string;
 }
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

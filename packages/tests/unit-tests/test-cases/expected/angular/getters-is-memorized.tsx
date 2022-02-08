@@ -3,8 +3,10 @@ import {
   Options as externalType,
 } from "./types.d";
 
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() someProp: string = "";
   @Input() type?: string = "";
@@ -20,7 +22,6 @@ interface internalInterface {
 }
 type internalType = { a: string };
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -137,6 +138,7 @@ class Widget extends WidgetProps {
     }));
     this._currentDateChange = (e: any) => {
       this.currentDateChange.emit(e);
+      this.__getterCache["someDate"] = undefined;
       this._detectChanges();
     };
   }

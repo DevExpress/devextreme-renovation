@@ -27,6 +27,6 @@ function view(model:RefMiddle){
   jQuery: {register: true},
 })
 export default class RefMiddle extends JSXComponent(RefMiddleProps) {
-    @Ref() middleDivRef?: RefObject<HTMLDivElement>;
-    @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
+    @Ref() middleDivRef!: RefObject<HTMLDivElement>;
+    @ForwardRef() forwardRef!: RefObject<HTMLDivElement>;
 }

@@ -1,6 +1,8 @@
 import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class Props {
   @Input() nullableRef?: (
     ref?: ElementRef<HTMLDivElement>
@@ -8,7 +10,6 @@ class Props {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,6 +21,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-ref-on-children-parent",
@@ -37,7 +39,8 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class RefOnChildrenParent extends Props {
-  child!: ElementRef<HTMLDivElement>;
+  child: ElementRef<HTMLDivElement> =
+    new UndefinedNativeElementRef<HTMLDivElement>();
   innerState: number = 10;
   __effect(): any {
     if (this.child.nativeElement) {
@@ -63,7 +66,11 @@ export default class RefOnChildrenParent extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> {
         if (arguments.length) {
-          this.child = ref!;
+          if (ref) {
+            this.child = ref;
+          } else {
+            this.child = new UndefinedNativeElementRef();
+          }
         }
         return this.child;
       }.bind(this);
@@ -83,8 +90,12 @@ export default class RefOnChildrenParent extends Props {
         ref?: ElementRef<HTMLDivElement>
       ): ElementRef<HTMLDivElement> | undefined {
         if (arguments.length) {
-          this.nullableRef__Ref__ = ref;
-          this.nullableRef?.(ref);
+          if (ref) {
+            this.nullableRef__Ref__ = ref;
+          } else {
+            this.nullableRef__Ref__ = new UndefinedNativeElementRef();
+          }
+          this.nullableRef?.(this.nullableRef__Ref__);
         }
         return this.nullableRef?.();
       }.bind(this);

@@ -1,6 +1,6 @@
 import { Decorators } from '../decorators';
 import { HeritageClause } from '../expressions/class';
-import { Call, Identifier } from '../expressions/common';
+import { Call, Identifier, Paren } from '../expressions/common';
 import { Component } from '../expressions/component';
 import { ComponentInput } from '../expressions/component-input';
 import { ImportClause } from '../expressions/import';
@@ -14,6 +14,11 @@ import {
   TypeReferenceNode,
 } from '../expressions/type';
 import { GeneratorContext } from '../types';
+import { Block, ReturnStatement } from '../expressions/statements';
+import { Expression, SimpleExpression } from '../expressions/base';
+import { Binary } from '../expressions/operators';
+import { SyntaxKind } from '../syntaxKind';
+import { ArrowFunction } from '../expressions/functions';
 
 export function extractComponentFromType(
   typeExpression: string | TypeExpression | undefined,
@@ -77,3 +82,45 @@ export function isComponentWrapper(imports: {
 } | undefined): boolean {
   return Object.keys(imports || {}).some((i: string) => i.includes('dom_component_wrapper'));
 }
+
+export const compileGetterCache = (
+  name: Identifier,
+  type: TypeExpression | string | undefined,
+  body: Block,
+  isProvider: boolean | undefined,
+  needToHandleProvider = true,
+): Expression[] => {
+  const cacheAccess = `this.__getterCache["${name.toString()}"]`;
+  const setCacheExpression = new Binary(
+    new SimpleExpression(cacheAccess),
+    SyntaxKind.EqualsToken,
+    new Call(
+      new Paren(
+        new ArrowFunction(
+          [],
+          [],
+          [],
+          type,
+          SyntaxKind.EqualsGreaterThanToken,
+          new Block(body.statements, false),
+          {},
+        ),
+      ),
+      undefined,
+    ),
+  );
+  const returnExpression = isProvider && needToHandleProvider
+    ? new Binary(
+      new SimpleExpression(`this.${name}Provider.value`),
+      SyntaxKind.EqualsToken,
+      setCacheExpression,
+    )
+    : setCacheExpression;
+  return [
+    new SimpleExpression(`
+                if(${cacheAccess}!==undefined){
+                    return ${cacheAccess};
+                }`),
+    new ReturnStatement(returnExpression),
+  ];
+};
