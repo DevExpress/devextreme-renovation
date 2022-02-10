@@ -1066,7 +1066,7 @@ export class AngularComponent extends Component {
       @Directive({
         selector: "${selector}"
       })
-      class ${name} extends ${component.name} {
+      export class ${name} extends ${component.name} {
         ${innerNested}
       }
     `;
