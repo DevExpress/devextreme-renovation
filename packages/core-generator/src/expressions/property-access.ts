@@ -104,7 +104,7 @@ export class PropertyAccess extends ExpressionWithExpression {
   toString(options?: toStringOptions, elements: BindingElement[] = []) {
     const member = this.getMember(options);
     if (member) {
-      if (member.name.toString() === '__restAttributes' && options?.mutableOptions) {
+      if (member.isRestAttributes && options?.mutableOptions) {
         options.mutableOptions.hasRestAttributes = true;
       }
       return `${member.getter(options!.newComponentContext, options)}`;
