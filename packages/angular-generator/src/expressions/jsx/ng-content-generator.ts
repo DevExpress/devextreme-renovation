@@ -29,7 +29,7 @@ export function tryToGetContent(element: JsxOpeningElement): {
   }
   const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
   const existRef = refAttr?.toString().split('.').pop()?.replace('#', '');
-  const ref = existRef || getUniqComponentName(element.context, componentName);
+  const ref = existRef || getUniqComponentName(componentName);
   if (!existRef) {
     elementDirectives.push(new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression('')));
   }

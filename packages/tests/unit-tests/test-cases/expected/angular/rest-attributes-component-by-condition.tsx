@@ -44,14 +44,14 @@ import {
     ></dx-public-widget-with-props>
     <ng-container *ngIf="!isPublic"
       ><dx-widget-with-props
-        #widgetwithprops1
+        #widgetwithprops2
         style="display: contents"
         #_auto_ref_1
         [_restAttributes]="__restAttributes"
         style="display: contents"
       ></dx-widget-with-props
       ><ng-content
-        *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
+        *ngTemplateOutlet="widgetwithprops2?.widgetTemplate"
       ></ng-content></ng-container
   ></ng-template>`,
 })

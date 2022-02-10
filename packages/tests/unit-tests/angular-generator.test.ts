@@ -21,12 +21,17 @@ import { ComponentParameters } from '@devextreme-generator/declarations';
 import { assertCode, printSourceCodeAst as getResult, removeSpaces } from './helpers/common';
 import factory from './helpers/create-component';
 import mocha from './helpers/mocha';
+import { reset } from 'angular-generator/src/expressions/utils/uniq_name_generator';
 
 const { createComponent, createComponentDecorator, createDecorator } = factory(
   generator
 );
 
 mocha.describe("Angular generator", function () {
+  this.beforeEach(function () {
+    reset();
+  });
+
   mocha.describe("JSX -> AngularTemplate", function () {
     this.beforeEach(function () {
       generator.setContext({

@@ -37,7 +37,7 @@ import {
   inputs: ["cellTemplate", "rows"],
   template: `<ng-template #widgetTemplate
     ><ng-container *ngFor="let cells of rows"
-      ><dx-widget-with-props #widgetwithprops1 style="display: contents"
+      ><dx-widget-with-props #widgetwithprops3 style="display: contents"
         ><ng-container *ngFor="let value of cells"
           ><ng-container
             *ngTemplateOutlet="
@@ -47,7 +47,7 @@ import {
           >
           </ng-container></ng-container></dx-widget-with-props
       ><ng-content
-        *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
+        *ngTemplateOutlet="widgetwithprops3?.widgetTemplate"
       ></ng-content></ng-container
     ><ng-template #cellTemplateDefault let-value="value">
       <dx-public-widget-with-props
