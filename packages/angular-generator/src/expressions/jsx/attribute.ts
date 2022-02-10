@@ -67,7 +67,9 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   compileEvent(options: toStringOptions) {
     const member = getMember(this.initializer, options);
-    const hasEmptyParameters = member instanceof Method && member.parameters.length === 0;
+    const hasEmptyParameters = member instanceof Method
+      && !(member instanceof GetAccessor)
+      && member.parameters.length === 0;
     const args = hasEmptyParameters ? '' : '$event';
 
     return `(${this.name})="${this.compileInitializer(options)}(${args})"`;

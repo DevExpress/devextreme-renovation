@@ -2,14 +2,23 @@ import {
     Component,
     ComponentBindings,
     JSXComponent,
+    Fragment
   } from "@devextreme-generator/declarations";
 
   import { WidgetWithProps } from './dx-widget-with-props';
   
-  function view({ onClick }: Widget) {
-    return <WidgetWithProps 
-      onClick={onClick}>
-    </WidgetWithProps>;
+  function view({ onClickWithArgs, onClickWithoutArgs, onClickGetter }: Widget) {
+    return <Fragment>
+      <WidgetWithProps 
+        onClick={onClickWithoutArgs}>
+      </WidgetWithProps>
+      <WidgetWithProps 
+        onClick={onClickWithArgs}>
+      </WidgetWithProps>
+      <WidgetWithProps 
+        onClick={onClickGetter}>
+      </WidgetWithProps>
+    </Fragment>;
   }
   
   @ComponentBindings()
@@ -20,7 +29,14 @@ import {
     view,
   })
   export default class Widget extends JSXComponent(WidgetInput) {
-    onClick() {
+    onClickWithoutArgs() {
+    }
+
+    onClickWithArgs(args: unknown) {
+    }
+
+    get onClickGetter() {
+      return () => {};
     }
   }
   

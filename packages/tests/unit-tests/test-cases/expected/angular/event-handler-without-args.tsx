@@ -25,17 +25,37 @@ import { CommonModule } from "@angular/common";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-widget-with-props
-      (onClick)="__onClick()"
+      (onClick)="__onClickWithoutArgs()"
       #widgetwithprops1
       style="display: contents"
     ></dx-widget-with-props
     ><ng-content
       *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
     ></ng-content
+    ><dx-widget-with-props
+      (onClick)="__onClickWithArgs($event)"
+      #widgetwithprops2
+      style="display: contents"
+    ></dx-widget-with-props
+    ><ng-content
+      *ngTemplateOutlet="widgetwithprops2?.widgetTemplate"
+    ></ng-content
+    ><dx-widget-with-props
+      (onClick)="__onClickGetter($event)"
+      #widgetwithprops3
+      style="display: contents"
+    ></dx-widget-with-props
+    ><ng-content
+      *ngTemplateOutlet="widgetwithprops3?.widgetTemplate"
+    ></ng-content
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  __onClick(): any {}
+  __onClickWithoutArgs(): any {}
+  __onClickWithArgs(args: unknown): any {}
+  get __onClickGetter(): any {
+    return () => {};
+  }
   get __restAttributes(): any {
     return {};
   }
