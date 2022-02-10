@@ -16,7 +16,9 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxExpression } from './jsx-expression';
 
-const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
+function isAriaAttribute(name: string): boolean {
+  return name.startsWith('aria-');
+}
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
@@ -93,7 +95,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         return options?.isSVG ? 'attr.class' : 'class';
       }
 
-      if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {
+      if (isAriaAttribute(name)) {
         return `attr.${name}`;
       }
 

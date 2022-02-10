@@ -204,30 +204,32 @@ mocha.describe("Angular generator", function () {
       }
     );
 
-    mocha.it(`aria-label attribute binding - [attr.aria-label]"`, function () {
-      const expression = generator.createJsxAttribute(
-        generator.createIdentifier("aria-label"),
-        generator.createJsxExpression(
-          undefined,
-          generator.createIdentifier("value")
-        )
-      );
-
-      assert.strictEqual(expression.toString(), `[attr.aria-label]="value"`);
-    });
-
-    mocha.it(`aria-label attribute - aria-label"`, function () {
-      const expression = generator.createJsxAttribute(
-        generator.createIdentifier("aria-label"),
-        generator.createJsxExpression(
-          undefined,
-          generator.createStringLiteral("value")
-        )
-      );
-
-      assert.strictEqual(expression.toString(), `aria-label="value"`);
-    });
-
+    ['aria-label', 'aria-labelledby', 'aria-colindex', 'aria-rowindex', 'aria-selected'].forEach((attrName) => {
+      mocha.it(`${attrName} attribute binding - [attr.${attrName}]"`, function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("value")
+          )
+        );
+  
+        assert.strictEqual(expression.toString(), `[attr.${attrName}]="value"`);
+      });
+  
+      mocha.it(`${attrName} attribute - ${attrName}"`, function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createStringLiteral("value")
+          )
+        );
+  
+        assert.strictEqual(expression.toString(), `${attrName}="value"`);
+      });
+    })
+    
     mocha.it("JsxSelfClosingElement with attributes", function () {
       const expression = generator.createJsxSelfClosingElement(
         generator.createIdentifier("div"),
