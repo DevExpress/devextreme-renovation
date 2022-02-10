@@ -10,6 +10,7 @@ import {
   getExpression,
   getMember,
   getProps,
+  Heritable,
   Identifier,
   isFunction,
   JsxOpeningElement as BaseJsxOpeningElement,
@@ -342,6 +343,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return super.attributesString(options);
   }
 
+  addTemplateComponents(options: toStringOptions, components: Heritable[]): void {
+    const { templateComponents } = options;
+    if (templateComponents) {
+      components.forEach((component) => {
+        if (templateComponents.indexOf(component) === -1) {
+          templateComponents.push(component);
+        }
+      });
+    }
+  }
+
   compileTemplate(templateProperty: Property, options: toStringOptions) {
     const contextExpr = processComponentContext(options?.newComponentContext);
     const contextElements = this.attributes
@@ -387,9 +399,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (!options.templateComponents) {
           throw new Error('options.templateComponents should be initialized by component');
         }
-        if (options.templateComponents.indexOf(initializerComponent) === -1) {
-          options.templateComponents.push(initializerComponent);
-        }
+        this.addTemplateComponents(options, [initializerComponent]);
       }
       const contextElementsStr = contextElements.map((el) => el.key.toString());
       options.defaultTemplates = options.defaultTemplates || {};
@@ -579,7 +589,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
-  componentToJsxElement(name: string, component: Component) {
+  componentToJsxElement(name: string, component: Component): JsxElement {
     const attributes = getProps(component.members).map((prop) => {
       let initializer: Expression = prop._name;
       if (prop.initializer) {
@@ -656,9 +666,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }, [] as { name: string; component: Component }[]);
 
       if (options) {
-        options.templateComponents = (options.templateComponents || []).concat(
-          components.map((c) => c.component),
-        );
+        this.addTemplateComponents(options, components.map((c) => c.component));
       }
 
       const functions = templates.reduce((acc, template) => {

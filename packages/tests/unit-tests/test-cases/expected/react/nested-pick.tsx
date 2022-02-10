@@ -12,9 +12,7 @@ export declare type BasePropsType = {
   children?: React.ReactNode;
 };
 export const BaseProps: BasePropsType = {
-  get __defaultNestedValues() {
-    return { nestedProp: {} };
-  },
+  __defaultNestedValues: Object.freeze({ nestedProp: {} }) as any,
 };
 export declare type SomePropsType = {
   nestedProp?: typeof NestedProps;
@@ -25,7 +23,7 @@ export declare type SomePropsType = {
   fieldComponent?: () => null;
 };
 export const SomeProps: SomePropsType = {
-  get __defaultNestedValues() {
-    return { nestedProp: BaseProps.nestedProp };
-  },
+  __defaultNestedValues: Object.freeze({
+    nestedProp: BaseProps.nestedProp,
+  }) as any,
 };

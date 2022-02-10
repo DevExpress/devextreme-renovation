@@ -21,33 +21,10 @@ function view({ getRowCells, props: { rows } }: WithNested) {
   );
 }
 
+import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
-function __collectChildren(children: React.ReactNode): Record<string, any> {
-  return (
-    React.Children.toArray(children).filter(
-      (child) => React.isValidElement(child) && typeof child.type !== "string"
-    ) as (React.ReactElement & { type: { propName: string } })[]
-  ).reduce((acc: Record<string, any>, child) => {
-    const {
-      children: childChildren,
-      __defaultNestedValues,
-      ...childProps
-    } = child.props;
-    const collectedChildren = __collectChildren(childChildren);
-    const childPropsValue = Object.keys(childProps).length
-      ? childProps
-      : __defaultNestedValues;
-    const allChild = { ...childPropsValue, ...collectedChildren };
-    return {
-      ...acc,
-      [child.type.propName]: acc[child.type.propName]
-        ? [...acc[child.type.propName], allChild]
-        : [allChild],
-    };
-  }, {});
-}
 import { GridRow, GridCell } from "./nested-default-props";
 export const Row: React.FunctionComponent<typeof GridRow> & {
   propName: string;
@@ -69,46 +46,42 @@ declare type RestProps = {
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
   __getNestedRows: typeof GridRow[];
-  nestedChildren: () => Record<string, any>;
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
 }
 
 export default function WithNested(props: typeof WithNestedInput & RestProps) {
-  const __getNestedRows = useCallback(
+  const cachedNested = useRef<any>(__collectChildren(props.children));
+
+  const __getNestedRows = useMemo(
     function __getNestedRows(): typeof GridRow[] {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.rows
         ? props.rows
-        : nested.rows
-        ? nested.rows
+        : cachedNested.current.rows
+        ? cachedNested.current.rows
         : props?.__defaultNestedValues?.rows;
     },
     [props.rows, props.children]
   );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
-  );
   const __getRowCells = useCallback(
     function __getRowCells(index: number): any {
-      const cells = __getNestedRows()?.[index].cells;
+      const cells = __getNestedRows?.[index].cells;
       return (
         cells
           ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
           .join("|") || []
       );
     },
-    [props.rows, props.children]
+    [__getNestedRows]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { __defaultNestedValues, children, rows, ...restProps } = {
         ...props,
-        rows: __getNestedRows(),
+        rows: __getNestedRows,
       };
       return restProps;
     },
@@ -116,9 +89,8 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
   );
 
   return view({
-    props: { ...props, rows: __getNestedRows() },
-    __getNestedRows: __getNestedRows(),
-    nestedChildren: __nestedChildren,
+    props: { ...props, rows: __getNestedRows },
+    __getNestedRows,
     getRowCells: __getRowCells,
     restAttributes: __restAttributes(),
   });

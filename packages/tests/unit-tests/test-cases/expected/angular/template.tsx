@@ -8,8 +8,10 @@ import {
   DxWidgetWithPropsModule,
 } from "./dx-widget-with-props";
 
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() someProp: boolean = false;
   @Input() headerTemplate: TemplateRef<any> | null = null;
@@ -21,7 +23,6 @@ export class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -113,6 +114,7 @@ import {
     ><ng-template #componentTemplateDefault let-value="value">
       <dx-widget-with-props
         #compRef
+        style="display: contents"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
       ></dx-widget-with-props>
       <ng-content
@@ -121,6 +123,7 @@ import {
     ><ng-template #publicComponentTemplateDefault let-value="value">
       <dx-public-widget-with-props
         #compRef
+        style="display: contents"
         [value]="
           value !== undefined ? value : PublicWidgetWithPropsDefaults.value
         "
@@ -162,16 +165,8 @@ export default class WidgetWithTemplate extends WidgetInput {
     }));
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
-  PublicWidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
+  PublicWidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [WidgetWithTemplate],

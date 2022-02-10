@@ -40,13 +40,11 @@ export declare type WidgetPropsType = {
   children?: React.ReactNode;
 };
 export const WidgetProps: WidgetPropsType = {
-  get __defaultNestedValues() {
-    return {
-      editing: EditingProps.__defaultNestedValues
-        ? EditingProps.__defaultNestedValues
-        : EditingProps,
-    };
-  },
+  __defaultNestedValues: Object.freeze({
+    editing: EditingProps.__defaultNestedValues
+      ? EditingProps.__defaultNestedValues
+      : EditingProps,
+  }) as any,
 };
 export declare type PickedPropsType = {
   columns?: Array<typeof GridColumnProps | string>;
@@ -55,7 +53,5 @@ export declare type PickedPropsType = {
   children?: React.ReactNode;
 };
 export const PickedProps: PickedPropsType = {
-  get __defaultNestedValues() {
-    return { editing: WidgetProps.editing };
-  },
+  __defaultNestedValues: Object.freeze({ editing: WidgetProps.editing }) as any,
 };

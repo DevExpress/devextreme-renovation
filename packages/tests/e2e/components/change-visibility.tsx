@@ -42,7 +42,7 @@ class WidgetInput {}
 })
 export default class VisibilityChange extends JSXComponent(WidgetInput) {
   @InternalState() visible: boolean = false;
-  @Ref() element?: RefObject<HTMLDivElement>;
+  @Ref() element!: RefObject<HTMLDivElement>;
 
   @Effect()
   elementClick() {
@@ -50,10 +50,10 @@ export default class VisibilityChange extends JSXComponent(WidgetInput) {
       this.visible = false;
     };
     if (this.visible) {
-      this.element?.current?.addEventListener("click", handler);
+      this.element.current?.addEventListener("click", handler);
     }
 
-    return () => this.element?.current?.removeEventListener("click", handler);
+    return () => this.element.current?.removeEventListener("click", handler);
   }
 
   clickHandler() {

@@ -367,8 +367,11 @@ export class AngularComponent extends Component {
           ],
           [],
           new Identifier(`${m.name}__Ref__`),
-          m.questionOrExclamationToken,
+          '!',
           m.type,
+          undefined,
+          false,
+          m,
         ),
       ),
     );
@@ -391,6 +394,7 @@ export class AngularComponent extends Component {
         .filter((m) => m.isForwardRef || m.isForwardRefProp)
         .map((m) => {
           const property = m as Property;
+          const forwardRefPropertyName = `this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''}`;
           const type = new SimpleTypeExpression(`ElementRef<${m.type}>`);
           const isOptional = property.questionOrExclamationToken === SyntaxKind.QuestionToken;
           const questionDotTokenIfNeed = isOptional
@@ -420,8 +424,12 @@ export class AngularComponent extends Component {
                 new SimpleExpression(
                   `return (function(this: ${this.name}, ${parameter}): ${returnType}{
                     if(arguments.length){
-                      this.${m.name}${m.isForwardRefProp ? '__Ref__' : ''} = ref${!isOptional ? '!' : ''};
-                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(ref)` : ''}
+                      if(ref) {
+                        ${forwardRefPropertyName} = ref;
+                      } else {
+                        ${forwardRefPropertyName} = new UndefinedNativeElementRef();
+                      }
+                      ${m.isForwardRefProp ? `this.${m.name}${questionDotTokenIfNeed}(${forwardRefPropertyName})` : ''}
                     }
                   return this.${m.name}${m.isForwardRefProp ? `${questionDotTokenIfNeed}()` : ''}
                 }).bind(this)`,
@@ -603,8 +611,13 @@ export class AngularComponent extends Component {
 
   compileDefaultPropsImport(imports: string[]): void {
     const propsWithDefault = this.getPropsWithDefault();
-    if (propsWithDefault.length) {
-      imports.push("import {updateUndefinedFromDefaults, DefaultEntries} from '@devextreme/runtime/angular'");
+    const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
+    const runTimeImports = [
+      ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
+      ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
     }
   }
 
@@ -935,7 +948,7 @@ export class AngularComponent extends Component {
               (p) => p.name === `_${name}`,
             ) as SetAccessor;
             if (setter) {
-              const expression = `this.${scheduledApplyAttributes} = this`;
+              const expression = `this.${scheduledApplyAttributes} = true`;
               if (
                 !setter.body?.statements.some(
                   (expr) => expr.toString() === expression,
@@ -1134,15 +1147,29 @@ export class AngularComponent extends Component {
     return '';
   }
 
-  compileBindEvents(constructorStatements: string[]) {
+  compileBindEvents(constructorStatements: string[], options: toStringOptions): string {
     const events = this.members.filter((m) => m.isEvent);
 
     return events
       .map((e) => {
+        const twoWayMember = this.members.find((m) => m.isState && e.name === `${m.name}Change`);
+        const resetGetterStatement = (name: string) => `this.__getterCache["${name}"] = undefined`;
+
+        let resetStatements: string[] = [];
+        if (twoWayMember) {
+          const dependentGetters = this.members.filter(
+            (m) => m instanceof GetAccessor
+            && m.isMemorized(options)
+            && m.getDependency(options).includes(twoWayMember),
+          );
+          resetStatements = dependentGetters.map((g) => resetGetterStatement(g._name.toString()));
+        }
+
         constructorStatements.push(
           `this._${e.name}=(e:any) => {
             this.${e.name}.emit(e);
-            ${this.members.some((m) => m.isState && e.name === `${m.name}Change`) ? 'this._detectChanges();' : ''
+            ${resetStatements.join(';\n')}
+            ${twoWayMember ? 'this._detectChanges();' : ''
 }
           }`,
         );
@@ -1193,7 +1220,7 @@ export class AngularComponent extends Component {
     let providers: string[] = [];
 
     const contextProperties = this.members.filter(
-      (m) => m.isConsumer || m.isProvider,
+      (m) => m.isProvider,
     );
 
     if (contextProperties.length) {
@@ -1691,7 +1718,7 @@ export class AngularComponent extends Component {
     ngAfterViewCheckedStatements,
   )}
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
-            ${this.compileBindEvents(constructorStatements)}
+            ${this.compileBindEvents(constructorStatements, { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword })}
             @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
             ${this.compileLifeCycle(
     'constructor',

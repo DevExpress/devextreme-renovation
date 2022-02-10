@@ -50,18 +50,23 @@ import StylesWidget from "./styles";
 import ButtonWithInternalState from "./internal-state-change-on-effect";
 import GetterCache from "./getter-cache/getter-cache-parent";
 import UndefPropParent from "./undefined-prop-parent";
+import CachedGetterWithTwoWay from './getter-cached-with-two-way';
+import DefaultTemplateValueWithMap from './default-template/default-template-map';
 function view(model: App) {
   return (
     <div>
       <SimpleComponent width={25} height={25}></SimpleComponent>
       <PickPropsComponent />
       <ButtonComponent id="button-1" onClick={model.onButtonClick}>
-        {"DefaultSlot"}
+      DefaultSlot
       </ButtonComponent>
       <div id="button-1-click-counter">{model.clickCount}</div>
       <div>
         <ButtonComponent />
       </div>
+      <ButtonComponent id="empty-button-conditianal-children">
+        {false&&<div>Not visible text</div>}
+      </ButtonComponent>
       <ButtonWithState
         id="button-2"
         pressedChange={model.onButtonWithStatePressedChange}
@@ -173,6 +178,8 @@ function view(model: App) {
         twoWayProp={model.undefinedProps.twoWayProp} />
         <ButtonComponent id="undefinedPropsButton" onClick={model.changeUndefProps}>Change Undef Props</ButtonComponent>
       </div>
+      <CachedGetterWithTwoWay />
+      <DefaultTemplateValueWithMap />
     </div>
   );
 }

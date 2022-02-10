@@ -1,5 +1,7 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() height: number = 10;
   @Input() selected: boolean = false;
@@ -7,7 +9,6 @@ class WidgetInput {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

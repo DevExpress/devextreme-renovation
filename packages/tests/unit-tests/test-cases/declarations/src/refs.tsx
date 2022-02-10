@@ -33,10 +33,10 @@ export default class Widget extends JSXComponent<
   WidgetProps,
   "requiredRefProp" | "requiredForwardRefProp"
 >(WidgetProps) {
-  @Ref() divRef?: RefObject<HTMLDivElement>;
+  @Ref() divRef!: RefObject<HTMLDivElement>;
 
-  @Ref() ref?: RefObject<HTMLDivElement>;
-  @ForwardRef() forwardRef?: RefObject<HTMLDivElement>;
+  @Ref() ref!: RefObject<HTMLDivElement>;
+  @ForwardRef() forwardRef!: RefObject<HTMLDivElement>;
   @Ref() existingRef!: RefObject<HTMLDivElement>;
   @ForwardRef() existingForwardRef!: RefObject<HTMLDivElement>;
 
@@ -62,9 +62,10 @@ export default class Widget extends JSXComponent<
       this.props.forwardRefProp.current = this.divRef!.current;
     }
 
+    /* This scenario doesn't supported @Ref can be initialized only from JSX
     if (this.ref && !this.ref.current) {
       this.ref.current = this.divRef!.current;
-    }
+    }*/
   }
 
   readRefs() {

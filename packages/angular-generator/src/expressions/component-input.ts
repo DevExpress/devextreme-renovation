@@ -52,12 +52,23 @@ export class ComponentInput extends BaseComponentInput {
       `${compileCoreImports(
         this.members.filter((m) => !m.inherited),
         this.context,
-        ['Injectable'],
+        ['Component'],
       )}`,
     ];
     const missedImports = this.getImports(this.context);
+    const defaultImport: string[] = [];
+    this.compileDefaultPropsImport(defaultImport);
+    return [...imports, ...missedImports.map((i) => i.toString()), ...defaultImport].join(';\n');
+  }
 
-    return [...imports, ...missedImports.map((i) => i.toString())].join(';\n');
+  compileDefaultPropsImport(imports: string[]): void {
+    const hasSlotProperty = this.members.some((m) => m.isSlot);
+    const runTimeImports = [
+      ...(hasSlotProperty ? ['isSlotEmpty'] : []),
+    ];
+    if (runTimeImports.length) {
+      imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
+    }
   }
 
   processNestedProperty(property: Property) {
@@ -201,14 +212,16 @@ export class ComponentInput extends BaseComponentInput {
 
     return `
         ${this.compileImports()}
-        @Injectable()
+        @Component({
+          template: ''
+        })
         ${this.modifiers.join(' ')} class ${
   this.name
 } ${this.heritageClauses.map((h) => h.toString()).join(' ')} {
             ${membersWithNestedReplaced
     .filter(
       (p) => (p instanceof Property || SetAccessor || GetAccessor)
-                  && !p.inherited,
+            && !p.inherited,
     )
     .map((m) => m.toString())
     .filter((m) => m)

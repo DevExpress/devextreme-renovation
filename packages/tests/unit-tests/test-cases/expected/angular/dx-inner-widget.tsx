@@ -1,5 +1,7 @@
-import { Injectable, Input, Output, EventEmitter } from "@angular/core";
-@Injectable()
+import { Component, Input, Output, EventEmitter } from "@angular/core";
+@Component({
+  template: "",
+})
 export class InnerWidgetProps {
   @Input() selected?: boolean;
   @Input() value: number = 14;
@@ -8,7 +10,6 @@ export class InnerWidgetProps {
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

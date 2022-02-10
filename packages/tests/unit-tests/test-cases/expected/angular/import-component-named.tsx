@@ -1,12 +1,13 @@
 import { Widget, DxWidgetModule } from "./export-named";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class ChildInput {
   @Input() height: number = 10;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

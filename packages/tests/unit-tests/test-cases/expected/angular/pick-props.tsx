@@ -1,15 +1,16 @@
 import Props from "./component-bindings-only";
 import { Options } from "./types.d";
-import { Injectable, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { AdditionalOptions } from "./types.d";
-@Injectable()
+@Component({
+  template: "",
+})
 class WidgetProps {
   @Input() data?: Options = new Props().data;
   @Input() info?: AdditionalOptions = new Props().info;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

@@ -1,11 +1,12 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class WidgetInput {
   @Input() prop: any = {};
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,6 +21,7 @@ import { CommonModule } from "@angular/common";
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
+  UndefinedNativeElementRef,
 } from "@devextreme/runtime/angular";
 
 @Component({
@@ -33,8 +35,18 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
-  @ViewChild("hostLink", { static: false }) host?: ElementRef<HTMLDivElement>;
-  @ViewChild("i1Link", { static: false }) i1!: ElementRef<HTMLInputElement>;
+  @ViewChild("hostLink", { static: false }) __host!: ElementRef<HTMLDivElement>;
+  get host(): ElementRef<HTMLDivElement> {
+    return this.__host
+      ? this.__host
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
+  @ViewChild("i1Link", { static: false }) __i1!: ElementRef<HTMLInputElement>;
+  get i1(): ElementRef<HTMLInputElement> {
+    return this.__i1
+      ? this.__i1
+      : new UndefinedNativeElementRef<HTMLInputElement>();
+  }
   get __attr1(): any {
     return {};
   }

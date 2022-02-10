@@ -21,6 +21,7 @@
     "lint": "eslint --ext .tsx,.ts .",
     "lint:fix": "eslint --fix --ext .tsx,.ts .",
     "test": "cd packages/tests && npm run test",
+    "test:runtime": "cd packages/runtime && npm run test",
     "test:with-reporters": "cd packages/tests && npm run test:with-reporters",
     "test:with-replace": "cd packages/tests && npm run test:with-replace",
     "test:testcafe": "cd packages/tests && npm run test:testcafe",
@@ -30,7 +31,8 @@
     "publish:patch": "npm run prepare-release-branch && lerna version patch --exact --force-publish",
     "publish:minor": "npm run prepare-release-branch && lerna version minor --exact --force-publish",
     "publish:major": "npm run prepare-release-branch && lerna version major --exact --force-publish",
-    "prepare-release-branch": "git checkout -b release && git push origin release"
+    "prepare-release-branch": "git checkout -b release && git push origin release",
+    "add-generators": "npm run clear && gulp add-generators --path"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.4.1",
@@ -47,6 +49,9 @@
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-spellcheck": "0.0.14",
-    "lerna": "^4.0.0"
+    "gulp": "^4.0.2",
+    "gulp-run": "^1.7.1",
+    "lerna": "^4.0.0",
+    "minimist": "^1.2.5"
   }
 }

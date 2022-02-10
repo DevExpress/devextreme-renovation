@@ -1,12 +1,13 @@
 import BaseWidget, { DxWidgetModule } from "./method";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetWithApiRefInput {
   @Input() prop1?: number;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -28,7 +29,7 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class WidgetWithApiRef extends WidgetWithApiRefInput {
-  @ViewChild("baseRef", { static: false }) baseRef?: BaseWidget;
+  @ViewChild("baseRef", { static: false }) baseRef!: BaseWidget;
   getSomething(): string {
     return `${this.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
   }

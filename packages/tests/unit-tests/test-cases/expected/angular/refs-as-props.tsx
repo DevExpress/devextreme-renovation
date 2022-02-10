@@ -1,14 +1,15 @@
 import WidgetWithRefProp, {
   DxWidgetWithRefPropModule,
 } from "./dx-widget-with-ref-prop";
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class WidgetInput {
   @Input() nullableRef?: HTMLDivElement;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -20,6 +21,7 @@ import {
   ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 
 @Component({
   selector: "dx-widget",
@@ -40,7 +42,12 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends WidgetInput {
   @ViewChild("divRefLink", { static: false })
-  divRef!: ElementRef<HTMLDivElement>;
+  __divRef!: ElementRef<HTMLDivElement>;
+  get divRef(): ElementRef<HTMLDivElement> {
+    return this.__divRef
+      ? this.__divRef
+      : new UndefinedNativeElementRef<HTMLDivElement>();
+  }
   __getDirectly(): any {
     const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
     const nullableRefOuter = this.nullableRef?.outerHTML ?? "";

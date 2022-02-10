@@ -30,30 +30,18 @@ export const WidgetProps: WidgetPropsType = {
   str: "",
   num: 1,
   bool: true,
-  get arr() {
-    return [];
-  },
-  get strArr() {
-    return ["a", "b"];
-  },
-  get obj() {
-    return {};
-  },
-  get date() {
-    return new Date();
-  },
+  arr: Object.freeze([]) as any,
+  strArr: Object.freeze(["a", "b"]) as any,
+  obj: Object.freeze({}) as any,
+  date: Object.freeze(new Date()) as any,
   func: () => {},
   get symbol() {
     return Symbol("x");
   },
   externalEnum: "data",
   externalUnion: 0,
-  get externalObj() {
-    return { number: 0, text: "text" };
-  },
-  get externalArray() {
-    return ["s1", "s2"];
-  },
+  externalObj: Object.freeze({ number: 0, text: "text" }) as any,
+  externalArray: Object.freeze(["s1", "s2"]) as any,
   externalString: "someValue",
 };
 import * as React from "react";

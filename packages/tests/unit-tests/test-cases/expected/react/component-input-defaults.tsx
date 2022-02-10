@@ -21,9 +21,7 @@ export const BaseProps: BasePropsType = {
   get width() {
     return isMaterial() ? 20 : 10;
   },
-  get __defaultNestedValues() {
-    return { baseNested: { text: "3" } };
-  },
+  __defaultNestedValues: Object.freeze({ baseNested: { text: "3" } }) as any,
 };
 export declare type TextsPropsType = {
   text?: string;
@@ -59,17 +57,13 @@ export const WidgetProps: WidgetPropsType = Object.create(
       get text() {
         return format("text");
       },
-      get texts1() {
-        return { text: format("text") };
-      },
+      texts1: Object.freeze({ text: format("text") }) as any,
       template: () => <div></div>,
-      get __defaultNestedValues() {
-        return {
-          texts2: { text: format("text") },
-          texts3: TextsProps,
-          baseNested: BaseProps?.__defaultNestedValues.baseNested,
-        };
-      },
+      __defaultNestedValues: Object.freeze({
+        texts2: { text: format("text") },
+        texts3: TextsProps,
+        baseNested: BaseProps?.__defaultNestedValues.baseNested,
+      }) as any,
     })
   )
 );
@@ -96,42 +90,17 @@ const WidgetPropsType: WidgetPropsTypeType = {
   height: WidgetProps.height,
   width: WidgetProps.width,
   expressionDefault: ExpressionProps.expressionDefault,
-  get __defaultNestedValues() {
-    return {
-      texts2: WidgetProps.texts2,
-      texts3: WidgetProps.texts3,
-      baseNested: WidgetProps.baseNested,
-    };
-  },
+  __defaultNestedValues: Object.freeze({
+    texts2: WidgetProps.texts2,
+    texts3: WidgetProps.texts3,
+    baseNested: WidgetProps.baseNested,
+  }) as any,
 };
+import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
 import * as React from "react";
-import { useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { getTemplate } from "@devextreme/runtime/react";
 
-function __collectChildren(children: React.ReactNode): Record<string, any> {
-  return (
-    React.Children.toArray(children).filter(
-      (child) => React.isValidElement(child) && typeof child.type !== "string"
-    ) as (React.ReactElement & { type: { propName: string } })[]
-  ).reduce((acc: Record<string, any>, child) => {
-    const {
-      children: childChildren,
-      __defaultNestedValues,
-      ...childProps
-    } = child.props;
-    const collectedChildren = __collectChildren(childChildren);
-    const childPropsValue = Object.keys(childProps).length
-      ? childProps
-      : __defaultNestedValues;
-    const allChild = { ...childPropsValue, ...collectedChildren };
-    return {
-      ...acc,
-      [child.type.propName]: acc[child.type.propName]
-        ? [...acc[child.type.propName], allChild]
-        : [allChild],
-    };
-  }, {});
-}
 export const Texts2: React.FunctionComponent<typeof TextsProps> & {
   propName: string;
 } = () => null;
@@ -149,50 +118,50 @@ interface Widget {
   __getNestedBaseNested: typeof TextsProps | string;
   __getNestedTexts3: typeof TextsProps;
   __getNestedTexts2: typeof TextsProps;
-  nestedChildren: () => Record<string, any>;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetPropsType & RestProps) {
-  const __getNestedBaseNested = useCallback(
+  const cachedNested = useRef<any>(__collectChildren(props.children));
+
+  const __getNestedBaseNested = useMemo(
     function __getNestedBaseNested(): typeof TextsProps | string {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.baseNested
         ? props.baseNested
-        : nested.baseNested
-        ? nested.baseNested?.[0]
+        : cachedNested.current.baseNested
+        ? cachedNested.current.baseNested?.[0]
         : props?.__defaultNestedValues?.baseNested;
     },
     [props.baseNested, props.children]
   );
-  const __getNestedTexts3 = useCallback(
+  const __getNestedTexts3 = useMemo(
     function __getNestedTexts3(): typeof TextsProps {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.texts3
         ? props.texts3
-        : nested.texts3
-        ? nested.texts3?.[0]
+        : cachedNested.current.texts3
+        ? cachedNested.current.texts3?.[0]
         : props?.__defaultNestedValues?.texts3;
     },
     [props.texts3, props.children]
   );
-  const __getNestedTexts2 = useCallback(
+  const __getNestedTexts2 = useMemo(
     function __getNestedTexts2(): typeof TextsProps {
-      const nested = __nestedChildren();
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
       return props.texts2
         ? props.texts2
-        : nested.texts2
-        ? nested.texts2?.[0]
+        : cachedNested.current.texts2
+        ? cachedNested.current.texts2?.[0]
         : props?.__defaultNestedValues?.texts2;
     },
     [props.texts2, props.children]
-  );
-  const __nestedChildren = useCallback(
-    function __nestedChildren(): Record<string, any> {
-      const { children } = props;
-      return __collectChildren(children);
-    },
-    [props.children]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
@@ -214,9 +183,9 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
         ...restProps
       } = {
         ...props,
-        texts2: __getNestedTexts2(),
-        texts3: __getNestedTexts3(),
-        baseNested: __getNestedBaseNested(),
+        texts2: __getNestedTexts2,
+        texts3: __getNestedTexts3,
+        baseNested: __getNestedBaseNested,
       };
       return restProps;
     },
@@ -227,14 +196,13 @@ export default function Widget(props: typeof WidgetPropsType & RestProps) {
     props: {
       ...props,
       template: getTemplate(props.template, props.render, props.component),
-      texts2: __getNestedTexts2(),
-      texts3: __getNestedTexts3(),
-      baseNested: __getNestedBaseNested(),
+      texts2: __getNestedTexts2,
+      texts3: __getNestedTexts3,
+      baseNested: __getNestedBaseNested,
     },
-    __getNestedBaseNested: __getNestedBaseNested(),
-    __getNestedTexts3: __getNestedTexts3(),
-    __getNestedTexts2: __getNestedTexts2(),
-    nestedChildren: __nestedChildren,
+    __getNestedBaseNested,
+    __getNestedTexts3,
+    __getNestedTexts2,
     restAttributes: __restAttributes(),
   });
 }

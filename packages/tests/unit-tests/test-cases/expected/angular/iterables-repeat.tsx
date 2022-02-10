@@ -1,11 +1,12 @@
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 export class ListInput {
   @Input() items?: any[] = [];
   @Input() keyExpr?: string = "value";
 }
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

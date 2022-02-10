@@ -1,19 +1,19 @@
 export const COMPONENT_INPUT_CLASS = "c3";
-import { Injectable, Input, ViewChild, ElementRef } from "@angular/core";
-@Injectable()
+import { Component, Input, ViewChild, ElementRef } from "@angular/core";
+import { isSlotEmpty } from "@devextreme/runtime/angular";
+@Component({
+  template: "",
+})
 export class WidgetProps {
   @Input() height?: number = 10;
   @Input() width?: number = 10;
   __slotChildren?: ElementRef<HTMLDivElement>;
-
-  get children() {
-    const childNodes = this.__slotChildren?.nativeElement?.childNodes;
-    return childNodes && childNodes.length > 2;
+  get children(): boolean {
+    return !isSlotEmpty(this.__slotChildren);
   }
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,

@@ -7,7 +7,6 @@ import {
   FunctionTypeNode,
   Identifier,
   Property as BaseProperty,
-  SimpleExpression,
   SyntaxKind,
   TypeExpression,
 } from '@devextreme-generator/core';
@@ -30,6 +29,8 @@ function parseEventType(type: TypeExpression | string) {
 }
 
 export class Property extends BaseProperty {
+  readonly forwardRefProps?: Property;
+
   get name() {
     return this._name.toString();
   }
@@ -42,14 +43,12 @@ export class Property extends BaseProperty {
     type?: TypeExpression | string,
     initializer?: Expression,
     inherited = false,
+    forwardRefProps?: Property,
   ) {
     if (decorators.find((d) => d.name === Decorators.Template)) {
       questionOrExclamationToken = questionOrExclamationToken === SyntaxKind.ExclamationToken
         ? ''
         : questionOrExclamationToken;
-    }
-    if (!initializer && decorators.find((d) => d.name === Decorators.Event)) {
-      initializer = new SimpleExpression('(e: any) => void 0');
     }
     super(
       decorators,
@@ -60,6 +59,7 @@ export class Property extends BaseProperty {
       initializer,
       inherited,
     );
+    this.forwardRefProps = forwardRefProps;
   }
 
   toString(options?: toStringOptions) {
@@ -73,15 +73,22 @@ export class Property extends BaseProperty {
       )} = new EventEmitter();`;
     }
     if (this.isRef) {
-      const decoratorString = !options?.forwardRefs?.some(
-        (forwardRef) => `${forwardRef.name}__Ref__` === this.name,
-      )
-        && options?.members
-          .filter((m) => m.isForwardRefProp || m.isForwardRef)
-          .some((forwardRef) => `${forwardRef.name}__Ref__` === this.name)
-        ? ''
-        : `@ViewChild("${this.name}${this.name.endsWith('__Ref__') ? '' : 'Link'}", {static: false}) `;
-      return `${decoratorString}${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>`;
+      const forwardRefProps = this.forwardRefProps as Property;
+      if (forwardRefProps) {
+        const forwardRefUsedInView = options
+          ?.forwardRefs
+          ?.some((forwardRef) => forwardRef.name === forwardRefProps.name);
+        if (forwardRefUsedInView) {
+          return `@ViewChild("${this.name}", {static: false})${this.name}${forwardRefProps.questionOrExclamationToken}:ElementRef<${this.type}>;`;
+        }
+        return `${this.name}${forwardRefProps.questionOrExclamationToken}:ElementRef<${this.type}>;`;
+      }
+      if (this.isRefProp) {
+        return `${this.name}${this.questionOrExclamationToken}:ElementRef<${this.type}>;`;
+      }
+      const decoratorString = `@ViewChild("${this.name}Link", {static: false}) `;
+      return `${decoratorString}__${this.name}!:ElementRef<${this.type}>;
+            get ${this.name}():ElementRef<${this.type}> { return (this.__${this.name}) ? this.__${this.name} : (new UndefinedNativeElementRef<${this.type}>()); }`;
     }
     if (this._hasDecorator(Decorators.ApiRef)) {
       return `@ViewChild("${this.name}", {static: false}) ${this.name}${this.questionOrExclamationToken}:${this.type}`;
@@ -89,10 +96,8 @@ export class Property extends BaseProperty {
     if (this.isSlot) {
       const selector = `slot${capitalizeFirstLetter(this.name)}`;
       return `__${selector}?: ElementRef<HTMLDivElement>;
-
-            get ${this.name}(){
-                const childNodes =  this.__${selector}?.nativeElement?.childNodes;
-                return childNodes && childNodes.length > 2;
+            get ${this.name}():boolean {
+              return !isSlotEmpty(this.__${selector});
             }`;
     }
     if (this.isNestedComp) {
@@ -105,24 +110,20 @@ export class Property extends BaseProperty {
 
     if (this.isForwardRefProp) {
       const type = `ElementRef<${this.type}>`;
-      const returnType = `${type}${
-        this.questionOrExclamationToken === SyntaxKind.QuestionToken
-          ? '|undefined'
-          : ''
+      const returnType = `${type}${this.questionOrExclamationToken === SyntaxKind.QuestionToken
+        ? '|undefined'
+        : ''
       }`;
       return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(' ')} ${this.name}${
-        this.questionOrExclamationToken
+        .join(' ')} ${this.name}${this.questionOrExclamationToken
       }:(ref?:${type})=>${returnType}`;
     }
 
     if (this.isForwardRef) {
       return `${this.modifiers.join(' ')} ${this.decorators
         .map((d) => d.toString())
-        .join(' ')} ${this.name}${this.questionOrExclamationToken}:ElementRef<${
-        this.type
-      }>`;
+        .join(' ')} ${this.name}:ElementRef<${this.type}> = new UndefinedNativeElementRef<${this.type}>();`;
     }
 
     if (this.isTemplate) {

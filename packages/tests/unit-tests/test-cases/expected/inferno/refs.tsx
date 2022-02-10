@@ -66,9 +66,6 @@ export default class Widget extends BaseInfernoComponent<any> {
     if (this.props.forwardRefProp && !this.props.forwardRefProp.current) {
       this.props.forwardRefProp.current = this.divRef!.current;
     }
-    if (this.ref && !this.ref.current) {
-      this.ref.current = this.divRef!.current;
-    }
   }
   readRefs(): any {
     const outer_1 = this.props.refProp?.current?.outerHTML;

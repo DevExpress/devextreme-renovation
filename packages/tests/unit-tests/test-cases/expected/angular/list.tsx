@@ -4,15 +4,16 @@ import {
 } from "./dx-widget-with-props";
 const noop = (e: any) => {};
 
-import { Injectable, Input, TemplateRef } from "@angular/core";
-@Injectable()
+import { Component, Input, TemplateRef } from "@angular/core";
+@Component({
+  template: "",
+})
 export class ListInput {
   @Input() items?: Array<{ key: number; text: string }>;
   @Input() ListItem: TemplateRef<any> | null = null;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -61,12 +62,9 @@ import { CommonModule } from "@angular/common";
     ><ng-template #ListItemDefault let-value="value" let-onClick="onClick">
       <dx-widget-with-props
         #compRef
+        style="display: contents"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-        (onClick)="
-          onClick !== undefined
-            ? onClick($event)
-            : WidgetWithPropsDefaults.onClick($event)
-        "
+        (onClick)="onClick($event)"
       ></dx-widget-with-props>
       <ng-content
         *ngTemplateOutlet="compRef?.widgetTemplate"
@@ -75,6 +73,7 @@ import { CommonModule } from "@angular/common";
 })
 export default class List extends ListInput {
   global_noop = noop;
+
   get __restAttributes(): any {
     return {};
   }
@@ -108,11 +107,7 @@ export default class List extends ListInput {
     super();
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [List],

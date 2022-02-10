@@ -1,4 +1,5 @@
 import {
+  Injectable,
   EventEmitter as ContextEmitter,
   SkipSelf,
   Optional,
@@ -12,6 +13,20 @@ class P1Context {
     return this._value;
   }
   set value(value: number) {
+    if (this._value !== value) {
+      this._value = value;
+      this.change.emit(value);
+    }
+  }
+}
+@Injectable()
+class ContextForConsumer {
+  _value: any = null;
+  change: ContextEmitter<any> = new ContextEmitter();
+  get value(): any {
+    return this._value;
+  }
+  set value(value: any) {
     if (this._value !== value) {
       this._value = value;
       this.change.emit(value);
@@ -33,14 +48,15 @@ class GetterContext {
   }
 }
 
-import { Injectable, Input } from "@angular/core";
-@Injectable()
+import { Component, Input } from "@angular/core";
+@Component({
+  template: "",
+})
 class Props {
   @Input() p1: number = 10;
 }
 
 import {
-  Component,
   NgModule,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -66,6 +82,7 @@ import {
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
   contextConsumerConsumer: number;
+  consumerConsumer: any;
   get __sum(): any {
     return this.provider.value + this.contextConsumerConsumer;
   }
@@ -118,6 +135,7 @@ export default class Widget extends Props {
     private viewContainerRef: ViewContainerRef,
     @SkipSelf() @Optional() private contextConsumer: P1Context,
     @Host() private provider: P1Context,
+    @SkipSelf() @Optional() private consumer: ContextForConsumer,
     @Host() private contextProviderProvider: GetterContext
   ) {
     super();
@@ -142,6 +160,20 @@ export default class Widget extends Props {
     this.contextConsumerConsumer = this.contextConsumer.value;
 
     this.provider.value = 10;
+    if (!consumer) {
+      this.consumer = new ContextForConsumer();
+    } else {
+      const changeHandler = (value: any) => {
+        this.consumerConsumer = value;
+
+        this._detectChanges();
+      };
+      const subscription = consumer.change.subscribe(changeHandler);
+      this._destroyContext.push(() => {
+        subscription.unsubscribe();
+      });
+    }
+    this.consumerConsumer = this.consumer.value;
   }
 }
 @NgModule({
