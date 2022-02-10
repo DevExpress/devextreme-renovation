@@ -154,17 +154,17 @@ import {
 @Directive({
   selector: "dxo-base-nested",
 })
-class DxWidgetBaseNested extends TextsProps {}
+export class DxWidgetBaseNested extends TextsProps {}
 
 @Directive({
   selector: "dxo-texts3",
 })
-class DxWidgetTexts3 extends TextsProps {}
+export class DxWidgetTexts3 extends TextsProps {}
 
 @Directive({
   selector: "dxo-texts2",
 })
-class DxWidgetTexts2 extends TextsProps {}
+export class DxWidgetTexts2 extends TextsProps {}
 
 @Component({
   selector: "dx-widget",

@@ -71,12 +71,12 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
 @Directive({
   selector: "dxi-another-nested-prop-init",
 })
-class DxUndefWidgetAnotherNestedPropInit extends FakeNested {}
+export class DxUndefWidgetAnotherNestedPropInit extends FakeNested {}
 
 @Directive({
   selector: "dxi-nested-prop",
 })
-class DxUndefWidgetNestedProp extends FakeNested {}
+export class DxUndefWidgetNestedProp extends FakeNested {}
 
 @Component({
   selector: "dx-undef-widget",

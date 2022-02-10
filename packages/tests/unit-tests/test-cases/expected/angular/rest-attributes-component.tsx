@@ -28,13 +28,13 @@ import { getAttributes } from "@devextreme/runtime/angular";
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-widget-with-props
-      #widgetwithprops1
+      #widgetwithprops4
       style="display: contents"
       #_auto_ref_0
       [_restAttributes]="__restAttributes"
     ></dx-widget-with-props
     ><ng-content
-      *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
+      *ngTemplateOutlet="widgetwithprops4?.widgetTemplate"
     ></ng-content
   ></ng-template>`,
 })
