@@ -16,6 +16,10 @@ import {
 import { toStringOptions } from '../../types';
 import { JsxExpression } from './jsx-expression';
 
+function isAriaAttribute(name: string): boolean {
+  return name.startsWith('aria-');
+}
+
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
     super(
@@ -80,7 +84,7 @@ export class JsxAttribute extends BaseJsxAttribute {
         return 'ngStyle';
       }
 
-      if (name.startsWith('aria-')) {
+      if (isAriaAttribute(name)) {
         return `attr.${name}`;
       }
 
