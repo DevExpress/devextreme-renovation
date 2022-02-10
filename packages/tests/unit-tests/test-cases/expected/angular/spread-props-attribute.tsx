@@ -39,14 +39,14 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   outputs: ["valueChange"],
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
-      #innerwidget2
+      #innerwidget1
       style="display: contents"
       [value]="value"
       (valueChange)="_valueChange($event)"
       #_auto_ref_0
       [_restAttributes]="__restAttributes"
     ></dx-inner-widget
-    ><ng-content *ngTemplateOutlet="innerwidget2?.widgetTemplate"></ng-content
+    ><ng-content *ngTemplateOutlet="innerwidget1?.widgetTemplate"></ng-content
     ><div #_auto_ref_1></div
   ></ng-template>`,
 })

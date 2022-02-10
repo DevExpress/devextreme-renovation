@@ -28,7 +28,7 @@ import { CommonModule } from "@angular/common";
       [template]="CustomTemplate"
       [componentTemplate]="InnerWidget"
       [arrowTemplate]="__arrowTemplate__generated"
-      #widgetwithtemplate2
+      #widgetwithtemplate1
       style="display: contents"
       ><ng-template
         #InnerWidget
@@ -45,11 +45,11 @@ import { CommonModule } from "@angular/common";
               ? valueChange
               : InnerWidgetDefaults.valueChange)($event)
           "
-          #innerwidget3
+          #innerwidget1
           style="display: contents"
         ></dx-inner-widget
         ><ng-content
-          *ngTemplateOutlet="innerwidget3?.widgetTemplate"
+          *ngTemplateOutlet="innerwidget1?.widgetTemplate"
         ></ng-content></ng-template
       ><ng-template #CustomTemplate let-text="text" let-value="value"
         ><span>{{ text }}</span></ng-template
@@ -57,7 +57,7 @@ import { CommonModule } from "@angular/common";
         ><div>{{ name }}</div></ng-template
       ></dx-widget-with-template
     ><ng-content
-      *ngTemplateOutlet="widgetwithtemplate2?.widgetTemplate"
+      *ngTemplateOutlet="widgetwithtemplate1?.widgetTemplate"
     ></ng-content
   ></ng-template>`,
 })
