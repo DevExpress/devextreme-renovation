@@ -751,7 +751,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const result = this.attributes
       .filter((a) => a instanceof JsxSpreadAttribute && !this.isPropsSpreadAttribute(a, options))
       .map((a) => {
-        const ref = this.attributes.find(
+        const ref = this.attributes.slice().reverse().find(
           (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
         ) as JsxAttribute | undefined;
 
