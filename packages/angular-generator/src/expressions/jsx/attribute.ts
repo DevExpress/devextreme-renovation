@@ -80,7 +80,8 @@ export class JsxAttribute extends BaseJsxAttribute {
     const name = this.name.toString();
     if (name === 'style') {
       const component = options?.jsxComponent;
-      if (!component || component.props.every((p) => p.name !== 'style')) {
+      const isComponentWithoutStyleProp = component?.props.every((p) => p.name !== 'style');
+      if (!component || isComponentWithoutStyleProp) {
         if (options) {
           options.hasStyle = true;
         }
