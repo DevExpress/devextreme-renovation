@@ -21,12 +21,12 @@ import { GridRow, GridCell } from "./nested-default-props";
 @Directive({
   selector: "dxi-cell",
 })
-class DxWithNestedRowCell extends GridCell {}
+export class DxWithNestedRowCell extends GridCell {}
 
 @Directive({
   selector: "dxi-row",
 })
-class DxWithNestedRow extends GridRow {
+export class DxWithNestedRow extends GridRow {
   private __cells?: (DxWithNestedRowCell | string)[];
   @ContentChildren(DxWithNestedRowCell)
   cellsNested?: QueryList<DxWithNestedRowCell>;
