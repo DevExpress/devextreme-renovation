@@ -46,15 +46,13 @@ export class JsxAttribute extends BaseJsxAttribute {
       return this.getForwardRefValue(options);
     }
 
-    const result = this.initializer
+    return this.initializer
       .toString({
         members: [],
         disableTemplates: true,
         ...options,
       })
       .replace(/"/gi, "'");
-
-    return result;
   }
 
   compileRef(options?: toStringOptions) {
