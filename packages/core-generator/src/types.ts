@@ -29,7 +29,7 @@ export interface toStringOptions {
   componentInputs?: ComponentInput[];
   isComponent?: boolean;
   fromType?: boolean;
-  hasRestAttributes?: boolean;
+  mutableOptions?: { hasRestAttributes?: boolean };
 }
 
 export type VariableExpression = {

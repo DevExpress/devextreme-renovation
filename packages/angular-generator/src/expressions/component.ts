@@ -68,7 +68,7 @@ export function compileCoreImports(
         || d.name === Decorators.RefProp
         || d.name === Decorators.Nested
         || d.name === Decorators.ForwardRefProp,
-    )) || options?.hasRestAttributes
+    )) || options?.mutableOptions?.hasRestAttributes
   ) {
     imports.push('Input');
   }
@@ -582,7 +582,7 @@ export class AngularComponent extends Component {
     if (this.refs.length || this.apiRefs.length) {
       core.push('ViewChild');
     }
-    if (this.refs.length || options?.hasRestAttributes) {
+    if (this.refs.length || options?.mutableOptions?.hasRestAttributes) {
       core.push('ElementRef');
     }
 
@@ -615,7 +615,7 @@ export class AngularComponent extends Component {
     const propsWithDefault = this.getPropsWithDefault();
     const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
     const runTimeImports = [
-      ...(options?.hasRestAttributes ? ['getAttributes'] : []),
+      ...(options?.mutableOptions?.hasRestAttributes ? ['getAttributes'] : []),
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
       ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
     ];
@@ -920,6 +920,7 @@ export class AngularComponent extends Component {
       const options: toStringOptions = {
         members: this.members,
         newComponentContext: this.viewModel ? '_viewModel' : '',
+        mutableOptions: memberToStringOptions?.mutableOptions,
       };
       const expression = getTemplate(viewFunction, options);
       const allDependency: Dependency[] = [];
@@ -957,9 +958,6 @@ export class AngularComponent extends Component {
         });
 
         if (statements.length) {
-          if (options.hasRestAttributes && memberToStringOptions) {
-            memberToStringOptions.hasRestAttributes = true;
-          }
           const methodName = '__applyAttributes__';
           const scheduledApplyAttributes = 'scheduledApplyAttributes';
           ngAfterViewCheckedStatements.push(`if(this.${scheduledApplyAttributes}){
@@ -1337,7 +1335,7 @@ export class AngularComponent extends Component {
       }
     });
 
-    if (options?.hasRestAttributes) {
+    if (options?.mutableOptions?.hasRestAttributes) {
       constructorArguments.push('private _elementRef: ElementRef<HTMLElement>');
     }
 
@@ -1578,7 +1576,7 @@ export class AngularComponent extends Component {
   }
 
   compileRestAttributesProp(options: toStringOptions): string {
-    if (options.hasRestAttributes) {
+    if (options.mutableOptions?.hasRestAttributes) {
       const property = new Property(
         [new Decorator(new Call(
           new Identifier('OneWay'),
@@ -1647,6 +1645,7 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       templateComponents: [],
       isSVG: this.isSVGComponent,
+      mutableOptions: {},
     };
 
     const implementedInterfaces: string[] = [];
@@ -1719,7 +1718,7 @@ export class AngularComponent extends Component {
       newComponentContext: SyntaxKind.ThisKeyword,
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
-      hasRestAttributes: decoratorToStringOptions.hasRestAttributes,
+      mutableOptions: decoratorToStringOptions.mutableOptions,
     };
 
     const memberStatements = this.members
