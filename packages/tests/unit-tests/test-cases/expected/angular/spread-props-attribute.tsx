@@ -24,6 +24,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { getAttributes } from "@devextreme/runtime/angular";
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,
@@ -42,22 +43,31 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
       style="display: contents"
       [value]="value"
       (valueChange)="_valueChange($event)"
+      #_auto_ref_0
+      [_restAttributes]="__restAttributes"
     ></dx-inner-widget
     ><ng-content *ngTemplateOutlet="innerwidget2?.widgetTemplate"></ng-content
-    ><div #_auto_ref_0></div
+    ><div #_auto_ref_1></div
   ></ng-template>`,
 })
 export default class Widget
   extends WidgetInput
   implements ControlValueAccessor
 {
+  @Input() _restAttributes?: Record<string, unknown>;
   counter: number = 1;
   notUsedValue: number = 1;
   get __attributes(): any {
     return { visible: this.visible, value: this.counter };
   }
   get __restAttributes(): any {
-    return {};
+    const { visible, value, valueChange, ...restAttributes } = getAttributes(
+      this._elementRef
+    );
+    return {
+      ...restAttributes,
+      ...this._restAttributes,
+    };
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -67,14 +77,24 @@ export default class Widget
   }
   @ViewChild("_auto_ref_0", { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
+  @ViewChild("_auto_ref_1", { static: false })
+  _auto_ref_1?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    const _attr_0: { [name: string]: any } = (this.__attributes as any) || {};
+    const _attr_0: { [name: string]: any } = this.__restAttributes || {};
     const _ref_0 = this._auto_ref_0?.nativeElement;
     if (_ref_0) {
       for (let key in _attr_0) {
         _ref_0.setAttribute(key, _attr_0[key].toString());
+      }
+    }
+
+    const _attr_1: { [name: string]: any } = (this.__attributes as any) || {};
+    const _ref_1 = this._auto_ref_1?.nativeElement;
+    if (_ref_1) {
+      for (let key in _attr_1) {
+        _ref_1.setAttribute(key, _attr_1[key].toString());
       }
     }
   }
@@ -116,7 +136,8 @@ export default class Widget
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
     this._valueChange = (e: any) => {

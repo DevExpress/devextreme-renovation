@@ -46,9 +46,6 @@ export default class Child extends ChildInput {
   __getProps(): WidgetProps {
     return { height: this.height } as WidgetProps;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

@@ -47,9 +47,6 @@ export default class ModelWidget
   extends ModelWidgetInput
   implements ControlValueAccessor
 {
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -85,14 +82,17 @@ export default class ModelWidget
     super();
     this._baseStatePropChange = (e: any) => {
       this.baseStatePropChange.emit(e);
+
       this._detectChanges();
     };
     this._modelStatePropChange = (e: any) => {
       this.modelStatePropChange.emit(e);
+
       this._detectChanges();
     };
     this._valueChange = (e: any) => {
       this.valueChange.emit(e);
+
       this._detectChanges();
     };
   }

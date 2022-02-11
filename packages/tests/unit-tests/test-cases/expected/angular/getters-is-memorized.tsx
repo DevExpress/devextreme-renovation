@@ -88,9 +88,6 @@ class Widget extends WidgetProps {
       return new Date(this.currentDate);
     })());
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

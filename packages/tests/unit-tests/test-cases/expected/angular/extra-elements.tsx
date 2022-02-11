@@ -41,9 +41,6 @@ style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child
 })
 export class ExtraElement extends Props {
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

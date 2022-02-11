@@ -48,9 +48,6 @@ export default class RefOnChildrenParent extends Props {
     }
     const html = this.nullableRef?.()?.nativeElement?.innerHTML;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   nullableRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>

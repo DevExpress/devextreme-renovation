@@ -44,9 +44,6 @@ export default class RefOnChildrenChild extends Props {
     }
     return nullableRefHtml;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   @ViewChild("childRef__Ref__", { static: false })
   childRef__Ref__!: ElementRef<HTMLDivElement>;
   @ViewChild("nullableRef__Ref__", { static: false })

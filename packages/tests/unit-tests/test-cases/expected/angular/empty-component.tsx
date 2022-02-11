@@ -90,9 +90,6 @@ const normalizeStyles = (styles: unknown) => {
 export default class Widget {
   @Input() height?: number;
   @Input() width?: number;
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

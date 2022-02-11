@@ -153,9 +153,6 @@ export default class UndefWidget extends WidgetProps {
     }
     return WidgetProps.__defaultNestedValues.anotherNestedPropInit;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   someForwardRef__Ref__?: ElementRef<any>;
   get forwardRef_someForwardRef(): (
     ref?: ElementRef<any>

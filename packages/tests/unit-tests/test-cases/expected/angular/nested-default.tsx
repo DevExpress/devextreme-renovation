@@ -84,9 +84,6 @@ export default class WithNested extends WithNestedInput {
     }
     return WithNestedInput.__defaultNestedValues.rows;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

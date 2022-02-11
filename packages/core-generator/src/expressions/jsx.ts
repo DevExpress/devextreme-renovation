@@ -132,6 +132,7 @@ export class JsxOpeningElement extends Expression {
       .join('\n');
 
     if (inputOptions) {
+      (inputOptions as any).hasStyle = (options as any).hasStyle;
       (inputOptions as any).forwardRef = (options as any).forwardRef;
     }
 

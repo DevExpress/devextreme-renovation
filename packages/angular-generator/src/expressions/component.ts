@@ -60,6 +60,7 @@ export function compileCoreImports(
   members: Array<Property | Method>,
   context: AngularGeneratorContext,
   imports: string[] = [],
+  options?: toStringOptions,
 ) {
   if (
     members.some((m) => m.decorators.some(
@@ -67,7 +68,7 @@ export function compileCoreImports(
         || d.name === Decorators.RefProp
         || d.name === Decorators.Nested
         || d.name === Decorators.ForwardRefProp,
-    ))
+    )) || options?.mutableOptions?.hasRestAttributes
   ) {
     imports.push('Input');
   }
@@ -575,13 +576,13 @@ export class AngularComponent extends Component {
     return `Dx${this._name}Module`;
   }
 
-  compileImports(coreImports: string[] = []) {
+  compileImports(coreImports: string[] = [], options?: toStringOptions) {
     const core = ['Component', 'NgModule'].concat(coreImports);
 
     if (this.refs.length || this.apiRefs.length) {
       core.push('ViewChild');
     }
-    if (this.refs.length) {
+    if (this.refs.length || options?.mutableOptions?.hasRestAttributes) {
       core.push('ElementRef');
     }
 
@@ -594,6 +595,7 @@ export class AngularComponent extends Component {
         this.members.filter((m) => !m.inherited),
         this.context,
         core,
+        options,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
@@ -604,21 +606,44 @@ export class AngularComponent extends Component {
     ];
 
     this.compileDefaultOptionsImport(imports);
-    this.compileDefaultPropsImport(imports);
+    this.compileDefaultPropsImport(imports, options);
 
     return imports.join(';\n');
   }
 
-  compileDefaultPropsImport(imports: string[]): void {
+  compileDefaultPropsImport(imports: string[], options?: toStringOptions): void {
     const propsWithDefault = this.getPropsWithDefault();
     const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
     const runTimeImports = [
+      ...(options?.mutableOptions?.hasRestAttributes ? ['getAttributes'] : []),
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
       ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
     ];
     if (runTimeImports.length) {
       imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
     }
+  }
+
+  createRestPropsGetter(_members: BaseClassMember[]): GetAccessor {
+    const propNames = getProps(_members)
+      .map((member) => member._name.toString())
+      .map((name) => (name === 'export' ? 'export: exportProp' : name));
+    return new GetAccessor(
+      undefined,
+      undefined,
+      new Identifier('restAttributes'),
+      [],
+      undefined,
+      new Block([new SimpleExpression(`
+        const 
+          ${propNames.length ? `{ ${propNames.join(',\n')}, ...restAttributes } ` : 'restAttributes'}
+          = getAttributes(this._elementRef);
+        return {
+          ...restAttributes,
+          ...this._restAttributes
+        };
+      `)], true),
+    );
   }
 
   compileGetterCache(ngOnChangesStatements: string[],
@@ -888,20 +913,22 @@ export class AngularComponent extends Component {
     coreImports: string[],
     ngAfterViewInitStatements: string[],
     ngAfterViewCheckedStatements: string[],
+    memberToStringOptions?: toStringOptions,
   ): string {
     const viewFunction = this.decorator.getViewFunction();
     if (viewFunction) {
       const options: toStringOptions = {
         members: this.members,
         newComponentContext: this.viewModel ? '_viewModel' : '',
+        mutableOptions: memberToStringOptions?.mutableOptions,
       };
       const expression = getTemplate(viewFunction, options);
       const allDependency: Dependency[] = [];
       if (isElement(expression)) {
         options.newComponentContext = SyntaxKind.ThisKeyword;
-        const members = [];
+        const members: string[] = [];
 
-        const statements = expression.getSpreadAttributes().map((o, i) => {
+        const statements = expression.getSpreadAttributes(memberToStringOptions).map((o, i) => {
           const expressionString = o.expression.toString(options);
 
           allDependency.push(...getDependencyFromViewExpression(o.expression, options));
@@ -912,9 +939,12 @@ export class AngularComponent extends Component {
           }?.nativeElement`;
           if (o.refExpression instanceof SimpleExpression) {
             coreImports.push('ViewChild', 'ElementRef');
-            members.push(
-              `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`,
-            );
+            const viewChildMemberString = `@ViewChild("${o.refExpression.toString()}", { static: false }) ${o.refExpression.toString()}?: ElementRef<HTMLDivElement>`;
+            if (!members.includes(viewChildMemberString)) {
+              members.push(
+                viewChildMemberString,
+              );
+            }
           }
           return `
                     const _attr_${i}:{[name: string]:any } = ${expressionString} || {};
@@ -1264,6 +1294,7 @@ export class AngularComponent extends Component {
     ngDoCheckStatements: string[],
     ngOnDestroyStatements: string[],
     resetDependantGetters: string[],
+    options?: toStringOptions,
   ): string {
     let destroyContext = '';
     this.members.forEach((m) => {
@@ -1303,6 +1334,10 @@ export class AngularComponent extends Component {
         );
       }
     });
+
+    if (options?.mutableOptions?.hasRestAttributes) {
+      constructorArguments.push('private _elementRef: ElementRef<HTMLElement>');
+    }
 
     if (destroyContext.length) {
       ngOnDestroyStatements.push('this._destroyContext.forEach(d=>d())');
@@ -1540,6 +1575,26 @@ export class AngularComponent extends Component {
     return `<ng-content *ngTemplateOutlet="${refName}?.widgetTemplate"></ng-content>`;
   }
 
+  compileRestAttributesProp(options: toStringOptions): string {
+    if (options.mutableOptions?.hasRestAttributes) {
+      const property = new Property(
+        [new Decorator(new Call(
+          new Identifier('OneWay'),
+          undefined,
+          [],
+        ), this.context)],
+        undefined,
+        new Identifier('_restAttributes'),
+        '?',
+        'Record<string, unknown>',
+        undefined,
+      );
+
+      return property.toString();
+    }
+    return '';
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1590,19 +1645,23 @@ export class AngularComponent extends Component {
       disableTemplates: true,
       templateComponents: [],
       isSVG: this.isSVGComponent,
+      mutableOptions: {},
     };
 
     const implementedInterfaces: string[] = [];
 
     this.fillProviders();
+
     const componentDecorator = this.decorator.toString(
       decoratorToStringOptions,
     );
+
     const spreadAttributes = this.compileSpreadAttributes(
       ngOnChangesStatements,
       coreImports,
       ngAfterViewInitStatements,
       ngAfterViewCheckedStatements,
+      decoratorToStringOptions,
     );
 
     this.members
@@ -1653,8 +1712,26 @@ export class AngularComponent extends Component {
 
     coreImports.push('ViewChild', 'TemplateRef');
 
+    const memberToStringOptions: toStringOptions = {
+      members: this.members,
+      componentContext: SyntaxKind.ThisKeyword,
+      newComponentContext: SyntaxKind.ThisKeyword,
+      forwardRefs: decoratorToStringOptions.forwardRefs,
+      isComponent: true,
+      mutableOptions: decoratorToStringOptions.mutableOptions,
+    };
+
+    const memberStatements = this.members
+      .filter((m) => !m.inherited && !(m instanceof SetAccessor))
+      .map((m) => {
+        memberToStringOptions.variables = {};
+        return m.toString(memberToStringOptions);
+      })
+      .filter((m) => m)
+      .join('\n');
+
     return `
-        ${this.compileImports(coreImports)}
+        ${this.compileImports(coreImports, memberToStringOptions)}
         ${this.compileCdkImports(cdkImports)}
         ${this.compileDefaultTemplateImports(missedDefautTemplatesImports)}
         ${this.compileStyleNormalizer(decoratorToStringOptions)}
@@ -1673,17 +1750,8 @@ export class AngularComponent extends Component {
     ' = ',
   ).join(';\n')}
             ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
-            ${this.members
-    .filter((m) => !m.inherited && !(m instanceof SetAccessor))
-    .map((m) => m.toString({
-      members: this.members,
-      componentContext: SyntaxKind.ThisKeyword,
-      newComponentContext: SyntaxKind.ThisKeyword,
-      forwardRefs: decoratorToStringOptions.forwardRefs,
-      isComponent: true,
-    }))
-    .filter((m) => m)
-    .join('\n')}
+            ${this.compileRestAttributesProp(memberToStringOptions)}
+            ${memberStatements}
             ${spreadAttributes}
             ${trackBy}
             ${dynamicComponents}
@@ -1703,6 +1771,7 @@ export class AngularComponent extends Component {
     ngDoCheckStatements,
     ngOnDestroyStatements,
     resetDependantGetters,
+    memberToStringOptions,
   )}
             ${this.compileNgModel()}
             ${this.compileLifeCycle(

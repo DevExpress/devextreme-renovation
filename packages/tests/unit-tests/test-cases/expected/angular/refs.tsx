@@ -120,9 +120,6 @@ export default class Widget extends WidgetProps {
       requiredForwardRefProp: restProps.requiredForwardRefProp()?.nativeElement,
     };
   }
-  get __restAttributes(): any {
-    return {};
-  }
   @ViewChild("outerDivRef__Ref__", { static: false })
   outerDivRef__Ref__?: ElementRef<HTMLDivElement>;
   forwardRefProp__Ref__?: ElementRef<HTMLDivElement>;

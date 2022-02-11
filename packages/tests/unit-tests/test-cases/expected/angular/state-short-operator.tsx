@@ -43,9 +43,6 @@ export default class Widget extends WidgetInput {
     this._propStateChange((this.propState = this.propState + 1));
     this._propStateChange((this.propState = this.propState + 1));
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -77,6 +74,7 @@ export default class Widget extends WidgetInput {
     }));
     this._propStateChange = (e: any) => {
       this.propStateChange.emit(e);
+
       this._detectChanges();
     };
   }

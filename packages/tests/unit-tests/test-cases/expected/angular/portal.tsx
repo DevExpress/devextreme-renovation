@@ -110,9 +110,6 @@ export default class Widget extends WidgetProps {
   __onInit(): any {
     this._rendered = true;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

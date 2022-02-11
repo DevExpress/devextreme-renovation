@@ -45,9 +45,6 @@ export default class Widget extends WidgetInput {
       selectedChange: this._selectedChange,
     };
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -79,6 +76,7 @@ export default class Widget extends WidgetInput {
     }));
     this._selectedChange = (e: any) => {
       this.selectedChange.emit(e);
+
       this._detectChanges();
     };
   }

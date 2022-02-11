@@ -41,9 +41,6 @@ export default class Widget extends WidgetProps {
   __onClick(): any {
     const v = this.height;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

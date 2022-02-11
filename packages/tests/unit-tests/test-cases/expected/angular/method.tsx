@@ -45,9 +45,6 @@ export default class Widget extends WidgetInput {
       this.divRef.nativeElement?.innerHTML
     } + ${this.getHeight(0, 0)}`;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
