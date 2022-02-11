@@ -38,6 +38,7 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -106,6 +107,11 @@ export default class Widget extends Props {
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
   __getterCache: {
     provide?: any;
     g1?: number[];
@@ -116,6 +122,9 @@ export default class Widget extends Props {
   }
   _destroyContext: Array<() => void> = [];
 
+  ngAfterViewInit() {
+    this.__applyAttributes__();
+  }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
@@ -130,7 +139,12 @@ export default class Widget extends Props {
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
   }
-
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
   ngDoCheck() {
     this.__provide;
   }
@@ -142,7 +156,8 @@ export default class Widget extends Props {
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef,
     @Host() private provideProvider: SimpleContext,
-    @SkipSelf() @Optional() private cons: SimpleContext
+    @SkipSelf() @Optional() private cons: SimpleContext,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };

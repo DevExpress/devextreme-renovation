@@ -21,6 +21,7 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
   Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -61,12 +62,29 @@ export default class WidgetWithNestedWidgets extends WidgetWithNestedWidgetsProp
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
+  ngAfterViewInit() {
+    this.__applyAttributes__();
+  }
+
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
   }

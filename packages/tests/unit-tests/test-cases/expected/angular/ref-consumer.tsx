@@ -78,6 +78,11 @@ export default class RefConsumer extends Props {
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
@@ -88,6 +93,7 @@ export default class RefConsumer extends Props {
   } = {};
 
   ngAfterViewInit() {
+    this.__applyAttributes__();
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(this.__init());
     }, 0);
@@ -97,13 +103,20 @@ export default class RefConsumer extends Props {
     this.__destroyEffects.forEach((d) => d && d());
     clearTimeout(this._effectTimeout);
   }
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
 
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
   }

@@ -583,7 +583,7 @@ export class AngularComponent extends Component {
     if (this.refs.length || this.apiRefs.length) {
       core.push('ViewChild');
     }
-    if (this.refs.length || options?.mutableOptions?.hasRestAttributes) {
+    if (this.refs.length || this.needHostElementRef(options)) {
       core.push('ElementRef');
     }
 
@@ -959,6 +959,10 @@ export class AngularComponent extends Component {
                     `;
         });
 
+        if (this.needHostElementRef(options)) {
+          statements.push('this._elementRef.nativeElement.removeAttribute(\'id\');');
+        }
+
         if (statements.length) {
           const methodName = '__applyAttributes__';
           const scheduledApplyAttributes = 'scheduledApplyAttributes';
@@ -1001,10 +1005,6 @@ export class AngularComponent extends Component {
           }
 
           ngAfterViewInitStatements.push(`this.${methodName}()`);
-
-          if (options?.mutableOptions?.hasRestAttributes) {
-            statements.push('this._elementRef.nativeElement.removeAttribute(\'id\');');
-          }
 
           members.push(`
             ${scheduledApplyAttributes} = false;
@@ -1294,6 +1294,11 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  needHostElementRef(options?: toStringOptions): boolean {
+    return options?.mutableOptions?.hasRestAttributes
+    || this.decorator.isPublicComponentWithPrivateProp;
+  }
+
   compileContext(
     constructorStatements: string[],
     constructorArguments: string[],
@@ -1341,7 +1346,7 @@ export class AngularComponent extends Component {
       }
     });
 
-    if (options?.mutableOptions?.hasRestAttributes) {
+    if (this.needHostElementRef(options)) {
       constructorArguments.push('private _elementRef: ElementRef<HTMLElement>');
     }
 
