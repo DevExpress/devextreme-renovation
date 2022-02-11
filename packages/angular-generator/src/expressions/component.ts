@@ -1002,6 +1002,10 @@ export class AngularComponent extends Component {
 
           ngAfterViewInitStatements.push(`this.${methodName}()`);
 
+          if (options?.mutableOptions?.hasRestAttributes) {
+            statements.push('this._elementRef.nativeElement.removeAttribute(\'id\');');
+          }
+
           members.push(`
             ${scheduledApplyAttributes} = false;
             ${methodName}(){
