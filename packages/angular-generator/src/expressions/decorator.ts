@@ -54,13 +54,19 @@ function setComponentProperty(
   }
 }
 
+function isPublicComponent(decorator: Decorator): boolean {
+  const parameters = decorator.expression.arguments[0] as ObjectLiteral;
+
+  return parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true';
+}
+
 function isInnerComponent(decorator: Decorator): boolean {
   const parameters = decorator.expression.arguments[0] as ObjectLiteral;
   const isInnerComponentValue = parameters?.getProperty?.<ObjectLiteral>('angular')?.getProperty?.('innerComponent')?.toString();
-  if (isInnerComponentValue) {
-    return isInnerComponentValue === 'true';
+  if (isInnerComponentValue === 'false') {
+    return false;
   }
-  return !(parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true');
+  return true;
 }
 
 export class Decorator extends BaseDecorator {
@@ -71,8 +77,8 @@ export class Decorator extends BaseDecorator {
   constructor(expression: Call, context: GeneratorContext) {
     super(expression, context);
 
-    this.isWrappedByTemplate = !this.isSvg;
-    this.isPublicComponentWithPrivateProp = !isInnerComponent(this) && this.isWrappedByTemplate;
+    this.isWrappedByTemplate = !this.isSvg && isInnerComponent(this) !== false;
+    this.isPublicComponentWithPrivateProp = isPublicComponent(this) && this.isWrappedByTemplate;
   }
 
   toString(options?: toStringOptions) {
