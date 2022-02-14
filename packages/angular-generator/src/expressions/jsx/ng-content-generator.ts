@@ -24,7 +24,7 @@ export function tryToGetContent(element: JsxOpeningElement): {
   const component = element.context.components?.[componentName] as AngularComponent;
   const elementDirectives: Array<AngularDirective> = [];
 
-  if (!component || !component.decorator.isWrappedByTemplate) {
+  if (!component || !component.isWrappedByTemplate) {
     return { content: '', elementDirectives, condition: null };
   }
   const refAttr = element.attributes.find((attr: JsxAttribute | JsxSpreadAttribute) => attr.toString()[0] === '#');
@@ -34,7 +34,7 @@ export function tryToGetContent(element: JsxOpeningElement): {
     elementDirectives.push(new AngularDirective(new Identifier(`#${ref}`), new SimpleExpression('')));
   }
   elementDirectives.push(new AngularDirective(new Identifier('style'), new SimpleExpression('display: contents')));
-  if (component.decorator.isPublicComponentWithPrivateProp) {
+  if (component.isPublicComponentWithPrivateProp) {
     elementDirectives.push(new AngularDirective(new Identifier('[_private]'), new SimpleExpression('true')));
   }
   const condition = element.attributes.find(isStructDirective) as AngularDirective;

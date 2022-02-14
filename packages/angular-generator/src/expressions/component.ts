@@ -577,6 +577,14 @@ export class AngularComponent extends Component {
     return `Dx${this._name}Module`;
   }
 
+  get isPublicComponentWithPrivateProp(): boolean {
+    return this.decorator.isPublicComponentWithPrivateProp(this.members);
+  }
+
+  get isWrappedByTemplate(): boolean {
+    return this.decorator.isWrappedByTemplate(this.members);
+  }
+
   compileImports(coreImports: string[] = [], options?: toStringOptions) {
     const core = ['Component', 'NgModule'].concat(coreImports);
 
@@ -597,7 +605,7 @@ export class AngularComponent extends Component {
         this.context,
         core,
         options,
-        this.decorator.isPublicComponentWithPrivateProp,
+        this.isPublicComponentWithPrivateProp,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
@@ -1296,7 +1304,7 @@ export class AngularComponent extends Component {
 
   needHostElementRef(options?: toStringOptions): boolean {
     return options?.mutableOptions?.hasRestAttributes
-    || this.decorator.isPublicComponentWithPrivateProp;
+    || this.isPublicComponentWithPrivateProp;
   }
 
   compileContext(
@@ -1607,7 +1615,7 @@ export class AngularComponent extends Component {
   }
 
   compilePrivateProperty(): string {
-    if (this.decorator.isPublicComponentWithPrivateProp) {
+    if (this.isPublicComponentWithPrivateProp) {
       return '@Input() _private = false';
     }
     return '';

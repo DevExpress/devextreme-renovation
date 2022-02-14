@@ -38,7 +38,6 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -51,15 +50,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
   inputs: ["p"],
-  template: `<ng-template #widgetTemplate><div></div></ng-template>
-    <ng-container
-      *ngTemplateOutlet="_private ? null : widgetTemplate"
-    ></ng-container>`,
+  template: `<div></div>`,
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
 
-  @Input() _private = false;
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {
@@ -107,11 +102,6 @@ export default class Widget extends Props {
     });
   }
 
-  scheduledApplyAttributes = false;
-  __applyAttributes__() {
-    this._elementRef.nativeElement.removeAttribute("id");
-  }
-
   __getterCache: {
     provide?: any;
     g1?: number[];
@@ -122,9 +112,6 @@ export default class Widget extends Props {
   }
   _destroyContext: Array<() => void> = [];
 
-  ngAfterViewInit() {
-    this.__applyAttributes__();
-  }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
@@ -139,12 +126,7 @@ export default class Widget extends Props {
   ngOnDestroy() {
     this._destroyContext.forEach((d) => d());
   }
-  ngAfterViewChecked() {
-    if (this.scheduledApplyAttributes) {
-      this.__applyAttributes__();
-      this.scheduledApplyAttributes = false;
-    }
-  }
+
   ngDoCheck() {
     this.__provide;
   }
@@ -156,8 +138,7 @@ export default class Widget extends Props {
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef,
     @Host() private provideProvider: SimpleContext,
-    @SkipSelf() @Optional() private cons: SimpleContext,
-    private _elementRef: ElementRef<HTMLElement>
+    @SkipSelf() @Optional() private cons: SimpleContext
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
