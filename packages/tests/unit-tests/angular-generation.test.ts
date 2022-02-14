@@ -208,6 +208,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("render-nested-widgets", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("method", function () {
     this.testGenerator(this.test!.title);
   });

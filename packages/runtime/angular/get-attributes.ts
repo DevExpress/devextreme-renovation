@@ -15,7 +15,7 @@ function getStyleObject(styleText: string): Record<string, unknown> {
 
 function processStyleAttribute(attributes: Record<string, string>): Record<string, unknown> {
   if (attributes.style) {
-    const styleText = attributes.style.replace(/display: contents[;]?/, '');
+    const styleText = attributes.style.replace(/display: contents[; ]*/, '');
 
     if (!styleText) {
       delete attributes.style;

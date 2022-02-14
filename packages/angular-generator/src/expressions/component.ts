@@ -61,6 +61,7 @@ export function compileCoreImports(
   context: AngularGeneratorContext,
   imports: string[] = [],
   options?: toStringOptions,
+  isPublicComponentWithPrivateProp = false,
 ) {
   if (
     members.some((m) => m.decorators.some(
@@ -68,7 +69,7 @@ export function compileCoreImports(
         || d.name === Decorators.RefProp
         || d.name === Decorators.Nested
         || d.name === Decorators.ForwardRefProp,
-    )) || options?.mutableOptions?.hasRestAttributes
+    )) || options?.mutableOptions?.hasRestAttributes || isPublicComponentWithPrivateProp
   ) {
     imports.push('Input');
   }
@@ -576,13 +577,21 @@ export class AngularComponent extends Component {
     return `Dx${this._name}Module`;
   }
 
+  get isPublicComponentWithPrivateProp(): boolean {
+    return this.decorator.isPublicComponentWithPrivateProp(this.members);
+  }
+
+  get isWrappedByTemplate(): boolean {
+    return this.decorator.isWrappedByTemplate(this.members);
+  }
+
   compileImports(coreImports: string[] = [], options?: toStringOptions) {
     const core = ['Component', 'NgModule'].concat(coreImports);
 
     if (this.refs.length || this.apiRefs.length) {
       core.push('ViewChild');
     }
-    if (this.refs.length || options?.mutableOptions?.hasRestAttributes) {
+    if (this.refs.length || this.needHostElementRef(options)) {
       core.push('ElementRef');
     }
 
@@ -596,6 +605,7 @@ export class AngularComponent extends Component {
         this.context,
         core,
         options,
+        this.isPublicComponentWithPrivateProp,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
@@ -957,6 +967,10 @@ export class AngularComponent extends Component {
                     `;
         });
 
+        if (this.needHostElementRef(options)) {
+          statements.push('this._elementRef.nativeElement.removeAttribute(\'id\');');
+        }
+
         if (statements.length) {
           const methodName = '__applyAttributes__';
           const scheduledApplyAttributes = 'scheduledApplyAttributes';
@@ -1288,6 +1302,11 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  needHostElementRef(options?: toStringOptions): boolean {
+    return options?.mutableOptions?.hasRestAttributes
+    || this.isPublicComponentWithPrivateProp;
+  }
+
   compileContext(
     constructorStatements: string[],
     constructorArguments: string[],
@@ -1335,7 +1354,7 @@ export class AngularComponent extends Component {
       }
     });
 
-    if (options?.mutableOptions?.hasRestAttributes) {
+    if (this.needHostElementRef(options)) {
       constructorArguments.push('private _elementRef: ElementRef<HTMLElement>');
     }
 
@@ -1595,6 +1614,13 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  compilePrivateProperty(): string {
+    if (this.isPublicComponentWithPrivateProp) {
+      return '@Input() _private = false';
+    }
+    return '';
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1751,6 +1777,7 @@ export class AngularComponent extends Component {
   ).join(';\n')}
             ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
             ${this.compileRestAttributesProp(memberToStringOptions)}
+            ${this.compilePrivateProperty()}
             ${memberStatements}
             ${spreadAttributes}
             ${trackBy}
