@@ -91,6 +91,18 @@ export class Decorator extends BaseDecorator {
       && this.isWrappedByTemplate(members);
   }
 
+  processPrivateWidgetTemplate(template: string, options?: toStringOptions) {
+    if (this.isWrappedByTemplate(options ? options.members : [])) {
+      const ngTemplateExpression = `<ng-template #widgetTemplate>${template}</ng-template>`;
+      if (this.isPublicComponent) {
+        return `${ngTemplateExpression}\n<ng-container *ngTemplateOutlet="_private ? null : widgetTemplate"></ng-container>`;
+      }
+      return ngTemplateExpression;
+    }
+
+    return template;
+  }
+
   toString(options?: toStringOptions) {
     if (isInputDecorator(this.name)) {
       return '@Input()';
@@ -135,14 +147,8 @@ export class Decorator extends BaseDecorator {
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
         if (template) {
-          let templateExpression = template;
+          const templateExpression = this.processPrivateWidgetTemplate(template, options);
 
-          if (this.isWrappedByTemplate(options ? options.members : [])) {
-            templateExpression = `<ng-template #widgetTemplate>${template}</ng-template>`;
-            if (this.isPublicComponent) {
-              templateExpression = `${templateExpression}\n<ng-container *ngTemplateOutlet="_private ? null : widgetTemplate"></ng-container>`;
-            }
-          }
           parameters.setProperty(
             'template',
             new TemplateExpression(templateExpression, []),
