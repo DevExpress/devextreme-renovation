@@ -54,6 +54,7 @@ import {
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {

@@ -13,7 +13,7 @@ import {
   @Component({
     defaultOptionRules: null,
     view: viewFunction,
-    angular: { innerComponent: true },
+    angular: { innerComponent: false },
     jQuery: { register: true }
   })
   export class InnerComponent extends JSXComponent(Props) {}

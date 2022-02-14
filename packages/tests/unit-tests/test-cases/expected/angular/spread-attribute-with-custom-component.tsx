@@ -39,6 +39,7 @@ import { getAttributes } from "@devextreme/runtime/angular";
 })
 export default class Widget extends WidgetInput {
   @Input() _restAttributes?: Record<string, unknown>;
+
   get __attr1(): any {
     return { value: 100, selected: true };
   }
@@ -67,6 +68,8 @@ export default class Widget extends WidgetInput {
         _ref_0.setAttribute(key, _attr_0[key].toString());
       }
     }
+
+    this._elementRef.nativeElement.removeAttribute("id");
   }
 
   ngAfterViewInit() {

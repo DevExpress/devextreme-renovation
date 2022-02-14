@@ -40,6 +40,7 @@ import { getAttributes } from "@devextreme/runtime/angular";
 })
 export default class ComponentWithRest extends WidgetInput {
   @Input() _restAttributes?: Record<string, unknown>;
+
   get __restAttributes(): any {
     const restAttributes = getAttributes(this._elementRef);
     return {
@@ -65,6 +66,8 @@ export default class ComponentWithRest extends WidgetInput {
         _ref_0.setAttribute(key, _attr_0[key].toString());
       }
     }
+
+    this._elementRef.nativeElement.removeAttribute("id");
   }
 
   ngAfterViewInit() {

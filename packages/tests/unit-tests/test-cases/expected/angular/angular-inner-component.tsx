@@ -19,7 +19,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-inner-component",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
+  template: `<div></div>`,
 })
 export class InnerComponent extends Props {
   _detectChanges(): void {

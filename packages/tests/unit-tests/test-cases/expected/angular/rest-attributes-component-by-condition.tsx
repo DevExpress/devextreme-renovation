@@ -37,11 +37,20 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["isPublic"],
   template: `<ng-template #widgetTemplate
-    ><dx-public-widget-with-props
-      #_auto_ref_0
-      [_restAttributes]="__restAttributes"
-      *ngIf="isPublic"
-    ></dx-public-widget-with-props>
+    ><ng-container *ngIf="isPublic"
+      ><dx-public-widget-with-props
+        #publicwidgetwithprops1
+        style="display: contents"
+        [_private]="true"
+        #_auto_ref_0
+        [_restAttributes]="__restAttributes"
+        style="display: contents"
+        [_private]="true"
+      ></dx-public-widget-with-props
+      ><ng-content
+        *ngTemplateOutlet="publicwidgetwithprops1?.widgetTemplate"
+      ></ng-content
+    ></ng-container>
     <ng-container *ngIf="!isPublic"
       ><dx-widget-with-props
         #widgetwithprops5
@@ -58,6 +67,7 @@ import {
 export default class ComponentWithRest extends ComponentWithRestInput {
   defaultEntries: DefaultEntries;
   @Input() _restAttributes?: Record<string, unknown>;
+
   get __restAttributes(): any {
     const { isPublic, ...restAttributes } = getAttributes(this._elementRef);
     return {
