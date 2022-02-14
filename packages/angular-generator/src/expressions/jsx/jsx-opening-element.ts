@@ -851,6 +851,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
+    if (this.tagName.toString() === 'Fragment') {
+      return '';
+    }
+
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
     }
