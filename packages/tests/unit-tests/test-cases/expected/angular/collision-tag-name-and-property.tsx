@@ -34,6 +34,7 @@ import {
 })
 export class TextSvgElement extends TextSvgElementProps {
   defaultEntries: DefaultEntries;
+
   get __computedProps(): TextSvgElementProps {
     return this;
   }
