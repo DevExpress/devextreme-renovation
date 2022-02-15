@@ -883,11 +883,9 @@ export class AngularComponent extends Component {
         });
       }
       ngAfterViewInitStatements.push(
-        `this._effectTimeout = setTimeout(()=>{
-          this.__destroyEffects.push(${effects
-    .map((e) => subscribe(e))
-    .join(',')});
-          }, 0)`,
+        `this.__destroyEffects.push(${effects
+          .map((e) => subscribe(e))
+          .join(',')});`,
       );
       ngOnDestroyStatements.push(
         `this.__destroyEffects.forEach(d => d && d());
