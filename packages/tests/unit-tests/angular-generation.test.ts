@@ -220,6 +220,14 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("props-any-undefined-unknown", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("method-pass", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("method-use-apiref", function () {
     this.testGenerator(this.test!.title);
   });

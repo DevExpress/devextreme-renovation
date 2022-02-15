@@ -38,6 +38,7 @@ import path from 'path';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
 import { GetAccessor } from './class-members/get-accessor';
+import { Method as AngularMethod } from './class-members/method';
 import { Property } from './class-members/property';
 import { PropsGetAccessor } from './class-members/props-get-accessor';
 import { SetAccessor } from './class-members/set-accessor';
@@ -1621,6 +1622,26 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  bindMethods(constructorStatements: string[]): void {
+    this.members.forEach((member) => {
+      if (member instanceof AngularMethod && member.needBind) {
+        constructorStatements.push(`this.${member.name} = this.${member.name}.bind(this);`);
+      }
+    });
+  }
+
+  compileConstructor(constructorArguments: string[], constructorStatements: string[]): string {
+    this.bindMethods(constructorStatements);
+    return this.compileLifeCycle(
+      'constructor',
+      (constructorStatements.length || constructorArguments.length)
+                && this.heritageClauses.length
+        ? ['super()'].concat(constructorStatements)
+        : constructorStatements,
+      constructorArguments,
+    );
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1816,14 +1837,7 @@ export class AngularComponent extends Component {
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements, { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword })}
             @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
-            ${this.compileLifeCycle(
-    'constructor',
-    (constructorStatements.length || constructorArguments.length)
-              && this.heritageClauses.length
-      ? ['super()'].concat(constructorStatements)
-      : constructorStatements,
-    constructorArguments,
-  )}
+            ${this.compileConstructor(constructorArguments, constructorStatements)}
             ${this.members.filter((m) => m instanceof SetAccessor).join('\n')}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
             ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}
