@@ -77,10 +77,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [P1Context, GetterContext],
   inputs: ["p1"],
-  template: `<ng-template #widgetTemplate><span></span></ng-template>`,
+  template: `<span></span>`,
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
   contextConsumerConsumer: number;
   consumerConsumer: any;
   get __sum(): any {

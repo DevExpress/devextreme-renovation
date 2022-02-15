@@ -17,6 +17,7 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -28,7 +29,8 @@ import {
   selector: "dx-extra-element",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["prop", "rf"],
-  template: `<pre><ng-container *ngIf="rf"><dx-inner-layout #rf
+  template: `<ng-template #widgetTemplate>
+      <pre><ng-container *ngIf="rf"><dx-inner-layout #rf
 [prop]="3"
 style="display: contents"
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.widgetTemplate"></ng-content></ng-container><div id="firstDiv"></div><dx-inner-layout #rf
@@ -37,10 +39,16 @@ style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="rf?.w
 #child2
 style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child2?.widgetTemplate"></ng-content><div id="thirdDiv"></div><dx-inner-layout [prop]="1"
 #child3
-style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>`,
+style="display: contents"></dx-inner-layout><ng-content *ngTemplateOutlet="child3?.widgetTemplate"></ng-content></pre>
+    </ng-template>
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export class ExtraElement extends Props {
   defaultEntries: DefaultEntries;
+
+  @Input() _private = false;
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -48,6 +56,14 @@ export class ExtraElement extends Props {
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
+  ngAfterViewInit() {
+    this.__applyAttributes__();
+  }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
@@ -56,12 +72,20 @@ export class ExtraElement extends Props {
     );
   }
 
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
+
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };

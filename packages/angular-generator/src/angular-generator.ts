@@ -1,7 +1,6 @@
 import Generator, {
   StringLiteral,
   GeneratorContext,
-  Method,
   Expression,
   Identifier,
   Block,
@@ -17,6 +16,7 @@ import Generator, {
 } from '@devextreme-generator/core';
 import { counter } from './counter';
 import { AsExpression } from './expressions/as-expression';
+import { Method } from './expressions/class-members/method';
 import { GetAccessor } from './expressions/class-members/get-accessor';
 import { Property } from './expressions/class-members/property';
 import { AngularComponent } from './expressions/component';

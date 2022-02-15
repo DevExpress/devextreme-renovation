@@ -55,6 +55,7 @@ export default class Widget
   implements ControlValueAccessor
 {
   @Input() _restAttributes?: Record<string, unknown>;
+
   counter: number = 1;
   notUsedValue: number = 1;
   get __attributes(): any {
@@ -97,6 +98,8 @@ export default class Widget
         _ref_1.setAttribute(key, _attr_1[key].toString());
       }
     }
+
+    this._elementRef.nativeElement.removeAttribute("id");
   }
 
   @HostListener("valueChange", ["$event"]) change() {}

@@ -38,6 +38,7 @@ import path from 'path';
 
 import { AngularGeneratorContext, toStringOptions } from '../types';
 import { GetAccessor } from './class-members/get-accessor';
+import { Method as AngularMethod } from './class-members/method';
 import { Property } from './class-members/property';
 import { PropsGetAccessor } from './class-members/props-get-accessor';
 import { SetAccessor } from './class-members/set-accessor';
@@ -61,6 +62,7 @@ export function compileCoreImports(
   context: AngularGeneratorContext,
   imports: string[] = [],
   options?: toStringOptions,
+  isPublicComponentWithPrivateProp = false,
 ) {
   if (
     members.some((m) => m.decorators.some(
@@ -68,7 +70,7 @@ export function compileCoreImports(
         || d.name === Decorators.RefProp
         || d.name === Decorators.Nested
         || d.name === Decorators.ForwardRefProp,
-    )) || options?.mutableOptions?.hasRestAttributes
+    )) || options?.mutableOptions?.hasRestAttributes || isPublicComponentWithPrivateProp
   ) {
     imports.push('Input');
   }
@@ -576,13 +578,21 @@ export class AngularComponent extends Component {
     return `Dx${this._name}Module`;
   }
 
+  get isPublicComponentWithPrivateProp(): boolean {
+    return this.decorator.isPublicComponentWithPrivateProp(this.members);
+  }
+
+  get isWrappedByTemplate(): boolean {
+    return this.decorator.isWrappedByTemplate(this.members);
+  }
+
   compileImports(coreImports: string[] = [], options?: toStringOptions) {
     const core = ['Component', 'NgModule'].concat(coreImports);
 
     if (this.refs.length || this.apiRefs.length) {
       core.push('ViewChild');
     }
-    if (this.refs.length || options?.mutableOptions?.hasRestAttributes) {
+    if (this.refs.length || this.needHostElementRef(options)) {
       core.push('ElementRef');
     }
 
@@ -596,6 +606,7 @@ export class AngularComponent extends Component {
         this.context,
         core,
         options,
+        this.isPublicComponentWithPrivateProp,
       )}`,
       'import {CommonModule} from "@angular/common"',
       ...(this.modelProp
@@ -955,6 +966,10 @@ export class AngularComponent extends Component {
                     `;
         });
 
+        if (this.needHostElementRef(options)) {
+          statements.push('this._elementRef.nativeElement.removeAttribute(\'id\');');
+        }
+
         if (statements.length) {
           const methodName = '__applyAttributes__';
           const scheduledApplyAttributes = 'scheduledApplyAttributes';
@@ -1286,6 +1301,11 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  needHostElementRef(options?: toStringOptions): boolean {
+    return options?.mutableOptions?.hasRestAttributes
+    || this.isPublicComponentWithPrivateProp;
+  }
+
   compileContext(
     constructorStatements: string[],
     constructorArguments: string[],
@@ -1333,7 +1353,7 @@ export class AngularComponent extends Component {
       }
     });
 
-    if (options?.mutableOptions?.hasRestAttributes) {
+    if (this.needHostElementRef(options)) {
       constructorArguments.push('private _elementRef: ElementRef<HTMLElement>');
     }
 
@@ -1593,6 +1613,33 @@ export class AngularComponent extends Component {
     return '';
   }
 
+  compilePrivateProperty(): string {
+    if (this.isPublicComponentWithPrivateProp) {
+      return '@Input() _private = false';
+    }
+    return '';
+  }
+
+  bindMethods(constructorStatements: string[]): void {
+    this.members.forEach((member) => {
+      if (member instanceof AngularMethod && member.needBind) {
+        constructorStatements.push(`this.${member.name} = this.${member.name}.bind(this);`);
+      }
+    });
+  }
+
+  compileConstructor(constructorArguments: string[], constructorStatements: string[]): string {
+    this.bindMethods(constructorStatements);
+    return this.compileLifeCycle(
+      'constructor',
+      (constructorStatements.length || constructorArguments.length)
+                && this.heritageClauses.length
+        ? ['super()'].concat(constructorStatements)
+        : constructorStatements,
+      constructorArguments,
+    );
+  }
+
   toString() {
     const props = this.heritageClauses
       .filter((h) => h.isJsxComponent)
@@ -1749,6 +1796,7 @@ export class AngularComponent extends Component {
   ).join(';\n')}
             ${this.compileDefaultInputValues(ngOnChangesStatements, constructorStatements)}
             ${this.compileRestAttributesProp(memberToStringOptions)}
+            ${this.compilePrivateProperty()}
             ${memberStatements}
             ${spreadAttributes}
             ${trackBy}
@@ -1787,14 +1835,7 @@ export class AngularComponent extends Component {
             ${this.compileLifeCycle('ngDoCheck', ngDoCheckStatements)}
             ${this.compileBindEvents(constructorStatements, { ...decoratorToStringOptions, componentContext: SyntaxKind.ThisKeyword })}
             @ViewChild('widgetTemplate', { static: true }) widgetTemplate!: TemplateRef<any>;
-            ${this.compileLifeCycle(
-    'constructor',
-    (constructorStatements.length || constructorArguments.length)
-              && this.heritageClauses.length
-      ? ['super()'].concat(constructorStatements)
-      : constructorStatements,
-    constructorArguments,
-  )}
+            ${this.compileConstructor(constructorArguments, constructorStatements)}
             ${this.members.filter((m) => m instanceof SetAccessor).join('\n')}
             ${this.compileNgStyleProcessor(decoratorToStringOptions)}
             ${this.compileDefaultPropsForTemplates(decoratorToStringOptions)}

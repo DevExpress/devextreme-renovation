@@ -1,8 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 @Component({
   template: "",
 })
-export class Props {}
+export class WidgetInput {
+  @Input() anyProp: any;
+  @Input() undefinedProp: undefined;
+  @Input() unknownProp: unknown;
+}
 
 import {
   NgModule,
@@ -17,11 +21,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-inner-component",
+  selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div></div>`,
+  inputs: ["anyProp", "undefinedProp", "unknownProp"],
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
-export class InnerComponent extends Props {
+export default class Widget extends WidgetInput {
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -40,11 +45,10 @@ export class InnerComponent extends Props {
   }
 }
 @NgModule({
-  declarations: [InnerComponent],
+  declarations: [Widget],
   imports: [CommonModule],
 
-  exports: [InnerComponent],
+  exports: [Widget],
 })
-export class DxInnerComponentModule {}
-export { InnerComponent as DxInnerComponentComponent };
-export default InnerComponent;
+export class DxWidgetModule {}
+export { Widget as DxWidgetComponent };
