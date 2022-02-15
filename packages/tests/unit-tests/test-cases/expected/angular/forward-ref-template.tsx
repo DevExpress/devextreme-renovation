@@ -102,9 +102,7 @@ export default class RefOnChildrenTemplate extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__effect());
-    }, 0);
+    this.__destroyEffects.push(this.__effect());
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (this.__destroyEffects.length && ["child"].some((d) => changes[d])) {
