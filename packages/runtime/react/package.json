@@ -1,6 +1,6 @@
 {
     "name": "@devextreme/runtime/react",
-    "version": "3.1.0-next",
+    "version": "3.0.5",
     "description": "DevExtreme react common utils",
     "author": "Developer Express Inc.",
     "license": "SEE LICENSE IN LICENSE",
