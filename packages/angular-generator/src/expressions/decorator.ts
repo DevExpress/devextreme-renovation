@@ -8,6 +8,7 @@ import {
   getJsxExpression,
   getProps,
   Identifier,
+  Method,
   ObjectLiteral,
   Property,
   SimpleExpression,
@@ -54,21 +55,52 @@ function setComponentProperty(
   }
 }
 
+function isPublicComponent(decorator: Decorator): boolean {
+  const parameters = decorator.expression.arguments[0] as ObjectLiteral;
+
+  return parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true';
+}
+
 function isInnerComponent(decorator: Decorator): boolean {
   const parameters = decorator.expression.arguments[0] as ObjectLiteral;
   const isInnerComponentValue = parameters?.getProperty?.<ObjectLiteral>('angular')?.getProperty?.('innerComponent')?.toString();
-  if (isInnerComponentValue) {
-    return isInnerComponentValue === 'true';
+  if (isInnerComponentValue === 'false') {
+    return false;
   }
-  return !(parameters?.getProperty?.<ObjectLiteral>('jQuery')?.getProperty?.('register')?.toString() === 'true');
+  return true;
 }
 
 export class Decorator extends BaseDecorator {
-  readonly isWrappedByTemplate: boolean;
+  readonly isInnerComponent: boolean;
+
+  readonly isPublicComponent: boolean;
 
   constructor(expression: Call, context: GeneratorContext) {
     super(expression, context);
-    this.isWrappedByTemplate = isInnerComponent(this) && !this.isSvg;
+
+    this.isInnerComponent = !this.isSvg && isInnerComponent(this) !== false;
+    this.isPublicComponent = isPublicComponent(this);
+  }
+
+  isWrappedByTemplate(members: (Property | Method)[]) {
+    return this.isInnerComponent && !members.some((member) => member.isProvider);
+  }
+
+  isPublicComponentWithPrivateProp(members: (Property | Method)[]): boolean {
+    return this.isPublicComponent
+      && this.isWrappedByTemplate(members);
+  }
+
+  processPrivateWidgetTemplate(template: string, options?: toStringOptions) {
+    if (this.isWrappedByTemplate(options ? options.members : [])) {
+      const ngTemplateExpression = `<ng-template #widgetTemplate>${template}</ng-template>`;
+      if (this.isPublicComponent) {
+        return `${ngTemplateExpression}\n<ng-container *ngTemplateOutlet="_private ? null : widgetTemplate"></ng-container>`;
+      }
+      return ngTemplateExpression;
+    }
+
+    return template;
   }
 
   toString(options?: toStringOptions) {
@@ -115,9 +147,11 @@ export class Decorator extends BaseDecorator {
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
         if (template) {
+          const templateExpression = this.processPrivateWidgetTemplate(template, options);
+
           parameters.setProperty(
             'template',
-            new TemplateExpression(this.isWrappedByTemplate ? `<ng-template #widgetTemplate>${template}</ng-template>` : template, []),
+            new TemplateExpression(templateExpression, []),
           );
         }
       }
@@ -169,11 +203,13 @@ function compileDefaultTemplates(
             return `[${v}]="${v}"`;
           })
             .join(' ');
-          const templateOutlet = component.decorator.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
+
+          const templateOutlet = component.isWrappedByTemplate ? component.getContentTemplateOutlet(ref) : '';
+          const privateVariable = component.isPublicComponentWithPrivateProp ? '[_private]="true"' : '';
           const templateString = `<ng-template #${name}Default ${template.variables
             .map((v) => `let-${v}="${v}"`)
             .join(' ')}>
-            <${componentName} #${ref} style="display: contents" ${templateVariables}></${componentName}>
+            <${componentName} #${ref} style="display: contents" ${templateVariables}${privateVariable}></${componentName}>
             ${templateOutlet}
             </ng-template>`;
           return templateString;

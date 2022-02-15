@@ -89,6 +89,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("empty-view", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("event-handler-without-args", function () {
     this.testGenerator(this.test!.title);
   });
@@ -208,7 +212,19 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("render-nested-widgets", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("method", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("props-any-undefined-unknown", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("method-pass", function () {
     this.testGenerator(this.test!.title);
   });
 

@@ -26,9 +26,15 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
   selector: "dx-ref-consumer",
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["elementRef"],
-  template: `<span>consumer is rendered</span>`,
+  template: `<ng-template #widgetTemplate
+      ><span>consumer is rendered</span></ng-template
+    >
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export default class RefConsumer extends Props {
+  @Input() _private = false;
   __getElementRef(): any {
     const temp = this.elementRef?.()?.nativeElement;
     return temp;
@@ -72,6 +78,11 @@ export default class RefConsumer extends Props {
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
   __destroyEffects: any[] = [];
   __viewCheckedSubscribeEvent: Array<(() => void) | null> = [];
   _effectTimeout: any;
@@ -82,6 +93,7 @@ export default class RefConsumer extends Props {
   } = {};
 
   ngAfterViewInit() {
+    this.__applyAttributes__();
     this._effectTimeout = setTimeout(() => {
       this.__destroyEffects.push(this.__init());
     }, 0);
@@ -91,13 +103,20 @@ export default class RefConsumer extends Props {
     this.__destroyEffects.forEach((d) => d && d());
     clearTimeout(this._effectTimeout);
   }
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
 
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
   }

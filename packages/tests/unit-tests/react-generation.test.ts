@@ -77,6 +77,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("empty-view", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("props", function () {
     this.testGenerator(this.test!.title);
   });

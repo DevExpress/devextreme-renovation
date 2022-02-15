@@ -8,12 +8,12 @@ import {
   kebabSvgAttributes,
   Expression,
   SimpleExpression,
-  Method,
   GetAccessor,
   isCall,
   isFunction,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
+import { Method } from '../class-members/method';
 import { JsxExpression } from './jsx-expression';
 
 function isAriaAttribute(name: string): boolean {
@@ -207,6 +207,11 @@ export class JsxAttribute extends BaseJsxAttribute {
           return this.compileBase(name, `__${name}__generated`);
         }
       }
+    }
+
+    const member = getMember(this.initializer, options);
+    if (member instanceof Method) {
+      member.needBind = true;
     }
 
     return this.compileBase(

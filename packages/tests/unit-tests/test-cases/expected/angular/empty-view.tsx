@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 @Component({
   template: "",
 })
-export class Props {}
+export class WidgetProps {}
 
 import {
   NgModule,
@@ -17,11 +17,10 @@ import {
 import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: "dx-inner-component",
+  selector: "dx-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div></div>`,
 })
-export class InnerComponent extends Props {
+export class WidgetWithProps extends WidgetProps {
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -40,11 +39,11 @@ export class InnerComponent extends Props {
   }
 }
 @NgModule({
-  declarations: [InnerComponent],
+  declarations: [WidgetWithProps],
   imports: [CommonModule],
 
-  exports: [InnerComponent],
+  exports: [WidgetWithProps],
 })
-export class DxInnerComponentModule {}
-export { InnerComponent as DxInnerComponentComponent };
-export default InnerComponent;
+export class DxWidgetWithPropsModule {}
+export { WidgetWithProps as DxWidgetWithPropsComponent };
+export default WidgetWithProps;
