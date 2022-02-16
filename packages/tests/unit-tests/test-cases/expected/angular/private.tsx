@@ -30,9 +30,6 @@ export default class Widget extends WidgetInput {
   __simpleGetter(): any {
     return this.decoratedState.concat(this.simpleState);
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

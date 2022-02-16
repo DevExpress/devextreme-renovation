@@ -204,30 +204,32 @@ mocha.describe("Angular generator", function () {
       }
     );
 
-    mocha.it(`aria-label attribute binding - [attr.aria-label]"`, function () {
-      const expression = generator.createJsxAttribute(
-        generator.createIdentifier("aria-label"),
-        generator.createJsxExpression(
-          undefined,
-          generator.createIdentifier("value")
-        )
-      );
-
-      assert.strictEqual(expression.toString(), `[attr.aria-label]="value"`);
-    });
-
-    mocha.it(`aria-label attribute - aria-label"`, function () {
-      const expression = generator.createJsxAttribute(
-        generator.createIdentifier("aria-label"),
-        generator.createJsxExpression(
-          undefined,
-          generator.createStringLiteral("value")
-        )
-      );
-
-      assert.strictEqual(expression.toString(), `aria-label="value"`);
-    });
-
+    ['aria-label', 'aria-labelledby', 'aria-colindex', 'aria-rowindex', 'aria-selected'].forEach((attrName) => {
+      mocha.it(`${attrName} attribute binding - [attr.${attrName}]"`, function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createIdentifier("value")
+          )
+        );
+  
+        assert.strictEqual(expression.toString(), `[attr.${attrName}]="value"`);
+      });
+  
+      mocha.it(`${attrName} attribute - ${attrName}"`, function () {
+        const expression = generator.createJsxAttribute(
+          generator.createIdentifier(attrName),
+          generator.createJsxExpression(
+            undefined,
+            generator.createStringLiteral("value")
+          )
+        );
+  
+        assert.strictEqual(expression.toString(), `${attrName}="value"`);
+      });
+    })
+    
     mocha.it("JsxSelfClosingElement with attributes", function () {
       const expression = generator.createJsxSelfClosingElement(
         generator.createIdentifier("div"),
@@ -6319,7 +6321,7 @@ mocha.describe("Angular generator", function () {
             getResult(`{
               this.attr=attr;
               this._detectChanges();
-              this.scheduledApplyAttributes = this;
+              this.scheduledApplyAttributes = true;
             }`)
           );
         });
@@ -6883,9 +6885,6 @@ mocha.describe("Angular generator", function () {
 
                 ${component.decorator}
                 export default class BaseWidget {
-                    get __restAttributes(): any{
-                        return {}
-                    }
                     _detectChanges(): void {
                       setTimeout(() => {
                         if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -6976,9 +6975,6 @@ mocha.describe("Angular generator", function () {
 
                 ${component.decorator}
                 export default class BaseWidget extends Input {
-                    get __restAttributes(): any{
-                        return {}
-                    }
                     _detectChanges(): void {
                       setTimeout(() => {
                         if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -7936,9 +7932,9 @@ mocha.describe("Angular generator", function () {
                 }
 
                 _updateEffects(){
-                  if(this.__viewCheckedSubscribeEvent.length){
-                    clearTimeout(this._effectTimeout);
-                    this._effectTimeout = setTimeout(()=>{
+                  if(this.__viewCheckedSubscribeEvent.length && !this._effectTimeout){
+                    this._effectTimeout = setTimeout(() => {
+                      this._effectTimeout = undefined;
                         this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
                           s?.();
                           if(this.__viewCheckedSubscribeEvent[i]===s){
@@ -8004,16 +8000,16 @@ mocha.describe("Angular generator", function () {
                             }
                         }
                         _updateEffects(){
-                          if(this.__viewCheckedSubscribeEvent.length){
-                            clearTimeout(this._effectTimeout);
-                            this._effectTimeout = setTimeout(()=>{
-                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
-                                  s?.();
-                                  if(this.__viewCheckedSubscribeEvent[i]===s){
-                                    this.__viewCheckedSubscribeEvent[i]=null;
-                                  }
-                                });
+                          if(this.__viewCheckedSubscribeEvent.length && !this._effectTimeout) {
+                            this._effectTimeout = setTimeout(() => {
+                              this._effectTimeout = undefined;
+                              this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                s?.();
+                                if(this.__viewCheckedSubscribeEvent[i]===s){
+                                  this.__viewCheckedSubscribeEvent[i]=null;
+                                }
                               });
+                            });
                           }
                         }
                 `)
@@ -8086,16 +8082,16 @@ mocha.describe("Angular generator", function () {
                             }
                         }
                         _updateEffects(){
-                          if(this.__viewCheckedSubscribeEvent.length){
-                            clearTimeout(this._effectTimeout);
-                            this._effectTimeout = setTimeout(()=>{
-                                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
-                                  s?.();
-                                  if(this.__viewCheckedSubscribeEvent[i]===s){
-                                    this.__viewCheckedSubscribeEvent[i]=null;
-                                  }
-                                });
+                          if(this.__viewCheckedSubscribeEvent.length && !this._effectTimeout){
+                            this._effectTimeout = setTimeout(() => {
+                              this._effectTimeout = undefined;
+                              this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                                s?.();
+                                if(this.__viewCheckedSubscribeEvent[i]===s){
+                                  this.__viewCheckedSubscribeEvent[i]=null;
+                                }
                               });
+                            });
                           }
                         }
                 `)

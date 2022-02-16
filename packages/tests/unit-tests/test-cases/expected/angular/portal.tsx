@@ -110,9 +110,6 @@ export default class Widget extends WidgetProps {
   __onInit(): any {
     this._rendered = true;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -125,9 +122,7 @@ export default class Widget extends WidgetProps {
   _effectTimeout: any;
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__onInit());
-    }, 0);
+    this.__destroyEffects.push(this.__onInit());
   }
 
   ngOnDestroy() {

@@ -21,7 +21,6 @@ export class FirstProps {
 })
 export default class First extends JSXComponent(FirstProps) {
   get currentDateGetter(): Date {
-    console.log('ngOnChanges')
     return this.props.currentDate;
   }
 

@@ -493,3 +493,25 @@ cloneTest("Default prop value if undefined in parent", async (t) => {
     .expect((await undefinedPropDefaults.textContent).trim())
     .eql('oneWayDefault twoWayDefault')
 })
+
+cloneTest("Default template default value with map", async (t) => {
+  const defaultTemplateMap = Selector("#defaultTemplateMap");
+  await t
+    .expect((await defaultTemplateMap.textContent).trim())
+    .eql('Default value with map')
+})
+
+cloneTest("rest attributes should be passed and applied", async (t) => {
+  const restAttributesWidget = Selector("#restAttributesWidget");
+
+  await t
+    .expect(await restAttributesWidget.getAttribute("class"))
+    .eql('myclass')
+  await t
+    .expect(await restAttributesWidget.getAttribute("role"))
+    .eql('button')
+
+  await t
+    .expect(await restAttributesWidget.getAttribute("style"))
+    .eql("width: 200px; color: red;")
+})

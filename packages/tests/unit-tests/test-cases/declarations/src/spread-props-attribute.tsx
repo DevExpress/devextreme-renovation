@@ -4,11 +4,16 @@ import {
   JSXComponent,
   OneWay,
   TwoWay,
+  InternalState,
+  Fragment,
 } from "@devextreme-generator/declarations";
 import InnerWidget from "./dx-inner-widget";
 
-function view({ props, restAttributes }: Widget) {
-  return <InnerWidget {...(props as any)} {...restAttributes} />;
+function view({ attributes, props, restAttributes }: Widget) {
+  return <Fragment>
+    <InnerWidget {...(props as any)} {...restAttributes} />
+    <div { ...attributes as any} />
+  </Fragment>
 }
 
 @ComponentBindings()
@@ -20,4 +25,13 @@ export class WidgetInput {
 @Component({
   view: view,
 })
-export default class Widget extends JSXComponent(WidgetInput) {}
+export default class Widget extends JSXComponent(WidgetInput) {
+  @InternalState() counter = 1;
+  @InternalState() notUsedValue = 1;
+  get attributes () {
+    return {
+      visible: this.props.visible,
+      value: this.counter
+    }
+  }
+}

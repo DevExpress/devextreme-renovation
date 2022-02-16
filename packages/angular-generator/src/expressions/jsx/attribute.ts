@@ -8,15 +8,17 @@ import {
   kebabSvgAttributes,
   Expression,
   SimpleExpression,
-  Method,
   GetAccessor,
   isCall,
   isFunction,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
+import { Method } from '../class-members/method';
 import { JsxExpression } from './jsx-expression';
 
-const ATTR_BINDING_ATTRIBUTES = ['aria-label'];
+function isAriaAttribute(name: string): boolean {
+  return name.startsWith('aria-');
+}
 
 export class JsxAttribute extends BaseJsxAttribute {
   constructor(name: Identifier, initializer?: Expression) {
@@ -66,23 +68,33 @@ export class JsxAttribute extends BaseJsxAttribute {
   }
 
   compileEvent(options: toStringOptions) {
-    return `(${this.name})="${this.compileInitializer(options)}($event)"`;
+    const member = getMember(this.initializer, options);
+    const hasEmptyParameters = member instanceof Method
+      && !(member instanceof GetAccessor)
+      && member.parameters.length === 0;
+    const args = hasEmptyParameters ? '' : '$event';
+
+    return `(${this.name})="${this.compileInitializer(options)}(${args})"`;
   }
 
   compileName(options?: toStringOptions) {
     const name = this.name.toString();
-    if (!options?.jsxComponent) {
-      if (name === 'className') {
-        return options?.isSVG ? 'attr.class' : 'class';
-      }
-      if (name === 'style') {
+    if (name === 'style') {
+      const component = options?.jsxComponent;
+      const isComponentWithoutStyleProp = component?.props.every((p) => p.name !== 'style');
+      if (!component || isComponentWithoutStyleProp) {
         if (options) {
           options.hasStyle = true;
         }
         return 'ngStyle';
       }
+    }
+    if (!options?.jsxComponent) {
+      if (name === 'className') {
+        return options?.isSVG ? 'attr.class' : 'class';
+      }
 
-      if (ATTR_BINDING_ATTRIBUTES.indexOf(name) > -1) {
+      if (isAriaAttribute(name)) {
         return `attr.${name}`;
       }
 
@@ -195,6 +207,11 @@ export class JsxAttribute extends BaseJsxAttribute {
           return this.compileBase(name, `__${name}__generated`);
         }
       }
+    }
+
+    const member = getMember(this.initializer, options);
+    if (member instanceof Method) {
+      member.needBind = true;
     }
 
     return this.compileBase(

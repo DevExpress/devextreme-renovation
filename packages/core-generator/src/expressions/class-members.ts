@@ -69,6 +69,10 @@ export class BaseClassMember extends Expression {
     return true;
   }
 
+  get isRestAttributes(): boolean {
+    return this.name === '__restAttributes';
+  }
+
   public getDecoratorParameter<E extends Expression>(decoratorType: Decorators,
     paramName: string): E | null | undefined {
     const decorator = this.decorators.find((d) => d.name === decoratorType);

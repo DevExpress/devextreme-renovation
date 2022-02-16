@@ -40,9 +40,6 @@ export default class RefOnChildrenTemplate extends Props {
       this.child.nativeElement.innerHTML += "ParentText";
     }
   }
-  get __restAttributes(): any {
-    return {};
-  }
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
@@ -85,9 +82,9 @@ export default class RefOnChildrenTemplate extends Props {
   }
 
   _updateEffects() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      clearTimeout(this._effectTimeout);
+    if (this.__viewCheckedSubscribeEvent.length && !this._effectTimeout) {
       this._effectTimeout = setTimeout(() => {
+        this._effectTimeout = undefined;
         this.__viewCheckedSubscribeEvent.forEach((s, i) => {
           s?.();
           if (this.__viewCheckedSubscribeEvent[i] === s) {
@@ -105,9 +102,7 @@ export default class RefOnChildrenTemplate extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__effect());
-    }, 0);
+    this.__destroyEffects.push(this.__effect());
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (this.__destroyEffects.length && ["child"].some((d) => changes[d])) {

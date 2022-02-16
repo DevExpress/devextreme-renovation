@@ -10,6 +10,7 @@ import {
   getExpression,
   getMember,
   getProps,
+  Heritable,
   Identifier,
   isFunction,
   JsxOpeningElement as BaseJsxOpeningElement,
@@ -168,7 +169,6 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     const properties = (component
         && getProps(component.members).filter(this.getPropertyFromSpread))
       || [];
-
     const spreadAttributesExpression = getExpression(
       spreadAttribute.expression,
       options,
@@ -277,15 +277,31 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return new JsxAttribute(name, value);
   }
 
-  processSpreadAttributesOnNativeElement() {
-    const ref = this.attributes.find(
+  processSpreadAttributesOnNativeElement(restAttributesExpression?: Expression) {
+    const refs = this.attributes.filter(
       (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
     );
-    if (!ref && !this.component) {
+
+    const hasAutoRef = refs.some(
+      (a) => a instanceof JsxAttribute && a.initializer.toString().startsWith('_auto_ref'),
+    );
+
+    const needRestAttributesProp = this.component && restAttributesExpression && !hasAutoRef;
+
+    if ((!this.component && !refs.length) || needRestAttributesProp) {
       this.attributes.push(
         new JsxAttribute(
           new Identifier('ref'),
           new SimpleExpression(`_auto_ref_${counter.get()}`),
+        ),
+      );
+    }
+
+    if (needRestAttributesProp) {
+      this.attributes.push(
+        new JsxAttribute(
+          new Identifier('_restAttributes'),
+          restAttributesExpression,
         ),
       );
     }
@@ -298,13 +314,27 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return spreadAttribute;
   }
 
+  isPropsSpreadAttribute(
+    attr: JsxAttribute | JsxSpreadAttribute,
+    options?: toStringOptions,
+  ): boolean {
+    return this.component !== undefined
+      && attr instanceof JsxSpreadAttribute
+      && this.spreadToArray(attr, options).length > 0;
+  }
+
   processSpreadAttributes(options?: toStringOptions) {
+    let restAttributesExpression: Expression | undefined;
     const spreadAttributes = this.attributes.filter(
       (a) => a instanceof JsxSpreadAttribute,
     ) as JsxSpreadAttribute[];
     if (spreadAttributes.length) {
       spreadAttributes.forEach((spreadAttr) => {
         const attributes = this.spreadToArray(spreadAttr, options);
+
+        if (attributes.length === 0) {
+          restAttributesExpression = spreadAttr.expression;
+        }
 
         const updatedSpreadAttribute = this.updateSpreadAttribute(
           spreadAttr,
@@ -333,13 +363,24 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         });
       });
 
-      this.processSpreadAttributesOnNativeElement();
+      this.processSpreadAttributesOnNativeElement(restAttributesExpression);
     }
   }
 
   attributesString(options?: toStringOptions) {
     this.processSpreadAttributes(options);
     return super.attributesString(options);
+  }
+
+  addTemplateComponents(options: toStringOptions, components: Heritable[]): void {
+    const { templateComponents } = options;
+    if (templateComponents) {
+      components.forEach((component) => {
+        if (templateComponents.indexOf(component) === -1) {
+          templateComponents.push(component);
+        }
+      });
+    }
   }
 
   compileTemplate(templateProperty: Property, options: toStringOptions) {
@@ -387,9 +428,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
         if (!options.templateComponents) {
           throw new Error('options.templateComponents should be initialized by component');
         }
-        if (options.templateComponents.indexOf(initializerComponent) === -1) {
-          options.templateComponents.push(initializerComponent);
-        }
+        this.addTemplateComponents(options, [initializerComponent]);
       }
       const contextElementsStr = contextElements.map((el) => el.key.toString());
       options.defaultTemplates = options.defaultTemplates || {};
@@ -579,7 +618,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     );
   }
 
-  componentToJsxElement(name: string, component: Component) {
+  componentToJsxElement(name: string, component: Component): JsxElement {
     const attributes = getProps(component.members).map((prop) => {
       let initializer: Expression = prop._name;
       if (prop.initializer) {
@@ -656,9 +695,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
       }, [] as { name: string; component: Component }[]);
 
       if (options) {
-        options.templateComponents = (options.templateComponents || []).concat(
-          components.map((c) => c.component),
-        );
+        this.addTemplateComponents(options, components.map((c) => c.component));
       }
 
       const functions = templates.reduce((acc, template) => {
@@ -710,19 +747,17 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return `__${templateName}__generated`;
   }
 
-  getSpreadAttributes() {
-    if (this.component) {
-      return [];
-    }
+  getSpreadAttributes(options?: toStringOptions) {
     const result = this.attributes
-      .filter((a) => a instanceof JsxSpreadAttribute)
+      .filter((a) => a instanceof JsxSpreadAttribute && !this.isPropsSpreadAttribute(a, options))
       .map((a) => {
-        const ref = this.attributes.find(
+        const lastRef = this.attributes.slice().reverse().find(
           (a) => a instanceof JsxAttribute && a.name.toString() === 'ref',
         ) as JsxAttribute | undefined;
-        if (ref) {
+
+        if (lastRef) {
           return {
-            refExpression: ref.initializer,
+            refExpression: lastRef.initializer,
             expression: (a as JsxSpreadAttribute).expression,
           } as JsxSpreadAttributeMeta;
         }
@@ -816,6 +851,10 @@ export class JsxSelfClosingElement extends JsxOpeningElement {
   }
 
   toString(options?: toStringOptions) {
+    if (this.tagName.toString() === 'Fragment') {
+      return '';
+    }
+
     if (VOID_ELEMENTS.indexOf(this.tagName.toString(options)) !== -1) {
       return `${super.toString(options).replace('>', '/>')}`;
     }

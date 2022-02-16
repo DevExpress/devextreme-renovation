@@ -51,6 +51,8 @@ import ButtonWithInternalState from "./internal-state-change-on-effect";
 import GetterCache from "./getter-cache/getter-cache-parent";
 import UndefPropParent from "./undefined-prop-parent";
 import CachedGetterWithTwoWay from './getter-cached-with-two-way';
+import DefaultTemplateValueWithMap from './default-template/default-template-map';
+import RestAttributesWidget from './rest-attributes/button';
 function view(model: App) {
   return (
     <div>
@@ -178,6 +180,8 @@ function view(model: App) {
         <ButtonComponent id="undefinedPropsButton" onClick={model.changeUndefProps}>Change Undef Props</ButtonComponent>
       </div>
       <CachedGetterWithTwoWay />
+      <DefaultTemplateValueWithMap />
+      <RestAttributesWidget className="myclass" role="button" style={{width: 200, color: 'red'}}/>
     </div>
   );
 }

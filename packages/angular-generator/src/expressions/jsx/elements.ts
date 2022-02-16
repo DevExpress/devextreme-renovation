@@ -133,12 +133,12 @@ export class JsxElement extends BaseJsxElement {
     );
   }
 
-  getSpreadAttributes() {
-    const result = this.openingElement.getSpreadAttributes();
+  getSpreadAttributes(options?: toStringOptions) {
+    const result = this.openingElement.getSpreadAttributes(options);
     const allAttributes: JsxSpreadAttributeMeta[] = this.children.reduce(
       (result: JsxSpreadAttributeMeta[], c) => {
         if (isElement(c)) {
-          return result.concat(c.getSpreadAttributes());
+          return result.concat(c.getSpreadAttributes(options));
         }
         return result;
       },

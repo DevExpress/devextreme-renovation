@@ -89,11 +89,43 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("empty-view", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("event-handler-without-args", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("component-input", function () {
     this.testGenerator(this.test!.title);
   });
 
   mocha.it("component-input-defaults", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes-component", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes-component-with-ref", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("rest-attributes-component-by-condition", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("component-pass-one", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("widget-with-style-prop", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -176,7 +208,23 @@ mocha.describe("angular-generation", function () {
     }
   });
 
+  mocha.it("template-default-nested-render", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("render-nested-widgets", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("method", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("props-any-undefined-unknown", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("method-pass", function () {
     this.testGenerator(this.test!.title);
   });
 
@@ -397,6 +445,10 @@ mocha.describe("angular-generation", function () {
   });
 
   mocha.it("getters-destructuring", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("ref-consumer", function () {
     this.testGenerator(this.test!.title);
   });
 

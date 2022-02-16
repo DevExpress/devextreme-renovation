@@ -39,11 +39,7 @@ import { CommonModule } from "@angular/common";
         ><dx-inner-widget
           [selected]="selected"
           [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-          (onSelect)="
-            (onSelect !== undefined ? onSelect : InnerWidgetDefaults.onSelect)(
-              $event
-            )
-          "
+          (onSelect)="onSelect($event)"
           (valueChange)="
             (valueChange !== undefined
               ? valueChange
@@ -66,9 +62,6 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -86,11 +79,7 @@ export default class Widget extends WidgetProps {
     super();
   }
 
-  InnerWidgetDefaults = {
-    value: 14,
-    onSelect: (e: any) => void 0,
-    valueChange: () => {},
-  };
+  InnerWidgetDefaults = { value: 14, valueChange: () => {} };
 }
 @NgModule({
   declarations: [Widget],

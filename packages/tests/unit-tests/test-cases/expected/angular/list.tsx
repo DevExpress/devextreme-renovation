@@ -64,11 +64,7 @@ import { CommonModule } from "@angular/common";
         #compRef
         style="display: contents"
         [value]="value !== undefined ? value : WidgetWithPropsDefaults.value"
-        (onClick)="
-          onClick !== undefined
-            ? onClick($event)
-            : WidgetWithPropsDefaults.onClick($event)
-        "
+        (onClick)="onClick($event)"
       ></dx-widget-with-props>
       <ng-content
         *ngTemplateOutlet="compRef?.widgetTemplate"
@@ -78,9 +74,6 @@ import { CommonModule } from "@angular/common";
 export default class List extends ListInput {
   global_noop = noop;
 
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -111,11 +104,7 @@ export default class List extends ListInput {
     super();
   }
 
-  WidgetWithPropsDefaults = {
-    value: "default text",
-    number: 42,
-    onClick: (e: any) => void 0,
-  };
+  WidgetWithPropsDefaults = { value: "default text", number: 42 };
 }
 @NgModule({
   declarations: [List],

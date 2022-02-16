@@ -54,9 +54,6 @@ import { CommonModule } from "@angular/common";
   ></ng-template>`,
 })
 export default class SlotsWidget extends SlotsWidgetProps {
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

@@ -5,6 +5,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
     {model.props.defaultCompTemplate({
       optionalValue: model.props.stringToRender,
       value: "twdComp",
+      onClick: () => {},
     })}
     {model.props.defaultCompTemplate({ value: model.props.stringToRender })}
     {model.props.defaultFuncTemplate({ value: model.props.stringToRender })}
@@ -14,10 +15,24 @@ export const viewFunction = (model: TemplateDefaultValue) => (
 export declare type TemplateDefaultValuePropsType = {
   defaultCompTemplate: React.FunctionComponent<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<
+        {
+          optionalValue?: string | undefined;
+          onClick?: (e: any) => void;
+          value: string;
+        },
+        "value"
+      >
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<
+          {
+            optionalValue?: string | undefined;
+            onClick?: (e: any) => void;
+            value: string;
+          },
+          "value"
+        >
       >
   >;
   defaultFuncTemplate: React.FunctionComponent<
@@ -31,18 +46,46 @@ export declare type TemplateDefaultValuePropsType = {
   stringToRender: string;
   defaultCompRender?: React.FunctionComponent<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<
+        {
+          optionalValue?: string | undefined;
+          onClick?: (e: any) => void;
+          value: string;
+        },
+        "value"
+      >
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<
+          {
+            optionalValue?: string | undefined;
+            onClick?: (e: any) => void;
+            value: string;
+          },
+          "value"
+        >
       >
   >;
   defaultCompComponent?: React.JSXElementConstructor<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<
+        {
+          optionalValue?: string | undefined;
+          onClick?: (e: any) => void;
+          value: string;
+        },
+        "value"
+      >
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<
+          {
+            optionalValue?: string | undefined;
+            onClick?: (e: any) => void;
+            value: string;
+          },
+          "value"
+        >
       >
   >;
   defaultFuncRender?: React.FunctionComponent<
@@ -87,6 +130,7 @@ interface TemplateDefaultValue {
   props: typeof TemplateDefaultValueProps & RestProps;
   restAttributes: RestProps;
 }
+
 export default function TemplateDefaultValue(
   props: typeof TemplateDefaultValueProps & RestProps
 ) {

@@ -27,27 +27,27 @@ import {
 @Directive({
   selector: "dxo-another-custom",
 })
-class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
+export class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
 
 @Directive({
   selector: "dxi-custom",
 })
-class DxWidgetEditingCustom extends CustomProps {}
+export class DxWidgetEditingCustom extends CustomProps {}
 
 @Directive({
   selector: "dxo-editing",
 })
-class DxWidgetColumnEditing extends ColumnEditingProps {}
+export class DxWidgetColumnEditing extends ColumnEditingProps {}
 
 @Directive({
   selector: "dxi-custom",
 })
-class DxWidgetColumnCustom extends CustomProps {}
+export class DxWidgetColumnCustom extends CustomProps {}
 
 @Directive({
   selector: "dxo-editing",
 })
-class DxWidgetEditing extends EditingProps {
+export class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
   @ContentChildren(DxWidgetEditingCustom)
   customNested?: QueryList<DxWidgetEditingCustom>;
@@ -83,7 +83,7 @@ class DxWidgetEditing extends EditingProps {
 @Directive({
   selector: "dxi-column",
 })
-class DxWidgetColumn extends GridColumnProps {
+export class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
   @ContentChildren(DxWidgetColumnEditing)
   editingNested?: QueryList<DxWidgetColumnEditing>;
@@ -151,9 +151,6 @@ export default class Widget extends PickedProps {
       return nested[0];
     }
     return PickedProps.__defaultNestedValues.editing;
-  }
-  get __restAttributes(): any {
-    return {};
   }
   _detectChanges(): void {
     setTimeout(() => {

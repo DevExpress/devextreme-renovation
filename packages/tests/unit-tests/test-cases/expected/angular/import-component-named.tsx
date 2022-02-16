@@ -28,15 +28,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["height"],
   template: `<ng-template #widgetTemplate
-    ><dx-widget [prop]="true" #widget2 style="display: contents"></dx-widget
-    ><ng-content *ngTemplateOutlet="widget2?.widgetTemplate"></ng-content
+    ><dx-widget [prop]="true" #widget3 style="display: contents"></dx-widget
+    ><ng-content *ngTemplateOutlet="widget3?.widgetTemplate"></ng-content
   ></ng-template>`,
 })
 export default class Child extends ChildInput {
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

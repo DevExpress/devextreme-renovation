@@ -58,9 +58,6 @@ export default class Widget extends WidgetProps {
   get __forwardRefCurrent(): any {
     return this.forwardRef?.nativeElement;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   forwardRefProp__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>

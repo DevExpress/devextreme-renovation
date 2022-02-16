@@ -1,3 +1,4 @@
+import { Fragment } from "inferno";
 import {
   BaseInfernoComponent,
   InfernoComponent,
@@ -5,8 +6,14 @@ import {
   normalizeStyles,
 } from "@devextreme/runtime/inferno";
 import InnerWidget from "./dx-inner-widget";
-function view({ props, restAttributes }: Widget) {
-  return <InnerWidget {...(props as any)} {...restAttributes} />;
+function view({ attributes, props, restAttributes }: Widget) {
+  return (
+    <Fragment>
+      <InnerWidget {...(props as any)} {...restAttributes} />
+
+      <div {...(attributes as any)} />
+    </Fragment>
+  );
 }
 
 export declare type WidgetInputType = {
@@ -27,13 +34,15 @@ declare type RestProps = {
 };
 
 export default class Widget extends BaseInfernoComponent<any> {
-  state: { value?: boolean };
+  state: { counter: number; notUsedValue: number; value?: boolean };
 
   refs: any;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      counter: 1,
+      notUsedValue: 1,
       value:
         this.props.value !== undefined
           ? this.props.value
@@ -41,6 +50,12 @@ export default class Widget extends BaseInfernoComponent<any> {
     };
   }
 
+  counter!: number;
+  notUsedValue!: number;
+
+  get attributes(): any {
+    return { visible: this.props.visible, value: this.state.counter };
+  }
   get restAttributes(): RestProps {
     const { defaultValue, value, valueChange, visible, ...restProps } = {
       ...this.props,
@@ -58,6 +73,9 @@ export default class Widget extends BaseInfernoComponent<any> {
         value:
           this.props.value !== undefined ? this.props.value : this.state.value,
       },
+      counter: this.state.counter,
+      notUsedValue: this.state.notUsedValue,
+      attributes: this.attributes,
       restAttributes: this.restAttributes,
     } as Widget);
   }

@@ -54,6 +54,7 @@ import {
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {
@@ -93,9 +94,6 @@ export default class Widget extends Props {
   }
   get __userGet(): UserType {
     return "user";
-  }
-  get __restAttributes(): any {
-    return {};
   }
   _detectChanges(): void {
     setTimeout(() => {

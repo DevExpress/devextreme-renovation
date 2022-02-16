@@ -21,6 +21,11 @@ export class GetAccessor extends BaseGetAccessor {
   }
 
   toString(options?: toStringOptions): string {
+    if (this.isRestAttributes) {
+      if (options && !options.mutableOptions?.hasRestAttributes) {
+        return '';
+      }
+    }
     if (options?.isComponent
        && this.body
        && this.isMemorized(options)) {

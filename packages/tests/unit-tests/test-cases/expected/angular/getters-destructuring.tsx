@@ -100,9 +100,6 @@ class Widget extends WidgetProps {
   changeState(newValue: string): any {
     this._someState = newValue;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

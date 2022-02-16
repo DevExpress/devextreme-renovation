@@ -16,8 +16,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
+  Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { getAttributes } from "@devextreme/runtime/angular";
 
 const NUMBER_STYLES = new Set([
   "animation-iteration-count",
@@ -93,12 +96,17 @@ const normalizeStyles = (styles: unknown) => {
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
+  @Input() _restAttributes?: Record<string, unknown>;
   get __styles(): any {
     const { style } = this.__restAttributes;
     return modifyStyles(style);
   }
   get __restAttributes(): any {
-    return {};
+    const restAttributes = getAttributes(this._elementRef);
+    return {
+      ...restAttributes,
+      ...this._restAttributes,
+    };
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -112,7 +120,8 @@ export default class Widget extends WidgetInput {
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
   }
