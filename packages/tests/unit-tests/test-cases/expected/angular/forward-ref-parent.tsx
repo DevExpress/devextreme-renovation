@@ -117,14 +117,11 @@ export default class RefOnChildrenParent extends Props {
 
   _updateEffects() {
     if (this.__viewCheckedSubscribeEvent.length) {
-      clearTimeout(this._effectTimeout);
-      this._effectTimeout = setTimeout(() => {
-        this.__viewCheckedSubscribeEvent.forEach((s, i) => {
-          s?.();
-          if (this.__viewCheckedSubscribeEvent[i] === s) {
-            this.__viewCheckedSubscribeEvent[i] = null;
-          }
-        });
+      this.__viewCheckedSubscribeEvent.forEach((s, i) => {
+        s?.();
+        if (this.__viewCheckedSubscribeEvent[i] === s) {
+          this.__viewCheckedSubscribeEvent[i] = null;
+        }
       });
     }
   }
