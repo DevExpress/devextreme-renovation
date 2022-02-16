@@ -34,6 +34,7 @@ import {
 })
 class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   someState: number = 0;
   get __g7(): any {
     return this.__g6;
@@ -114,9 +115,9 @@ class Widget extends WidgetProps {
   }
 
   _updateEffects() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      clearTimeout(this._effectTimeout);
+    if (this.__viewCheckedSubscribeEvent.length && !this._effectTimeout) {
       this._effectTimeout = setTimeout(() => {
+        this._effectTimeout = undefined;
         this.__viewCheckedSubscribeEvent.forEach((s, i) => {
           s?.();
           if (this.__viewCheckedSubscribeEvent[i] === s) {
@@ -134,9 +135,7 @@ class Widget extends WidgetProps {
   } = {};
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__someEffect());
-    }, 0);
+    this.__destroyEffects.push(this.__someEffect());
   }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
