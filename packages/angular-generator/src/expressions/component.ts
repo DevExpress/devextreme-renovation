@@ -854,16 +854,13 @@ export class AngularComponent extends Component {
       if (ngOnChanges.length || hasInternalStateDependency) {
         statements.push(`
           _updateEffects(){
-            if(this.__viewCheckedSubscribeEvent.length){
-              clearTimeout(this._effectTimeout);
-              this._effectTimeout = setTimeout(()=>{
-                  this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
-                    s?.();
-                    if(this.__viewCheckedSubscribeEvent[i]===s){
-                      this.__viewCheckedSubscribeEvent[i]=null;
-                    }
-                  });
-                });
+            if(this.__viewCheckedSubscribeEvent.length) {
+              this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                s?.();
+                if(this.__viewCheckedSubscribeEvent[i]===s){
+                  this.__viewCheckedSubscribeEvent[i]=null;
+                }
+              });
             }
           }
         `);
