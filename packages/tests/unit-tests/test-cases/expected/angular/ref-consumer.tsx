@@ -94,9 +94,7 @@ export default class RefConsumer extends Props {
 
   ngAfterViewInit() {
     this.__applyAttributes__();
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__init());
-    }, 0);
+    this.__destroyEffects.push(this.__init());
   }
 
   ngOnDestroy() {
