@@ -29,10 +29,17 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof WidgetInput & RestProps;
+  componentProps: any;
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
+  const __componentProps = useCallback(
+    function __componentProps(): any {
+      return props;
+    },
+    [props]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -51,6 +58,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   return view({
     props: { ...props, templateProp: getWrapperTemplate(props.templateProp) },
+    componentProps: {
+      ...__componentProps(),
+      templateProp: getWrapperTemplate(props.templateProp),
+    },
     restAttributes: __restAttributes(),
   });
 }

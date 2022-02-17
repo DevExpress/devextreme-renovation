@@ -25,4 +25,7 @@ import {
     view: view,
   })
   export default class Widget extends JSXComponent(WidgetInput) {
+    get componentProps() {
+      return this.props;
+    }
   }

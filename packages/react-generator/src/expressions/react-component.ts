@@ -521,7 +521,13 @@ export class ReactComponent extends Component {
         }
         return new ShorthandPropertyAssignment(s._name);
       })
-      .map((p) => p.toString(toStringOptions));
+      .map((p) => {
+        const name = p.key.toString();
+        if (name === 'componentProps') {
+          return `${name}: { ...__${name}(), ${this.processTemplates()}}`;
+        }
+        return p.toString(toStringOptions);
+      });
 
     const state = compileState(this.state, 'props');
     const internalState = compileState(this.internalState);
