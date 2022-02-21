@@ -6,8 +6,5 @@
     "license": "SEE LICENSE IN LICENSE",
     "main": "../dist/csj/vue/index",
     "module": "../dist/esm/vue/index",
-    "types": "../dist/esm/vue/index",
-    "peerDependencies": {
-      "vue": "^2.6.14"
-    }
+    "types": "../dist/esm/vue/index"
   }

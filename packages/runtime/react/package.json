@@ -6,9 +6,5 @@
     "license": "SEE LICENSE IN LICENSE",
     "main": "../dist/cjs/react/index",
     "module": "../dist/esm/react/index",
-    "types": "../dist/esm/react/index",
-    "peerDependencies": {
-      "react-dom": "^16.12.0",
-      "react": "^16.12.0"
-    }
+    "types": "../dist/esm/react/index"
   }

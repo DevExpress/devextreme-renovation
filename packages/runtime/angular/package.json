@@ -7,7 +7,7 @@
     "main": "../dist/cjs/angular/index",
     "module": "../dist/esm/angular/index",
     "types": "../dist/esm/angular/index",
-    "peerDependencies": {
+    "devDependencies": {
       "@angular/core": "^11.0.0 || ^12.0.0 || ^13.0.0"
     }
   }

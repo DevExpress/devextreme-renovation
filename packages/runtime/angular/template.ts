@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { ViewContainerRef } from '@angular/core';
 
 interface IModel {
@@ -28,7 +29,13 @@ export const renderTemplate = (
   }
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const hasTemplate = (name: any, props: any, _component?: any): boolean => {
+export const hasTemplate = (
+  name: string,
+  props: Record<string, unknown>,
+  _component?: any,
+): boolean => {
   const value = props[name];
   return !!value && typeof value !== 'string';
 };
+
+export const getWrapperTemplate = (TemplateProp: unknown): unknown => TemplateProp;

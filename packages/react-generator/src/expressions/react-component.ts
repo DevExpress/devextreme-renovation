@@ -217,8 +217,8 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
-    if (this.props.some((p) => p.isTemplate)) {
-      imports.push(`import { ${isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate'} } from '@devextreme/runtime/react'`);
+    if (this.props.some((p) => p.isTemplate) && !isComponentWrapper(this.context.imports)) {
+      imports.push('import { getTemplate } from \'@devextreme/runtime/react\'');
     }
 
     return imports;
@@ -485,16 +485,15 @@ export class ReactComponent extends Component {
   }
 
   getTemplateRender(name: string): string {
-    return isComponentWrapper(this.context.imports) ? `getWrapperTemplate(props.${name})`
-      : `getTemplate(props.${name}, props.${getTemplatePropName(
-        name,
-        'render',
-      )}, props.${getTemplatePropName(name, 'component')})`;
+    return `getTemplate(props.${name}, props.${getTemplatePropName(
+      name,
+      'render',
+    )}, props.${getTemplatePropName(name, 'component')})`;
   }
 
   processTemplates(): string[] {
     return this.props
-      .filter((p) => p.isTemplate)
+      .filter((p) => p.isTemplate && !isComponentWrapper(this.context.imports))
       .map(
         (t) => `${t.name}: ${this.getTemplateRender(t.name)}`,
       );

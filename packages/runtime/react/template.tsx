@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import ReactDOM from 'react-dom';
 import * as React from 'react';
 
@@ -5,7 +6,11 @@ import * as React from 'react';
 export const renderTemplate = (template: any, model: any, _component?: any): void => {
   template(model, model.container);
 };
-export const hasTemplate = (name: any, props: any, _component?: any): boolean => {
+export const hasTemplate = (
+  name: string,
+  props: Record<string, unknown>,
+  _component?: any,
+): boolean => {
   const value = props[name];
   return !!value && typeof value !== 'string';
 };
@@ -22,11 +27,14 @@ export const getWrapperTemplate = (TemplateProp: any) => {
   };
 };
 
-export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => (
-  (TemplateProp && (TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp))
-    || (RenderProp
-      && ((props: any) => RenderProp(
-        ...('data' in props ? [props.data, props.index] : [props]),
-      )))
-    || (ComponentProp && ((props: any) => <ComponentProp {...props} />))
-);
+export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => {
+  if (TemplateProp) {
+    return TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp;
+  } if (RenderProp) {
+    return (props: any) => RenderProp(
+      ...('data' in props ? [props.data, props.index] : [props]),
+    );
+  } if (ComponentProp) {
+    return (props: any) => <ComponentProp {...props} />;
+  }
+};

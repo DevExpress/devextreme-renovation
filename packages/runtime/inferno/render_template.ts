@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { render } from 'inferno';
 import { createElement } from 'inferno-create-element';
 
@@ -29,3 +30,5 @@ export const hasTemplate = (
   const value = properties[name];
   return !!value && typeof value !== 'string';
 };
+
+export const getWrapperTemplate = (TemplateProp: unknown): unknown => TemplateProp;
