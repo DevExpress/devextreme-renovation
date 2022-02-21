@@ -18,7 +18,6 @@ export const WidgetInput: WidgetInputType = {
 };
 import * as React from "react";
 import { useCallback } from "react";
-import { getWrapperTemplate } from "@devextreme/runtime/react";
 
 declare type RestProps = {
   className?: string;
@@ -49,10 +48,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     [props]
   );
 
-  return view({
-    props: { ...props, templateProp: getWrapperTemplate(props.templateProp) },
-    restAttributes: __restAttributes(),
-  });
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
 Widget.defaultProps = WidgetInput;
