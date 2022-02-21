@@ -27,7 +27,7 @@ export const getWrapperTemplate = (TemplateProp: any) => {
   };
 };
 
-export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any) => {
+export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: any): any => {
   if (TemplateProp) {
     return TemplateProp.defaultProps ? (props: any) => <TemplateProp {...props} /> : TemplateProp;
   } if (RenderProp) {
@@ -37,4 +37,5 @@ export const getTemplate = (TemplateProp: any, RenderProp: any, ComponentProp: a
   } if (ComponentProp) {
     return (props: any) => <ComponentProp {...props} />;
   }
+  return '';
 };

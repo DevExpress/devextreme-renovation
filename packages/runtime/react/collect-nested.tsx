@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react';
 // eslint-disable-next-line
 export function __collectChildren(children: React.ReactNode): Record<string, any> {

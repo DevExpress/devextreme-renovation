@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { ElementRef } from '@angular/core';
 
 export function isSlotEmpty(slot: ElementRef<HTMLDivElement> | undefined): boolean {

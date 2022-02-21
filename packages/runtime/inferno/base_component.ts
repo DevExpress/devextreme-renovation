@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Component, findDOMfromVNode } from 'inferno';
 import { InfernoEffect } from './effect';
 import { InfernoEffectHost } from './effect_host';
