@@ -61,9 +61,7 @@ export default class Widget extends WidgetInput {
   _effectTimeout: any;
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__initialize());
-    }, 0);
+    this.__destroyEffects.push(this.__initialize());
   }
 
   ngOnDestroy() {

@@ -122,9 +122,7 @@ export default class Widget extends WidgetProps {
   _effectTimeout: any;
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__onInit());
-    }, 0);
+    this.__destroyEffects.push(this.__onInit());
   }
 
   ngOnDestroy() {
