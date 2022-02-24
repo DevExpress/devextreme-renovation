@@ -329,7 +329,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block,
+    body: Block | undefined,
   ) {
     const functionDeclaration = this.createFunctionDeclarationCore(
       decorators,
@@ -356,7 +356,7 @@ export class Generator implements GeneratorAPI {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block,
+    body: Block | undefined,
   ) {
     return new Function(
       decorators,
