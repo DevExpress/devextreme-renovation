@@ -854,16 +854,16 @@ export class AngularComponent extends Component {
       if (ngOnChanges.length || hasInternalStateDependency) {
         statements.push(`
           _updateEffects(){
-            if(this.__viewCheckedSubscribeEvent.length){
-              clearTimeout(this._effectTimeout);
-              this._effectTimeout = setTimeout(()=>{
-                  this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
-                    s?.();
-                    if(this.__viewCheckedSubscribeEvent[i]===s){
-                      this.__viewCheckedSubscribeEvent[i]=null;
-                    }
-                  });
+            if(this.__viewCheckedSubscribeEvent.length && !this._effectTimeout){
+              this._effectTimeout = setTimeout(()=> {
+                this._effectTimeout = undefined;
+                this.__viewCheckedSubscribeEvent.forEach((s, i)=>{
+                  s?.();
+                  if(this.__viewCheckedSubscribeEvent[i]===s){
+                    this.__viewCheckedSubscribeEvent[i]=null;
+                  }
                 });
+              });
             }
           }
         `);
@@ -894,11 +894,9 @@ export class AngularComponent extends Component {
         });
       }
       ngAfterViewInitStatements.push(
-        `this._effectTimeout = setTimeout(()=>{
-          this.__destroyEffects.push(${effects
-    .map((e) => subscribe(e))
-    .join(',')});
-          }, 0)`,
+        `this.__destroyEffects.push(${effects
+          .map((e) => subscribe(e))
+          .join(',')});`,
       );
       ngOnDestroyStatements.push(
         `this.__destroyEffects.forEach(d => d && d());

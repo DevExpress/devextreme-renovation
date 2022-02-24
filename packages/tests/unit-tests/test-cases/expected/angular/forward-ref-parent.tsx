@@ -116,9 +116,9 @@ export default class RefOnChildrenParent extends Props {
   }
 
   _updateEffects() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      clearTimeout(this._effectTimeout);
+    if (this.__viewCheckedSubscribeEvent.length && !this._effectTimeout) {
       this._effectTimeout = setTimeout(() => {
+        this._effectTimeout = undefined;
         this.__viewCheckedSubscribeEvent.forEach((s, i) => {
           s?.();
           if (this.__viewCheckedSubscribeEvent[i] === s) {
@@ -139,9 +139,7 @@ export default class RefOnChildrenParent extends Props {
   } = {};
 
   ngAfterViewInit() {
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(this.__effect());
-    }, 0);
+    this.__destroyEffects.push(this.__effect());
   }
   ngOnChanges(changes: { [name: string]: any }) {
     if (

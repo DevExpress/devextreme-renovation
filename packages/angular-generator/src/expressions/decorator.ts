@@ -83,7 +83,8 @@ export class Decorator extends BaseDecorator {
   }
 
   isWrappedByTemplate(members: (Property | Method)[]) {
-    return this.isInnerComponent && !members.some((member) => member.isProvider);
+    return this.isInnerComponent
+      && !(this.isPublicComponent && members.some((member) => member.isProvider));
   }
 
   isPublicComponentWithPrivateProp(members: (Property | Method)[]): boolean {

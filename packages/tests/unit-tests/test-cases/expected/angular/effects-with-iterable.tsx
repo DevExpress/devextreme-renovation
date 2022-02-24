@@ -31,6 +31,7 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
+
   internalArray: string[] = [];
   internalObject: object = {};
   keys: string[] = [];
@@ -78,9 +79,9 @@ export default class Widget extends WidgetInput {
   }
 
   _updateEffects() {
-    if (this.__viewCheckedSubscribeEvent.length) {
-      clearTimeout(this._effectTimeout);
+    if (this.__viewCheckedSubscribeEvent.length && !this._effectTimeout) {
       this._effectTimeout = setTimeout(() => {
+        this._effectTimeout = undefined;
         this.__viewCheckedSubscribeEvent.forEach((s, i) => {
           s?.();
           if (this.__viewCheckedSubscribeEvent[i] === s) {
@@ -113,14 +114,12 @@ export default class Widget extends WidgetInput {
     this.__cachedObservables["propArray"] = this.propArray;
     this.__cachedObservables["internalArray"] = this.internalArray;
     this.__cachedObservables["keys"] = this.keys;
-    this._effectTimeout = setTimeout(() => {
-      this.__destroyEffects.push(
-        this.__effect(),
-        this.__effectWithObservables(),
-        this.__onceEffect(),
-        this.__alwaysEffect()
-      );
-    }, 0);
+    this.__destroyEffects.push(
+      this.__effect(),
+      this.__effectWithObservables(),
+      this.__onceEffect(),
+      this.__alwaysEffect()
+    );
   }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(

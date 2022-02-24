@@ -77,7 +77,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [P1Context, GetterContext],
   inputs: ["p1"],
-  template: `<span></span>`,
+  template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
