@@ -161,6 +161,13 @@ jobs:
         run: |
           sudo apt-get install -y dbus-x11 httping x11vnc xvfb
 
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            '2.1.x'
+            '3.1.x'
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
