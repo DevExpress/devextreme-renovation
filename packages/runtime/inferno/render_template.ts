@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { render } from 'inferno';
 import { createElement } from 'inferno-create-element';
 

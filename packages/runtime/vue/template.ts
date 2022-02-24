@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import Vue from 'vue';
 
 const getSlot = (component: any, slotName: string) => component.$parent.$scopedSlots[slotName];

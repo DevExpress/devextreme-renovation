@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { ViewContainerRef } from '@angular/core';
 
 interface IModel {

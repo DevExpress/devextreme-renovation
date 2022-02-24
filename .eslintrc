@@ -39,6 +39,11 @@
     "no-nested-ternary": "warn",
     "no-param-reassign": "warn",
     "no-plusplus": "warn",
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": [
+        "./packages/runtime/**"
+      ]
+    }],
     "no-restricted-globals": "warn",
     "no-restricted-syntax": "warn",
     "no-underscore-dangle": "warn",

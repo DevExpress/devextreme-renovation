@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { ElementRef } from '@angular/core';
 
 function getStyleObject(styleText: string): Record<string, unknown> {

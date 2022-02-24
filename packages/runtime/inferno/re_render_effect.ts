@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { rerender as reRender } from 'inferno';
 import { InfernoEffect } from './effect';
 
