@@ -41,7 +41,7 @@
     "no-plusplus": "warn",
     "import/no-extraneous-dependencies": ["error", {
       "devDependencies": [
-        "./packages/runtime/**"
+        "packages/runtime/**/*"
       ]
     }],
     "no-restricted-globals": "warn",

@@ -4,11 +4,20 @@ const replace = require('gulp-replace');
 const shell = require('gulp-shell');
 const platforms = ['angular', 'react', 'vue', 'inferno', 'declarations'];
 
+const getPackageContent = (platform) => {
+  return `
+  {
+    "module": "../esm/${platform}/index",
+    "main": "../cjs/${platform}/index"
+  }
+  `;
+};
+
 platforms.forEach(function(platform) {
-  gulp.task(`copy-package-json-file.${platform}`, function() {
+  gulp.task(`create-package-json-file.${platform}`, function() {
     return gulp
-      .src(`./${platform}/package.json`)
-      .pipe(replace('../dist/', '../'))
+      .src('./package.json')
+      .pipe(replace(/[\s\S]+/, getPackageContent(platform)))
       .pipe(gulp.dest(`dist/${platform}`))
   });
 });
@@ -49,12 +58,12 @@ gulp.task('npm.build',
     }
 ));
 
-gulp.task('copy-package-json-file', gulp.parallel(
-  platforms.map(function(name) { return `copy-package-json-file.${name}` })
+gulp.task('create-package-json-file', gulp.parallel(
+  platforms.map(function(name) { return `create-package-json-file.${name}` })
 ));
 
 gulp.task('build', gulp.series(
   'compile.esm',
   'compile.cjs',
-  'copy-package-json-file')
+  'create-package-json-file')
 );
