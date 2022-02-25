@@ -15,12 +15,15 @@ import {
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
 import { JsxExpression } from './jsx-expression';
+import { getUniqComponentName } from '../utils/uniq_name_generator';
 
 function isAriaAttribute(name: string): boolean {
   return name.startsWith('aria-');
 }
 
 export class JsxAttribute extends BaseJsxAttribute {
+  generatedValue?: string;
+
   constructor(name: Identifier, initializer?: Expression) {
     super(
       name,
@@ -200,7 +203,11 @@ export class JsxAttribute extends BaseJsxAttribute {
           if (funcName) {
             return this.compileBase(name, funcName);
           }
-          return this.compileBase(name, `__${name}__generated`);
+          const context = options?.jsxComponent?.context || {};
+
+          this.generatedValue = getUniqComponentName(context, `__${name}__generated`);
+
+          return this.compileBase(name, this.generatedValue);
         }
       }
     }

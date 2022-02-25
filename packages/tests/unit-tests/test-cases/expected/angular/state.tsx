@@ -108,14 +108,17 @@ export default class Widget extends WidgetInput {
     }));
     this._state1Change = (e: any) => {
       this.state1Change.emit(e);
+
       this._detectChanges();
     };
     this._state2Change = (e: any) => {
       this.state2Change.emit(e);
+
       this._detectChanges();
     };
     this._statePropChange = (e: any) => {
       this.statePropChange.emit(e);
+
       this._detectChanges();
     };
   }

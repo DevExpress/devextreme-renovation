@@ -10,7 +10,7 @@ export function getUniqComponentName(
 ): string {
   const currentNames = getCurrentNames(context);
   const key = componentName.toLowerCase();
-  if (!currentNames[key]) { currentNames[key] = 0; }
+  currentNames[key] = currentNames[key] || 0;
   currentNames[key] += 1;
   return key + currentNames[key];
 }

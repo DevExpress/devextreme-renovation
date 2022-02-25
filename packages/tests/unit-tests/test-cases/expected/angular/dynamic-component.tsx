@@ -241,7 +241,7 @@ export class DynamicComponentDirective {
       ></ng-template
       ><ng-template
         dynamicComponent
-        [props]="{ template: __template__generated }"
+        [props]="{ template: __template__generated1 }"
         [componentConstructor]="__ComponentWithTemplate"
         let-internalStateValue="internalStateValue"
         let-Component="Component"
@@ -251,7 +251,7 @@ export class DynamicComponentDirective {
         let-restAttributes="restAttributes"
         let-height="height"
       ></ng-template>
-      <ng-template #__template__generated let-textProp="textProp"
+      <ng-template #__template__generated1 let-textProp="textProp"
         ><div [ngStyle]="__processNgStyle({ height: '50px' })">{{
           textProp
         }}</div></ng-template
