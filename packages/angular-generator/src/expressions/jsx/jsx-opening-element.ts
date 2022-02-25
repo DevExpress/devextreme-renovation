@@ -744,7 +744,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
   }
 
   getArrowFunctionGeneratedName(attribute: JsxAttribute): string {
-    return attribute.generatedValue || attribute.name.toString();
+    return attribute.generatedValue || `__${attribute.name.toString()}__generated`;
   }
 
   getSpreadAttributes(options?: toStringOptions) {

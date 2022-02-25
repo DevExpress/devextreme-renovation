@@ -1390,11 +1390,11 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(`
               <ng-template dynamicComponent
-                [props]="{template:__template__generated}"
+                [props]="{template:__template__generated1}"
                 [componentConstructor]="DynamicComponent"
                 let-DynamicComponent="DynamicComponent">
                 </ng-template>
-                <ng-template #__template__generated>
+                <ng-template #__template__generated1>
                     <div></div>
                   </ng-template>
             `)
@@ -1524,12 +1524,12 @@ mocha.describe("Angular generator", function () {
             removeSpaces(element.toString(options)),
             removeSpaces(`
               <ng-template dynamicComponent
-                [props]="{template:__template__generated}"
+                [props]="{template:__template__generated1}"
                 [componentConstructor]="DynamicComponent"
                 let-DynamicComponent="DynamicComponent">
                   <div></div>
                 </ng-template>
-                <ng-template #__template__generated>
+                <ng-template #__template__generated1>
                   <div></div>
                 </ng-template>
             `)
@@ -3962,8 +3962,8 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents">
-                <ng-template #__template__generated>
+              <dx-base-widget [template]="__template__generated1" #basewidget1 style="display:contents">
+                <ng-template #__template__generated1>
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
@@ -4000,8 +4000,8 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents">
-                <ng-template #__template__generated let-p1="p1" let-myP2="p2">
+              <dx-base-widget [template]="__template__generated1" #basewidget1 style="display:contents">
+                <ng-template #__template__generated1 let-p1="p1" let-myP2="p2">
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
@@ -4041,8 +4041,8 @@ mocha.describe("Angular generator", function () {
               })
             ),
             removeSpaces(`
-              <dx-base-widget [template]="__template__generated" #basewidget1 style="display:contents">
-                <ng-template #__template__generated let-p1="p1" let-p2="p2">
+              <dx-base-widget [template]="__template__generated1" #basewidget1 style="display:contents">
+                <ng-template #__template__generated1 let-p1="p1" let-p2="p2">
                   <div ></div>
                 </ng-template>
               </dx-base-widget>
