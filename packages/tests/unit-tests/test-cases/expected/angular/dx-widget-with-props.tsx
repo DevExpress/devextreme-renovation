@@ -37,9 +37,6 @@ import {
 export class WidgetWithProps extends WidgetWithPropsInput {
   defaultEntries: DefaultEntries;
   doSomething(): any {}
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

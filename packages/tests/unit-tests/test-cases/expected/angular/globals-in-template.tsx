@@ -53,9 +53,6 @@ export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
   global_getKey = getKey;
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

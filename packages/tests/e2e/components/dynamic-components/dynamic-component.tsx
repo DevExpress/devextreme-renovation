@@ -72,6 +72,9 @@ class Props {}
 @Component({
   view,
   jQuery: {register: true},
+  angular: {
+    innerComponent: false
+  }
 })
 export default class DynamicComponent extends JSXComponent(Props) {
   @InternalState() value = 1;

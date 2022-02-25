@@ -195,7 +195,7 @@ export class BaseFunction extends Expression {
 
   type?: TypeExpression | string;
 
-  body: Block | Expression;
+  body: Block | Expression | undefined;
 
   context: GeneratorContext;
 
@@ -204,7 +204,7 @@ export class BaseFunction extends Expression {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block | Expression,
+    body: Block | Expression | undefined,
     context: GeneratorContext,
   ) {
     super();
@@ -217,7 +217,7 @@ export class BaseFunction extends Expression {
   }
 
   getDependency(options: toStringOptions): Dependency[] {
-    return this.body.getDependency(options);
+    return this.body ? this.body.getDependency(options) : [];
   }
 
   getToStringOptions(options?: toStringOptions) {
@@ -297,8 +297,8 @@ export class BaseFunction extends Expression {
     return options;
   }
 
-  isJsx() {
-    return this.body.isJsx();
+  isJsx(): boolean {
+    return this.body ? this.body.isJsx() : false;
   }
 
   processTemplateExpression(expression?: JsxExpression) {
@@ -364,7 +364,7 @@ export class BaseFunction extends Expression {
 
       return expressions.some(containsStyleInStatements);
     }
-    return containsStyleInStatements(body);
+    return body ? containsStyleInStatements(body) : false;
   }
 
   compileTypeParameters(): string {
@@ -372,6 +372,9 @@ export class BaseFunction extends Expression {
   }
 
   get statements(): Expression[] {
+    if (this.body === undefined) {
+      return [];
+    }
     const statements = this.body instanceof Block ? this.body.statements : [this.body];
 
     return statements;
@@ -398,7 +401,7 @@ export class Function extends BaseFunction {
 
   name?: Identifier;
 
-  body: Block;
+  body: Block | undefined;
 
   constructor(
     decorators: Decorator[] = [],
@@ -408,7 +411,7 @@ export class Function extends BaseFunction {
     typeParameters: TypeParameterDeclaration[] | undefined,
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
-    body: Block,
+    body: Block | undefined,
     context: GeneratorContext,
   ) {
     super(modifiers, typeParameters, parameters, type, body, context);
@@ -424,7 +427,7 @@ export class Function extends BaseFunction {
       this.name || ''
     }${this.compileTypeParameters()}(${this.parameters})${compileType(
       this.type?.toString(),
-    )}${this.body.toString(options)}`;
+    )}${this.body ? this.body.toString(options) : ''}`;
   }
 }
 

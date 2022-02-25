@@ -81,6 +81,7 @@ import {
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
   contextConsumerConsumer: number;
   consumerConsumer: any;
   get __sum(): any {
@@ -96,9 +97,6 @@ export default class Widget extends Props {
       ((): any => {
         return "provide";
       })());
-  }
-  get __restAttributes(): any {
-    return {};
   }
   _detectChanges(): void {
     setTimeout(() => {

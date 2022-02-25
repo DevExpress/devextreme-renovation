@@ -18,4 +18,15 @@ export function plus(a: number = 45, c: any, b?: number): number {
   (p as any).SomeMethod({});
   return a + (b ? b : 0);
 }
+export function createSelector<A, R>(deps: [A], func: (a: A) => R): R;
+export function createSelector<A, B, R>(
+  deps: [A, B],
+  func: (a: A, b: B) => R
+): R;
+export function createSelector<R>(
+  deps: unknown[],
+  func: (...args: unknown[]) => R
+): R {
+  return func.apply(null, deps);
+}
 export default (function (): void {})();

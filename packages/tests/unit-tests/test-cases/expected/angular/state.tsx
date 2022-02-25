@@ -72,9 +72,6 @@ export default class Widget extends WidgetInput {
   __stateChange(stateProp?: boolean): any {
     this._statePropChange((this.stateProp = stateProp));
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

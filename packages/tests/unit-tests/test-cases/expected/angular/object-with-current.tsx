@@ -34,9 +34,6 @@ export default class Widget extends WidgetInput {
     const fromState = this.someState?.current || "";
     return `${fromProps}${fromState}${this.existsState.current}`;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

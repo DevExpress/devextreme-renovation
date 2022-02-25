@@ -127,14 +127,16 @@ import {
         [value]="
           value !== undefined ? value : PublicWidgetWithPropsDefaults.value
         "
-      ></dx-public-widget-with-props> </ng-template
+        [_private]="true"
+      ></dx-public-widget-with-props>
+      <ng-content
+        *ngTemplateOutlet="compRef?.widgetTemplate"
+      ></ng-content> </ng-template
   ></ng-template>`,
 })
 export default class WidgetWithTemplate extends WidgetInput {
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

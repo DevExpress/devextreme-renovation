@@ -34,11 +34,9 @@ import {
 })
 export class TextSvgElement extends TextSvgElementProps {
   defaultEntries: DefaultEntries;
+
   get __computedProps(): TextSvgElementProps {
     return this;
-  }
-  get __restAttributes(): any {
-    return {};
   }
   _detectChanges(): void {
     setTimeout(() => {

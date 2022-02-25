@@ -37,9 +37,6 @@ export function defaultOptions(rule: WidgetOptionRule) {
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

@@ -46,9 +46,6 @@ export default class Widget extends WidgetInput {
   get __name(): any {
     return "User";
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

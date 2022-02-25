@@ -39,9 +39,6 @@ import {
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
   innerData: Options = { value: "" };
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)

@@ -18,6 +18,7 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -30,14 +31,18 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: ["value", "optionalValue", "number"],
   outputs: ["onClick"],
-  template: `<div>{{ optionalValue || value }}</div>`,
+  template: `<ng-template #widgetTemplate
+      ><div>{{ optionalValue || value }}</div></ng-template
+    >
+    <ng-container
+      *ngTemplateOutlet="_private ? null : widgetTemplate"
+    ></ng-container>`,
 })
 export class PublicWidgetWithProps extends WidgetWithPropsInput {
   defaultEntries: DefaultEntries;
+
+  @Input() _private = false;
   doSomething(): any {}
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -45,6 +50,14 @@ export class PublicWidgetWithProps extends WidgetWithPropsInput {
     });
   }
 
+  scheduledApplyAttributes = false;
+  __applyAttributes__() {
+    this._elementRef.nativeElement.removeAttribute("id");
+  }
+
+  ngAfterViewInit() {
+    this.__applyAttributes__();
+  }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
@@ -53,13 +66,21 @@ export class PublicWidgetWithProps extends WidgetWithPropsInput {
     );
   }
 
+  ngAfterViewChecked() {
+    if (this.scheduledApplyAttributes) {
+      this.__applyAttributes__();
+      this.scheduledApplyAttributes = false;
+    }
+  }
+
   _onClick: any;
   @ViewChild("widgetTemplate", { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
     private renderer: Renderer2,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private _elementRef: ElementRef<HTMLElement>
   ) {
     super();
     const defaultProps = new WidgetWithPropsInput() as { [key: string]: any };

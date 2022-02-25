@@ -8,12 +8,12 @@ import {
   kebabSvgAttributes,
   Expression,
   SimpleExpression,
-  Method,
   GetAccessor,
   isCall,
   isFunction,
 } from '@devextreme-generator/core';
 import { toStringOptions } from '../../types';
+import { Method } from '../class-members/method';
 import { JsxExpression } from './jsx-expression';
 import { getUniqComponentName } from '../utils/uniq_name_generator';
 
@@ -82,15 +82,19 @@ export class JsxAttribute extends BaseJsxAttribute {
 
   compileName(options?: toStringOptions) {
     const name = this.name.toString();
-    if (!options?.jsxComponent) {
-      if (name === 'className') {
-        return options?.isSVG ? 'attr.class' : 'class';
-      }
-      if (name === 'style') {
+    if (name === 'style') {
+      const component = options?.jsxComponent;
+      const isComponentWithoutStyleProp = component?.props.every((p) => p.name !== 'style');
+      if (!component || isComponentWithoutStyleProp) {
         if (options) {
           options.hasStyle = true;
         }
         return 'ngStyle';
+      }
+    }
+    if (!options?.jsxComponent) {
+      if (name === 'className') {
+        return options?.isSVG ? 'attr.class' : 'class';
       }
 
       if (isAriaAttribute(name)) {
@@ -210,6 +214,11 @@ export class JsxAttribute extends BaseJsxAttribute {
           return this.compileBase(name, this.generatedValue);
         }
       }
+    }
+
+    const member = getMember(this.initializer, options);
+    if (member instanceof Method) {
+      member.needBind = true;
     }
 
     return this.compileBase(

@@ -21,9 +21,6 @@ export default class Widget {
   __updateState(): any {
     this.__hovered = !this._hovered;
   }
-  get __restAttributes(): any {
-    return {};
-  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
