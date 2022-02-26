@@ -29,6 +29,13 @@ gulp.task('compile.esm', function() {
     .pipe(gulp.dest('./dist/esm'))
 });
 
+gulp.task('compile', function() {
+  var tsProject = ts.createProject('tsconfig.build.json');
+  return tsProject.src()
+    .pipe(tsProject())
+    .pipe(gulp.dest('./'))
+});
+
 gulp.task('compile.cjs', function() {
   const tsProject = ts.createProject('tsconfig.cjs.build.json');
   return tsProject.src()
@@ -63,6 +70,7 @@ gulp.task('create-package-json-file', gulp.parallel(
 ));
 
 gulp.task('build', gulp.series(
+  'compile',
   'compile.esm',
   'compile.cjs',
   'create-package-json-file')
