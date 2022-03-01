@@ -31,4 +31,10 @@ export const renderTemplate = (template: any, model: any, component?: any): void
     placeholder,
   );
 };
-export const hasTemplate = (name: any, _props: any, component?: any): boolean => !!component.$parent.$slots[name];
+export const hasTemplate = (
+  name: string,
+  _props: Record<string, unknown>,
+  component?: any,
+): boolean => !!component.$parent.$slots[name];
+
+export const getWrapperTemplate = (TemplateProp: unknown): unknown => TemplateProp;
