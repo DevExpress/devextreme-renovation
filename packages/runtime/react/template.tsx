@@ -10,7 +10,7 @@ export const renderTemplate = (template: any, model: any, _component?: any): voi
     ReactDOM.render(
       /* eslint-disable react/jsx-props-no-spreading */
       <TemplateProp {...model} /> as React.ReactElement,
-      container ? model.container : model.item
+      container ? model.container : model.item,
     );
   }
 };
