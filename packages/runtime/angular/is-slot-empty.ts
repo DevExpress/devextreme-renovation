@@ -1,6 +1,6 @@
 import { ElementRef } from '@angular/core';
 
-export function isSlotEmpty(slot: ElementRef<HTMLDivElement> | undefined): boolean {
+export function isSlotEmpty(slot: ElementRef | undefined): boolean {
   if (slot?.nativeElement) {
     const nativeEl = slot.nativeElement;
     const children = nativeEl.parentElement ? [...nativeEl.parentElement.childNodes] : [];

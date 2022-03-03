@@ -45,7 +45,7 @@ export class Function extends AngularFunction {
     typeParameters: any,
     parameters: Parameter[],
     _type: TypeExpression | undefined,
-    body: Block,
+    body: Block | undefined,
     context: GeneratorContext,
   ) {
     super(

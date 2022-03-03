@@ -435,8 +435,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return undefined;
   }
 
-  getArrowFunctionGeneratedName(templateName: string) {
-    return templateName;
+  getArrowFunctionGeneratedName(attribute: JsxAttribute) {
+    return attribute.name.toString();
   }
 }
 

@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.build.json",
   "include": ["declarations/**/*", "angular/**/*", "react/**/*", "vue/**/*", "inferno/**/*"],
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "./",
     "skipLibCheck": true,
     "typeRoots": ["node_modules/inferno"],
     "jsx": "react",
