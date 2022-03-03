@@ -713,7 +713,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           && isFunction(getExpression(template.initializer))
         ) {
           acc.push({
-            name: this.getArrowFunctionGeneratedName(template.name.toString()),
+            name: this.getArrowFunctionGeneratedName(template),
             func: getExpression(template.initializer) as BaseFunction,
           });
         }
@@ -725,7 +725,7 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
           .concat(functions)
           .some(
             ({ name }) => name === this.getTemplateName(t)
-                || name === `__${this.getTemplateName(t)}__generated`,
+                || name.startsWith(`__${this.getTemplateName(t)}__generated`),
           ),
       );
 
@@ -743,8 +743,8 @@ export class JsxOpeningElement extends BaseJsxOpeningElement {
     return [];
   }
 
-  getArrowFunctionGeneratedName(templateName: string) {
-    return `__${templateName}__generated`;
+  getArrowFunctionGeneratedName(attribute: JsxAttribute): string {
+    return attribute.generatedValue || `__${attribute.name.toString()}__generated`;
   }
 
   getSpreadAttributes(options?: toStringOptions) {

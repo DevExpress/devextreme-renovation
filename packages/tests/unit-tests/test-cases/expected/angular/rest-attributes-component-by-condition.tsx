@@ -53,14 +53,14 @@ import {
     ></ng-container>
     <ng-container *ngIf="!isPublic"
       ><dx-widget-with-props
-        #widgetwithprops5
+        #widgetwithprops1
         style="display: contents"
         #_auto_ref_1
         [_restAttributes]="__restAttributes"
         style="display: contents"
       ></dx-widget-with-props
       ><ng-content
-        *ngTemplateOutlet="widgetwithprops5?.widgetTemplate"
+        *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
       ></ng-content></ng-container
   ></ng-template>`,
 })

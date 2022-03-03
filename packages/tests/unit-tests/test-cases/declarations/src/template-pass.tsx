@@ -2,6 +2,7 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
+  Fragment,
 } from "@devextreme-generator/declarations";
 import WidgetWithTemplate from "./dx-widget-with-template";
 import InnerWidget from "./dx-inner-widget";
@@ -12,13 +13,20 @@ const CustomTemplate = ({ text }: { text: string; value: number }) => {
 
 function view(model: Widget) {
   return (
-    <WidgetWithTemplate
-      template={CustomTemplate}
-      componentTemplate={InnerWidget}
-      arrowTemplate={(data: { name: string; id: number }) => (
-        <div>{data.name}</div>
-      )}
-    />
+    <Fragment>
+      <WidgetWithTemplate
+        template={CustomTemplate}
+        componentTemplate={InnerWidget}
+        arrowTemplate={(data: { name: string; id: number }) => (
+          <div>{data.name}</div>
+        )}
+      />
+      <WidgetWithTemplate
+        arrowTemplate={(data: { name: string; id: number }) => (
+          <div>{data.id}</div>
+        )}
+      />
+    </Fragment>
   );
 }
 

@@ -33,20 +33,20 @@ import { CommonModule } from "@angular/common";
       ><div
         ><dx-widget-with-props
           value="private widget"
-          #widgetwithprops7
+          #widgetwithprops1
           style="display: contents"
         ></dx-widget-with-props
         ><ng-content
-          *ngTemplateOutlet="widgetwithprops7?.widgetTemplate"
+          *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
         ></ng-content
         ><dx-public-widget-with-props
           value="public widget"
-          #publicwidgetwithprops2
+          #publicwidgetwithprops1
           style="display: contents"
           [_private]="true"
         ></dx-public-widget-with-props
         ><ng-content
-          *ngTemplateOutlet="publicwidgetwithprops2?.widgetTemplate"
+          *ngTemplateOutlet="publicwidgetwithprops1?.widgetTemplate"
         ></ng-content></div
     ></ng-template>
     <ng-container
