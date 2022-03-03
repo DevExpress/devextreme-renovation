@@ -6,7 +6,7 @@ export const renderTemplate = (template: any, model: any, _component?: any): voi
   const TemplateProp = template;
   const container = model.container ? model.container : model.item;
 
-  if (typeof TemplateProp !== 'string' || !(TemplateProp instanceof Element)) {
+  if (typeof TemplateProp !== 'string' || !(template instanceof Element)) {
     ReactDOM.render(
       /* eslint-disable react/jsx-props-no-spreading */
       <TemplateProp {...model} /> as React.ReactElement,
