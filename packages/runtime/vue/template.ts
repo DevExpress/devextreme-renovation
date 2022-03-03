@@ -36,5 +36,3 @@ export const hasTemplate = (
   _props: Record<string, unknown>,
   component?: any,
 ): boolean => !!component.$parent.$slots[name];
-
-export const getWrapperTemplate = (TemplateProp: unknown): unknown => TemplateProp;
