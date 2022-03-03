@@ -4,14 +4,17 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const renderTemplate = (template: any, model: any, _component?: any): void => {
   const TemplateProp = template;
-  const isComponent = typeof TemplateProp === 'string' || !!(TemplateProp instanceof Element);
   const container = model.container ? model.container : model.item;
 
-  isComponent ? TemplateProp(model) : ReactDOM.render(
-    /* eslint-disable react/jsx-props-no-spreading */
+  if (typeof TemplateProp === 'string' || !!(TemplateProp instanceof Element)) {
+    TemplateProp(model);
+  } else {
+    ReactDOM.render(
+      /* eslint-disable react/jsx-props-no-spreading */
       <TemplateProp {...model} /> as React.ReactElement,
-      container ? model.container : model.item,
+      container ? model.container : model.item
     );
+  }
 };
 
 export const hasTemplate = (
