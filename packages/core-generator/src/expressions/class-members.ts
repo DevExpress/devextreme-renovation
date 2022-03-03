@@ -363,6 +363,10 @@ export class GetAccessor extends Method {
     );
   }
 
+  get memorizeNestedProp(): boolean {
+    return true;
+  }
+
   isMemorized(
     options?: toStringOptions,
     needToMemorizeProvider = true,
@@ -378,6 +382,11 @@ export class GetAccessor extends Method {
       const dependencies = this.getDependency(options);
       const depMembers = dependencies
         .filter((dep) => dep instanceof BaseClassMember) as BaseClassMember[];
+
+      if (!this.memorizeNestedProp && depMembers.some((member) => member.isNested)) {
+        return false;
+      }
+
       const containMutableDep = depMembers
         .some((dep) => mutables?.includes(dep));
       return !containMutableDep

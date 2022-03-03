@@ -5,8 +5,9 @@ import {
   SimpleTypeExpression,
   Parameter,
   Block,
+  Dependency,
+  toStringOptions,
 } from '@devextreme-generator/core';
-import { toStringOptions } from '../../types';
 
 export class SetAccessor extends Method {
   constructor(
@@ -45,5 +46,12 @@ export class SetAccessor extends Method {
       return false;
     }
     return super.canBeDestructured;
+  }
+
+  getDependency(options: toStringOptions): Dependency[] {
+    if (this.isNested) {
+      return [this];
+    }
+    return super.getDependency(options);
   }
 }

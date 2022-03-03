@@ -11,11 +11,19 @@ function view(viewModel: Widget) {
 }
 type UserType = "user" | "not";
 
+export declare type SomeNestedType = {
+  text: string;
+};
+export const SomeNested: SomeNestedType = {
+  text: "",
+};
 export declare type PropsType = {
   p: number;
+  someNestedProp: typeof SomeNested;
 };
 export const Props: PropsType = {
   p: 10,
+  someNestedProp: Object.freeze({ text: "" }) as any,
 };
 import { createElement as h } from "inferno-compat";
 import { createReRenderEffect } from "@devextreme/runtime/inferno";
@@ -95,14 +103,23 @@ export default class Widget extends InfernoWrapperComponent<any> {
   get userGet(): UserType {
     return "user";
   }
+  get nestedGet(): { text: string } {
+    if (this.__getterCache["nestedGet"] !== undefined) {
+      return this.__getterCache["nestedGet"];
+    }
+    return (this.__getterCache["nestedGet"] = ((): { text: string } => {
+      return this.props.someNestedProp;
+    })());
+  }
   get restAttributes(): RestProps {
-    const { p, ...restProps } = this.props as any;
+    const { p, someNestedProp, ...restProps } = this.props as any;
     return restProps;
   }
   __getterCache: {
     provide?: any;
     g1?: number[];
     g4?: number[];
+    nestedGet?: { text: string };
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     super.componentWillUpdate();
@@ -118,6 +135,9 @@ export default class Widget extends InfernoWrapperComponent<any> {
     if (this.context["SimpleContext"] !== context["SimpleContext"]) {
       this.__getterCache["g4"] = undefined;
     }
+    if (this.props["someNestedProp"] !== nextProps["someNestedProp"]) {
+      this.__getterCache["nestedGet"] = undefined;
+    }
   }
   render() {
     const props = this.props;
@@ -132,6 +152,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
       g4: this.g4,
       g5: this.g5,
       userGet: this.userGet,
+      nestedGet: this.nestedGet,
       restAttributes: this.restAttributes,
     } as Widget);
   }

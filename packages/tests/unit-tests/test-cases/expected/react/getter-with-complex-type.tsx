@@ -5,14 +5,31 @@ function view(viewModel: Widget) {
 }
 type UserType = "user" | "not";
 
+export declare type SomeNestedType = {
+  text: string;
+};
+export const SomeNested: SomeNestedType = {
+  text: "",
+};
 export declare type PropsType = {
   p: number;
+  someNestedProp?: typeof SomeNested;
+  __defaultNestedValues?: any;
+  children?: React.ReactNode;
 };
 export const Props: PropsType = {
   p: 10,
+  __defaultNestedValues: Object.freeze({ someNestedProp: { text: "" } }) as any,
 };
+import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
 import * as React from "react";
 import { useState, useContext, useCallback, useMemo, useRef } from "react";
+
+export const SomeNestedProp: React.FunctionComponent<typeof SomeNested> & {
+  propName: string;
+} = () => null;
+SomeNestedProp.propName = "someNestedProp";
+SomeNestedProp.defaultProps = SomeNested;
 
 declare type RestProps = {
   className?: string;
@@ -22,6 +39,7 @@ declare type RestProps = {
 };
 interface Widget {
   props: typeof Props & RestProps;
+  __getNestedSomeNestedProp: typeof SomeNested;
   i: number;
   provide: any;
   cons: number;
@@ -31,13 +49,28 @@ interface Widget {
   g4: number[];
   g5: number[];
   userGet: UserType;
+  nestedGet: { text: string };
   restAttributes: RestProps;
 }
 
 export default function Widget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
+  const cachedNested = useRef<any>(__collectChildren(props.children));
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
+  const __getNestedSomeNestedProp = useMemo(
+    function __getNestedSomeNestedProp(): typeof SomeNested {
+      const nested = __collectChildren(props.children);
+      if (!equalByValue(cachedNested.current, nested))
+        cachedNested.current = nested;
+      return props.someNestedProp
+        ? props.someNestedProp
+        : cachedNested.current.someNestedProp
+        ? cachedNested.current.someNestedProp?.[0]
+        : props?.__defaultNestedValues?.someNestedProp;
+    },
+    [props.someNestedProp, props.children]
+  );
   const __provide = useCallback(
     function __provide(): any {
       return __state_i;
@@ -77,9 +110,21 @@ export default function Widget(props: typeof Props & RestProps) {
   const __userGet = useCallback(function __userGet(): UserType {
     return "user";
   }, []);
+  const __nestedGet = useMemo(
+    function __nestedGet(): { text: string } {
+      return __getNestedSomeNestedProp;
+    },
+    [__getNestedSomeNestedProp]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { p, ...restProps } = props;
+      const {
+        __defaultNestedValues,
+        children,
+        p,
+        someNestedProp,
+        ...restProps
+      } = { ...props, someNestedProp: __getNestedSomeNestedProp };
       return restProps;
     },
     [props]
@@ -88,9 +133,10 @@ export default function Widget(props: typeof Props & RestProps) {
   return (
     <SimpleContext.Provider value={__provide()}>
       {view({
-        props: { ...props },
+        props: { ...props, someNestedProp: __getNestedSomeNestedProp },
         i: __state_i,
         cons,
+        __getNestedSomeNestedProp,
         provide: __provide(),
         g1: __g1,
         g2: __g2(),
@@ -98,6 +144,7 @@ export default function Widget(props: typeof Props & RestProps) {
         g4: __g4,
         g5: __g5(),
         userGet: __userGet(),
+        nestedGet: __nestedGet,
         restAttributes: __restAttributes(),
       })}
     </SimpleContext.Provider>
