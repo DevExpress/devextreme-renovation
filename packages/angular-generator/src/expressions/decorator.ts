@@ -147,14 +147,14 @@ export class Decorator extends BaseDecorator {
         if (templates?.length) template += templates.join('');
         const slots = compileSlots(options);
         if (slots?.length) template += slots.join('');
-        if (template) {
-          const templateExpression = this.processPrivateWidgetTemplate(template, options);
+        const templateExpression = template
+          ? this.processPrivateWidgetTemplate(template, options)
+          : template;
 
-          parameters.setProperty(
-            'template',
-            new TemplateExpression(templateExpression, []),
-          );
-        }
+        parameters.setProperty(
+          'template',
+          new TemplateExpression(templateExpression, []),
+        );
       }
 
       [
