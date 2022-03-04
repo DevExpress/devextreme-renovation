@@ -19,6 +19,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-props",
   changeDetection: ChangeDetectionStrategy.OnPush,
+  template: ``,
 })
 export class WidgetWithProps extends WidgetProps {
   _detectChanges(): void {
