@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import * as React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const renderTemplate = (template: any, model: any, _component?: any): void => {
+export const renderTemplate = (template: any, model: any, _component?: any): void | string | Element => {
   const TemplateProp = template;
   const container = model.container ? model.container : model.item;
 
