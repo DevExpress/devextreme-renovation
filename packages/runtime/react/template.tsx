@@ -12,6 +12,8 @@ export const renderTemplate = (template: any, model: any, _component?: any): voi
       <TemplateProp {...model} /> as React.ReactElement,
       container ? model.container : model.item,
     );
+  } else {
+    return TemplateProp;
   }
 };
 
