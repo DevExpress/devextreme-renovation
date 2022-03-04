@@ -29,5 +29,3 @@ export const hasTemplate = (
   const value = properties[name];
   return !!value && typeof value !== 'string';
 };
-
-export const getWrapperTemplate = (TemplateProp: unknown): unknown => TemplateProp;
