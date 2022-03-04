@@ -68,7 +68,7 @@ function functionParameterToTemplateVariables(
 
   if (parameter.name instanceof BindingPattern) {
     return parameter.name.elements.map((element) => new AngularDirective(
-      new Identifier(`let-${element.name}`),
+      new Identifier(`let-${element.propertyName || element.name}`),
       new Identifier(`${element.propertyName || element.name}`),
     ));
   }

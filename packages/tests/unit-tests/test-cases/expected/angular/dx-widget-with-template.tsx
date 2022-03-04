@@ -6,6 +6,7 @@ export class WidgetWithTemplateInput {
   @Input() template?: TemplateRef<any> | null = null;
   @Input() componentTemplate?: TemplateRef<any> | null = null;
   @Input() arrowTemplate?: TemplateRef<any> | null = null;
+  @Input() typedTemplate?: TemplateRef<any> | null = null;
 }
 
 import {
@@ -22,7 +23,7 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "dx-widget-with-template",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["template", "componentTemplate", "arrowTemplate"],
+  inputs: ["template", "componentTemplate", "arrowTemplate", "typedTemplate"],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container

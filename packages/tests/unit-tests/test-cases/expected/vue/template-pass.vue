@@ -16,6 +16,11 @@
       ><template v-slot:arrowTemplate="data"
         ><div>{{ data.id }}</div></template
       ></WidgetWithTemplate
+    ><WidgetWithTemplate
+      ><template
+        v-slot:typedTemplate="{ array: [param1, param2], obj: { text } }"
+        ><div>{{ array[0] }}{{ array[1] }}{{ text }}</div></template
+      ></WidgetWithTemplate
     ></div
   >
 </template>

@@ -3,6 +3,7 @@ import {
   Template,
   ComponentBindings,
   JSXComponent,
+  JSXTemplate,
 } from "@devextreme-generator/declarations";
 
 @ComponentBindings()
@@ -10,6 +11,7 @@ export class WidgetWithTemplateInput {
   @Template() template?: any;
   @Template() componentTemplate?: any;
   @Template() arrowTemplate?: any;
+  @Template() typedTemplate?: JSXTemplate<{ array: string[], obj: { text: string } }, 'array' | 'obj'>;
 }
 
 @Component({
