@@ -20,6 +20,10 @@ export class GetAccessor extends BaseGetAccessor {
     return super.canBeDestructured;
   }
 
+  get memorizeNestedProp(): boolean {
+    return false;
+  }
+
   toString(options?: toStringOptions): string {
     if (this.isRestAttributes) {
       if (options && !options.mutableOptions?.hasRestAttributes) {

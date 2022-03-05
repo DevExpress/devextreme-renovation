@@ -7,18 +7,27 @@ import {
   Provider,
   createContext,
   Consumer,
-  Mutable
+  Mutable,
+  Nested
 } from "@devextreme-generator/declarations";
 
 const SimpleContext = createContext<number>(5);
+
 
 function view(viewModel: Widget) {
   return <div></div>;
 }
 type UserType = 'user'|'not';
+
+@ComponentBindings()
+export class SomeNested {
+    @OneWay() text: string = '';
+}
+
 @ComponentBindings()
 export class Props {
   @OneWay() p: number = 10;
+  @Nested() someNestedProp: SomeNested = { text: '' };
 }
 
 @Component({
@@ -56,6 +65,10 @@ export default class Widget extends JSXComponent<Props>() {
 
   get userGet(): UserType{
     return 'user'
+  }
+
+  get nestedGet(): { text: string } {
+    return this.props.someNestedProp
   }
 }
 

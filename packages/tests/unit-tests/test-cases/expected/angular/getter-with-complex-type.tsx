@@ -25,8 +25,26 @@ import { Component, Input } from "@angular/core";
 @Component({
   template: "",
 })
+export class SomeNested {
+  @Input() text: string = "";
+}
+
+@Component({
+  template: "",
+})
 export class Props {
   @Input() p: number = 10;
+  private __someNestedProp__?: SomeNested;
+  @Input() set someNestedProp(value: SomeNested) {
+    this.__someNestedProp__ = value;
+  }
+  get someNestedProp(): SomeNested {
+    if (!this.__someNestedProp__) {
+      return Props.__defaultNestedValues.someNestedProp;
+    }
+    return this.__someNestedProp__;
+  }
+  public static __defaultNestedValues: any = { someNestedProp: { text: "" } };
 }
 
 import {
@@ -38,6 +56,9 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
+  ContentChildren,
+  QueryList,
+  Directive,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -45,11 +66,16 @@ import {
   DefaultEntries,
 } from "@devextreme/runtime/angular";
 
+@Directive({
+  selector: "dxo-some-nested-prop",
+})
+export class DxWidgetSomeNestedProp extends SomeNested {}
+
 @Component({
   selector: "dx-widget",
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
-  inputs: ["p"],
+  inputs: ["p", "someNestedProp"],
   template: `<div></div>`,
 })
 export default class Widget extends Props {
@@ -95,6 +121,22 @@ export default class Widget extends Props {
   get __userGet(): UserType {
     return "user";
   }
+  get __nestedGet(): { text: string } {
+    return this.someNestedProp;
+  }
+  private __someNestedProp?: DxWidgetSomeNestedProp;
+  @ContentChildren(DxWidgetSomeNestedProp)
+  someNestedPropNested?: QueryList<DxWidgetSomeNestedProp>;
+  get someNestedProp(): DxWidgetSomeNestedProp {
+    if (this.__someNestedProp) {
+      return this.__someNestedProp;
+    }
+    const nested = this.someNestedPropNested?.toArray();
+    if (nested && nested.length) {
+      return nested[0];
+    }
+    return Props.__defaultNestedValues.someNestedProp;
+  }
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -112,6 +154,9 @@ export default class Widget extends Props {
   }
   _destroyContext: Array<() => void> = [];
 
+  ngAfterViewInit() {
+    this._detectChanges();
+  }
   ngOnChanges(changes: { [name: string]: any }) {
     updateUndefinedFromDefaults(
       this as Record<string, unknown>,
@@ -167,12 +212,16 @@ export default class Widget extends Props {
     this.__getterCache["provide"] = undefined;
     this.__getterCache["g1"] = undefined;
   }
+  @Input() set someNestedProp(value: DxWidgetSomeNestedProp) {
+    this.__someNestedProp = value;
+    this._detectChanges();
+  }
 }
 @NgModule({
-  declarations: [Widget],
+  declarations: [Widget, DxWidgetSomeNestedProp],
   imports: [CommonModule],
 
-  exports: [Widget],
+  exports: [Widget, DxWidgetSomeNestedProp],
 })
 export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
