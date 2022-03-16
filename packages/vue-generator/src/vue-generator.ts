@@ -170,7 +170,7 @@ export class VueGenerator extends BaseGenerator {
     typeParameters: any,
     parameters: Parameter[],
     type: TypeExpression | undefined,
-    body: Block,
+    body: Block | undefined,
   ) {
     return new Function(
       decorators,

@@ -23,10 +23,10 @@ import { CommonModule } from "@angular/common";
   template: `<ng-template #widgetTemplate
     ><dx-widget
       [unknownProp]="__someMethod"
-      #widget2
+      #widget1
       style="display: contents"
     ></dx-widget
-    ><ng-content *ngTemplateOutlet="widget2?.widgetTemplate"></ng-content
+    ><ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content
   ></ng-template>`,
 })
 export default class MethodPassWidget extends MethodPassWidgetInput {

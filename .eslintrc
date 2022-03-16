@@ -8,6 +8,8 @@
   "ignorePatterns": [
     "packages/tests",
     "node_modules",
+    "packages/runtime/**/*.js",
+    "packages/runtime/**/*.d.ts",
     "dist",
     "packages/runtime/inferno/mocked", // Temporary ignored because lot of errors. Now we need just copy package with minimal changes.
     "packages/runtime/gulpfile.js",
@@ -39,6 +41,11 @@
     "no-nested-ternary": "warn",
     "no-param-reassign": "warn",
     "no-plusplus": "warn",
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": [
+        "packages/runtime/**/*"
+      ]
+    }],
     "no-restricted-globals": "warn",
     "no-restricted-syntax": "warn",
     "no-underscore-dangle": "warn",

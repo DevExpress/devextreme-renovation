@@ -5,13 +5,21 @@ const CustomTemplate = ({ text }: { text: string; value: number }) => {
 };
 function view(model: Widget) {
   return (
-    <WidgetWithTemplate
-      template={CustomTemplate}
-      componentTemplate={InnerWidget}
-      arrowTemplate={(data: { name: string; id: number }) => (
-        <div>{data.name}</div>
-      )}
-    />
+    <React.Fragment>
+      <WidgetWithTemplate
+        template={CustomTemplate}
+        componentTemplate={InnerWidget}
+        arrowTemplate={(data: { name: string; id: number }) => (
+          <div>{data.name}</div>
+        )}
+      />
+
+      <WidgetWithTemplate
+        arrowTemplate={(data: { name: string; id: number }) => (
+          <div>{data.id}</div>
+        )}
+      />
+    </React.Fragment>
   );
 }
 
