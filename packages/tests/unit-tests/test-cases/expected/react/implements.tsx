@@ -1,4 +1,4 @@
-import BaseProps from "./component-bindings-only";
+import BaseProps from './component-bindings-only';
 const view = (model: Widget) => <span />;
 
 export interface PropsI {
@@ -9,7 +9,7 @@ interface WidgetI {
   onClick(): void;
 }
 
-export declare type WidgetInputType = typeof BaseProps & {
+export type WidgetInputType = typeof BaseProps & {
   p: string;
 };
 const WidgetInput: WidgetInputType = Object.create(
@@ -17,14 +17,14 @@ const WidgetInput: WidgetInputType = Object.create(
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
     Object.getOwnPropertyDescriptors({
-      p: "10",
+      p: '10',
     })
   )
 );
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

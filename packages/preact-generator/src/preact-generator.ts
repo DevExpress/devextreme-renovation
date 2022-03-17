@@ -122,7 +122,7 @@ export class PreactComponent extends ReactComponent {
 
   compilePortalComponentCore() {
     return `
-    declare type PortalProps = {
+    type PortalProps = {
       container?: HTMLElement | null;
       children: any,
     }

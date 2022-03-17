@@ -2,14 +2,14 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useCallback, useImperativeHandle } from "preact/hooks";
-import { forwardRef } from "preact/compat";
+import * as Preact from 'preact';
+import { useCallback, useImperativeHandle } from 'preact/hooks';
+import { forwardRef } from 'preact/compat';
 
 export type WidgetRef = { getValue: () => any };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

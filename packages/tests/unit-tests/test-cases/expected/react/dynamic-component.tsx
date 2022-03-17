@@ -1,7 +1,7 @@
-import DynamicComponent, { WidgetInput } from "./props";
+import DynamicComponent, { WidgetInput } from './props';
 import DynamicComponentWithTemplate, {
   WidgetInput as PropsWithTemplate,
-} from "./template";
+} from './template';
 function view({
   Component,
   ComponentWithTemplate,
@@ -23,60 +23,60 @@ function view({
 
       <ComponentWithTemplate
         template={({ textProp }) => (
-          <div style={normalizeStyles({ height: "50px" })}>{textProp}</div>
+          <div style={normalizeStyles({ height: '50px' })}>{textProp}</div>
         )}
       />
     </div>
   );
 }
 
-export declare type PropsType = {
+export type PropsType = {
   height: number;
 };
 const Props: PropsType = {
   height: 10,
 };
-import * as React from "react";
-import { useState, useCallback } from "react";
+import * as React from 'react';
+import { useState, useCallback } from 'react';
 const NUMBER_STYLES = new Set([
-  "animationIterationCount",
-  "borderImageOutset",
-  "borderImageSlice",
-  "border-imageWidth",
-  "boxFlex",
-  "boxFlexGroup",
-  "boxOrdinalGroup",
-  "columnCount",
-  "fillOpacity",
-  "flex",
-  "flexGrow",
-  "flexNegative",
-  "flexOrder",
-  "flexPositive",
-  "flexShrink",
-  "floodOpacity",
-  "fontWeight",
-  "gridColumn",
-  "gridRow",
-  "lineClamp",
-  "lineHeight",
-  "opacity",
-  "order",
-  "orphans",
-  "stopOpacity",
-  "strokeDasharray",
-  "strokeDashoffset",
-  "strokeMiterlimit",
-  "strokeOpacity",
-  "strokeWidth",
-  "tabSize",
-  "widows",
-  "zIndex",
-  "zoom",
+  'animationIterationCount',
+  'borderImageOutset',
+  'borderImageSlice',
+  'border-imageWidth',
+  'boxFlex',
+  'boxFlexGroup',
+  'boxOrdinalGroup',
+  'columnCount',
+  'fillOpacity',
+  'flex',
+  'flexGrow',
+  'flexNegative',
+  'flexOrder',
+  'flexPositive',
+  'flexShrink',
+  'floodOpacity',
+  'fontWeight',
+  'gridColumn',
+  'gridRow',
+  'lineClamp',
+  'lineHeight',
+  'opacity',
+  'order',
+  'orphans',
+  'stopOpacity',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
+  'tabSize',
+  'widows',
+  'zIndex',
+  'zoom',
 ]);
 
 const isNumeric = (value: string | number) => {
-  if (typeof value === "number") return true;
+  if (typeof value === 'number') return true;
   return !isNaN(Number(value));
 };
 
@@ -96,7 +96,7 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

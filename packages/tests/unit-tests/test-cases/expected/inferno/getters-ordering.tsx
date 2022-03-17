@@ -4,9 +4,9 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   gridCompatibility?: boolean;
@@ -15,16 +15,16 @@ export declare type WidgetPropsType = {
   pageIndexChange?: (pageIndex: number) => void;
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
   gridCompatibility: true,
   defaultPageIndex: 1,
   pageIndexChange: () => {},
 } as any as WidgetPropsType;
 const view = (model: Widget) => <div></div>;
 
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -75,10 +75,10 @@ class Widget extends InfernoComponent<any> {
     return this.g6;
   }
   get g5(): (string | undefined)[] {
-    if (this.__getterCache["g5"] !== undefined) {
-      return this.__getterCache["g5"];
+    if (this.__getterCache['g5'] !== undefined) {
+      return this.__getterCache['g5'];
     }
-    return (this.__getterCache["g5"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g5'] = ((): (string | undefined)[] => {
       return [...this.g3(), this.g2];
     })());
   }
@@ -92,18 +92,18 @@ class Widget extends InfernoComponent<any> {
     return n > 1 ? this.factorial(n - 1) : 1;
   }
   get g4(): (string | undefined)[] {
-    if (this.__getterCache["g4"] !== undefined) {
-      return this.__getterCache["g4"];
+    if (this.__getterCache['g4'] !== undefined) {
+      return this.__getterCache['g4'];
     }
-    return (this.__getterCache["g4"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g4'] = ((): (string | undefined)[] => {
       return [...this.g3(), this.g1];
     })());
   }
   get g6(): (string | undefined)[] {
-    if (this.__getterCache["g6"] !== undefined) {
-      return this.__getterCache["g6"];
+    if (this.__getterCache['g6'] !== undefined) {
+      return this.__getterCache['g6'];
     }
-    return (this.__getterCache["g6"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g6'] = ((): (string | undefined)[] => {
       return [...this.g5, ...this.g4];
     })());
   }
@@ -171,22 +171,22 @@ class Widget extends InfernoComponent<any> {
   componentWillUpdate(nextProps, nextState, context) {
     super.componentWillUpdate();
     if (
-      this.props["someProp"] !== nextProps["someProp"] ||
-      this.props["type"] !== nextProps["type"]
+      this.props['someProp'] !== nextProps['someProp'] ||
+      this.props['type'] !== nextProps['type']
     ) {
-      this.__getterCache["g5"] = undefined;
+      this.__getterCache['g5'] = undefined;
     }
     if (
-      this.props["someProp"] !== nextProps["someProp"] ||
-      this.props["type"] !== nextProps["type"]
+      this.props['someProp'] !== nextProps['someProp'] ||
+      this.props['type'] !== nextProps['type']
     ) {
-      this.__getterCache["g4"] = undefined;
+      this.__getterCache['g4'] = undefined;
     }
     if (
-      this.props["someProp"] !== nextProps["someProp"] ||
-      this.props["type"] !== nextProps["type"]
+      this.props['someProp'] !== nextProps['someProp'] ||
+      this.props['type'] !== nextProps['type']
     ) {
-      this.__getterCache["g6"] = undefined;
+      this.__getterCache['g6'] = undefined;
     }
   }
   render() {

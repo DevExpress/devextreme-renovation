@@ -1,7 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import prettier from 'prettier';
-
 import { compileCode } from './code-compiler';
 import { Decorators } from './decorators';
 import { Expression, SimpleExpression } from './expressions/base';
@@ -105,6 +103,8 @@ import {
 } from './types';
 import { getExpression } from './utils/expressions';
 import { getModuleRelativePath, resolveModule } from './utils/path-utils';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const format = require('prettier-eslint');
 
 export class Generator implements GeneratorAPI {
   NodeFlags = {
@@ -1364,9 +1364,15 @@ export class Generator implements GeneratorAPI {
   options: GeneratorOptions = {};
 
   format(code: string) {
-    return prettier.format(code, {
-      parser: 'typescript',
-      htmlWhitespaceSensitivity: 'strict',
+    return format({
+      text: code,
+      eslintConfig: this.options.lintConfig || {},
+      prettierOptions: {
+        parser: 'typescript',
+        htmlWhitespaceSensitivity: 'strict',
+        singleQuote: true,
+
+      },
     });
   }
 

@@ -1,16 +1,16 @@
-export declare type NestedPropsType = {
+export type NestedPropsType = {
   field1?: number;
   fieldTemplate?: any;
   field3?: number;
 };
 export const NestedProps: NestedPropsType = {};
-export declare type BasePropsType = {
+export type BasePropsType = {
   nestedProp?: typeof NestedProps;
 };
 export const BaseProps: BasePropsType = {
   nestedProp: Object.freeze({}) as any,
 };
-export declare type SomePropsType = {
+export type SomePropsType = {
   nestedProp?: typeof NestedProps;
   fieldTemplate?: any;
 };

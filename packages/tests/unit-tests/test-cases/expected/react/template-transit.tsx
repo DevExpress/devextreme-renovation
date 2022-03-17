@@ -1,6 +1,6 @@
-import WidgetWithTemplate from "./dx-widget-with-template";
+import WidgetWithTemplate from './dx-widget-with-template';
 
-export declare type TemplateTransitWidgetInputType = {
+export type TemplateTransitWidgetInputType = {
   templateProp?: any;
   componentTemplateProp?: any;
   renderProp?: any;
@@ -9,11 +9,11 @@ export declare type TemplateTransitWidgetInputType = {
   componentComponentProp?: any;
 };
 export const TemplateTransitWidgetInput: TemplateTransitWidgetInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -23,6 +23,7 @@ interface TemplateTransitWidget {
   props: typeof TemplateTransitWidgetInput & RestProps;
   restAttributes: RestProps;
 }
+
 export default function TemplateTransitWidget(
   props: typeof TemplateTransitWidgetInput & RestProps
 ) {

@@ -4,16 +4,16 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(viewModel: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import { createElement as h } from "inferno-compat";
-import { createRef as infernoCreateRef } from "inferno";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+import { createRef as infernoCreateRef } from 'inferno';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -1,5 +1,5 @@
-import { MutableRefObject } from "react";
-import BaseWidget from "./method";
+import { MutableRefObject } from 'react';
+import BaseWidget from './method';
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
@@ -9,16 +9,16 @@ function view(viewModel: WidgetWithApiRef) {
   );
 }
 
-export declare type WidgetWithApiRefInputType = {
+export type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-import { WidgetRef as BaseWidgetRef } from "./method";
-import * as React from "react";
-import { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
+import { WidgetRef as BaseWidgetRef } from './method';
+import * as React from 'react';
+import { useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

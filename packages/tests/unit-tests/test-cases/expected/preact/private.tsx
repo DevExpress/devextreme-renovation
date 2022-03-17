@@ -2,12 +2,12 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useState, useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useState, useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -21,8 +21,8 @@ interface Widget {
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_decoratedState, __state_setDecoratedState] =
-    useState<string>("");
-  const [__state_simpleState, __state_setSimpleState] = useState<string>("");
+    useState<string>('');
+  const [__state_simpleState, __state_setSimpleState] = useState<string>('');
 
   const __privateGetter = useCallback(
     function __privateGetter(): any {

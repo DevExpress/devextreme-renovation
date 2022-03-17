@@ -2,12 +2,12 @@ function view(viewModel: typeof WidgetProps) {
   return <React.Fragment />;
 }
 
-export declare type WidgetPropsType = {};
+export type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

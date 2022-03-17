@@ -1,7 +1,7 @@
 import { toStringOptions as BaseToStringOptions } from '@devextreme-generator/angular';
 import { Expression, ExpressionWithTypeArguments as BaseExpressionWithTypeArguments } from '@devextreme-generator/core';
 
-export declare type InitializedTemplateType = {
+export type InitializedTemplateType = {
   propName: string;
   defaultName: string;
   initializer: Expression;

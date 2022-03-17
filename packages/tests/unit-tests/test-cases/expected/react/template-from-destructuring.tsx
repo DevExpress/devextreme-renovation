@@ -1,4 +1,4 @@
-export declare type PropsType = {
+export type PropsType = {
   contentTemplate: React.FunctionComponent<Partial<any>>;
   contentRender?: React.FunctionComponent<Partial<any>>;
   contentComponent?: React.JSXElementConstructor<Partial<any>>;
@@ -11,11 +11,11 @@ export const viewFunction = ({ props }: TestComponent): any => {
   return AnotherTemplate({});
 };
 
-import * as React from "react";
-import { useCallback } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -25,6 +25,7 @@ interface TestComponent {
   props: typeof Props & RestProps;
   restAttributes: RestProps;
 }
+
 export function TestComponent(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

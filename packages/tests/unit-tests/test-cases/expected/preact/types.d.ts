@@ -1,7 +1,7 @@
-export declare type Options = {
+export type Options = {
   value: string;
 };
 
-export declare type AdditionalOptions = {
+export type AdditionalOptions = {
   index: number;
 };

@@ -3,18 +3,18 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: Widget): any {
   return <span></span>;
 }
 type EventCallBack<Type> = (e: Type) => void;
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   someProp?: { current: string };
 };
 export const WidgetInput: WidgetInputType = {};
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -30,7 +30,7 @@ export default class Widget extends BaseInfernoComponent<any> {
     super(props);
     this.state = {
       someState: undefined,
-      existsState: { current: "value" },
+      existsState: { current: 'value' },
     };
     this.concatStrings = this.concatStrings.bind(this);
   }
@@ -39,8 +39,8 @@ export default class Widget extends BaseInfernoComponent<any> {
   existsState!: { current: string };
 
   concatStrings(): any {
-    const fromProps = this.props.someProp?.current || "";
-    const fromState = this.state.someState?.current || "";
+    const fromProps = this.props.someProp?.current || '';
+    const fromState = this.state.someState?.current || '';
     return `${fromProps}${fromState}${this.state.existsState.current}`;
   }
   get restAttributes(): RestProps {

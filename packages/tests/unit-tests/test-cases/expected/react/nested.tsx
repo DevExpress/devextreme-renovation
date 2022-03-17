@@ -1,51 +1,51 @@
-import { PickedProps, GridColumnProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
   return <div />;
 }
 
-import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
-import * as React from "react";
-import { useCallback, useMemo, useRef } from "react";
+import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
+import * as React from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 import {
   EditingProps,
   CustomProps,
   ColumnEditingProps,
   AnotherCustomProps,
-} from "./nested-props";
+} from './nested-props';
 export const Column: React.FunctionComponent<typeof GridColumnProps> & {
   propName: string;
 } = () => null;
-Column.propName = "columns";
+Column.propName = 'columns';
 Column.defaultProps = GridColumnProps;
 export const Editing: React.FunctionComponent<typeof EditingProps> & {
   propName: string;
 } = () => null;
-Editing.propName = "editing";
+Editing.propName = 'editing';
 Editing.defaultProps = EditingProps;
 export const ColumnCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
-ColumnCustom.propName = "custom";
+ColumnCustom.propName = 'custom';
 ColumnCustom.defaultProps = CustomProps;
 export const ColumnEditing: React.FunctionComponent<
   typeof ColumnEditingProps
 > & { propName: string } = () => null;
-ColumnEditing.propName = "editing";
+ColumnEditing.propName = 'editing';
 ColumnEditing.defaultProps = ColumnEditingProps;
 export const EditingCustom: React.FunctionComponent<typeof CustomProps> & {
   propName: string;
 } = () => null;
-EditingCustom.propName = "custom";
+EditingCustom.propName = 'custom';
 EditingCustom.defaultProps = CustomProps;
 export const EditingAnotherCustom: React.FunctionComponent<
   typeof AnotherCustomProps
 > & { propName: string } = () => null;
-EditingAnotherCustom.propName = "anotherCustom";
+EditingAnotherCustom.propName = 'anotherCustom';
 EditingAnotherCustom.defaultProps = AnotherCustomProps;
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -94,7 +94,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   const __getColumns = useCallback(
     function __getColumns(): any {
       return __getNestedColumns?.map((el) =>
-        typeof el === "string" ? el : el.name
+        typeof el === 'string' ? el : el.name
       );
     },
     [__getNestedColumns]

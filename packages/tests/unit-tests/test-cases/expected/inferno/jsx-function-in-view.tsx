@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 const loadingJSX = ({ text }: any) => {
   return <div>{text}</div>;
 };
@@ -11,16 +11,16 @@ function infoJSX(text: string, name: string) {
   return <span>{`${text} ${name}`}</span>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   loading: boolean;
   greetings: string;
 };
 export const WidgetInput: WidgetInputType = {
   loading: true,
-  greetings: "Hello",
+  greetings: 'Hello',
 };
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -36,10 +36,10 @@ export default class Widget extends BaseInfernoComponent<any> {
   }
 
   get loadingProps(): any {
-    return { text: "Loading..." };
+    return { text: 'Loading...' };
   }
   get name(): any {
-    return "User";
+    return 'User';
   }
   get restAttributes(): RestProps {
     const { greetings, loading, ...restProps } = this.props as any;

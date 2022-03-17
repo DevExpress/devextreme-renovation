@@ -1,5 +1,5 @@
-import { RefObject } from "preact";
-import { createPortal } from "preact/compat";
+import { RefObject } from 'preact';
+import { createPortal } from 'preact/compat';
 function view(model: Widget) {
   return (
     <div>
@@ -16,14 +16,14 @@ function view(model: Widget) {
   );
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someRef?: any;
 };
 export const WidgetProps: WidgetPropsType = {};
-import * as Preact from "preact";
-import { useState, useCallback, useEffect } from "preact/hooks";
+import * as Preact from 'preact';
+import { useState, useCallback, useEffect } from 'preact/hooks';
 
-declare type PortalProps = {
+type PortalProps = {
   container?: HTMLElement | null;
   children: any;
 };
@@ -34,7 +34,7 @@ const Portal = ({ container, children }: PortalProps): any => {
   return null;
 };
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

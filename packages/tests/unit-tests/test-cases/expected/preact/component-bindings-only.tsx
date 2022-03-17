@@ -1,6 +1,6 @@
 import { Options, AdditionalOptions } from "./types";
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   height?: number;
   data?: Options;
   info?: AdditionalOptions;

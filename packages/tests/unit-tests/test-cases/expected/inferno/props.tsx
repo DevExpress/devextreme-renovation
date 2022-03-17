@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
   return (
@@ -15,12 +15,12 @@ function view(model: Widget): any {
   );
 }
 type EventCallBack<Type> = (e: Type) => void;
-const device = "ios";
+const device = 'ios';
 function isDevice() {
   return true;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   height: number;
   export: object;
   array: any;
@@ -38,24 +38,24 @@ export declare type WidgetInputType = {
 export const WidgetInput: WidgetInputType = {
   height: 10,
   export: Object.freeze({}) as any,
-  array: Object.freeze(["1"]) as any,
+  array: Object.freeze(['1']) as any,
   currentDate: Object.freeze(new Date()) as any,
   get expressionDefault() {
-    return device === "ios" ? "yes" : "no";
+    return device === 'ios' ? 'yes' : 'no';
   },
   get expressionDefault1() {
     return !device;
   },
   get expressionDefault2() {
-    return isDevice() || "test";
+    return isDevice() || 'test';
   },
   onClick: () => {},
   onSomething: () => {},
-  defaultStringValue: "",
+  defaultStringValue: '',
   stringValueChange: () => {},
 } as any as WidgetInputType;
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

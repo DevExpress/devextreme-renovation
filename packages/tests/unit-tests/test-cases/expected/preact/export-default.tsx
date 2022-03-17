@@ -2,14 +2,14 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   prop?: boolean;
 };
 const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

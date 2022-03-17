@@ -1,4 +1,4 @@
-import BaseState from "./model";
+import BaseState from './model';
 function view(model: Widget) {
   return (
     <div>
@@ -9,7 +9,7 @@ function view(model: Widget) {
   );
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   state1?: boolean;
   state2: boolean;
   stateProp?: boolean;
@@ -27,10 +27,10 @@ const WidgetInput: WidgetInputType = {
   state2Change: () => {},
   statePropChange: () => {},
 } as any as WidgetInputType;
-import * as React from "react";
-import { useState, useCallback } from "react";
+import * as React from 'react';
+import { useState, useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
