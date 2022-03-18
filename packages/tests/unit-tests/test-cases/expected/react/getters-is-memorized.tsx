@@ -1,9 +1,9 @@
 import {
   InterfaceTemplateInput as externalInterface,
   Options as externalType,
-} from "./types.d";
+} from './types.d';
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   currentDate: Date | number | string;
@@ -11,8 +11,8 @@ export declare type WidgetPropsType = {
   currentDateChange?: (currentDate: Date | number | string) => void;
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
   defaultCurrentDate: Object.freeze(new Date()) as any,
   currentDateChange: () => {},
 } as any as WidgetPropsType;
@@ -24,10 +24,10 @@ interface internalInterface {
 type internalType = { a: string };
 const view = () => <div></div>;
 
-import * as React from "react";
-import { useState, useCallback, useMemo } from "react";
+import * as React from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -60,7 +60,7 @@ function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __internalTypeGetter = useMemo(
     function __internalTypeGetter(): internalType {
-      return { a: "1" };
+      return { a: '1' };
     },
     []
   );
@@ -72,7 +72,7 @@ function Widget(props: typeof WidgetProps & RestProps) {
   );
   const __externalTypeGetter = useMemo(
     function __externalTypeGetter(): externalType {
-      return { value: "" };
+      return { value: '' };
     },
     []
   );

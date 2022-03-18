@@ -1,21 +1,21 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 function view(model: Widget): any {
   return <span></span>;
 }
 const P1Context = createContext(5);
 const ContextForConsumer = createContext(null);
-const GetterContext = createContext("default");
+const GetterContext = createContext('default');
 
-export declare type PropsType = {
+export type PropsType = {
   p1: number;
 };
 const Props: PropsType = {
   p1: 10,
 };
-import * as React from "react";
-import { useState, useContext, useCallback } from "react";
+import * as React from 'react';
+import { useState, useContext, useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -42,7 +42,7 @@ export default function Widget(props: typeof Props & RestProps) {
     [provider, contextConsumer]
   );
   const __contextProvider = useCallback(function __contextProvider(): any {
-    return "provide";
+    return 'provide';
   }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

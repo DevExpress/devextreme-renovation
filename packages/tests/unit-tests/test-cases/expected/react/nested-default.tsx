@@ -1,4 +1,4 @@
-import { WithNestedInput } from "./nested-default-props";
+import { WithNestedInput } from './nested-default-props';
 function view({ getRowCells, props: { rows } }: WithNested) {
   return (
     <div>
@@ -12,32 +12,32 @@ function view({ getRowCells, props: { rows } }: WithNested) {
             </span>
           ))
         ) : (
-          <span>{"Empty Array"}</span>
+          <span>{'Empty Array'}</span>
         )
       ) : (
-        <span>{"No Data"}</span>
+        <span>{'No Data'}</span>
       )}
     </div>
   );
 }
 
-import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
-import * as React from "react";
-import { useCallback, useMemo, useRef } from "react";
+import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
+import * as React from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
-import { GridRow, GridCell } from "./nested-default-props";
+import { GridRow, GridCell } from './nested-default-props';
 export const Row: React.FunctionComponent<typeof GridRow> & {
   propName: string;
 } = () => null;
-Row.propName = "rows";
+Row.propName = 'rows';
 Row.defaultProps = GridRow;
 export const RowCell: React.FunctionComponent<typeof GridCell> & {
   propName: string;
 } = () => null;
-RowCell.propName = "cells";
+RowCell.propName = 'cells';
 RowCell.defaultProps = GridCell;
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -71,8 +71,8 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
       const cells = __getNestedRows?.[index].cells;
       return (
         cells
-          ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
-          .join("|") || []
+          ?.map((cell) => (typeof cell === 'string' ? cell : cell.gridData))
+          .join('|') || []
       );
     },
     [__getNestedRows]

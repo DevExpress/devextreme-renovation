@@ -18,7 +18,9 @@
   "dependencies": {
     "code-block-writer": "^10.1.0",
     "prettier": "^2.1.0",
-    "typescript": "3.8"
+    "prettier-eslint": "^13.0.0",
+    "typescript": "3.8",
+    "eslint-config-devextreme":"^0.1.40"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",

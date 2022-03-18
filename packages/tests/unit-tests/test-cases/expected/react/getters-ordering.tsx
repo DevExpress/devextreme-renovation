@@ -1,4 +1,4 @@
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   gridCompatibility?: boolean;
@@ -7,15 +7,15 @@ export declare type WidgetPropsType = {
   pageIndexChange?: (pageIndex: number) => void;
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
   gridCompatibility: true,
   defaultPageIndex: 1,
   pageIndexChange: () => {},
 } as any as WidgetPropsType;
 const view = (model: Widget) => <div></div>;
 
-import * as React from "react";
+import * as React from 'react';
 import {
   useState,
   useCallback,
@@ -23,10 +23,10 @@ import {
   useEffect,
   useImperativeHandle,
   forwardRef,
-} from "react";
+} from 'react';
 
 export type WidgetRef = { g3: () => (string | undefined)[] };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

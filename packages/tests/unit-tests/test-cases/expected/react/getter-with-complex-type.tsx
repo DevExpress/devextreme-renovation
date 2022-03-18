@@ -1,20 +1,20 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
 }
-type UserType = "user" | "not";
+type UserType = 'user' | 'not';
 
-export declare type PropsType = {
+export type PropsType = {
   p: number;
 };
 export const Props: PropsType = {
   p: 10,
 };
-import * as React from "react";
-import { useState, useContext, useCallback, useMemo, useRef } from "react";
+import * as React from 'react';
+import { useState, useContext, useCallback, useMemo, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -75,7 +75,7 @@ export default function Widget(props: typeof Props & RestProps) {
     [__state_i, mutableVar]
   );
   const __userGet = useCallback(function __userGet(): UserType {
-    return "user";
+    return 'user';
   }, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {

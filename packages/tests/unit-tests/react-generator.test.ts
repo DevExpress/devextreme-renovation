@@ -1526,7 +1526,7 @@ mocha.describe("import Components", function () {
     assert.strictEqual(
       getResult(model.toString()),
       getResult(`
-            export declare type ModelType = typeof WidgetProps & {};
+            export type ModelType = typeof WidgetProps & {};
             const Model:ModelType = WidgetProps
         `)
     );
@@ -1591,7 +1591,7 @@ mocha.describe("import Components", function () {
     assert.strictEqual(
       removeSpaces(model.toString()),
       removeSpaces(`
-            export declare type ModelType = typeof WidgetProps & {height:string}
+            export type ModelType = typeof WidgetProps & {height:string}
             constModel:ModelType=Object.create(Object.prototype,Object.assign(Object.getOwnPropertyDescriptors(WidgetProps),Object.getOwnPropertyDescriptors({height:"10px"}),));
         `)
     );
@@ -1621,7 +1621,7 @@ mocha.describe("import Components", function () {
       assert.strictEqual(
         getResult(model.toString()),
         getResult(`
-            export declare type ModelType = {height:string}
+            export type ModelType = {height:string}
             const Model:ModelType={} as any as ModelType
         `)
       );
@@ -2716,7 +2716,7 @@ mocha.describe("ComponentInput", function () {
     assert.strictEqual(
       getResult(expression.toString()),
       getResult(`
-            export declare type BaseModelType = {};
+            export type BaseModelType = {};
             export const BaseModel:BaseModelType = {};
         `)
     );
@@ -2759,7 +2759,7 @@ mocha.describe("ComponentInput", function () {
     assert.strictEqual(
       getResult(expression.toString()),
       getResult(`
-            export declare type BaseModelType = {p:number; p1:number};
+            export type BaseModelType = {p:number; p1:number};
             export const BaseModel:BaseModelType={p:10, p1: 15};
         `)
     );
@@ -2817,7 +2817,7 @@ mocha.describe("ComponentInput", function () {
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`
-            export declare type BaseModelType={
+            export type BaseModelType={
               template: (a?: string, b: number) => any;
               render?: (a?:string,b:number)=>any;
               component?: (a?:string,b:number)=>any
@@ -2863,7 +2863,7 @@ mocha.describe("ComponentInput", function () {
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`
-          export declare type BaseModelType = {
+          export type BaseModelType = {
             template:React.FunctionComponent<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>;
             render?:React.FunctionComponent<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>;
             component?:React.JSXElementConstructor<Partial<Omit<widgetProps,"requiredProperty">> & Required<Pick<widgetProps,"requiredProperty">>>
@@ -2897,7 +2897,7 @@ mocha.describe("ComponentInput", function () {
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`
-            export declare type BaseModelType = {contentTemplate: any,contentRender?: any,contentComponent?: any};
+            export type BaseModelType = {contentTemplate: any,contentRender?: any,contentComponent?: any};
             export const BaseModel:BaseModelType={} as any as BaseModelType;
         `)
       );
@@ -2927,7 +2927,7 @@ mocha.describe("ComponentInput", function () {
       assert.strictEqual(
         getResult(expression.toString()),
         getResult(`
-                export declare type BaseModelType = {
+                export type BaseModelType = {
                     prop: number
                 };
                 export const BaseModel:BaseModelType = {

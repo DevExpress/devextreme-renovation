@@ -1,9 +1,9 @@
 function view() {}
 
-import * as React from "react";
-import { useCallback, useEffect } from "react";
+import * as React from 'react';
+import { useCallback, useEffect } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -26,11 +26,11 @@ export function Widget(props: {} & RestProps) {
     [props]
   );
   useEffect(() => {
-    document.addEventListener("pointerup", __onPointerUp);
-    window.addEventListener("scroll", __scrollHandler);
+    document.addEventListener('pointerup', __onPointerUp);
+    window.addEventListener('scroll', __scrollHandler);
     return function cleanup() {
-      document.removeEventListener("pointerup", __onPointerUp);
-      window.removeEventListener("scroll", __scrollHandler);
+      document.removeEventListener('pointerup', __onPointerUp);
+      window.removeEventListener('scroll', __scrollHandler);
     };
   });
 

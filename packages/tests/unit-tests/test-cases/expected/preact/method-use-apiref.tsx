@@ -1,5 +1,5 @@
-import { RefObject } from "preact";
-import BaseWidget from "./method";
+import { RefObject } from 'preact';
+import BaseWidget from './method';
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
@@ -9,16 +9,16 @@ function view(viewModel: WidgetWithApiRef) {
   );
 }
 
-export declare type WidgetWithApiRefInputType = {
+export type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-import * as Preact from "preact";
-import { useCallback, useRef, useImperativeHandle } from "preact/hooks";
-import { forwardRef } from "preact/compat";
+import * as Preact from 'preact';
+import { useCallback, useRef, useImperativeHandle } from 'preact/hooks';
+import { forwardRef } from 'preact/compat';
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

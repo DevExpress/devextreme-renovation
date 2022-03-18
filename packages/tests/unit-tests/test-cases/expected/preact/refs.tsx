@@ -1,4 +1,4 @@
-import { RefObject } from "preact";
+import { RefObject } from 'preact';
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -7,7 +7,7 @@ function view(viewModel: Widget) {
   );
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   outerDivRef?: any;
   refProp?: any;
   forwardRefProp?: any;
@@ -15,10 +15,10 @@ export declare type WidgetPropsType = {
   requiredForwardRefProp: any;
 };
 const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
-import * as Preact from "preact";
-import { useCallback, useRef } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback, useRef } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

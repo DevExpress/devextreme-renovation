@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -7,7 +7,7 @@ function view(viewModel: Widget) {
   );
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   outerDivRef?: MutableRefObject<HTMLDivElement | null>;
   refProp?: MutableRefObject<HTMLDivElement | null>;
   forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
@@ -15,10 +15,10 @@ export declare type WidgetPropsType = {
   requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
-import * as React from "react";
-import { useCallback, useRef } from "react";
+import * as React from 'react';
+import { useCallback, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

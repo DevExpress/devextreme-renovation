@@ -1,24 +1,24 @@
-import { PublicWidgetWithProps } from "./dx-public-widget-with-props";
-import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+import { PublicWidgetWithProps } from './dx-public-widget-with-props';
+import { WidgetWithProps, WidgetWithPropsInput } from './dx-widget-with-props';
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   someProp: boolean;
   headerTemplate: React.FunctionComponent<any>;
   template: React.FunctionComponent<
     Partial<{ textProp: string; textPropExpr: string }>
   >;
   contentTemplate: React.FunctionComponent<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+    Partial<Omit<{ data: { p1: string }; index: number }, 'data'>> &
+      Required<Pick<{ data: { p1: string }; index: number }, 'data'>>
   >;
   footerTemplate: React.FunctionComponent<Partial<{ someProp: boolean }>>;
   componentTemplate: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
   publicComponentTemplate: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
   headerRender?: React.FunctionComponent<any>;
   headerComponent?: React.JSXElementConstructor<any>;
@@ -29,30 +29,30 @@ export declare type WidgetInputType = {
     Partial<{ textProp: string; textPropExpr: string }>
   >;
   contentRender?: React.FunctionComponent<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+    Partial<Omit<{ data: { p1: string }; index: number }, 'data'>> &
+      Required<Pick<{ data: { p1: string }; index: number }, 'data'>>
   >;
   contentComponent?: React.JSXElementConstructor<
-    Partial<Omit<{ data: { p1: string }; index: number }, "data">> &
-      Required<Pick<{ data: { p1: string }; index: number }, "data">>
+    Partial<Omit<{ data: { p1: string }; index: number }, 'data'>> &
+      Required<Pick<{ data: { p1: string }; index: number }, 'data'>>
   >;
   footerRender?: React.FunctionComponent<Partial<{ someProp: boolean }>>;
   footerComponent?: React.JSXElementConstructor<Partial<{ someProp: boolean }>>;
   componentRender?: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
   componentComponent?: React.JSXElementConstructor<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
   publicComponentRender?: React.FunctionComponent<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
   publicComponentComponent?: React.JSXElementConstructor<
-    Partial<Omit<typeof WidgetWithPropsInput, "value">> &
-      Required<Pick<typeof WidgetWithPropsInput, "value">>
+    Partial<Omit<typeof WidgetWithPropsInput, 'value'>> &
+      Required<Pick<typeof WidgetWithPropsInput, 'value'>>
   >;
 };
 export const WidgetInput: WidgetInputType = {
@@ -64,11 +64,11 @@ export const WidgetInput: WidgetInputType = {
   componentTemplate: WidgetWithProps,
   publicComponentTemplate: PublicWidgetWithProps,
 };
-import * as React from "react";
-import { useCallback } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -156,19 +156,19 @@ function view(viewModel: WidgetWithTemplate) {
       {viewModel.props.headerTemplate({})}
 
       {viewModel.props.contentTemplate &&
-        viewModel.props.contentTemplate({ data: { p1: "value" }, index: 10 })}
+        viewModel.props.contentTemplate({ data: { p1: 'value' }, index: 10 })}
 
       {!viewModel.props.contentTemplate &&
         viewModel.props.template({
-          textProp: "textPropValue",
-          textPropExpr: "textPropExrpValue",
+          textProp: 'textPropValue',
+          textPropExpr: 'textPropExrpValue',
         })}
 
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
-      {ComponentTemplate({ value: "Test Value" })}
+      {ComponentTemplate({ value: 'Test Value' })}
 
-      {PublicComponentTemplate({ value: "Test Value" })}
+      {PublicComponentTemplate({ value: 'Test Value' })}
     </div>
   );
 }

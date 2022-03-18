@@ -2,7 +2,7 @@ function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
-export declare type InnerWidgetPropsType = {
+export type InnerWidgetPropsType = {
   selected?: boolean;
   value: number;
   defaultValue: number;

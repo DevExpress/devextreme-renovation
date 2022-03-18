@@ -1,4 +1,4 @@
-import { Options } from "./types.d";
+import { Options } from './types.d';
 export const viewFunction = (viewModel: Marker) => <div></div>;
 
 export interface InterfaceConfig {
@@ -6,16 +6,16 @@ export interface InterfaceConfig {
 }
 export type TypeConfig = { value?: boolean };
 
-export declare type MarkerPropsType = {
+export type MarkerPropsType = {
   color?: Options;
   date?: Date;
   config?: InterfaceConfig | TypeConfig;
 };
 export const MarkerProps: MarkerPropsType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

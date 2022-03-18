@@ -108,7 +108,7 @@ export class ComponentInput extends BaseComponentInput {
       (m) => !(m as Property).inherited,
     ) as Property[];
 
-    const typeDeclaration = `export declare type ${typeName} = ${types
+    const typeDeclaration = `export type ${typeName} = ${types
       .concat([
         `{
               ${properties.map((p) => p.typeDeclaration()).join(';\n')}

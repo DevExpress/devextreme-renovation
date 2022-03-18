@@ -2,16 +2,16 @@ function view() {
   return <div></div>;
 }
 
-export declare type WidgetPropsType = {};
+export type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
-import * as React from "react";
-import { useCallback } from "react";
+} from '../../../../jquery-helpers/default_options';
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

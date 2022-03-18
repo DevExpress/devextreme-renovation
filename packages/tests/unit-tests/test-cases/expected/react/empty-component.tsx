@@ -1,44 +1,44 @@
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 const NUMBER_STYLES = new Set([
-  "animationIterationCount",
-  "borderImageOutset",
-  "borderImageSlice",
-  "border-imageWidth",
-  "boxFlex",
-  "boxFlexGroup",
-  "boxOrdinalGroup",
-  "columnCount",
-  "fillOpacity",
-  "flex",
-  "flexGrow",
-  "flexNegative",
-  "flexOrder",
-  "flexPositive",
-  "flexShrink",
-  "floodOpacity",
-  "fontWeight",
-  "gridColumn",
-  "gridRow",
-  "lineClamp",
-  "lineHeight",
-  "opacity",
-  "order",
-  "orphans",
-  "stopOpacity",
-  "strokeDasharray",
-  "strokeDashoffset",
-  "strokeMiterlimit",
-  "strokeOpacity",
-  "strokeWidth",
-  "tabSize",
-  "widows",
-  "zIndex",
-  "zoom",
+  'animationIterationCount',
+  'borderImageOutset',
+  'borderImageSlice',
+  'border-imageWidth',
+  'boxFlex',
+  'boxFlexGroup',
+  'boxOrdinalGroup',
+  'columnCount',
+  'fillOpacity',
+  'flex',
+  'flexGrow',
+  'flexNegative',
+  'flexOrder',
+  'flexPositive',
+  'flexShrink',
+  'floodOpacity',
+  'fontWeight',
+  'gridColumn',
+  'gridRow',
+  'lineClamp',
+  'lineHeight',
+  'opacity',
+  'order',
+  'orphans',
+  'stopOpacity',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
+  'tabSize',
+  'widows',
+  'zIndex',
+  'zoom',
 ]);
 
 const isNumeric = (value: string | number) => {
-  if (typeof value === "number") return true;
+  if (typeof value === 'number') return true;
   return !isNaN(Number(value));
 };
 
@@ -58,7 +58,7 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

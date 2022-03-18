@@ -3,19 +3,19 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view() {
   return <div></div>;
 }
 
-export declare type WidgetPropsType = {};
+export type WidgetPropsType = {};
 export const WidgetProps: WidgetPropsType = {};
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+} from '../../../../jquery-helpers/default_options';
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -3,15 +3,15 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
-import { PickedProps, GridColumnProps } from "./nested-props";
+} from '@devextreme/runtime/inferno';
+import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
   return <div />;
 }
 
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -30,7 +30,7 @@ export default class Widget extends BaseInfernoComponent<any> {
 
   getColumns(): any {
     const { columns } = this.props as any;
-    return columns?.map((el) => (typeof el === "string" ? el : el.name));
+    return columns?.map((el) => (typeof el === 'string' ? el : el.name));
   }
   get isEditable(): any {
     return this.props.editing.editEnabled || this.props.editing.custom?.length;

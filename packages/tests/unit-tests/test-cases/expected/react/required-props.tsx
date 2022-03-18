@@ -1,6 +1,6 @@
 function view() {}
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   size: { width: number; height: number };
   type: string;
 };
@@ -8,11 +8,11 @@ const WidgetInput: WidgetInputType = {} as any as WidgetInputType;
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
-import * as React from "react";
-import { useCallback } from "react";
+} from '../../../../jquery-helpers/default_options';
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

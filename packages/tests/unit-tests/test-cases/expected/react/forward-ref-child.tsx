@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
     <div ref={childRef}>
@@ -7,16 +7,16 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   );
 }
 
-export declare type PropsType = {
+export type PropsType = {
   childRef: MutableRefObject<HTMLDivElement | null>;
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
   state?: number;
 };
 const Props: PropsType = {} as any as PropsType;
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

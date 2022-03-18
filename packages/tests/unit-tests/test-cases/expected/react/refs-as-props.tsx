@@ -1,5 +1,5 @@
-import { MutableRefObject } from "react";
-import WidgetWithRefProp from "./dx-widget-with-ref-prop";
+import { MutableRefObject } from 'react';
+import WidgetWithRefProp from './dx-widget-with-ref-prop';
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -11,14 +11,14 @@ function view(viewModel: Widget) {
   );
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback, useRef } from "react";
+import * as React from 'react';
+import { useCallback, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -38,8 +38,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
 
   const __getDirectly = useCallback(
     function __getDirectly(): any {
-      const divRefOuter = __divRef.current?.outerHTML ?? "";
-      const nullableRefOuter = props.nullableRef?.current?.outerHTML ?? "";
+      const divRefOuter = __divRef.current?.outerHTML ?? '';
+      const nullableRefOuter = props.nullableRef?.current?.outerHTML ?? '';
       return divRefOuter + nullableRefOuter;
     },
     [props.nullableRef]
@@ -47,8 +47,8 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __getDestructed = useCallback(
     function __getDestructed(): any {
       const { nullableRef } = props;
-      const divRefOuter = __divRef.current?.outerHTML ?? "";
-      const nullableRefOuter = nullableRef?.current?.outerHTML ?? "";
+      const divRefOuter = __divRef.current?.outerHTML ?? '';
+      const nullableRefOuter = nullableRef?.current?.outerHTML ?? '';
       return divRefOuter + nullableRefOuter;
     },
     [props.nullableRef]

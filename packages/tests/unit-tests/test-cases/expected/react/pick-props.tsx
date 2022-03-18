@@ -1,10 +1,10 @@
-import Props from "./component-bindings-only";
-import { Options } from "./types.d";
+import Props from './component-bindings-only';
+import { Options } from './types.d';
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;
 }
-import { AdditionalOptions } from "./types.d";
-export declare type WidgetPropsType = {
+import { AdditionalOptions } from './types.d';
+export type WidgetPropsType = {
   data?: Options;
   info?: AdditionalOptions;
 };
@@ -12,10 +12,10 @@ const WidgetProps: WidgetPropsType = {
   data: Props.data,
   info: Props.info,
 };
-import * as React from "react";
-import { useState, useCallback } from "react";
+import * as React from 'react';
+import { useState, useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -29,7 +29,7 @@ interface Widget {
 
 export default function Widget(props: typeof WidgetProps & RestProps) {
   const [__state_innerData, __state_setInnerData] = useState<Options>({
-    value: "",
+    value: '',
   });
 
   const __restAttributes = useCallback(

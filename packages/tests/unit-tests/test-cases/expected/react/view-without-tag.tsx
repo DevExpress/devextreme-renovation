@@ -2,14 +2,14 @@ function view(model: Widget): any {
   return model.props.children;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   children?: React.ReactNode;
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
