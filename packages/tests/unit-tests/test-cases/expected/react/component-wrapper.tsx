@@ -1,9 +1,9 @@
-import DomComponentWrapper from "./dom_component_wrapper";
+import DomComponentWrapper from './dom_component_wrapper';
 function view(model: Widget): any {
   return <DomComponentWrapper></DomComponentWrapper>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   prop1: number;
   prop2: string;
   templateProp?: any;
@@ -13,13 +13,13 @@ export declare type WidgetInputType = {
 };
 export const WidgetInput: WidgetInputType = {
   prop1: 10,
-  prop2: "text",
+  prop2: 'text',
   isReactComponentWrapper: true,
 };
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

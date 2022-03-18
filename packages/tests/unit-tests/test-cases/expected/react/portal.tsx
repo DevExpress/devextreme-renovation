@@ -1,5 +1,5 @@
-import { MutableRefObject } from "react";
-import { createPortal } from "react-dom";
+import { MutableRefObject } from 'react';
+import { createPortal } from 'react-dom';
 function view(model: Widget) {
   return (
     <div>
@@ -16,14 +16,14 @@ function view(model: Widget) {
   );
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someRef?: MutableRefObject<HTMLElement | null>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import * as React from "react";
-import { useState, useCallback, useEffect } from "react";
+import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-declare type PortalProps = {
+type PortalProps = {
   container?: HTMLElement | null;
   children: React.ReactNode;
 };
@@ -37,7 +37,7 @@ const Portal = ({
   return null;
 };
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

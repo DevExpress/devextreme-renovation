@@ -1,14 +1,14 @@
-import WidgetWithProps from "./props";
+import WidgetWithProps from './props';
 function view(model: Widget) {
   return <WidgetWithProps {...model.restAttributes} />;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 export const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

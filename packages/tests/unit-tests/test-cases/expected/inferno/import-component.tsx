@@ -3,13 +3,13 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
-import Base, { WidgetProps } from "./component-input";
+} from '@devextreme/runtime/inferno';
+import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
 }
 
-export declare type ChildInputType = typeof WidgetProps & {
+export type ChildInputType = typeof WidgetProps & {
   height: number;
   onClick: (a: number) => void;
 };
@@ -23,8 +23,8 @@ const ChildInput: ChildInputType = Object.create(
     })
   )
 );
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

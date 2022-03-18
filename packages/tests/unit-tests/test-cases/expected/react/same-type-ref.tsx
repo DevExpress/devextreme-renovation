@@ -1,18 +1,18 @@
-import { MutableRefObject } from "react";
-import BaseWidget from "./method";
+import { MutableRefObject } from 'react';
+import BaseWidget from './method';
 function view(viewModel: Widget) {
   return <BaseWidget></BaseWidget>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetInput: WidgetInputType = {};
-import { WidgetRef as BaseWidgetRef } from "./method";
-import * as React from "react";
-import { useCallback, useRef } from "react";
+import { WidgetRef as BaseWidgetRef } from './method';
+import * as React from 'react';
+import { useCallback, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -2,22 +2,22 @@ function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
-export declare type WidgetWithPropsInputType = {
+export type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
   number?: number;
   onClick?: (e: any) => void;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
-  value: "default text",
+  value: 'default text',
   number: 42,
 };
-import * as Preact from "preact";
-import { useCallback, useImperativeHandle } from "preact/hooks";
-import { forwardRef } from "preact/compat";
+import * as Preact from 'preact';
+import { useCallback, useImperativeHandle } from 'preact/hooks';
+import { forwardRef } from 'preact/compat';
 
 export type PublicWidgetWithPropsRef = { doSomething: () => any };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -6,7 +6,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: Widget) {
   return (
     <div>
@@ -23,12 +23,12 @@ function view(model: Widget) {
   );
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someRef?: RefObject<HTMLElement | null>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -2,29 +2,29 @@ import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
-} from "./types.d";
+} from './types.d';
 
 interface TemplateInput {
   inputInt: number;
 }
 
-export declare type PropsType = {
+export type PropsType = {
   PropFromClass?: ClassTemplateInput;
   PropFromInterface?: TemplateInput;
   PropFromImportedInterface?: InterfaceTemplateInput;
   PropFromImportedType?: TypeTemplateInput;
   template: React.FunctionComponent<
-    Partial<Omit<{ width: string; height: string }, "width">> &
-      Required<Pick<{ width: string; height: string }, "width">>
+    Partial<Omit<{ width: string; height: string }, 'width'>> &
+      Required<Pick<{ width: string; height: string }, 'width'>>
   >;
   template2: React.FunctionComponent<Partial<TemplateInput>>;
   render?: React.FunctionComponent<
-    Partial<Omit<{ width: string; height: string }, "width">> &
-      Required<Pick<{ width: string; height: string }, "width">>
+    Partial<Omit<{ width: string; height: string }, 'width'>> &
+      Required<Pick<{ width: string; height: string }, 'width'>>
   >;
   component?: React.JSXElementConstructor<
-    Partial<Omit<{ width: string; height: string }, "width">> &
-      Required<Pick<{ width: string; height: string }, "width">>
+    Partial<Omit<{ width: string; height: string }, 'width'>> &
+      Required<Pick<{ width: string; height: string }, 'width'>>
   >;
   render2?: React.FunctionComponent<Partial<TemplateInput>>;
   component2?: React.JSXElementConstructor<Partial<TemplateInput>>;
@@ -49,11 +49,11 @@ function view(model: Widget) {
   );
 }
 
-import * as React from "react";
-import { useCallback, useMemo } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback, useMemo } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -70,7 +70,7 @@ export default function Widget(props: typeof Props & RestProps) {
     width: string;
     height: string;
   } {
-    return { width: "40px", height: "30px" };
+    return { width: '40px', height: '30px' };
   },
   []);
   const __restAttributes = useCallback(

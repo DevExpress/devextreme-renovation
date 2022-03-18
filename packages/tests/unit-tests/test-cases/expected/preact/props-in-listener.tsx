@@ -2,15 +2,15 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type PropsType = {
+export type PropsType = {
   type?: string;
   onClick?: (e: any) => void;
 };
 export const Props: PropsType = {};
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

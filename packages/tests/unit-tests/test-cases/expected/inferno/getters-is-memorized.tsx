@@ -3,13 +3,13 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 import {
   InterfaceTemplateInput as externalInterface,
   Options as externalType,
-} from "./types.d";
+} from './types.d';
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   currentDate: Date | number | string;
@@ -17,8 +17,8 @@ export declare type WidgetPropsType = {
   currentDateChange?: (currentDate: Date | number | string) => void;
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
   defaultCurrentDate: Object.freeze(new Date()) as any,
   currentDateChange: () => {},
 } as any as WidgetPropsType;
@@ -30,8 +30,8 @@ interface internalInterface {
 type internalType = { a: string };
 const view = () => <div></div>;
 
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -54,44 +54,44 @@ class Widget extends BaseInfernoComponent<any> {
   }
 
   get internalInterfaceGetter(): internalInterface {
-    if (this.__getterCache["internalInterfaceGetter"] !== undefined) {
-      return this.__getterCache["internalInterfaceGetter"];
+    if (this.__getterCache['internalInterfaceGetter'] !== undefined) {
+      return this.__getterCache['internalInterfaceGetter'];
     }
-    return (this.__getterCache["internalInterfaceGetter"] =
+    return (this.__getterCache['internalInterfaceGetter'] =
       ((): internalInterface => {
         return { field1: { a: this.props.someProp }, field2: 2, field3: 3 };
       })());
   }
   get internalTypeGetter(): internalType {
-    if (this.__getterCache["internalTypeGetter"] !== undefined) {
-      return this.__getterCache["internalTypeGetter"];
+    if (this.__getterCache['internalTypeGetter'] !== undefined) {
+      return this.__getterCache['internalTypeGetter'];
     }
-    return (this.__getterCache["internalTypeGetter"] = ((): internalType => {
-      return { a: "1" };
+    return (this.__getterCache['internalTypeGetter'] = ((): internalType => {
+      return { a: '1' };
     })());
   }
   get externalInterfaceGetter(): externalInterface {
-    if (this.__getterCache["externalInterfaceGetter"] !== undefined) {
-      return this.__getterCache["externalInterfaceGetter"];
+    if (this.__getterCache['externalInterfaceGetter'] !== undefined) {
+      return this.__getterCache['externalInterfaceGetter'];
     }
-    return (this.__getterCache["externalInterfaceGetter"] =
+    return (this.__getterCache['externalInterfaceGetter'] =
       ((): externalInterface => {
         return { inputInt: 2 };
       })());
   }
   get externalTypeGetter(): externalType {
-    if (this.__getterCache["externalTypeGetter"] !== undefined) {
-      return this.__getterCache["externalTypeGetter"];
+    if (this.__getterCache['externalTypeGetter'] !== undefined) {
+      return this.__getterCache['externalTypeGetter'];
     }
-    return (this.__getterCache["externalTypeGetter"] = ((): externalType => {
-      return { value: "" };
+    return (this.__getterCache['externalTypeGetter'] = ((): externalType => {
+      return { value: '' };
     })());
   }
   get someDate(): Date {
-    if (this.__getterCache["someDate"] !== undefined) {
-      return this.__getterCache["someDate"];
+    if (this.__getterCache['someDate'] !== undefined) {
+      return this.__getterCache['someDate'];
     }
-    return (this.__getterCache["someDate"] = ((): Date => {
+    return (this.__getterCache['someDate'] = ((): Date => {
       return new Date(
         this.props.currentDate !== undefined
           ? this.props.currentDate
@@ -124,14 +124,14 @@ class Widget extends BaseInfernoComponent<any> {
     someDate?: Date;
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
-    if (this.props["someProp"] !== nextProps["someProp"]) {
-      this.__getterCache["internalInterfaceGetter"] = undefined;
+    if (this.props['someProp'] !== nextProps['someProp']) {
+      this.__getterCache['internalInterfaceGetter'] = undefined;
     }
     if (
-      this.state["currentDate"] !== nextState["currentDate"] ||
-      this.props["currentDate"] !== nextProps["currentDate"]
+      this.state['currentDate'] !== nextState['currentDate'] ||
+      this.props['currentDate'] !== nextProps['currentDate']
     ) {
-      this.__getterCache["someDate"] = undefined;
+      this.__getterCache['someDate'] = undefined;
     }
   }
   render() {

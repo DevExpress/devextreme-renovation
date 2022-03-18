@@ -1,4 +1,4 @@
-import DynamicComponent, { WidgetInput } from "./props";
+import DynamicComponent, { WidgetInput } from './props';
 function view({ Components, onComponentClick }: DynamicComponentCreator): any {
   return (
     <div>
@@ -9,16 +9,16 @@ function view({ Components, onComponentClick }: DynamicComponentCreator): any {
   );
 }
 
-export declare type PropsType = {
+export type PropsType = {
   height: number;
 };
 const Props: PropsType = {
   height: 10,
 };
-import * as React from "react";
-import { useCallback, useMemo } from "react";
+import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

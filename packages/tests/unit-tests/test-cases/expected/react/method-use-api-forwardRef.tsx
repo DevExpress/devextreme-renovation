@@ -1,19 +1,19 @@
-import { MutableRefObject } from "react";
-import BaseWidget from "./method";
+import { MutableRefObject } from 'react';
+import BaseWidget from './method';
 export const viewFunction = ({
   props: { forwardedRef },
 }: Child1Component): any => <BaseWidget ref={forwardedRef} />;
 
-export declare type Child1ComponentPropsType = {
+export type Child1ComponentPropsType = {
   forwardedRef: any;
 };
 export const Child1ComponentProps: Child1ComponentPropsType =
   {} as any as Child1ComponentPropsType;
-import { WidgetRef as BaseWidgetRef } from "./method";
-import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { WidgetRef as BaseWidgetRef } from './method';
+import * as React from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

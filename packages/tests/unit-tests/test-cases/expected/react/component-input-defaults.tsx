@@ -5,10 +5,10 @@ function isMaterial() {
   return true;
 }
 function format(key: string) {
-  return "localized_" + key;
+  return 'localized_' + key;
 }
 
-export declare type BasePropsType = {
+export type BasePropsType = {
   empty?: string;
   height?: number;
   width?: number;
@@ -21,17 +21,17 @@ export const BaseProps: BasePropsType = {
   get width() {
     return isMaterial() ? 20 : 10;
   },
-  __defaultNestedValues: Object.freeze({ baseNested: { text: "3" } }) as any,
+  __defaultNestedValues: Object.freeze({ baseNested: { text: '3' } }) as any,
 };
-export declare type TextsPropsType = {
+export type TextsPropsType = {
   text?: string;
 };
 export const TextsProps: TextsPropsType = {
   get text() {
-    return format("text");
+    return format('text');
   },
 };
-export declare type ExpressionPropsType = {
+export type ExpressionPropsType = {
   expressionDefault?: any;
 };
 export const ExpressionProps: ExpressionPropsType = {
@@ -39,7 +39,7 @@ export const ExpressionProps: ExpressionPropsType = {
     return isMaterial() ? 20 : 10;
   },
 };
-export declare type WidgetPropsType = typeof BaseProps & {
+export type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
@@ -55,19 +55,19 @@ export const WidgetProps: WidgetPropsType = Object.create(
     Object.getOwnPropertyDescriptors(BaseProps),
     Object.getOwnPropertyDescriptors({
       get text() {
-        return format("text");
+        return format('text');
       },
-      texts1: Object.freeze({ text: format("text") }) as any,
+      texts1: Object.freeze({ text: format('text') }) as any,
       template: () => <div></div>,
       __defaultNestedValues: Object.freeze({
-        texts2: { text: format("text") },
+        texts2: { text: format('text') },
         texts3: TextsProps,
         baseNested: BaseProps?.__defaultNestedValues.baseNested,
       }) as any,
     })
   )
 );
-export declare type WidgetPropsTypeType = {
+export type WidgetPropsTypeType = {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
@@ -96,18 +96,18 @@ const WidgetPropsType: WidgetPropsTypeType = {
     baseNested: WidgetProps.baseNested,
   }) as any,
 };
-import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
-import * as React from "react";
-import { useCallback, useMemo, useRef } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
+import * as React from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
 export const Texts2: React.FunctionComponent<typeof TextsProps> & {
   propName: string;
 } = () => null;
-Texts2.propName = "texts2";
+Texts2.propName = 'texts2';
 Texts2.defaultProps = TextsProps;
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

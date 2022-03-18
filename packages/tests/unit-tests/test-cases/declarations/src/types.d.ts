@@ -1,8 +1,8 @@
-export declare type Options = {
+export type Options = {
   value: string;
 };
 
-export declare type AdditionalOptions = {
+export type AdditionalOptions = {
   index: number;
 };
 
@@ -14,7 +14,7 @@ export interface InterfaceTemplateInput {
   inputInt: number;
 }
 
-export declare type TypeTemplateInput = {
+export type TypeTemplateInput = {
   inputInt: number;
 };
 

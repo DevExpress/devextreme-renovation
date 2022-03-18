@@ -8,7 +8,7 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   p: string;
   r: string;
   s: number;
@@ -16,15 +16,15 @@ export declare type WidgetInputType = {
   sChange?: (s: number) => void;
 };
 export const WidgetInput: WidgetInputType = {
-  p: "10",
-  r: "20",
+  p: '10',
+  r: '20',
   defaultS: 10,
   sChange: () => {},
 } as any as WidgetInputType;
-import * as React from "react";
-import { useState, useCallback, useEffect } from "react";
+import * as React from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -2,19 +2,19 @@ export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
   return <div {...rest}></div>;
 };
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   a: Array<Number>;
   id: string;
   onClick?: (e: any) => void;
 };
 export const WidgetProps: WidgetPropsType = {
   a: Object.freeze([1, 2, 3]) as any,
-  id: "1",
+  id: '1',
 };
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

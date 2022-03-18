@@ -1,15 +1,15 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 function view(model: UndefWidget) {
   return <div></div>;
 }
 
-export declare type FakeNestedType = {
+export type FakeNestedType = {
   numberProp: number;
 };
 export const FakeNested: FakeNestedType = {
   numberProp: 2,
 };
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   oneWayProp?: number;
   twoWayProp?: number;
   someEvent?: () => void;
@@ -32,18 +32,18 @@ export const WidgetProps: WidgetPropsType = {
   }) as any,
   twoWayPropChange: () => {},
 };
-import { __collectChildren, equalByValue } from "@devextreme/runtime/react";
-import * as React from "react";
-import { useState, useCallback, useMemo, useRef } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
+import * as React from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
 export const NestedProp: React.FunctionComponent<typeof FakeNested> & {
   propName: string;
 } = () => null;
-NestedProp.propName = "nestedProp";
+NestedProp.propName = 'nestedProp';
 NestedProp.defaultProps = FakeNested;
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -106,7 +106,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("oneWayProp");
+    }.hasOwnProperty('oneWayProp');
   }, []);
   const __twoway = useCallback(function __twoway(): any {
     return (
@@ -118,7 +118,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
             : __state_twoWayProp,
         nestedProp: __getNestedNestedProp,
         anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-      }.twoWayProp !== undefined || props.hasOwnProperty("twoWayProp")
+      }.twoWayProp !== undefined || props.hasOwnProperty('twoWayProp')
     );
   }, []);
   const __someevent = useCallback(function __someevent(): any {
@@ -128,7 +128,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("someEvent");
+    }.hasOwnProperty('someEvent');
   }, []);
   const __someref = useCallback(function __someref(): any {
     return {
@@ -137,7 +137,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("someRef");
+    }.hasOwnProperty('someRef');
   }, []);
   const __someforwardref = useCallback(function __someforwardref(): any {
     return {
@@ -146,7 +146,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("someForwardRef");
+    }.hasOwnProperty('someForwardRef');
   }, []);
   const __someslot = useCallback(function __someslot(): any {
     return {
@@ -155,7 +155,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("slotProp");
+    }.hasOwnProperty('slotProp');
   }, []);
   const __sometemplate = useCallback(function __sometemplate(): any {
     return {
@@ -164,7 +164,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         props.twoWayProp !== undefined ? props.twoWayProp : __state_twoWayProp,
       nestedProp: __getNestedNestedProp,
       anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-    }.hasOwnProperty("templateProp");
+    }.hasOwnProperty('templateProp');
   }, []);
   const __nested = useCallback(function __nested(): any {
     return (
@@ -176,7 +176,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
             : __state_twoWayProp,
         nestedProp: __getNestedNestedProp,
         anotherNestedPropInit: __getNestedAnotherNestedPropInit,
-      }.nestedProp !== undefined || props.hasOwnProperty("nestedProp")
+      }.nestedProp !== undefined || props.hasOwnProperty('nestedProp')
     );
   }, []);
   const __nestedinit = useCallback(function __nestedinit(): any {
@@ -190,7 +190,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         nestedProp: __getNestedNestedProp,
         anotherNestedPropInit: __getNestedAnotherNestedPropInit,
       }.anotherNestedPropInit !== undefined ||
-      props.hasOwnProperty("anotherNestedPropInit")
+      props.hasOwnProperty('anotherNestedPropInit')
     );
   }, []);
   const __restAttributes = useCallback(

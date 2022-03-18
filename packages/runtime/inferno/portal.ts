@@ -1,6 +1,6 @@
 import { createPortal } from 'inferno';
 
-declare type PortalProps = {
+type PortalProps = {
   container?: HTMLElement | null;
   children: any;
 };

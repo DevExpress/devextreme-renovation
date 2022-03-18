@@ -3,16 +3,16 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   objectProp?: { someField: number };
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
 };
 interface FirstGetter {
   field1: string;
@@ -26,8 +26,8 @@ interface GetterType {
 }
 const view = () => <div></div>;
 
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -42,7 +42,7 @@ class Widget extends BaseInfernoComponent<any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      someState: "",
+      someState: '',
     };
     this.someMethodFromDestructured =
       this.someMethodFromDestructured.bind(this);
@@ -52,10 +52,10 @@ class Widget extends BaseInfernoComponent<any> {
   someState!: string;
 
   get arrayFromObj(): (string | undefined)[] {
-    if (this.__getterCache["arrayFromObj"] !== undefined) {
-      return this.__getterCache["arrayFromObj"];
+    if (this.__getterCache['arrayFromObj'] !== undefined) {
+      return this.__getterCache['arrayFromObj'];
     }
-    return (this.__getterCache["arrayFromObj"] = ((): (
+    return (this.__getterCache['arrayFromObj'] = ((): (
       | string
       | undefined
     )[] => {
@@ -64,10 +64,10 @@ class Widget extends BaseInfernoComponent<any> {
     })());
   }
   get arrayFromArr(): (string | undefined)[] {
-    if (this.__getterCache["arrayFromArr"] !== undefined) {
-      return this.__getterCache["arrayFromArr"];
+    if (this.__getterCache['arrayFromArr'] !== undefined) {
+      return this.__getterCache['arrayFromArr'];
     }
-    return (this.__getterCache["arrayFromArr"] = ((): (
+    return (this.__getterCache['arrayFromArr'] = ((): (
       | string
       | undefined
     )[] => {
@@ -76,10 +76,10 @@ class Widget extends BaseInfernoComponent<any> {
     })());
   }
   get someObj(): GetterType {
-    if (this.__getterCache["someObj"] !== undefined) {
-      return this.__getterCache["someObj"];
+    if (this.__getterCache['someObj'] !== undefined) {
+      return this.__getterCache['someObj'];
     }
-    return (this.__getterCache["someObj"] = ((): GetterType => {
+    return (this.__getterCache['someObj'] = ((): GetterType => {
       return {
         stateField: this.state.someState,
         propField: this.props.someProp,
@@ -87,19 +87,19 @@ class Widget extends BaseInfernoComponent<any> {
     })());
   }
   get objectFromDestructured(): GetterType {
-    if (this.__getterCache["objectFromDestructured"] !== undefined) {
-      return this.__getterCache["objectFromDestructured"];
+    if (this.__getterCache['objectFromDestructured'] !== undefined) {
+      return this.__getterCache['objectFromDestructured'];
     }
-    return (this.__getterCache["objectFromDestructured"] = ((): GetterType => {
+    return (this.__getterCache['objectFromDestructured'] = ((): GetterType => {
       const { propField, stateField } = this.someObj;
       return { stateField, propField };
     })());
   }
   get someGetter(): GetterType | undefined {
-    if (this.__getterCache["someGetter"] !== undefined) {
-      return this.__getterCache["someGetter"];
+    if (this.__getterCache['someGetter'] !== undefined) {
+      return this.__getterCache['someGetter'];
     }
-    return (this.__getterCache["someGetter"] = ((): GetterType | undefined => {
+    return (this.__getterCache['someGetter'] = ((): GetterType | undefined => {
       const { propField, stateField: stateField2 } = this.someObj;
       return { stateField: stateField2, propField };
     })());
@@ -124,34 +124,34 @@ class Widget extends BaseInfernoComponent<any> {
   } = {};
   componentWillUpdate(nextProps, nextState, context) {
     if (
-      this.state["someState"] !== nextState["someState"] ||
-      this.props["someProp"] !== nextProps["someProp"]
+      this.state['someState'] !== nextState['someState'] ||
+      this.props['someProp'] !== nextProps['someProp']
     ) {
-      this.__getterCache["arrayFromObj"] = undefined;
+      this.__getterCache['arrayFromObj'] = undefined;
     }
     if (
-      this.state["someState"] !== nextState["someState"] ||
-      this.props["someProp"] !== nextProps["someProp"]
+      this.state['someState'] !== nextState['someState'] ||
+      this.props['someProp'] !== nextProps['someProp']
     ) {
-      this.__getterCache["arrayFromArr"] = undefined;
+      this.__getterCache['arrayFromArr'] = undefined;
     }
     if (
-      this.state["someState"] !== nextState["someState"] ||
-      this.props["someProp"] !== nextProps["someProp"]
+      this.state['someState'] !== nextState['someState'] ||
+      this.props['someProp'] !== nextProps['someProp']
     ) {
-      this.__getterCache["someObj"] = undefined;
+      this.__getterCache['someObj'] = undefined;
     }
     if (
-      this.state["someState"] !== nextState["someState"] ||
-      this.props["someProp"] !== nextProps["someProp"]
+      this.state['someState'] !== nextState['someState'] ||
+      this.props['someProp'] !== nextProps['someProp']
     ) {
-      this.__getterCache["objectFromDestructured"] = undefined;
+      this.__getterCache['objectFromDestructured'] = undefined;
     }
     if (
-      this.state["someState"] !== nextState["someState"] ||
-      this.props["someProp"] !== nextProps["someProp"]
+      this.state['someState'] !== nextState['someState'] ||
+      this.props['someProp'] !== nextProps['someProp']
     ) {
-      this.__getterCache["someGetter"] = undefined;
+      this.__getterCache['someGetter'] = undefined;
     }
   }
   render() {

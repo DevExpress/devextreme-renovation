@@ -1,10 +1,10 @@
-import { WidgetWithProps } from "./dx-widget-with-props";
+import { WidgetWithProps } from './dx-widget-with-props';
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
     TemplateDefaultValue
     {model.props.defaultCompTemplate({
       optionalValue: model.props.stringToRender,
-      value: "twdComp",
+      value: 'twdComp',
       onClick: () => {},
     })}
     {model.props.defaultCompTemplate({ value: model.props.stringToRender })}
@@ -12,7 +12,7 @@ export const viewFunction = (model: TemplateDefaultValue) => (
   </div>
 );
 
-export declare type TemplateDefaultValuePropsType = {
+export type TemplateDefaultValuePropsType = {
   defaultCompTemplate: React.FunctionComponent<
     Partial<
       Omit<
@@ -21,7 +21,7 @@ export declare type TemplateDefaultValuePropsType = {
           onClick?: (e: any) => void;
           value: string;
         },
-        "value"
+        'value'
       >
     > &
       Required<
@@ -31,16 +31,16 @@ export declare type TemplateDefaultValuePropsType = {
             onClick?: (e: any) => void;
             value: string;
           },
-          "value"
+          'value'
         >
       >
   >;
   defaultFuncTemplate: React.FunctionComponent<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
       >
   >;
   stringToRender: string;
@@ -52,7 +52,7 @@ export declare type TemplateDefaultValuePropsType = {
           onClick?: (e: any) => void;
           value: string;
         },
-        "value"
+        'value'
       >
     > &
       Required<
@@ -62,7 +62,7 @@ export declare type TemplateDefaultValuePropsType = {
             onClick?: (e: any) => void;
             value: string;
           },
-          "value"
+          'value'
         >
       >
   >;
@@ -74,7 +74,7 @@ export declare type TemplateDefaultValuePropsType = {
           onClick?: (e: any) => void;
           value: string;
         },
-        "value"
+        'value'
       >
     > &
       Required<
@@ -84,24 +84,24 @@ export declare type TemplateDefaultValuePropsType = {
             onClick?: (e: any) => void;
             value: string;
           },
-          "value"
+          'value'
         >
       >
   >;
   defaultFuncRender?: React.FunctionComponent<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
       >
   >;
   defaultFuncComponent?: React.JSXElementConstructor<
     Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, "value">
+      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
     > &
       Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, "value">
+        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
       >
   >;
 };
@@ -110,17 +110,17 @@ export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
   defaultFuncTemplate: (props) => (
     <div>
       !DefaultFunc:
-      {props.value || "ftwdCompDefault"}
+      {props.value || 'ftwdCompDefault'}
       {props.optionalValue}
     </div>
   ),
-  stringToRender: "strCompDefault",
+  stringToRender: 'strCompDefault',
 };
-import * as React from "react";
-import { useCallback } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

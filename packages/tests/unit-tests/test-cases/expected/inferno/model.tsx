@@ -2,7 +2,7 @@ function view(model: ModelWidget) {
   return <div>{model.props.baseStateProp}</div>;
 }
 
-export declare type ModelWidgetInputType = {
+export type ModelWidgetInputType = {
   baseStateProp?: boolean;
   baseStatePropChange?: (stateProp?: boolean) => void;
   modelStateProp?: boolean;

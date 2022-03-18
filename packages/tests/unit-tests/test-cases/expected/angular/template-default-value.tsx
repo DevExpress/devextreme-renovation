@@ -1,15 +1,15 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
-import { Component, Input, TemplateRef } from "@angular/core";
+} from './dx-widget-with-props';
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class TemplateDefaultValueProps {
   @Input() defaultCompTemplate: TemplateRef<any> | null = null;
   @Input() defaultFuncTemplate: TemplateRef<any> | null = null;
-  @Input() stringToRender: string = "strCompDefault";
+  @Input() stringToRender: string = 'strCompDefault';
 }
 
 import {
@@ -20,17 +20,17 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-template-default-value",
+  selector: 'dx-template-default-value',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["defaultCompTemplate", "defaultFuncTemplate", "stringToRender"],
+  inputs: ['defaultCompTemplate', 'defaultFuncTemplate', 'stringToRender'],
   template: `<ng-template #widgetTemplate
     ><div
       >TemplateDefaultValue<ng-container
@@ -70,7 +70,7 @@ import {
     </ng-template>
     <ng-template #defaultFuncTemplateDefault let-value="value">
       <div
-        >!DefaultFunc:{{ value || "ftwdCompDefault" }}{{ optionalValue }}</div
+        >!DefaultFunc:{{ value || 'ftwdCompDefault' }}{{ optionalValue }}</div
       >
     </ng-template></ng-template
   >`,
@@ -93,7 +93,7 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -104,13 +104,13 @@ export default class TemplateDefaultValue extends TemplateDefaultValueProps {
     const defaultProps = new TemplateDefaultValueProps() as {
       [key: string]: any;
     };
-    this.defaultEntries = ["stringToRender"].map((key) => ({
+    this.defaultEntries = ['stringToRender'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
   }
 
-  WidgetWithPropsDefaults = { value: "default text", number: 42 };
+  WidgetWithPropsDefaults = { value: 'default text', number: 42 };
 }
 @NgModule({
   declarations: [TemplateDefaultValue],

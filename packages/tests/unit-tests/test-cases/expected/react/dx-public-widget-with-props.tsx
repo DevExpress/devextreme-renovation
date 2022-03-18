@@ -2,21 +2,21 @@ function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
-export declare type WidgetWithPropsInputType = {
+export type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
   number?: number;
   onClick?: (e: any) => void;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
-  value: "default text",
+  value: 'default text',
   number: 42,
 };
-import * as React from "react";
-import { useCallback, useImperativeHandle, forwardRef } from "react";
+import * as React from 'react';
+import { useCallback, useImperativeHandle, forwardRef } from 'react';
 
 export type PublicWidgetWithPropsRef = { doSomething: () => any };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -1,9 +1,9 @@
-export declare type EnumType = "data" | "none";
-export declare type Union = string | number;
-export declare type ObjType = { number: number; text: string };
-export declare type StringArr = Array<String>;
-export declare type StringType = String;
-export declare type StrDate = string | Date;
+export type EnumType = "data" | "none";
+export type Union = string | number;
+export type ObjType = { number: number; text: string };
+export type StringArr = Array<String>;
+export type StringType = String;
+export type StrDate = string | Date;
 import { Component, Input } from "@angular/core";
 @Component({
   template: "",

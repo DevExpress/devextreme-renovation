@@ -1,10 +1,10 @@
-export declare type GridCellType = {
+export type GridCellType = {
   gridData: string;
 };
 export const GridCell: GridCellType = {
-  gridData: "defaultValue",
+  gridData: 'defaultValue',
 };
-export declare type GridRowType = {
+export type GridRowType = {
   cells?: (typeof GridCell | string)[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
@@ -12,7 +12,7 @@ export declare type GridRowType = {
 export const GridRow: GridRowType = {
   __defaultNestedValues: Object.freeze({ cells: [GridCell] }) as any,
 };
-export declare type WithNestedInputType = {
+export type WithNestedInputType = {
   rows?: typeof GridRow[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
@@ -24,9 +24,9 @@ export const WithNestedInput: WithNestedInputType = {
     ],
   }) as any,
 };
-export declare type EmptyClassType = {};
+export type EmptyClassType = {};
 export const EmptyClass: EmptyClassType = {};
-export declare type FakeNestedType = {
+export type FakeNestedType = {
   value?: typeof EmptyClass[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;

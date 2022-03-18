@@ -3,14 +3,14 @@ function view(model: Widget): any {
 }
 type EventCallBack<Type> = (e: Type) => void;
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   someProp?: { current: string };
 };
 export const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useState, useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useState, useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -25,16 +25,17 @@ interface Widget {
 }
 
 export default function Widget(props: typeof WidgetInput & RestProps) {
-  const [__state_someState, __state_setSomeState] =
-    useState<{ current: string } | undefined>(undefined);
+  const [__state_someState, __state_setSomeState] = useState<
+    { current: string } | undefined
+  >(undefined);
   const [__state_existsState, __state_setExistsState] = useState<{
     current: string;
-  }>({ current: "value" });
+  }>({ current: 'value' });
 
   const __concatStrings = useCallback(
     function __concatStrings(): any {
-      const fromProps = props.someProp?.current || "";
-      const fromState = __state_someState?.current || "";
+      const fromProps = props.someProp?.current || '';
+      const fromState = __state_someState?.current || '';
       return `${fromProps}${fromState}${__state_existsState.current}`;
     },
     [props.someProp, __state_someState, __state_existsState]
