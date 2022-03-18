@@ -1,11 +1,11 @@
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   someProp: string;
   type?: string;
   objectProp?: { someField: number };
 };
 const WidgetProps: WidgetPropsType = {
-  someProp: "",
-  type: "",
+  someProp: '',
+  type: '',
 };
 interface FirstGetter {
   field1: string;
@@ -19,17 +19,17 @@ interface GetterType {
 }
 const view = () => <div></div>;
 
-import * as React from "react";
+import * as React from 'react';
 import {
   useState,
   useCallback,
   useMemo,
   useImperativeHandle,
   forwardRef,
-} from "react";
+} from 'react';
 
 export type WidgetRef = { changeState: (newValue: string) => any };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -49,7 +49,7 @@ interface Widget {
 
 const Widget = forwardRef<WidgetRef, typeof WidgetProps & RestProps>(
   function widget(props: typeof WidgetProps & RestProps, ref) {
-    const [__state_someState, __state_setSomeState] = useState<string>("");
+    const [__state_someState, __state_setSomeState] = useState<string>('');
 
     const __someObj = useMemo(
       function __someObj(): GetterType {

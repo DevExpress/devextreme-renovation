@@ -38,6 +38,7 @@ export type VariableExpression = {
 
 export type GeneratorOptions = {
   defaultOptionsModule?: string;
+  lintConfig?: { [key: string]: unknown; };
 };
 
 export type GeneratorCache = {

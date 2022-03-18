@@ -1,13 +1,13 @@
-import { PickedProps, GridColumnProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
   return <div />;
 }
 
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -24,7 +24,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   const __getColumns = useCallback(
     function __getColumns(): any {
       const { columns } = props;
-      return columns?.map((el) => (typeof el === "string" ? el : el.name));
+      return columns?.map((el) => (typeof el === 'string' ? el : el.name));
     },
     [props.columns]
   );

@@ -3,13 +3,13 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
-export const COMPONENT_INPUT_CLASS = "c3";
+} from '@devextreme/runtime/inferno';
+export const COMPONENT_INPUT_CLASS = 'c3';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   height?: number;
   width?: number;
   children?: any;
@@ -18,8 +18,8 @@ export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

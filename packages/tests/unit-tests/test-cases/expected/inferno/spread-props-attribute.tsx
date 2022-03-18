@@ -1,11 +1,11 @@
-import { Fragment } from "inferno";
+import { Fragment } from 'inferno';
 import {
   BaseInfernoComponent,
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
-import InnerWidget from "./dx-inner-widget";
+} from '@devextreme/runtime/inferno';
+import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
   return (
     <Fragment>
@@ -16,7 +16,7 @@ function view({ attributes, props, restAttributes }: Widget) {
   );
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   visible?: boolean;
   value?: boolean;
   defaultValue?: boolean;
@@ -25,8 +25,8 @@ export declare type WidgetInputType = {
 export const WidgetInput: WidgetInputType = {
   valueChange: () => {},
 };
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

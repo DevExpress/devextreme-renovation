@@ -5,15 +5,15 @@ import {
   OneWay,
 } from "@devextreme-generator/declarations";
 
-export declare type EnumType = "data" | "none";
-export declare type Union = string | number;
-export declare type ObjType = {
+export type EnumType = "data" | "none";
+export type Union = string | number;
+export type ObjType = {
   number: number;
   text: string;
 };
-export declare type StringArr = Array<String>;
-export declare type StringType = String;
-export declare type StrDate = string | Date;
+export type StringArr = Array<String>;
+export type StringType = String;
+export type StrDate = string | Date;
 
 export const viewFunction = (viewModel: Widget) => {
   return <div></div>;

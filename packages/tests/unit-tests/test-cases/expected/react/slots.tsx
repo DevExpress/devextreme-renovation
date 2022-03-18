@@ -10,16 +10,16 @@ function view(viewModel: SlotsWidget) {
   );
 }
 
-export declare type SlotsWidgetPropsType = {
+export type SlotsWidgetPropsType = {
   namedSlot?: React.ReactNode;
   selectorNamedSlot?: React.ReactNode;
   children?: React.ReactNode;
 };
 const SlotsWidgetProps: SlotsWidgetPropsType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

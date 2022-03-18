@@ -1,21 +1,21 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   prop1?: number;
   prop2?: number;
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback, useRef, useImperativeHandle, forwardRef } from "react";
+import * as React from 'react';
+import { useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 
 export type WidgetRef = {
   getHeight: (p: number, p1: any) => string;
   getSize: () => string;
 };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

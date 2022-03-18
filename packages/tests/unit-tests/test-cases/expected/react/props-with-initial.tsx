@@ -1,14 +1,14 @@
-import { WidgetWithProps } from "./dx-widget-with-props";
+import { WidgetWithProps } from './dx-widget-with-props';
 function view(model: Widget): any {
   return <WidgetWithProps />;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

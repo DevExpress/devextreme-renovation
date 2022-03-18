@@ -10,16 +10,16 @@ function view(viewModel: SlotsWidget) {
   );
 }
 
-export declare type SlotsWidgetPropsType = {
+export type SlotsWidgetPropsType = {
   namedSlot?: any;
   selectorNamedSlot?: any;
   children?: any;
 };
 const SlotsWidgetProps: SlotsWidgetPropsType = {};
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

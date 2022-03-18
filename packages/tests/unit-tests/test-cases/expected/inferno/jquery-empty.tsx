@@ -3,16 +3,16 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 
-export declare type PropsType = {
+export type PropsType = {
   height?: number;
   width?: number;
 };
 const Props: PropsType = {};
-import { createElement as h } from "inferno-compat";
-import { createReRenderEffect } from "@devextreme/runtime/inferno";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+import { createReRenderEffect } from '@devextreme/runtime/inferno';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

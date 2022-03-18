@@ -568,7 +568,7 @@ export class ReactComponent extends Component {
   }
 
   compileRestProps(): string {
-    return `declare type RestProps = {
+    return `type RestProps = {
       className?: string;
       style?: { [name: string]: any },
       key?: any,
@@ -714,7 +714,7 @@ export class ReactComponent extends Component {
 
   compilePortalComponentCore(): string {
     return `
-    declare type PortalProps = {
+    type PortalProps = {
       container?: HTMLElement | null;
       children: React.ReactNode,
     }

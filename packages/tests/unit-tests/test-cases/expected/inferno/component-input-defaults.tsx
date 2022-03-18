@@ -3,7 +3,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -11,10 +11,10 @@ function isMaterial() {
   return true;
 }
 function format(key: string) {
-  return "localized_" + key;
+  return 'localized_' + key;
 }
 
-export declare type BasePropsType = {
+export type BasePropsType = {
   empty?: string;
   height?: number;
   width?: number;
@@ -25,17 +25,17 @@ export const BaseProps: BasePropsType = {
   get width() {
     return isMaterial() ? 20 : 10;
   },
-  baseNested: Object.freeze({ text: "3" }) as any,
+  baseNested: Object.freeze({ text: '3' }) as any,
 };
-export declare type TextsPropsType = {
+export type TextsPropsType = {
   text?: string;
 };
 export const TextsProps: TextsPropsType = {
   get text() {
-    return format("text");
+    return format('text');
   },
 };
-export declare type ExpressionPropsType = {
+export type ExpressionPropsType = {
   expressionDefault?: any;
 };
 export const ExpressionProps: ExpressionPropsType = {
@@ -43,7 +43,7 @@ export const ExpressionProps: ExpressionPropsType = {
     return isMaterial() ? 20 : 10;
   },
 };
-export declare type WidgetPropsType = typeof BaseProps & {
+export type WidgetPropsType = typeof BaseProps & {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
@@ -56,16 +56,16 @@ export const WidgetProps: WidgetPropsType = Object.create(
     Object.getOwnPropertyDescriptors(BaseProps),
     Object.getOwnPropertyDescriptors({
       get text() {
-        return format("text");
+        return format('text');
       },
-      texts1: Object.freeze({ text: format("text") }) as any,
-      texts2: Object.freeze({ text: format("text") }) as any,
+      texts1: Object.freeze({ text: format('text') }) as any,
+      texts2: Object.freeze({ text: format('text') }) as any,
       texts3: Object.freeze(TextsProps) as any,
       template: () => <div></div>,
     })
   )
 );
-export declare type WidgetPropsTypeType = {
+export type WidgetPropsTypeType = {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
@@ -106,8 +106,8 @@ const WidgetPropsType: WidgetPropsTypeType = {
     return ExpressionProps.expressionDefault;
   },
 };
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -1,18 +1,18 @@
-import { Widget } from "./export-named";
+import { Widget } from './export-named';
 function view(model: Child) {
   return <Widget prop={true} />;
 }
 
-export declare type ChildInputType = {
+export type ChildInputType = {
   height: number;
 };
 const ChildInput: ChildInputType = {
   height: 10,
 };
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

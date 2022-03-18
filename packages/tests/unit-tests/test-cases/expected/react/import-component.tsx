@@ -1,9 +1,9 @@
-import Base, { WidgetProps } from "./component-input";
+import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
 }
 
-export declare type ChildInputType = typeof WidgetProps & {
+export type ChildInputType = typeof WidgetProps & {
   height: number;
   onClick: (a: number) => void;
 };
@@ -17,10 +17,10 @@ const ChildInput: ChildInputType = Object.create(
     })
   )
 );
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

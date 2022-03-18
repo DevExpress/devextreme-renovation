@@ -1,4 +1,4 @@
-import Props from "./component-bindings-only";
+import Props from './component-bindings-only';
 function view(model: Widget) {
   return <div>{model.props.height}</div>;
 }
@@ -6,11 +6,11 @@ function view(model: Widget) {
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
-import * as React from "react";
-import { useCallback } from "react";
+} from '../../../../jquery-helpers/default_options';
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

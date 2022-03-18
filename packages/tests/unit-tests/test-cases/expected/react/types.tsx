@@ -5,12 +5,12 @@ import {
   StringArr,
   StringType,
   WidgetProps as ExternalWidgetProps,
-} from "./types-external";
+} from './types-external';
 export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
 };
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   str: String;
   num: Number;
   bool: Boolean;
@@ -27,27 +27,27 @@ export declare type WidgetPropsType = {
   externalString: StringType;
 };
 export const WidgetProps: WidgetPropsType = {
-  str: "",
+  str: '',
   num: 1,
   bool: true,
   arr: Object.freeze([]) as any,
-  strArr: Object.freeze(["a", "b"]) as any,
+  strArr: Object.freeze(['a', 'b']) as any,
   obj: Object.freeze({}) as any,
   date: Object.freeze(new Date()) as any,
   func: () => {},
   get symbol() {
-    return Symbol("x");
+    return Symbol('x');
   },
-  externalEnum: "data",
+  externalEnum: 'data',
   externalUnion: 0,
-  externalObj: Object.freeze({ number: 0, text: "text" }) as any,
-  externalArray: Object.freeze(["s1", "s2"]) as any,
-  externalString: "someValue",
+  externalObj: Object.freeze({ number: 0, text: 'text' }) as any,
+  externalArray: Object.freeze(['s1', 's2']) as any,
+  externalString: 'someValue',
 };
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -90,8 +90,8 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
 }
 
 Widget.defaultProps = WidgetProps;
-import { CustomType } from "./types-external";
-export declare type BaseViewPropsTypeType = {
+import { CustomType } from './types-external';
+export type BaseViewPropsTypeType = {
   strArr: Array<String>;
   customTypeField?: { name: string; customField: CustomType }[];
 };

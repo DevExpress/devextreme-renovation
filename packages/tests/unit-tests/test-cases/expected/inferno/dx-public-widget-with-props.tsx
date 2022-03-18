@@ -3,24 +3,24 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
-export declare type WidgetWithPropsInputType = {
+export type WidgetWithPropsInputType = {
   value: string;
   optionalValue?: string;
   number?: number;
   onClick?: (e: any) => void;
 };
 export const WidgetWithPropsInput: WidgetWithPropsInputType = {
-  value: "default text",
+  value: 'default text',
   number: 42,
 };
-import { createElement as h } from "inferno-compat";
-import { createReRenderEffect } from "@devextreme/runtime/inferno";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+import { createReRenderEffect } from '@devextreme/runtime/inferno';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -1,53 +1,53 @@
 const modifyStyles = (styles: any) => {
-  return { height: "100px", ...styles };
+  return { height: '100px', ...styles };
 };
 function view({ styles }: Widget) {
   return <span style={normalizeStyles(styles)}></span>;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 const NUMBER_STYLES = new Set([
-  "animationIterationCount",
-  "borderImageOutset",
-  "borderImageSlice",
-  "border-imageWidth",
-  "boxFlex",
-  "boxFlexGroup",
-  "boxOrdinalGroup",
-  "columnCount",
-  "fillOpacity",
-  "flex",
-  "flexGrow",
-  "flexNegative",
-  "flexOrder",
-  "flexPositive",
-  "flexShrink",
-  "floodOpacity",
-  "fontWeight",
-  "gridColumn",
-  "gridRow",
-  "lineClamp",
-  "lineHeight",
-  "opacity",
-  "order",
-  "orphans",
-  "stopOpacity",
-  "strokeDasharray",
-  "strokeDashoffset",
-  "strokeMiterlimit",
-  "strokeOpacity",
-  "strokeWidth",
-  "tabSize",
-  "widows",
-  "zIndex",
-  "zoom",
+  'animationIterationCount',
+  'borderImageOutset',
+  'borderImageSlice',
+  'border-imageWidth',
+  'boxFlex',
+  'boxFlexGroup',
+  'boxOrdinalGroup',
+  'columnCount',
+  'fillOpacity',
+  'flex',
+  'flexGrow',
+  'flexNegative',
+  'flexOrder',
+  'flexPositive',
+  'flexShrink',
+  'floodOpacity',
+  'fontWeight',
+  'gridColumn',
+  'gridRow',
+  'lineClamp',
+  'lineHeight',
+  'opacity',
+  'order',
+  'orphans',
+  'stopOpacity',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
+  'tabSize',
+  'widows',
+  'zIndex',
+  'zoom',
 ]);
 
 const isNumeric = (value: string | number) => {
-  if (typeof value === "number") return true;
+  if (typeof value === 'number') return true;
   return !isNaN(Number(value));
 };
 
@@ -67,7 +67,7 @@ const normalizeStyles = (styles: unknown) => {
   );
 };
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

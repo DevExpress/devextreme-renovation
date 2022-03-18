@@ -1,14 +1,14 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 
-export declare type WidgetWithRefPropInputType = {
+export type WidgetWithRefPropInputType = {
   parentRef?: MutableRefObject<any>;
   nullableRef?: MutableRefObject<any>;
 };
 export const WidgetWithRefPropInput: WidgetWithRefPropInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

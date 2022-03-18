@@ -1,5 +1,5 @@
-import { MutableRefObject } from "react";
-import Child from "./forward-ref-child";
+import { MutableRefObject } from 'react';
+import Child from './forward-ref-child';
 function view({
   child,
   innerState,
@@ -10,14 +10,14 @@ function view({
   );
 }
 
-export declare type PropsType = {
+export type PropsType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const Props: PropsType = {};
-import * as React from "react";
-import { useState, useCallback, useEffect, useRef } from "react";
+import * as React from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -44,7 +44,7 @@ export default function RefOnChildrenParent(props: typeof Props & RestProps) {
   );
   useEffect(() => {
     if (__child.current) {
-      __child.current.innerHTML = "Ref from child";
+      __child.current.innerHTML = 'Ref from child';
     }
     const html = props.nullableRef?.current?.innerHTML;
   }, [props.nullableRef]);

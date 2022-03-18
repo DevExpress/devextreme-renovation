@@ -1,10 +1,10 @@
-export declare type FakeNestedType = {
+export type FakeNestedType = {
   baseProp: number;
 };
 export const FakeNested: FakeNestedType = {
   baseProp: 0,
 };
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   baseProp: number;
   someProp?: typeof FakeNested;
   __defaultNestedValues?: any;
@@ -14,7 +14,7 @@ export const WidgetProps: WidgetPropsType = {
   baseProp: 0,
   __defaultNestedValues: Object.freeze({ someProp: FakeNested }) as any,
 };
-export declare type TooltipPropsType = {
+export type TooltipPropsType = {
   tooltipValue: number;
   tooltipNested?: typeof WidgetProps[];
   __defaultNestedValues?: any;
@@ -30,7 +30,7 @@ export const TooltipProps: TooltipPropsType = {
     ],
   }) as any,
 };
-export declare type BulletPropsType = typeof WidgetProps & {
+export type BulletPropsType = typeof WidgetProps & {
   value: number;
   tooltip?: typeof TooltipProps;
   __defaultNestedValues?: any;
@@ -50,7 +50,7 @@ export const BulletProps: BulletPropsType = Object.create(
     })
   )
 );
-export declare type BulletProps2Type = typeof BulletProps & {
+export type BulletProps2Type = typeof BulletProps & {
   fakeNestedArr?: typeof FakeNested[];
   __defaultNestedValues?: any;
 };
@@ -67,7 +67,7 @@ export const BulletProps2: BulletProps2Type = Object.create(
     })
   )
 );
-export declare type BulletProps3Type = typeof BulletProps2 & {
+export type BulletProps3Type = typeof BulletProps2 & {
   fakeNestedArr2?: typeof FakeNested[];
   __defaultNestedValues?: any;
 };

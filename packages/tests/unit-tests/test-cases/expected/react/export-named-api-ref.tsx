@@ -2,13 +2,13 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback, useImperativeHandle, forwardRef } from "react";
+import * as React from 'react';
+import { useCallback, useImperativeHandle, forwardRef } from 'react';
 
 export type WidgetRef = { getValue: () => any };
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import { MutableRefObject } from 'react';
 function view(model: RefOnChildrenTemplate) {
   return (
     <React.Fragment>
@@ -7,17 +7,17 @@ function view(model: RefOnChildrenTemplate) {
   );
 }
 
-export declare type PropsType = {
+export type PropsType = {
   contentTemplate: any;
   contentRender?: any;
   contentComponent?: any;
 };
 const Props: PropsType = {} as any as PropsType;
-import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -28,6 +28,7 @@ interface RefOnChildrenTemplate {
   child: any;
   restAttributes: RestProps;
 }
+
 export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   const __child: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
   );
   useEffect(() => {
     if (__child.current) {
-      __child.current.innerHTML += "ParentText";
+      __child.current.innerHTML += 'ParentText';
     }
   }, []);
 

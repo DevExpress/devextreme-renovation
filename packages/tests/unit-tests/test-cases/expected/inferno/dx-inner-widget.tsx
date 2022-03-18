@@ -3,12 +3,12 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
-export declare type InnerWidgetPropsType = {
+export type InnerWidgetPropsType = {
   selected?: boolean;
   value: number;
   onSelect?: (e: any) => any;
@@ -19,8 +19,8 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

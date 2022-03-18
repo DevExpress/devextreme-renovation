@@ -2,7 +2,7 @@ function view(model: Widget) {
   return <span></span>;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   height: number;
   selected: boolean;
   defaultSelected: boolean;
@@ -13,10 +13,10 @@ const WidgetInput: WidgetInputType = {
   defaultSelected: false,
   selectedChange: () => {},
 } as any as WidgetInputType;
-import * as React from "react";
-import { useState, useCallback } from "react";
+import * as React from 'react';
+import { useState, useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

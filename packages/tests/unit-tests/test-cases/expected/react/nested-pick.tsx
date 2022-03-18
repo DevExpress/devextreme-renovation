@@ -1,4 +1,4 @@
-export declare type NestedPropsType = {
+export type NestedPropsType = {
   field1?: number;
   fieldTemplate?: () => null;
   field3?: number;
@@ -6,7 +6,7 @@ export declare type NestedPropsType = {
   fieldComponent?: () => null;
 };
 export const NestedProps: NestedPropsType = {};
-export declare type BasePropsType = {
+export type BasePropsType = {
   nestedProp?: typeof NestedProps;
   __defaultNestedValues?: any;
   children?: React.ReactNode;
@@ -14,7 +14,7 @@ export declare type BasePropsType = {
 export const BaseProps: BasePropsType = {
   __defaultNestedValues: Object.freeze({ nestedProp: {} }) as any,
 };
-export declare type SomePropsType = {
+export type SomePropsType = {
   nestedProp?: typeof NestedProps;
   children?: React.ReactNode;
   fieldTemplate?: () => null;

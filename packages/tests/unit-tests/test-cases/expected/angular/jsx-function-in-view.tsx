@@ -1,10 +1,10 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() loading: boolean = true;
-  @Input() greetings: string = "Hello";
+  @Input() greetings: string = 'Hello';
 }
 
 import {
@@ -16,35 +16,36 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["loading", "greetings"],
+  inputs: ['loading', 'greetings'],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngIf="loading"
         ><div>{{ __loadingProps.text }}</div></ng-container
       >
       <ng-container *ngIf="!loading"
-        ><span>{{ "" + greetings + " " + __name + "" }}</span></ng-container
+        ><span>{{ '' + greetings + ' ' + __name + '' }}</span></ng-container
       ></div
     ></ng-template
   >`,
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
+
   get __loadingProps(): any {
-    return { text: "Loading..." };
+    return { text: 'Loading...' };
   }
   get __name(): any {
-    return "User";
+    return 'User';
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -61,7 +62,7 @@ export default class Widget extends WidgetInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -70,7 +71,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["loading", "greetings"].map((key) => ({
+    this.defaultEntries = ['loading', 'greetings'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

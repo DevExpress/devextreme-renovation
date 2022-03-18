@@ -4,7 +4,7 @@ import { createFsFromVolume, Volume } from "memfs";
 import { GeneratorOptions } from "@devextreme-generator/core";
 import { GeneratorOptions as PreactGeneratorOptions } from "@devextreme-generator/preact";
 
-export declare type Options = { platform: string; tsConfig?: string } & (
+export type Options = { platform: string; tsConfig?: string } & (
   | GeneratorOptions
   | PreactGeneratorOptions
 );

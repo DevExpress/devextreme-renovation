@@ -4,7 +4,7 @@ import {
   InfernoComponent,
   InfernoWrapperComponent,
   normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -15,7 +15,7 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   p: string;
   r: string;
   s: number;
@@ -23,13 +23,13 @@ export declare type WidgetInputType = {
   sChange?: (s: number) => void;
 };
 export const WidgetInput: WidgetInputType = {
-  p: "10",
-  r: "20",
+  p: '10',
+  r: '20',
   defaultS: 10,
   sChange: () => {},
 } as any as WidgetInputType;
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+import { createElement as h } from 'inferno-compat';
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

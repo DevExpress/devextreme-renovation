@@ -1,7 +1,7 @@
-import { PublicWidgetWithProps } from "./dx-public-widget-with-props";
-import { WidgetWithProps, WidgetWithPropsInput } from "./dx-widget-with-props";
+import { PublicWidgetWithProps } from './dx-public-widget-with-props';
+import { WidgetWithProps, WidgetWithPropsInput } from './dx-widget-with-props';
 
-export declare type WidgetInputType = {
+export type WidgetInputType = {
   someProp: boolean;
   headerTemplate: any;
   template: any;
@@ -19,10 +19,10 @@ export const WidgetInput: WidgetInputType = {
   componentTemplate: WidgetWithProps,
   publicComponentTemplate: PublicWidgetWithProps,
 };
-import * as Preact from "preact";
-import { useCallback } from "preact/hooks";
+import * as Preact from 'preact';
+import { useCallback } from 'preact/hooks';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -82,19 +82,19 @@ function view(viewModel: WidgetWithTemplate) {
       {viewModel.props.headerTemplate({})}
 
       {viewModel.props.contentTemplate &&
-        viewModel.props.contentTemplate({ data: { p1: "value" }, index: 10 })}
+        viewModel.props.contentTemplate({ data: { p1: 'value' }, index: 10 })}
 
       {!viewModel.props.contentTemplate &&
         viewModel.props.template({
-          textProp: "textPropValue",
-          textPropExpr: "textPropExrpValue",
+          textProp: 'textPropValue',
+          textPropExpr: 'textPropExrpValue',
         })}
 
       {viewModel.props.footerTemplate && FooterTemplate({ someProp: myvar })}
 
-      {ComponentTemplate({ value: "Test Value" })}
+      {ComponentTemplate({ value: 'Test Value' })}
 
-      {PublicComponentTemplate({ value: "Test Value" })}
+      {PublicComponentTemplate({ value: 'Test Value' })}
     </div>
   );
 }

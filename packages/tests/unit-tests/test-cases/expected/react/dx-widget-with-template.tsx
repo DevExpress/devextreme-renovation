@@ -1,4 +1,4 @@
-export declare type WidgetWithTemplateInputType = {
+export type WidgetWithTemplateInputType = {
   template?: any;
   componentTemplate?: any;
   arrowTemplate?: any;
@@ -10,11 +10,11 @@ export declare type WidgetWithTemplateInputType = {
   arrowComponent?: any;
 };
 export const WidgetWithTemplateInput: WidgetWithTemplateInputType = {};
-import * as React from "react";
-import { useCallback } from "react";
-import { getTemplate } from "@devextreme/runtime/react";
+import * as React from 'react';
+import { useCallback } from 'react';
+import { getTemplate } from '@devextreme/runtime/react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
@@ -24,6 +24,7 @@ interface WidgetWithTemplate {
   props: typeof WidgetWithTemplateInput & RestProps;
   restAttributes: RestProps;
 }
+
 export default function WidgetWithTemplate(
   props: typeof WidgetWithTemplateInput & RestProps
 ) {

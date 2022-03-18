@@ -1,9 +1,9 @@
-export const COMPONENT_INPUT_CLASS = "c3";
+export const COMPONENT_INPUT_CLASS = 'c3';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export declare type WidgetPropsType = {
+export type WidgetPropsType = {
   height?: number;
   width?: number;
   children?: React.ReactNode;
@@ -12,10 +12,10 @@ export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
-import * as React from "react";
-import { useCallback } from "react";
+import * as React from 'react';
+import { useCallback } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
