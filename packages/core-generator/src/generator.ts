@@ -1364,16 +1364,16 @@ export class Generator implements GeneratorAPI {
   options: GeneratorOptions = {};
 
   format(code: string) {
-    return format({
+    const t = format({
       text: code,
-      eslintConfig: this.options.lintConfig || {},
+      eslintConfig: this.options.lintConfig,
       prettierOptions: {
         parser: 'typescript',
         htmlWhitespaceSensitivity: 'strict',
         singleQuote: true,
-
       },
     });
+    return t;
   }
 
   removeJQueryBaseModule(codeFactoryResult: Array<any>, component: Component) {

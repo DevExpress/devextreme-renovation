@@ -4,7 +4,6 @@ import {
   ObjType,
   StringArr,
   StringType,
-  WidgetProps as ExternalWidgetProps,
 } from './types-external';
 export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
@@ -44,7 +43,6 @@ export const WidgetProps: WidgetPropsType = {
   externalArray: Object.freeze(['s1', 's2']) as any,
   externalString: 'someValue',
 };
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

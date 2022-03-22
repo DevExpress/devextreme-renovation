@@ -34,9 +34,9 @@ function print(node: ts.Node, out?: string[], indent = 0): string[] {
   }
   out.push(
     new Array(indent + 1).join(" ") +
-      ts.SyntaxKind[node.kind] +
-      "---" +
-      printNodeValue(node)
+    ts.SyntaxKind[node.kind] +
+    "---" +
+    printNodeValue(node)
   );
   indent++;
   ts.forEachChild(node, (node) => {
@@ -61,6 +61,32 @@ export function printSourceCodeAst(source: string) {
   ).join("\n");
 }
 
+export const esLintConfig = {
+  //        logLevel: 'trace',
+  plugins: [
+    '@typescript-eslint',
+    'unused-imports'
+  ],
+  parser: require.resolve('@typescript-eslint/parser'),
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    sourceType: 'module',
+    ecmaVersion: 2015,
+  },
+  rules: {
+    'no-unused-vars': 'off', 
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_',
+      },
+    ],
+
+  },
+};
 export function createTestGenerator(
   expectedFolder: string,
   checkCode = assertCode,
@@ -72,6 +98,7 @@ export function createTestGenerator(
     generator: Generator,
     componentIndex: number = 0
   ) {
+    generator.options.lintConfig = esLintConfig;
     const factory = require(path.resolve(
       `${__dirname}/../test-cases/componentFactory/${generator.getPlatform()}/${componentName}`
     ));

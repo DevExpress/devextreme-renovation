@@ -1,9 +1,6 @@
 import {
   InfernoEffect,
-  BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view(model: Widget) {
   return <div></div>;
@@ -28,7 +25,6 @@ export const WidgetInput: WidgetInputType = {
   defaultS: 10,
   sChange: () => {},
 } as any as WidgetInputType;
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

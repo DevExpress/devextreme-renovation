@@ -15,7 +15,6 @@ export type WidgetPropsType = {
   requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
-import * as React from 'react';
 import { useCallback, useRef } from 'react';
 
 type RestProps = {

@@ -1,9 +1,6 @@
 import {
   RefObject,
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import BaseWidget from './method';
 function view(viewModel: WidgetWithApiRef) {
@@ -19,7 +16,6 @@ export type WidgetWithApiRefInputType = {
   prop1?: number;
 };
 const WidgetWithApiRefInput: WidgetWithApiRefInputType = {};
-import { createElement as h } from 'inferno-compat';
 import { createRef as infernoCreateRef } from 'inferno';
 type RestProps = {
   className?: string;

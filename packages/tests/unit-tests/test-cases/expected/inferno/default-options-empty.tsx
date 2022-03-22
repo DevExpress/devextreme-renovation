@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view() {
   return <div></div>;
@@ -14,7 +11,6 @@ import {
   convertRulesToOptions,
   DefaultOptionsRule,
 } from '../../../../jquery-helpers/default_options';
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

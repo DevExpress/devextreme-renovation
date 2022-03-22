@@ -12,7 +12,6 @@ export type MarkerPropsType = {
   config?: InterfaceConfig | TypeConfig;
 };
 export const MarkerProps: MarkerPropsType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

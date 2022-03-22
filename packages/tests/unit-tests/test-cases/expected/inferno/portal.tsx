@@ -2,10 +2,7 @@ import {
   Portal,
   InfernoEffect,
   RefObject,
-  BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view(model: Widget) {
   return (
@@ -27,7 +24,6 @@ export type WidgetPropsType = {
   someRef?: RefObject<HTMLElement | null>;
 };
 export const WidgetProps: WidgetPropsType = {};
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

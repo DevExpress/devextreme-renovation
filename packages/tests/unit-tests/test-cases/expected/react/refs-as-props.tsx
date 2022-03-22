@@ -15,7 +15,6 @@ export type WidgetInputType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useCallback, useRef } from 'react';
 
 type RestProps = {

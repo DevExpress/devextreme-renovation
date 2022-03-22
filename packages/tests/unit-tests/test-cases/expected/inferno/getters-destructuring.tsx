@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 
 export type WidgetPropsType = {
@@ -26,7 +23,6 @@ interface GetterType {
 }
 const view = () => <div></div>;
 
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

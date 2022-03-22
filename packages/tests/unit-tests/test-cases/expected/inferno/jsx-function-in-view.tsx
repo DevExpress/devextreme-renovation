@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 const loadingJSX = ({ text }: any) => {
   return <div>{text}</div>;
@@ -19,7 +16,6 @@ export const WidgetInput: WidgetInputType = {
   loading: true,
   greetings: 'Hello',
 };
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

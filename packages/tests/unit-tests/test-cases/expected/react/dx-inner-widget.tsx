@@ -13,7 +13,6 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 const NUMBER_STYLES = new Set([
   'animationIterationCount',

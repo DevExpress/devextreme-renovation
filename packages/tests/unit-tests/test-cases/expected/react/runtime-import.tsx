@@ -1,1 +1,1 @@
-import { renderTemplate } from '@devextreme/runtime/react';
+

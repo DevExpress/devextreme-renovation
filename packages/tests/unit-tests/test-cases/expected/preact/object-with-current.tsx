@@ -7,7 +7,6 @@ export type WidgetInputType = {
   someProp?: { current: string };
 };
 export const WidgetInput: WidgetInputType = {};
-import * as Preact from 'preact';
 import { useState, useCallback } from 'preact/hooks';
 
 type RestProps = {

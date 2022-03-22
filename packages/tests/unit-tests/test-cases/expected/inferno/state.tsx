@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import BaseState from './model';
 function view(model: Widget) {
@@ -33,7 +30,6 @@ const WidgetInput: WidgetInputType = {
   state2Change: () => {},
   statePropChange: () => {},
 } as any as WidgetInputType;
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

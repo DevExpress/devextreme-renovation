@@ -25,7 +25,6 @@ export const WidgetProps: WidgetPropsType = {
   s: '',
   strDate: Object.freeze(new Date()) as any,
 };
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

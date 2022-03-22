@@ -1,11 +1,10 @@
 import {
   InnerComponent,
-  InnerComponentProps,
   DxInnerComponentModule,
-} from "./inner-component";
-import { Component, Input, TemplateRef } from "@angular/core";
+} from './inner-component';
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class InnerLayoutProps {
   @Input() innerComponentTemplate: TemplateRef<any> | null = null;
@@ -19,13 +18,13 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-inner-layout",
+  selector: 'dx-inner-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["innerComponentTemplate"],
+  inputs: ['innerComponentTemplate'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export class InnerLayout extends InnerLayoutProps {
@@ -36,7 +35,7 @@ export class InnerLayout extends InnerLayoutProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

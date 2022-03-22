@@ -9,7 +9,6 @@ import {
   convertRulesToOptions,
   DefaultOptionsRule,
 } from '../../../../jquery-helpers/default_options';
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

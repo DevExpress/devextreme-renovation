@@ -4,7 +4,6 @@ function view(model: DomComponentWrapper): any {
 
 export type DomComponentWrapperPropsType = {};
 export const DomComponentWrapperProps: DomComponentWrapperPropsType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

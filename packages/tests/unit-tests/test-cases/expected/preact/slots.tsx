@@ -16,7 +16,6 @@ export type SlotsWidgetPropsType = {
   children?: any;
 };
 const SlotsWidgetProps: SlotsWidgetPropsType = {};
-import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
 
 type RestProps = {

@@ -12,7 +12,6 @@ const WidgetProps: WidgetPropsType = {
   data: Props.data,
   info: Props.info,
 };
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

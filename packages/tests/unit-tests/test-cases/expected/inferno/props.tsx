@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
@@ -54,7 +51,6 @@ export const WidgetInput: WidgetInputType = {
   defaultStringValue: '',
   stringValueChange: () => {},
 } as any as WidgetInputType;
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

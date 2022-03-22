@@ -16,7 +16,6 @@ export const WidgetInput: WidgetInputType = {
   prop2: 'text',
   isReactComponentWrapper: true,
 };
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

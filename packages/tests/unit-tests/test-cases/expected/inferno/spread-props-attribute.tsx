@@ -1,9 +1,6 @@
 import { Fragment } from 'inferno';
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
@@ -25,7 +22,6 @@ export type WidgetInputType = {
 export const WidgetInput: WidgetInputType = {
   valueChange: () => {},
 };
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

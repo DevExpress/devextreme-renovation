@@ -1,11 +1,8 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import { PublicWidgetWithProps } from './dx-public-widget-with-props';
-import { WidgetWithProps, WidgetWithPropsInput } from './dx-widget-with-props';
+import { WidgetWithProps } from './dx-widget-with-props';
 
 export type WidgetInputType = {
   someProp: boolean;
@@ -25,7 +22,6 @@ export const WidgetInput: WidgetInputType = {
   componentTemplate: WidgetWithProps,
   publicComponentTemplate: PublicWidgetWithProps,
 };
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

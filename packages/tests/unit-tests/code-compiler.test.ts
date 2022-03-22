@@ -8,7 +8,7 @@ import path from 'path';
 import sinon from 'sinon';
 import File from 'vinyl';
 
-import { printSourceCodeAst } from './helpers/common';
+import { esLintConfig, printSourceCodeAst } from './helpers/common';
 import mocha from './helpers/mocha';
 
 async function readData(stream: NodeJS.ReadableStream): Promise<File[]> {
@@ -27,6 +27,14 @@ async function readData(stream: NodeJS.ReadableStream): Promise<File[]> {
 }
 
 mocha.describe("code-compiler: gulp integration", function () {
+  this.beforeEach(function () {
+    generator.options = {
+      lintConfig: esLintConfig
+    };
+  });
+  this.afterEach(function () {
+    generator.options = {};
+  });
   mocha.it("createCodeGenerator stream", async function () {
     const setContextSpy = sinon.spy(generator, "setContext");
     const result = await readData(

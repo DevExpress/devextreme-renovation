@@ -2,7 +2,6 @@ export type WidgetInputType = {};
 export const WidgetInput: WidgetInputType = {};
 const view = (viewModel: Widget) => <svg {...viewModel.restAttributes}></svg>;
 
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

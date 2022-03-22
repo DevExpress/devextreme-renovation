@@ -1,6 +1,5 @@
 function view() {}
 
-import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 
 type RestProps = {

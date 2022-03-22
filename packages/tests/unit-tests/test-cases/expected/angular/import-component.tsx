@@ -1,8 +1,7 @@
-import Base, { WidgetProps, DxWidgetModule } from "./component-input";
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+import Base, { WidgetProps, DxWidgetModule } from './component-input';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class ChildInput extends WidgetProps {
   @Input() height: number = 10;
@@ -19,18 +18,18 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-child",
+  selector: 'dx-child',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "width"],
-  outputs: ["onClick"],
+  inputs: ['height', 'width'],
+  outputs: ['onClick'],
   template: `<ng-template #widgetTemplate
     ><dx-widget
       [height]="__getProps().height"
@@ -43,6 +42,7 @@ import {
 })
 export default class Child extends ChildInput {
   defaultEntries: DefaultEntries;
+
   __getProps(): WidgetProps {
     return { height: this.height } as WidgetProps;
   }
@@ -62,7 +62,7 @@ export default class Child extends ChildInput {
   }
 
   _onClick: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -71,7 +71,7 @@ export default class Child extends ChildInput {
   ) {
     super();
     const defaultProps = new ChildInput() as { [key: string]: any };
-    this.defaultEntries = ["height", "width"].map((key) => ({
+    this.defaultEntries = ['height', 'width'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
@@ -79,7 +79,7 @@ export default class Child extends ChildInput {
       this.onClick.emit(e);
     };
   }
-  @ViewChild("slotChildren") set slotChildren(
+  @ViewChild('slotChildren') set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.children;

@@ -1,5 +1,5 @@
 import { PublicWidgetWithProps } from './dx-public-widget-with-props';
-import { WidgetWithProps, WidgetWithPropsInput } from './dx-widget-with-props';
+import { WidgetWithProps } from './dx-widget-with-props';
 
 export type WidgetInputType = {
   someProp: boolean;
@@ -19,7 +19,6 @@ export const WidgetInput: WidgetInputType = {
   componentTemplate: WidgetWithProps,
   publicComponentTemplate: PublicWidgetWithProps,
 };
-import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
 
 type RestProps = {

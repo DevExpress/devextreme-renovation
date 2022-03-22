@@ -8,12 +8,11 @@ function view(viewModel: Widget) {
   );
 }
 
-export declare type WidgetInputType = {};
+export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;
