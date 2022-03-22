@@ -161,13 +161,6 @@ jobs:
         run: |
           sudo apt-get install -y dbus-x11 httping x11vnc xvfb
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: |
-            2.1.x
-            3.1.x
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -187,16 +180,7 @@ jobs:
 
       - name: Install Generators
         run: |
-          cd ./DevExtreme
-          npm i ../runtime/package.tgz
-          npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../build-helpers/package.tgz
+          npm run add-generators
 
       - name: Build DevExtreme
         env:
@@ -255,17 +239,7 @@ jobs:
 
       - name: Install Generators
         run: |
-          cd ./DevExtreme
-          npm i ../runtime/package.tgz
-          npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../build-helpers/package.tgz
-
+          npm run add-generators
       - name: Build DevExtreme
         env:
           DEVEXTREME_TEST_CI: "true"
