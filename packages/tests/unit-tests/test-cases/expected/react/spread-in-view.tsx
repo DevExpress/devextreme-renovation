@@ -11,7 +11,6 @@ export const WidgetProps: WidgetPropsType = {
   a: Object.freeze([1, 2, 3]) as any,
   id: '1',
 };
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

@@ -7,7 +7,6 @@ function view({ styles }: Widget) {
 
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
 const NUMBER_STYLES = new Set([
   'animationIterationCount',

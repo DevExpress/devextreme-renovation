@@ -10,7 +10,6 @@ export type Child1ComponentPropsType = {
 export const Child1ComponentProps: Child1ComponentPropsType =
   {} as any as Child1ComponentPropsType;
 import { WidgetRef as BaseWidgetRef } from './method';
-import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 
 type RestProps = {

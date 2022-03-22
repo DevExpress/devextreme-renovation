@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
   createContext,
 } from '@devextreme/runtime/inferno';
 function view(model: Widget): any {
@@ -18,7 +15,6 @@ export type PropsType = {
 const Props: PropsType = {
   p1: 10,
 };
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

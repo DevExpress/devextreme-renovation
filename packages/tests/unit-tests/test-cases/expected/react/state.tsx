@@ -27,7 +27,6 @@ const WidgetInput: WidgetInputType = {
   state2Change: () => {},
   statePropChange: () => {},
 } as any as WidgetInputType;
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

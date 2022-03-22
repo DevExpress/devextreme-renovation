@@ -6,7 +6,6 @@ export type WidgetInputType = {
   prop?: boolean;
 };
 const WidgetInput: WidgetInputType = {};
-import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
 
 type RestProps = {

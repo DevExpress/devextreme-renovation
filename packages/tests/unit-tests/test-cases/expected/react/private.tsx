@@ -4,7 +4,6 @@ function view(model: Widget) {
 
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

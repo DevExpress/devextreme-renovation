@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
@@ -23,7 +20,6 @@ const ChildInput: ChildInputType = Object.create(
     })
   )
 );
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

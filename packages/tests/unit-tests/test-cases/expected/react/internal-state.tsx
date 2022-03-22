@@ -2,7 +2,6 @@ function view(model: Widget) {
   return <span></span>;
 }
 
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

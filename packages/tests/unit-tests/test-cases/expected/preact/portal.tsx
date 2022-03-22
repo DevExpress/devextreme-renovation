@@ -1,4 +1,3 @@
-import { RefObject } from 'preact';
 import { createPortal } from 'preact/compat';
 function view(model: Widget) {
   return (
@@ -20,7 +19,6 @@ export type WidgetPropsType = {
   someRef?: any;
 };
 export const WidgetProps: WidgetPropsType = {};
-import * as Preact from 'preact';
 import { useState, useCallback, useEffect } from 'preact/hooks';
 
 type PortalProps = {

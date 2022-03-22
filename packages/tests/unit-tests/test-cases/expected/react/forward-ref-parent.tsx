@@ -14,7 +14,6 @@ export type PropsType = {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
 };
 const Props: PropsType = {};
-import * as React from 'react';
 import { useState, useCallback, useEffect, useRef } from 'react';
 
 type RestProps = {

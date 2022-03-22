@@ -1,8 +1,7 @@
-import type { Options } from "./types.d";
-import type { CustomClass } from "./types.d";
-import { Component, Input } from "@angular/core";
+import type { Options } from './types.d';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class ImportProps {
   @Input() Test?: Options;
@@ -17,13 +16,13 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-import",
+  selector: 'dx-import',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["Test"],
+  inputs: ['Test'],
   template: `<ng-template #widgetTemplate
     ><div>{{
       Test === undefined || Test === null ? undefined : Test.value
@@ -38,7 +37,7 @@ export default class Import extends ImportProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

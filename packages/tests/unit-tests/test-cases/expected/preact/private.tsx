@@ -4,7 +4,6 @@ function view(model: Widget) {
 
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as Preact from 'preact';
 import { useState, useCallback } from 'preact/hooks';
 
 type RestProps = {

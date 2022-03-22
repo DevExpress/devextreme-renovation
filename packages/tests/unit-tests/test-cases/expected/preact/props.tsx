@@ -48,7 +48,6 @@ export const WidgetInput: WidgetInputType = {
   defaultStringValue: '',
   stringValueChange: () => {},
 } as any as WidgetInputType;
-import * as Preact from 'preact';
 import { useState, useCallback } from 'preact/hooks';
 
 type RestProps = {

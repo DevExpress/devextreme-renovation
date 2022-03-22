@@ -1,8 +1,5 @@
 import {
-  BaseInfernoComponent,
-  InfernoComponent,
   InfernoWrapperComponent,
-  normalizeStyles,
   createContext,
 } from '@devextreme/runtime/inferno';
 const SimpleContext = createContext<number>(5);
@@ -17,9 +14,7 @@ export type PropsType = {
 export const Props: PropsType = {
   p: 10,
 };
-import { createElement as h } from 'inferno-compat';
 import { createReRenderEffect } from '@devextreme/runtime/inferno';
-import { createRef as infernoCreateRef } from 'inferno';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

@@ -13,7 +13,6 @@ export type PropsType = {
   state?: number;
 };
 const Props: PropsType = {} as any as PropsType;
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

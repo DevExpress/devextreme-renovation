@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
@@ -10,7 +7,6 @@ function view(model: Widget) {
   return <div />;
 }
 
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

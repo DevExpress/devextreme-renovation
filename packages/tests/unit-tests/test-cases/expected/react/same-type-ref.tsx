@@ -9,7 +9,6 @@ export type WidgetInputType = {
 };
 const WidgetInput: WidgetInputType = {};
 import { WidgetRef as BaseWidgetRef } from './method';
-import * as React from 'react';
 import { useCallback, useRef } from 'react';
 
 type RestProps = {

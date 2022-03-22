@@ -1,16 +1,15 @@
 import {
   PublicWidgetWithProps,
   DxPublicWidgetWithPropsModule,
-} from "./dx-public-widget-with-props";
+} from './dx-public-widget-with-props';
 import {
   WidgetWithProps,
-  WidgetWithPropsInput,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+} from './dx-widget-with-props';
 
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() someProp: boolean = false;
@@ -30,23 +29,23 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 @Component({
-  selector: "dx-widget-with-template",
+  selector: 'dx-widget-with-template',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "someProp",
-    "headerTemplate",
-    "template",
-    "contentTemplate",
-    "footerTemplate",
-    "componentTemplate",
-    "publicComponentTemplate",
+    'someProp',
+    'headerTemplate',
+    'template',
+    'contentTemplate',
+    'footerTemplate',
+    'componentTemplate',
+    'publicComponentTemplate',
   ],
   template: `<ng-template #widgetTemplate
     ><div
@@ -152,7 +151,7 @@ export default class WidgetWithTemplate extends WidgetInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -161,14 +160,14 @@ export default class WidgetWithTemplate extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["someProp"].map((key) => ({
+    this.defaultEntries = ['someProp'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
   }
 
-  WidgetWithPropsDefaults = { value: "default text", number: 42 };
-  PublicWidgetWithPropsDefaults = { value: "default text", number: 42 };
+  WidgetWithPropsDefaults = { value: 'default text', number: 42 };
+  PublicWidgetWithPropsDefaults = { value: 'default text', number: 42 };
 }
 @NgModule({
   declarations: [WidgetWithTemplate],

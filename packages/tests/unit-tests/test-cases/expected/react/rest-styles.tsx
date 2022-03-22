@@ -7,7 +7,6 @@ function view({ styles }: Widget) {
 
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 const NUMBER_STYLES = new Set([
   'animationIterationCount',

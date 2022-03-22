@@ -1,15 +1,14 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+} from './dx-widget-with-props';
 import {
   PublicWidgetWithProps,
-  WidgetWithPropsInput,
   DxPublicWidgetWithPropsModule,
-} from "./dx-public-widget-with-props";
-import { Component, Input, TemplateRef } from "@angular/core";
+} from './dx-public-widget-with-props';
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class DateTableBodyProps {
   @Input() cellTemplate: TemplateRef<any> | null = null;
@@ -24,17 +23,17 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-date-table-body",
+  selector: 'dx-date-table-body',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["cellTemplate", "rows"],
+  inputs: ['cellTemplate', 'rows'],
   template: `<ng-template #widgetTemplate
     ><ng-container *ngFor="let cells of rows"
       ><dx-widget-with-props #widgetwithprops1 style="display: contents"
@@ -81,7 +80,7 @@ export class DateTableBody extends DateTableBodyProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -90,13 +89,13 @@ export class DateTableBody extends DateTableBodyProps {
   ) {
     super();
     const defaultProps = new DateTableBodyProps() as { [key: string]: any };
-    this.defaultEntries = ["rows"].map((key) => ({
+    this.defaultEntries = ['rows'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
   }
 
-  PublicWidgetWithPropsDefaults = { value: "default text", number: 42 };
+  PublicWidgetWithPropsDefaults = { value: 'default text', number: 42 };
 }
 @NgModule({
   declarations: [DateTableBody],

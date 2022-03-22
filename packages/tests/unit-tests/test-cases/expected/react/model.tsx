@@ -17,7 +17,6 @@ const ModelWidgetInput: ModelWidgetInputType = {
   modelStatePropChange: () => {},
   valueChange: () => {},
 };
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

@@ -1,7 +1,7 @@
-import DynamicComponent, { WidgetInput, DxWidgetModule } from "./props";
-import { Component, Input } from "@angular/core";
+import DynamicComponent, { DxWidgetModule } from './props';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() height: number = 10;
@@ -22,15 +22,15 @@ import {
   ComponentFactoryResolver,
   EmbeddedViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Directive({
-  selector: "[dynamicComponent]",
+  selector: '[dynamicComponent]',
 })
 export class DynamicComponentDirective {
   private _props: { [name: string]: any } = {};
@@ -40,7 +40,7 @@ export class DynamicComponentDirective {
   @Input() set props(value: { [name: string]: any }) {
     this._props = Object.keys(value).reduce(
       (result: { [name: string]: any }, key) => {
-        if (key.indexOf("dxSpreadProp") === 0) {
+        if (key.indexOf('dxSpreadProp') === 0) {
           return {
             ...result,
             ...value[key],
@@ -136,9 +136,9 @@ export class DynamicComponentDirective {
 }
 
 @Component({
-  selector: "dx-dynamic-component-creator",
+  selector: 'dx-dynamic-component-creator',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height"],
+  inputs: ['height'],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngFor="let C of __Components; index as index"
@@ -154,11 +154,12 @@ export class DynamicComponentDirective {
 })
 export default class DynamicComponentCreator extends Props {
   defaultEntries: DefaultEntries;
+
   get __Components(): any[] {
-    if (this.__getterCache["Components"] !== undefined) {
-      return this.__getterCache["Components"];
+    if (this.__getterCache['Components'] !== undefined) {
+      return this.__getterCache['Components'];
     }
-    return (this.__getterCache["Components"] = ((): any[] => {
+    return (this.__getterCache['Components'] = ((): any[] => {
       return [DynamicComponent] as any[];
     })());
   }
@@ -197,7 +198,7 @@ export default class DynamicComponentCreator extends Props {
     this.createDynamicComponents();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -206,7 +207,7 @@ export default class DynamicComponentCreator extends Props {
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["height"].map((key) => ({
+    this.defaultEntries = ['height'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

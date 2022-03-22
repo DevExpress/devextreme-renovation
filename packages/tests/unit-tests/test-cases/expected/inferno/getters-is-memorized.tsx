@@ -1,8 +1,5 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 import {
   InterfaceTemplateInput as externalInterface,
@@ -30,7 +27,6 @@ interface internalInterface {
 type internalType = { a: string };
 const view = () => <div></div>;
 
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };

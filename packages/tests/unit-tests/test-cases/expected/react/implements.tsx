@@ -21,7 +21,6 @@ const WidgetInput: WidgetInputType = Object.create(
     })
   )
 );
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

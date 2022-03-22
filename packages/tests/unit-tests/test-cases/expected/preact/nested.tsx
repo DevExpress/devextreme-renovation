@@ -4,7 +4,6 @@ function view(model: Widget) {
   return <div />;
 }
 
-import * as Preact from 'preact';
 import { useCallback } from 'preact/hooks';
 
 type RestProps = {

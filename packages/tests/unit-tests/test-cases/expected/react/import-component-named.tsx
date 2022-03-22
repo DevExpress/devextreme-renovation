@@ -9,7 +9,6 @@ export type ChildInputType = {
 const ChildInput: ChildInputType = {
   height: 10,
 };
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

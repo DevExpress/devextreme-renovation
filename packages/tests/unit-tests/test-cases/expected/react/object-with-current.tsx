@@ -7,7 +7,6 @@ export type WidgetInputType = {
   someProp?: { current: string };
 };
 export const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useState, useCallback } from 'react';
 
 type RestProps = {

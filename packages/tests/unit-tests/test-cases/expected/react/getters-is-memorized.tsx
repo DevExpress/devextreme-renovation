@@ -24,7 +24,6 @@ interface internalInterface {
 type internalType = { a: string };
 const view = () => <div></div>;
 
-import * as React from 'react';
 import { useState, useCallback, useMemo } from 'react';
 
 type RestProps = {

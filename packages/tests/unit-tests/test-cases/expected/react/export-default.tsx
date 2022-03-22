@@ -6,7 +6,6 @@ export type WidgetInputType = {
   prop?: boolean;
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

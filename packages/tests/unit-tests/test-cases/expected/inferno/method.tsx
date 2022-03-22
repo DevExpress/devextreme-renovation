@@ -1,9 +1,6 @@
 import {
   RefObject,
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
@@ -14,7 +11,6 @@ export type WidgetInputType = {
   prop2?: number;
 };
 const WidgetInput: WidgetInputType = {};
-import { createElement as h } from 'inferno-compat';
 import { createRef as infernoCreateRef } from 'inferno';
 type RestProps = {
   className?: string;

@@ -7,7 +7,6 @@ export type WidgetInputType = {
   export?: {};
 };
 const WidgetInput: WidgetInputType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

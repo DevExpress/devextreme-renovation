@@ -4,27 +4,26 @@ import {
   ObjType,
   StringArr,
   StringType,
-  WidgetProps as ExternalWidgetProps,
-} from "./types-external";
-import { Component, Input } from "@angular/core";
+} from './types-external';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
-  @Input() str: String = "";
+  @Input() str: String = '';
   @Input() num: Number = 1;
   @Input() bool: Boolean = true;
   @Input() arr: Array<any> = [];
-  @Input() strArr: Array<String> = ["a", "b"];
+  @Input() strArr: Array<String> = ['a', 'b'];
   @Input() obj: Object = {};
   @Input() date: Date = new Date();
   @Input() func: Function = () => {};
-  @Input() symbol: Symbol = Symbol("x");
-  @Input() externalEnum: EnumType = "data";
+  @Input() symbol: Symbol = Symbol('x');
+  @Input() externalEnum: EnumType = 'data';
   @Input() externalUnion: Union = 0;
-  @Input() externalObj: ObjType = { number: 0, text: "text" };
-  @Input() externalArray: StringArr = ["s1", "s2"];
-  @Input() externalString: StringType = "someValue";
+  @Input() externalObj: ObjType = { number: 0, text: 'text' };
+  @Input() externalArray: StringArr = ['s1', 's2'];
+  @Input() externalString: StringType = 'someValue';
 }
 
 import {
@@ -36,36 +35,37 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "str",
-    "num",
-    "bool",
-    "arr",
-    "strArr",
-    "obj",
-    "date",
-    "func",
-    "symbol",
-    "externalEnum",
-    "externalUnion",
-    "externalObj",
-    "externalArray",
-    "externalString",
+    'str',
+    'num',
+    'bool',
+    'arr',
+    'strArr',
+    'obj',
+    'date',
+    'func',
+    'symbol',
+    'externalEnum',
+    'externalUnion',
+    'externalObj',
+    'externalArray',
+    'externalString',
   ],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -81,7 +81,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -91,20 +91,20 @@ export default class Widget extends WidgetProps {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
     this.defaultEntries = [
-      "str",
-      "num",
-      "bool",
-      "arr",
-      "strArr",
-      "obj",
-      "date",
-      "func",
-      "symbol",
-      "externalEnum",
-      "externalUnion",
-      "externalObj",
-      "externalArray",
-      "externalString",
+      'str',
+      'num',
+      'bool',
+      'arr',
+      'strArr',
+      'obj',
+      'date',
+      'func',
+      'symbol',
+      'externalEnum',
+      'externalUnion',
+      'externalObj',
+      'externalArray',
+      'externalString',
     ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }
@@ -117,9 +117,9 @@ export default class Widget extends WidgetProps {
 export class DxWidgetModule {}
 export { Widget as DxWidgetComponent };
 
-import { CustomType } from "./types-external";
+import { CustomType } from './types-external';
 @Component({
-  template: "",
+  template: '',
 })
 class BaseViewPropsType {
   @Input() strArr: Array<String> = new WidgetProps().strArr;

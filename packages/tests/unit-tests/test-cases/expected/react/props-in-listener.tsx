@@ -7,7 +7,6 @@ export type PropsType = {
   onClick?: (e: any) => void;
 };
 export const Props: PropsType = {};
-import * as React from 'react';
 import { useCallback } from 'react';
 
 type RestProps = {

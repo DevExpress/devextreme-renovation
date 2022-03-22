@@ -1,8 +1,5 @@
 import {
-  BaseInfernoComponent,
-  InfernoComponent,
   InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
@@ -18,7 +15,6 @@ export const WidgetWithPropsInput: WidgetWithPropsInputType = {
   value: 'default text',
   number: 42,
 };
-import { createElement as h } from 'inferno-compat';
 import { createReRenderEffect } from '@devextreme/runtime/inferno';
 type RestProps = {
   className?: string;

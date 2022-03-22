@@ -1,9 +1,6 @@
 import {
   InfernoEffect,
-  BaseInfernoComponent,
   InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
 
 export type SomePropsType = {};
@@ -12,7 +9,6 @@ function view() {
   return <span></span>;
 }
 
-import { createElement as h } from 'inferno-compat';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };
