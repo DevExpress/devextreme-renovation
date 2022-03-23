@@ -32,7 +32,7 @@
     "publish:minor": "npm run prepare-release-branch && lerna version minor --exact --force-publish",
     "publish:major": "npm run prepare-release-branch && lerna version major --exact --force-publish",
     "prepare-release-branch": "git checkout -b release && git push origin release",
-    "add-generators": "npm run clear && gulp add-generators --path"
+    "add-generators": "npm run clear && npx gulp add-generators --path"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.4.1",
