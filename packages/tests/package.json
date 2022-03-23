@@ -10,7 +10,7 @@
     "test:testcafe-headless": "start-server-and-test testcafe:start-test-servers \"3000|3001\" 'testcafe chrome:headless'",
     "test:compile-check": "gulp compile-check",
     "testcafe:start-test-servers": "cross-env NODE_ENV=development node ./e2e/start-servers.js",
-    "clear:screenshots": "shx rm -rf ./e2e/tests/etalon && shx rm -rf ./e2e/tests/temp"
+    "clear:screenshots": "npx shx rm -rf ./e2e/tests/etalon && npx shx rm -rf ./e2e/tests/temp"
   },
   "author": "Developer Express Inc.",
   "devDependencies": {
