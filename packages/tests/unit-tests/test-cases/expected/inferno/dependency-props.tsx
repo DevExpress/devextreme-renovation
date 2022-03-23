@@ -1,9 +1,7 @@
 import {
   BaseInfernoComponent,
-  InfernoComponent,
-  InfernoWrapperComponent,
-  normalizeStyles,
-} from "@devextreme/runtime/inferno";
+} from '@devextreme/runtime/inferno';
+import { normalizeStyles } from '@devextreme/runtime/common';
 function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
@@ -18,8 +16,7 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
-import { createElement as h } from "inferno-compat";
-declare type RestProps = {
+type RestProps = {
   className?: string;
   style?: { [name: string]: any };
   key?: any;

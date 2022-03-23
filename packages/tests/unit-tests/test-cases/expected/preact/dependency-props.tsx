@@ -12,7 +12,7 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'preact/hooks';
 import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {

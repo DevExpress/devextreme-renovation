@@ -244,6 +244,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dependency-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-template", function () {
     this.testGenerator(this.test!.title);
   });
