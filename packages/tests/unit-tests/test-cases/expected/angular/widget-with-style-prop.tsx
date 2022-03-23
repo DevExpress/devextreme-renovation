@@ -17,6 +17,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { normalizeStyles } from '@devextreme/runtime/angular';
 
 @Component({
   selector: 'dx-widget-with-style-prop',

@@ -24,6 +24,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
+  normalizeStyles,
   updateUndefinedFromDefaults,
   DefaultEntries,
 } from '@devextreme/runtime/angular';

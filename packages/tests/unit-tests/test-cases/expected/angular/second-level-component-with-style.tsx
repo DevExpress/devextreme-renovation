@@ -19,6 +19,7 @@ import {
   convertRulesToOptions,
   DefaultOptionsRule,
 } from '../../../../jquery-helpers/default_options';
+import { normalizeStyles } from '@devextreme/runtime/angular';
 
 type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetInput>>;
 

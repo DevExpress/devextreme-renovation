@@ -1699,6 +1699,7 @@ export class AngularComponent extends Component {
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
       mutableOptions: decoratorToStringOptions.mutableOptions,
+      hasStyle: decoratorToStringOptions.hasStyle,
     };
 
     const memberStatements = this.members

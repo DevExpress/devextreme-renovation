@@ -20,7 +20,7 @@ import {
   Input,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { getAttributes } from '@devextreme/runtime/angular';
+import { normalizeStyles, getAttributes } from '@devextreme/runtime/angular';
 
 @Component({
   selector: 'dx-widget',
