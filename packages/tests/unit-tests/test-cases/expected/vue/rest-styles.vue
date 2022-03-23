@@ -6,7 +6,7 @@ const modifyStyles = (styles) => {
   return { height: "100px", ...styles };
 };
 const WidgetInput = {};
-import { normalizeStyles } from "@devextreme/runtime/vue";
+import { normalizeStyles } from "@devextreme/runtime/common";
 
 export const DxWidget = {
   name: "Widget",

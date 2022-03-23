@@ -14,7 +14,7 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
 import { useState, useCallback } from 'react';
-import { normalizeStyles } from '@devextreme/runtime/react';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {
   className?: string;

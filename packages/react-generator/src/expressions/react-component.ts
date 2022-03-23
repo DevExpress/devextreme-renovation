@@ -217,12 +217,11 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
-    let runTimeImports = 'normalizeStyles, ';
+    imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
     if (this.props.some((p) => p.isTemplate) && !isComponentWrapper(this.context.imports)) {
-      runTimeImports += isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate';
+      const runTimeImports = isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate';
+      imports.push(`import { ${runTimeImports} } from '@devextreme/runtime/react'`);
     }
-    imports.push(`import { ${runTimeImports} } from '@devextreme/runtime/react'`);
-
     return imports;
   }
 

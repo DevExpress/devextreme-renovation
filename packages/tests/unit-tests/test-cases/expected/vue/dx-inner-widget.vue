@@ -16,7 +16,7 @@ export const InnerWidgetProps = {
     },
   },
 };
-import { normalizeStyles } from "@devextreme/runtime/vue";
+import { normalizeStyles } from "@devextreme/runtime/common";
 
 export const DxInnerWidget = {
   name: "InnerWidget",

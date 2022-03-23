@@ -44,7 +44,7 @@ const Props = {
     },
   },
 };
-import { normalizeStyles } from "@devextreme/runtime/vue";
+import { normalizeStyles } from "@devextreme/runtime/common";
 
 export const DxDynamicComponentCreator = {
   name: "DynamicComponentCreator",

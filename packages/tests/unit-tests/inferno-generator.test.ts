@@ -68,7 +68,8 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {Fragment} from "inferno"`
+          `import {Fragment} from "inferno";
+import { normalizeStyles } from '@devextreme/runtime/common'`
         );
       }
     );
@@ -93,7 +94,8 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme/runtime/inferno"`
+          `import {RefObject} from "@devextreme/runtime/inferno";
+import { normalizeStyles } from '@devextreme/runtime/common'`
         );
       }
     );
@@ -118,7 +120,8 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {RefObject} from "@devextreme/runtime/inferno"`
+          `import {RefObject} from "@devextreme/runtime/inferno";
+import { normalizeStyles } from '@devextreme/runtime/common'`
         );
       }
     );
@@ -143,7 +146,8 @@ mocha.describe("Expressions", function () {
 
         assert.strictEqual(
           expression.toString(),
-          `import {BaseInfernoComponent,InfernoComponent,InfernoWrapperComponent,normalizeStyles} from "@devextreme/runtime/inferno"`
+          `import {BaseInfernoComponent,InfernoComponent,InfernoWrapperComponent} from "@devextreme/runtime/inferno";
+import { normalizeStyles } from '@devextreme/runtime/common'`
         );
       }
     );

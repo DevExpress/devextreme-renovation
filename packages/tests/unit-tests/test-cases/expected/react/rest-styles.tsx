@@ -8,7 +8,7 @@ function view({ styles }: Widget) {
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import { useCallback } from 'react';
-import { normalizeStyles } from '@devextreme/runtime/react';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {
   className?: string;

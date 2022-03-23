@@ -1,7 +1,7 @@
 import {
   BaseInfernoComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
+import { normalizeStyles } from '@devextreme/runtime/common';
 function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }

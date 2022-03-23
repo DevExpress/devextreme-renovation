@@ -38,7 +38,7 @@ const Props: PropsType = {
 };
 import * as React from 'react';
 import { useState, useCallback } from 'react';
-import { normalizeStyles } from '@devextreme/runtime/react';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {
   className?: string;

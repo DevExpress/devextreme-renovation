@@ -826,7 +826,7 @@ export class VueComponent extends Component {
 
   compileImports(options: toStringOptions) {
     const imports: string[] = options.hasStyle ? [
-      'import { normalizeStyles } from \'@devextreme/runtime/vue\'',
+      'import { normalizeStyles } from \'@devextreme/runtime/common\'',
     ] : [];
     this.compileDefaultOptionsImport(imports);
 

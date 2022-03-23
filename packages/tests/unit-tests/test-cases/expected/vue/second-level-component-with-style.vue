@@ -6,7 +6,7 @@
 </template>
 <script>
 const WidgetInput = {};
-import { normalizeStyles } from "@devextreme/runtime/vue";
+import { normalizeStyles } from "@devextreme/runtime/common";
 
 export const DxWidget = {
   name: "Widget",

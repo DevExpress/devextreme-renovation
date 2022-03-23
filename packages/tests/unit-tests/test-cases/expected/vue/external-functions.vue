@@ -36,7 +36,7 @@ export const WidgetProps = {
     },
   },
 };
-import { normalizeStyles } from "@devextreme/runtime/vue";
+import { normalizeStyles } from "@devextreme/runtime/common";
 
 export const DxWidget = {
   name: "Widget",

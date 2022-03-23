@@ -1,7 +1,7 @@
 import {
   InfernoWrapperComponent,
-  normalizeStyles,
 } from '@devextreme/runtime/inferno';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 export type PropsType = {
   height?: number;

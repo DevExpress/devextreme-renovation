@@ -24,10 +24,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
-  normalizeStyles,
   updateUndefinedFromDefaults,
   DefaultEntries,
 } from '@devextreme/runtime/angular';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,

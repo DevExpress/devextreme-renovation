@@ -626,13 +626,15 @@ export class AngularComponent extends Component {
     const propsWithDefault = this.getPropsWithDefault();
     const hasRefProperty = this.members.some((m) => m.isForwardRef || m.isRef);
     const runTimeImports = [
-      ...(options?.hasStyle ? ['normalizeStyles'] : []),
       ...(options?.mutableOptions?.hasRestAttributes ? ['getAttributes'] : []),
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
       ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
     ];
     if (runTimeImports.length > 0) {
       imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
+    }
+    if (options?.hasStyle) {
+      imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
     }
   }
 

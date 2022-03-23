@@ -30,10 +30,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  normalizeStyles,
   updateUndefinedFromDefaults,
   DefaultEntries,
 } from '@devextreme/runtime/angular';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 @Component({
   selector: 'dx-widget',

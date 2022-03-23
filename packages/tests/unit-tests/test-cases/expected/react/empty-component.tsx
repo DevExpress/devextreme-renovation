@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { normalizeStyles } from '@devextreme/runtime/react';
+import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {
   className?: string;

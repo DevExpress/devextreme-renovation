@@ -146,7 +146,7 @@ export class PreactComponent extends ReactComponent {
     if (compats.length) {
       imports.push(`import {${compats.join(',')}} from "preact/compat"`);
     }
-    imports.push('import { normalizeStyles } from \'@devextreme/runtime/react\'');
+    imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
     return imports;
   }
 
