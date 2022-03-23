@@ -1,7 +1,7 @@
-import BaseState, { DxModelWidgetModule } from "./model";
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import BaseState, { DxModelWidgetModule } from './model';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   @Input() state1?: boolean = false;
@@ -23,18 +23,18 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["state1", "state2", "stateProp"],
-  outputs: ["state1Change", "state2Change", "statePropChange"],
+  inputs: ['state1', 'state2', 'stateProp'],
+  outputs: ['state1Change', 'state2Change', 'statePropChange'],
   template: `<ng-template #widgetTemplate
     ><div
       >{{ state1
@@ -50,6 +50,7 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
+
   internalState: number = 0;
   innerData?: string;
   __updateState(): any {
@@ -90,7 +91,7 @@ export default class Widget extends WidgetInput {
   _state1Change: any;
   _state2Change: any;
   _statePropChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -99,7 +100,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["state1", "state2"].map((key) => ({
+    this.defaultEntries = ['state1', 'state2'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

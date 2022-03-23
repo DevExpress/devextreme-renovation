@@ -1,7 +1,7 @@
-import { Component, ViewChild, ElementRef } from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { isSlotEmpty } from '@devextreme/runtime/angular';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   __slotChildren?: ElementRef<HTMLDivElement>;
@@ -18,11 +18,11 @@ import {
   Renderer2,
   ViewRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><div #slotChildren style="display: contents"></div>
@@ -39,7 +39,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -48,7 +48,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
   }
-  @ViewChild("slotChildren") set slotChildren(
+  @ViewChild('slotChildren') set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.children;

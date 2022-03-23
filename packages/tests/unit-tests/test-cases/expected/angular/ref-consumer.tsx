@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() elementRef?: (
@@ -18,14 +18,16 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-ref-consumer",
+  selector: 'dx-ref-consumer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["elementRef"],
+  inputs: ['elementRef'],
   template: `<ng-template #widgetTemplate
       ><span>consumer is rendered</span></ng-template
     >
@@ -42,17 +44,17 @@ export default class RefConsumer extends Props {
   __init(): any {
     const elementRef = this.__getElementRef();
     if (elementRef) {
-      elementRef.innerHTML += ":element passed";
+      elementRef.innerHTML += ':element passed';
     }
   }
   elementRef__Ref__?: ElementRef<HTMLDivElement>;
   get forwardRef_elementRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
-    if (this.__getterCache["forwardRef_elementRef"] !== undefined) {
-      return this.__getterCache["forwardRef_elementRef"];
+    if (this.__getterCache['forwardRef_elementRef'] !== undefined) {
+      return this.__getterCache['forwardRef_elementRef'];
     }
-    return (this.__getterCache["forwardRef_elementRef"] = ((): ((
+    return (this.__getterCache['forwardRef_elementRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined) => {
       return function (
@@ -80,7 +82,7 @@ export default class RefConsumer extends Props {
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
   __destroyEffects: any[] = [];
@@ -108,7 +110,7 @@ export default class RefConsumer extends Props {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

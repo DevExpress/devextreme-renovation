@@ -484,5 +484,8 @@ mocha.describe("angular-generation", function () {
     mocha.it("angular-inner-component", function () {
       this.testGenerator(this.test!.title);
     });
+    mocha.it("second-level-component-with-style", function () {
+      this.testGenerator(this.test!.title);
+    });
   });
 });

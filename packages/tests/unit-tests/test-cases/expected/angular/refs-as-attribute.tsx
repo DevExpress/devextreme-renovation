@@ -1,8 +1,8 @@
-import HelperWidget, { DxHelperWidgetModule } from "./refs-as-attribute-helper";
+import HelperWidget, { DxHelperWidgetModule } from './refs-as-attribute-helper';
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetProps {
   @Input() refProp?: HTMLDivElement;
@@ -20,14 +20,16 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["refProp", "forwardRefProp"],
+  inputs: ['refProp', 'forwardRefProp'],
   template: `<ng-template #widgetTemplate
     ><div
       ><dx-helper-widget
@@ -46,7 +48,7 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  @ViewChild("someRefLink", { static: false })
+  @ViewChild('someRefLink', { static: false })
   __someRef!: ElementRef<HTMLDivElement>;
   get someRef(): ElementRef<HTMLDivElement> {
     return this.__someRef
@@ -62,10 +64,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_forwardRef"] !== undefined) {
-      return this.__getterCache["forwardRef_forwardRef"];
+    if (this.__getterCache['forwardRef_forwardRef'] !== undefined) {
+      return this.__getterCache['forwardRef_forwardRef'];
     }
-    return (this.__getterCache["forwardRef_forwardRef"] = ((): ((
+    return (this.__getterCache['forwardRef_forwardRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -86,10 +88,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_forwardRefProp(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
-    if (this.__getterCache["forwardRef_forwardRefProp"] !== undefined) {
-      return this.__getterCache["forwardRef_forwardRefProp"];
+    if (this.__getterCache['forwardRef_forwardRefProp'] !== undefined) {
+      return this.__getterCache['forwardRef_forwardRefProp'];
     }
-    return (this.__getterCache["forwardRef_forwardRefProp"] = ((): ((
+    return (this.__getterCache['forwardRef_forwardRefProp'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined) => {
       return function (
@@ -124,7 +126,7 @@ export default class Widget extends WidgetProps {
     ) => ElementRef<HTMLDivElement> | undefined;
   } = {};
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

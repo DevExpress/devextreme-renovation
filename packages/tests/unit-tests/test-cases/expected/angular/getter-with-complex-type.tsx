@@ -4,7 +4,7 @@ import {
   SkipSelf,
   Optional,
   Host,
-} from "@angular/core";
+} from '@angular/core';
 @Injectable()
 class SimpleContext {
   _value: number = 5;
@@ -19,11 +19,11 @@ class SimpleContext {
     }
   }
 }
-type UserType = "user" | "not";
+type UserType = 'user' | 'not';
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class Props {
   @Input() p: number = 10;
@@ -38,18 +38,18 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SimpleContext],
-  inputs: ["p"],
+  inputs: ['p'],
   template: `<div></div>`,
 })
 export default class Widget extends Props {
@@ -58,20 +58,20 @@ export default class Widget extends Props {
   mutableVar: number = 10;
   i: number = 10;
   get __provide(): any {
-    if (this.__getterCache["provide"] !== undefined) {
-      return this.__getterCache["provide"];
+    if (this.__getterCache['provide'] !== undefined) {
+      return this.__getterCache['provide'];
     }
-    return (this.provideProvider.value = this.__getterCache["provide"] =
+    return (this.provideProvider.value = this.__getterCache['provide'] =
       ((): any => {
         return this.i;
       })());
   }
   consConsumer: number;
   get __g1(): number[] {
-    if (this.__getterCache["g1"] !== undefined) {
-      return this.__getterCache["g1"];
+    if (this.__getterCache['g1'] !== undefined) {
+      return this.__getterCache['g1'];
     }
-    return (this.__getterCache["g1"] = ((): number[] => {
+    return (this.__getterCache['g1'] = ((): number[] => {
       return [this.p, this.i];
     })());
   }
@@ -82,10 +82,10 @@ export default class Widget extends Props {
     return this.i;
   }
   get __g4(): number[] {
-    if (this.__getterCache["g4"] !== undefined) {
-      return this.__getterCache["g4"];
+    if (this.__getterCache['g4'] !== undefined) {
+      return this.__getterCache['g4'];
     }
-    return (this.__getterCache["g4"] = ((): number[] => {
+    return (this.__getterCache['g4'] = ((): number[] => {
       return [this.consConsumer];
     })());
   }
@@ -93,7 +93,7 @@ export default class Widget extends Props {
     return [this.i, this.mutableVar];
   }
   get __userGet(): UserType {
-    return "user";
+    return 'user';
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -108,7 +108,7 @@ export default class Widget extends Props {
     g4?: number[];
   } = {};
   resetDependantGetters(): void {
-    this.__getterCache["g4"] = undefined;
+    this.__getterCache['g4'] = undefined;
   }
   _destroyContext: Array<() => void> = [];
 
@@ -119,8 +119,8 @@ export default class Widget extends Props {
       this.defaultEntries
     );
 
-    if (["p"].some((d) => changes[d])) {
-      this.__getterCache["g1"] = undefined;
+    if (['p'].some((d) => changes[d])) {
+      this.__getterCache['g1'] = undefined;
     }
   }
   ngOnDestroy() {
@@ -131,7 +131,7 @@ export default class Widget extends Props {
     this.__provide;
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -142,7 +142,7 @@ export default class Widget extends Props {
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["p"].map((key) => ({
+    this.defaultEntries = ['p'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
@@ -164,8 +164,8 @@ export default class Widget extends Props {
   set _i(i: number) {
     this.i = i;
     this._detectChanges();
-    this.__getterCache["provide"] = undefined;
-    this.__getterCache["g1"] = undefined;
+    this.__getterCache['provide'] = undefined;
+    this.__getterCache['g1'] = undefined;
   }
 }
 @NgModule({

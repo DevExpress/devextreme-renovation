@@ -1,6 +1,6 @@
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetWithTemplateInput {
   @Input() template?: TemplateRef<any> | null = null;
@@ -16,13 +16,13 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget-with-template",
+  selector: 'dx-widget-with-template',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["template", "componentTemplate", "arrowTemplate"],
+  inputs: ['template', 'componentTemplate', 'arrowTemplate'],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngTemplateOutlet="componentTemplate"></ng-container
@@ -38,7 +38,7 @@ export default class WidgetWithTemplate extends WidgetWithTemplateInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {}
 
@@ -14,11 +14,11 @@ import {
   ViewChild,
   ElementRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><div #_auto_ref_0></div
@@ -34,7 +34,7 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
-  @ViewChild("_auto_ref_0", { static: false })
+  @ViewChild('_auto_ref_0', { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
@@ -59,7 +59,7 @@ export default class Widget extends WidgetInput {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,14 +1,14 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+} from './dx-widget-with-props';
 import {
   PublicWidgetWithProps,
   DxPublicWidgetWithPropsModule,
-} from "./dx-public-widget-with-props";
-import { Component } from "@angular/core";
+} from './dx-public-widget-with-props';
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetWithNestedWidgetsProps {}
 
@@ -23,11 +23,11 @@ import {
   TemplateRef,
   ElementRef,
   Input,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget-with-nested-widgets",
+  selector: 'dx-widget-with-nested-widgets',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
       ><div
@@ -64,7 +64,7 @@ export default class WidgetWithNestedWidgets extends WidgetWithNestedWidgetsProp
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
   ngAfterViewInit() {
@@ -78,7 +78,7 @@ export default class WidgetWithNestedWidgets extends WidgetWithNestedWidgetsProp
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

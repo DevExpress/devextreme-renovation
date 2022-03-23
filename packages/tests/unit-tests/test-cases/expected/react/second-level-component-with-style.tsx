@@ -11,6 +11,7 @@ function view(viewModel: Widget) {
 export type WidgetInputType = {};
 const WidgetInput: WidgetInputType = {};
 import { useCallback, useMemo } from 'react';
+import { normalizeStyles } from '@devextreme/runtime/react';
 
 type RestProps = {
   className?: string;

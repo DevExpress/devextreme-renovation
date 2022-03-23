@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class Props {}
 
@@ -13,11 +13,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-inner-component",
+  selector: 'dx-inner-component',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div></div>`,
 })
@@ -29,7 +29,7 @@ export class InnerComponent extends Props {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class InnerWidgetProps {
   @Input() selected?: boolean;
@@ -20,79 +20,13 @@ import {
   TemplateRef,
   forwardRef,
   HostListener,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
-
-const NUMBER_STYLES = new Set([
-  "animation-iteration-count",
-  "border-image-outset",
-  "border-image-slice",
-  "border-image-width",
-  "box-flex",
-  "box-flex-group",
-  "box-ordinal-group",
-  "column-count",
-  "fill-opacity",
-  "flex",
-  "flex-grow",
-  "flex-negative",
-  "flex-order",
-  "flex-positive",
-  "flex-shrink",
-  "flood-opacity",
-  "font-weight",
-  "grid-column",
-  "grid-row",
-  "line-clamp",
-  "line-height",
-  "opacity",
-  "order",
-  "orphans",
-  "stop-opacity",
-  "stroke-dasharray",
-  "stroke-dashoffset",
-  "stroke-miterlimit",
-  "stroke-opacity",
-  "stroke-width",
-  "tab-size",
-  "widows",
-  "z-index",
-  "zoom",
-]);
-
-const uppercasePattern = /[A-Z]/g;
-const kebabCase = (str: string) => {
-  return str.replace(uppercasePattern, "-$&").toLowerCase();
-};
-
-const isNumeric = (value: string | number) => {
-  if (typeof value === "number") return true;
-  return !isNaN(Number(value));
-};
-
-const getNumberStyleValue = (style: string, value: string | number) => {
-  return NUMBER_STYLES.has(style) ? value : `${value}px`;
-};
-
-const normalizeStyles = (styles: unknown) => {
-  if (!(styles instanceof Object)) return undefined;
-
-  return Object.entries(styles).reduce(
-    (result: Record<string, string | number>, [key, value]) => {
-      const kebabString = kebabCase(key);
-      result[kebabString] = isNumeric(value)
-        ? getNumberStyleValue(kebabString, value)
-        : value;
-      return result;
-    },
-    {} as Record<string, string | number>
-  );
-};
+} from '@devextreme/runtime/angular';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,
@@ -100,11 +34,11 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   multi: true,
 };
 @Component({
-  selector: "dx-inner-widget",
+  selector: 'dx-inner-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
-  inputs: ["selected", "value"],
-  outputs: ["onSelect", "valueChange"],
+  inputs: ['selected', 'value'],
+  outputs: ['onSelect', 'valueChange'],
   template: `<ng-template #widgetTemplate
     ><div [ngStyle]="__processNgStyle({ width: 100, height: 100 })"></div
   ></ng-template>`,
@@ -114,6 +48,7 @@ export default class InnerWidget
   implements ControlValueAccessor
 {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -121,8 +56,8 @@ export default class InnerWidget
     });
   }
 
-  @HostListener("valueChange", ["$event"]) change() {}
-  @HostListener("onBlur", ["$event"]) touched = () => {};
+  @HostListener('valueChange', ['$event']) change() {}
+  @HostListener('onBlur', ['$event']) touched = () => {};
 
   writeValue(value: any): void {
     this.value = value;
@@ -146,7 +81,7 @@ export default class InnerWidget
 
   _onSelect: any;
   _valueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -155,7 +90,7 @@ export default class InnerWidget
   ) {
     super();
     const defaultProps = new InnerWidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["value"].map((key) => ({
+    this.defaultEntries = ['value'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   @Input() id?: string;
@@ -17,14 +17,14 @@ import {
   ViewChild,
   ElementRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { getAttributes } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { getAttributes } from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-component-with-rest",
+  selector: 'dx-component-with-rest',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["id", "export"],
+  inputs: ['id', 'export'],
   template: `<ng-template #widgetTemplate
     ><div #_auto_ref_0></div
   ></ng-template>`,
@@ -49,7 +49,7 @@ export default class ComponentWithRest extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
-  @ViewChild("_auto_ref_0", { static: false })
+  @ViewChild('_auto_ref_0', { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
@@ -62,7 +62,7 @@ export default class ComponentWithRest extends WidgetInput {
       }
     }
 
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
   ngAfterViewInit() {
@@ -76,7 +76,7 @@ export default class ComponentWithRest extends WidgetInput {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

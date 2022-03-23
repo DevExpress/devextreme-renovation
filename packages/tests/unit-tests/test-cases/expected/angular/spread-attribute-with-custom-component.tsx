@@ -1,7 +1,7 @@
-import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Component } from "@angular/core";
+import InnerWidget, { DxInnerWidgetModule } from './dx-inner-widget';
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {}
 
@@ -16,12 +16,12 @@ import {
   ElementRef,
   TemplateRef,
   Input,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { getAttributes } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { getAttributes } from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
@@ -56,7 +56,7 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
-  @ViewChild("_auto_ref_0", { static: false })
+  @ViewChild('_auto_ref_0', { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
@@ -69,7 +69,7 @@ export default class Widget extends WidgetInput {
       }
     }
 
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
   ngAfterViewInit() {
@@ -83,7 +83,7 @@ export default class Widget extends WidgetInput {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

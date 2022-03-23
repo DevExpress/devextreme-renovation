@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() prop: any = {};
@@ -16,18 +16,18 @@ import {
   ViewChild,
   ElementRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
   UndefinedNativeElementRef,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["prop"],
+  inputs: ['prop'],
   template: `<ng-template #widgetTemplate
     ><div #hostLink
       ><input #_auto_ref_0 /><input #i1Link /><input #_auto_ref_1 /></div
@@ -35,13 +35,14 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
-  @ViewChild("hostLink", { static: false }) __host!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('hostLink', { static: false }) __host!: ElementRef<HTMLDivElement>;
   get host(): ElementRef<HTMLDivElement> {
     return this.__host
       ? this.__host
       : new UndefinedNativeElementRef<HTMLDivElement>();
   }
-  @ViewChild("i1Link", { static: false }) __i1!: ElementRef<HTMLInputElement>;
+  @ViewChild('i1Link', { static: false }) __i1!: ElementRef<HTMLInputElement>;
   get i1(): ElementRef<HTMLInputElement> {
     return this.__i1
       ? this.__i1
@@ -59,9 +60,9 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
-  @ViewChild("_auto_ref_0", { static: false })
+  @ViewChild('_auto_ref_0', { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
-  @ViewChild("_auto_ref_1", { static: false })
+  @ViewChild('_auto_ref_1', { static: false })
   _auto_ref_1?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
@@ -103,7 +104,7 @@ export default class Widget extends WidgetInput {
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (["prop"].some((d) => changes[d] && !changes[d].firstChange)) {
+    if (['prop'].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
     updateUndefinedFromDefaults(
@@ -120,7 +121,7 @@ export default class Widget extends WidgetInput {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -129,7 +130,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["prop"].map((key) => ({
+    this.defaultEntries = ['prop'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

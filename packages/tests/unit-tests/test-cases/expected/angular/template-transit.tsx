@@ -1,10 +1,10 @@
 import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
-} from "./dx-widget-with-template";
+} from './dx-widget-with-template';
 
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class TemplateTransitWidgetInput {
   @Input() templateProp?: TemplateRef<any> | null = null;
@@ -19,13 +19,13 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-template-transit-widget",
+  selector: 'dx-template-transit-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["templateProp", "componentTemplateProp"],
+  inputs: ['templateProp', 'componentTemplateProp'],
   template: `<ng-template #widgetTemplate
     ><dx-widget-with-template
       [template]="templateProp"
@@ -46,7 +46,7 @@ export default class TemplateTransitWidget extends TemplateTransitWidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

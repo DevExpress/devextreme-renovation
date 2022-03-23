@@ -1,14 +1,14 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+} from './dx-widget-with-props';
 import {
   PublicWidgetWithProps,
   DxPublicWidgetWithPropsModule,
-} from "./dx-public-widget-with-props";
-import { Component, Input } from "@angular/core";
+} from './dx-public-widget-with-props';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class ComponentWithRestInput {
   @Input() isPublic: boolean = false;
@@ -24,18 +24,18 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   getAttributes,
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-component-with-rest",
+  selector: 'dx-component-with-rest',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["isPublic"],
+  inputs: ['isPublic'],
   template: `<ng-template #widgetTemplate
     ><ng-container *ngIf="isPublic"
       ><dx-public-widget-with-props
@@ -90,7 +90,7 @@ export default class ComponentWithRest extends ComponentWithRestInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -100,7 +100,7 @@ export default class ComponentWithRest extends ComponentWithRestInput {
   ) {
     super();
     const defaultProps = new ComponentWithRestInput() as { [key: string]: any };
-    this.defaultEntries = ["isPublic"].map((key) => ({
+    this.defaultEntries = ['isPublic'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

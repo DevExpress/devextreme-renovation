@@ -217,9 +217,11 @@ export class ReactComponent extends Component {
     if (namedImports.length) {
       imports.push(`import {${namedImports.join(',')}} from 'react'`);
     }
+    let runTimeImports = 'normalizeStyles, ';
     if (this.props.some((p) => p.isTemplate) && !isComponentWrapper(this.context.imports)) {
-      imports.push('import { getTemplate } from \'@devextreme/runtime/react\'');
+      runTimeImports += isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate';
     }
+    imports.push(`import { ${runTimeImports} } from '@devextreme/runtime/react'`);
 
     return imports;
   }
@@ -778,69 +780,6 @@ export class ReactComponent extends Component {
     }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
   }
 
-  compileStyleNormalizer(): string {
-    const hasStyle = this.context.viewFunctions
-      && Object.values(this.context.viewFunctions).some((viewFunction) => viewFunction.containsStyle());
-    return hasStyle
-      ? `const NUMBER_STYLES = new Set([
-          "animationIterationCount",
-          "borderImageOutset",
-          "borderImageSlice",
-          "border-imageWidth",
-          "boxFlex",
-          "boxFlexGroup",
-          "boxOrdinalGroup",
-          "columnCount",
-          "fillOpacity",
-          "flex",
-          "flexGrow",
-          "flexNegative",
-          "flexOrder",
-          "flexPositive",
-          "flexShrink",
-          "floodOpacity",
-          "fontWeight",
-          "gridColumn",
-          "gridRow",
-          "lineClamp",
-          "lineHeight",
-          "opacity",
-          "order",
-          "orphans",
-          "stopOpacity",
-          "strokeDasharray",
-          "strokeDashoffset",
-          "strokeMiterlimit",
-          "strokeOpacity",
-          "strokeWidth",
-          "tabSize",
-          "widows",
-          "zIndex",
-          "zoom",
-        ]);
-
-        const isNumeric = (value: string | number) => {
-          if (typeof value === "number") return true;
-          return !isNaN(Number(value));
-        };
-
-        const getNumberStyleValue = (style: string, value: string | number) => {
-          return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
-        };
-
-        const normalizeStyles = (styles: unknown) => {
-          if (!(styles instanceof Object)) return undefined;
-
-          return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
-            result[key] = isNumeric(value)
-              ? getNumberStyleValue(key, value)
-              : value;
-            return result;
-          }, {} as Record<string, string | number>)
-        };`
-      : '';
-  }
-
   compileGettersAndMethods(): string {
     const methods = this.listeners
       .concat(this.methods)
@@ -901,7 +840,6 @@ export class ReactComponent extends Component {
     const getTemplateFunc = this.compileTemplateGetter();
     return `
               ${this.compileImports()}
-              ${this.compileStyleNormalizer()}
               ${this.compilePortalComponent()}
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}

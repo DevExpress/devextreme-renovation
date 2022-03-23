@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class FakeNested {
   @Input() numberProp: number = 2;
@@ -12,10 +12,10 @@ import {
   TemplateRef,
   ViewChild,
   ElementRef,
-} from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { isSlotEmpty } from '@devextreme/runtime/angular';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() oneWayProp?: number;
@@ -64,33 +64,35 @@ import {
   ContentChildren,
   QueryList,
   Directive,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Directive({
-  selector: "dxi-another-nested-prop-init",
+  selector: 'dxi-another-nested-prop-init',
 })
 export class DxUndefWidgetAnotherNestedPropInit extends FakeNested {}
 
 @Directive({
-  selector: "dxi-nested-prop",
+  selector: 'dxi-nested-prop',
 })
 export class DxUndefWidgetNestedProp extends FakeNested {}
 
 @Component({
-  selector: "dx-undef-widget",
+  selector: 'dx-undef-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "oneWayProp",
-    "twoWayProp",
-    "someRef",
-    "someForwardRef",
-    "templateProp",
-    "nestedProp",
-    "anotherNestedPropInit",
+    'oneWayProp',
+    'twoWayProp',
+    'someRef',
+    'someForwardRef',
+    'templateProp',
+    'nestedProp',
+    'anotherNestedPropInit',
   ],
-  outputs: ["someEvent", "twoWayPropChange"],
+  outputs: ['someEvent', 'twoWayPropChange'],
   template: `<ng-template #widgetTemplate
     ><div></div
     ><ng-template #dxslotProp
@@ -99,32 +101,32 @@ export class DxUndefWidgetNestedProp extends FakeNested {}
 })
 export default class UndefWidget extends WidgetProps {
   get __oneway(): any {
-    return this.hasOwnProperty("oneWayProp");
+    return this.hasOwnProperty('oneWayProp');
   }
   get __twoway(): any {
-    return this.hasOwnProperty("twoWayProp");
+    return this.hasOwnProperty('twoWayProp');
   }
   get __someevent(): any {
-    return this.hasOwnProperty("someEvent");
+    return this.hasOwnProperty('someEvent');
   }
   get __someref(): any {
-    return this.hasOwnProperty("someRef");
+    return this.hasOwnProperty('someRef');
   }
   get __someforwardref(): any {
-    return this.hasOwnProperty("someForwardRef");
+    return this.hasOwnProperty('someForwardRef');
   }
   get __someslot(): any {
-    return this.hasOwnProperty("slotProp");
+    return this.hasOwnProperty('slotProp');
   }
   get __sometemplate(): any {
-    return this.hasOwnProperty("templateProp");
+    return this.hasOwnProperty('templateProp');
   }
   get __nested(): any {
-    return this.hasOwnProperty("__nestedProp") || this.nestedProp !== undefined;
+    return this.hasOwnProperty('__nestedProp') || this.nestedProp !== undefined;
   }
   get __nestedinit(): any {
     return (
-      this.hasOwnProperty("__anotherNestedPropInit") ||
+      this.hasOwnProperty('__anotherNestedPropInit') ||
       this.anotherNestedPropInit !== undefined
     );
   }
@@ -157,10 +159,10 @@ export default class UndefWidget extends WidgetProps {
   get forwardRef_someForwardRef(): (
     ref?: ElementRef<any>
   ) => ElementRef<any> | undefined {
-    if (this.__getterCache["forwardRef_someForwardRef"] !== undefined) {
-      return this.__getterCache["forwardRef_someForwardRef"];
+    if (this.__getterCache['forwardRef_someForwardRef'] !== undefined) {
+      return this.__getterCache['forwardRef_someForwardRef'];
     }
-    return (this.__getterCache["forwardRef_someForwardRef"] = ((): ((
+    return (this.__getterCache['forwardRef_someForwardRef'] = ((): ((
       ref?: ElementRef<any>
     ) => ElementRef<any> | undefined) => {
       return function (
@@ -198,7 +200,7 @@ export default class UndefWidget extends WidgetProps {
 
   _someEvent: any;
   _twoWayPropChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -225,7 +227,7 @@ export default class UndefWidget extends WidgetProps {
     this.__anotherNestedPropInit = value;
     this._detectChanges();
   }
-  @ViewChild("slotSlotProp") set slotSlotProp(
+  @ViewChild('slotSlotProp') set slotSlotProp(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.slotProp;

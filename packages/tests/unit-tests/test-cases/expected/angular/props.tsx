@@ -1,23 +1,23 @@
 type EventCallBack<Type> = (e: Type) => void;
-const device = "ios";
+const device = 'ios';
 function isDevice() {
   return true;
 }
 
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() height: number = 10;
   @Input() export: object = {};
-  @Input() array: any = ["1"];
+  @Input() array: any = ['1'];
   @Input() currentDate: any = new Date();
-  @Input() expressionDefault: string = device === "ios" ? "yes" : "no";
+  @Input() expressionDefault: string = device === 'ios' ? 'yes' : 'no';
   @Input() expressionDefault1: boolean = !device;
-  @Input() expressionDefault2: boolean | string = isDevice() || "test";
+  @Input() expressionDefault2: boolean | string = isDevice() || 'test';
   @Input() sizes?: { height: number; width: number };
-  @Input() stringValue: string = "";
+  @Input() stringValue: string = '';
   @Output() onClick: EventEmitter<number> = new EventEmitter();
   @Output() onSomething: EventEmitter<any> = new EventEmitter();
   @Output() stringValueChange: EventEmitter<string> = new EventEmitter();
@@ -32,28 +32,28 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "height",
-    "export",
-    "array",
-    "currentDate",
-    "expressionDefault",
-    "expressionDefault1",
-    "expressionDefault2",
-    "sizes",
-    "stringValue",
+    'height',
+    'export',
+    'array',
+    'currentDate',
+    'expressionDefault',
+    'expressionDefault1',
+    'expressionDefault2',
+    'sizes',
+    'stringValue',
   ],
-  outputs: ["onClick", "onSomething", "stringValueChange"],
+  outputs: ['onClick', 'onSomething', 'stringValueChange'],
   template: `<ng-template #widgetTemplate
     ><span
       >{{ (sizes ?? { width: 0, height: 0 }).height
@@ -63,6 +63,7 @@ import {
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
+
   __getHeight(): number {
     this._onClick(10);
     this._onClick(11);
@@ -103,7 +104,7 @@ export default class Widget extends WidgetInput {
   _onClick: any;
   _onSomething: any;
   _stringValueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -113,14 +114,14 @@ export default class Widget extends WidgetInput {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
     this.defaultEntries = [
-      "height",
-      "export",
-      "array",
-      "currentDate",
-      "expressionDefault",
-      "expressionDefault1",
-      "expressionDefault2",
-      "stringValue",
+      'height',
+      'export',
+      'array',
+      'currentDate',
+      'expressionDefault',
+      'expressionDefault1',
+      'expressionDefault2',
+      'stringValue',
     ].map((key) => ({ key, value: defaultProps[key] }));
     this._onClick = (e: any) => {
       this.onClick.emit(e);

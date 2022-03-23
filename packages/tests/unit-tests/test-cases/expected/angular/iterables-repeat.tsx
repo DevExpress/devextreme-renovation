@@ -1,10 +1,10 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class ListInput {
   @Input() items?: any[] = [];
-  @Input() keyExpr?: string = "value";
+  @Input() keyExpr?: string = 'value';
 }
 import {
   NgModule,
@@ -15,17 +15,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-list",
+  selector: 'dx-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["items", "keyExpr"],
+  inputs: ['items', 'keyExpr'],
   template: `<ng-template #widgetTemplate
     ><div
       ><div
@@ -42,6 +42,7 @@ import {
 })
 export default class List extends ListInput {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -64,7 +65,7 @@ export default class List extends ListInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -73,7 +74,7 @@ export default class List extends ListInput {
   ) {
     super();
     const defaultProps = new ListInput() as { [key: string]: any };
-    this.defaultEntries = ["items", "keyExpr"].map((key) => ({
+    this.defaultEntries = ['items', 'keyExpr'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

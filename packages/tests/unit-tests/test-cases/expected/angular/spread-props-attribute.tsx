@@ -1,7 +1,7 @@
-import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import InnerWidget, { DxInnerWidgetModule } from './dx-inner-widget';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() visible?: boolean;
@@ -21,10 +21,10 @@ import {
   TemplateRef,
   forwardRef,
   HostListener,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { getAttributes } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { getAttributes } from '@devextreme/runtime/angular';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,
@@ -32,11 +32,11 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   multi: true,
 };
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
-  inputs: ["visible", "value"],
-  outputs: ["valueChange"],
+  inputs: ['visible', 'value'],
+  outputs: ['valueChange'],
   template: `<ng-template #widgetTemplate
     ><dx-inner-widget
       #innerwidget1
@@ -76,9 +76,9 @@ export default class Widget
         this.changeDetection.detectChanges();
     });
   }
-  @ViewChild("_auto_ref_0", { static: false })
+  @ViewChild('_auto_ref_0', { static: false })
   _auto_ref_0?: ElementRef<HTMLDivElement>;
-  @ViewChild("_auto_ref_1", { static: false })
+  @ViewChild('_auto_ref_1', { static: false })
   _auto_ref_1?: ElementRef<HTMLDivElement>;
 
   scheduledApplyAttributes = false;
@@ -99,11 +99,11 @@ export default class Widget
       }
     }
 
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
-  @HostListener("valueChange", ["$event"]) change() {}
-  @HostListener("onBlur", ["$event"]) touched = () => {};
+  @HostListener('valueChange', ['$event']) change() {}
+  @HostListener('onBlur', ['$event']) touched = () => {};
 
   writeValue(value: any): void {
     this.value = value;
@@ -121,7 +121,7 @@ export default class Widget
     this.__applyAttributes__();
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (["visible"].some((d) => changes[d] && !changes[d].firstChange)) {
+    if (['visible'].some((d) => changes[d] && !changes[d].firstChange)) {
       this.scheduledApplyAttributes = true;
     }
   }
@@ -134,7 +134,7 @@ export default class Widget
   }
 
   _valueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

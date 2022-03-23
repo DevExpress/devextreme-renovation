@@ -1,8 +1,8 @@
-import { namedFunction as externalFunction } from "./functions";
-import { SomeClass } from "./class";
+import { namedFunction as externalFunction } from './functions';
+import { SomeClass } from './class';
 declare type Cell = { text: string; visible: boolean };
 const arrowFunction: () => string = () => {
-  return "defaultClassName";
+  return 'defaultClassName';
 };
 const conditionFn: (cell: Cell) => boolean = (cell) => {
   return cell.visible;
@@ -10,9 +10,9 @@ const conditionFn: (cell: Cell) => boolean = (cell) => {
 const getValue: (cell: Cell) => string = (cell) => cell.text;
 const array = new Array(100).map((_, index) => index);
 const CLASS_NAME = arrowFunction();
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() cells: Cell[] = [];
@@ -27,83 +27,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
-
-const NUMBER_STYLES = new Set([
-  "animation-iteration-count",
-  "border-image-outset",
-  "border-image-slice",
-  "border-image-width",
-  "box-flex",
-  "box-flex-group",
-  "box-ordinal-group",
-  "column-count",
-  "fill-opacity",
-  "flex",
-  "flex-grow",
-  "flex-negative",
-  "flex-order",
-  "flex-positive",
-  "flex-shrink",
-  "flood-opacity",
-  "font-weight",
-  "grid-column",
-  "grid-row",
-  "line-clamp",
-  "line-height",
-  "opacity",
-  "order",
-  "orphans",
-  "stop-opacity",
-  "stroke-dasharray",
-  "stroke-dashoffset",
-  "stroke-miterlimit",
-  "stroke-opacity",
-  "stroke-width",
-  "tab-size",
-  "widows",
-  "z-index",
-  "zoom",
-]);
-
-const uppercasePattern = /[A-Z]/g;
-const kebabCase = (str: string) => {
-  return str.replace(uppercasePattern, "-$&").toLowerCase();
-};
-
-const isNumeric = (value: string | number) => {
-  if (typeof value === "number") return true;
-  return !isNaN(Number(value));
-};
-
-const getNumberStyleValue = (style: string, value: string | number) => {
-  return NUMBER_STYLES.has(style) ? value : `${value}px`;
-};
-
-const normalizeStyles = (styles: unknown) => {
-  if (!(styles instanceof Object)) return undefined;
-
-  return Object.entries(styles).reduce(
-    (result: Record<string, string | number>, [key, value]) => {
-      const kebabString = kebabCase(key);
-      result[kebabString] = isNumeric(value)
-        ? getNumberStyleValue(kebabString, value)
-        : value;
-      return result;
-    },
-    {} as Record<string, string | number>
-  );
-};
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["cells"],
+  inputs: ['cells'],
   template: `<ng-template #widgetTemplate
     ><div
       [class]="global_CLASS_NAME"
@@ -133,6 +67,7 @@ export default class Widget extends WidgetProps {
   global_SomeClass = SomeClass;
   global_array = array;
   defaultEntries: DefaultEntries;
+
   __addPostfix(index: number): any {
     return `_#${index}`;
   }
@@ -158,7 +93,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -167,7 +102,7 @@ export default class Widget extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["cells"].map((key) => ({
+    this.defaultEntries = ['cells'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

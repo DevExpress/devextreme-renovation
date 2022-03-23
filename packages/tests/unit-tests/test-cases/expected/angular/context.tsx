@@ -4,7 +4,7 @@ import {
   SkipSelf,
   Optional,
   Host,
-} from "@angular/core";
+} from '@angular/core';
 @Injectable()
 class P1Context {
   _value: number = 5;
@@ -35,7 +35,7 @@ class ContextForConsumer {
 }
 @Injectable()
 class GetterContext {
-  _value: string = "default";
+  _value: string = 'default';
   change: ContextEmitter<string> = new ContextEmitter();
   get value(): string {
     return this._value;
@@ -48,9 +48,9 @@ class GetterContext {
   }
 }
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() p1: number = 10;
@@ -65,18 +65,18 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [P1Context, GetterContext],
-  inputs: ["p1"],
+  inputs: ['p1'],
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends Props {
@@ -88,14 +88,14 @@ export default class Widget extends Props {
     return this.provider.value + this.contextConsumerConsumer;
   }
   get __contextProvider(): any {
-    if (this.__getterCache["contextProvider"] !== undefined) {
-      return this.__getterCache["contextProvider"];
+    if (this.__getterCache['contextProvider'] !== undefined) {
+      return this.__getterCache['contextProvider'];
     }
     return (this.contextProviderProvider.value = this.__getterCache[
-      "contextProvider"
+      'contextProvider'
     ] =
       ((): any => {
-        return "provide";
+        return 'provide';
       })());
   }
   _detectChanges(): void {
@@ -125,7 +125,7 @@ export default class Widget extends Props {
     this.__contextProvider;
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -138,7 +138,7 @@ export default class Widget extends Props {
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["p1"].map((key) => ({
+    this.defaultEntries = ['p1'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

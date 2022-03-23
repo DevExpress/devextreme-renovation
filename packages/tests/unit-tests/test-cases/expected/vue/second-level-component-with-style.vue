@@ -1,10 +1,10 @@
 <template>
-  <span v-bind:style="__processStyle(__styles)"></span>
+  <tr
+    ><template v-for="height of __cells"
+      ><td v-bind:style="__processStyle({ height })" /></template
+  ></tr>
 </template>
 <script>
-const modifyStyles = (styles) => {
-  return { height: "100px", ...styles };
-};
 const WidgetInput = {};
 import { normalizeStyles } from "@devextreme/runtime/vue";
 
@@ -12,9 +12,8 @@ export const DxWidget = {
   name: "Widget",
   props: WidgetInput,
   computed: {
-    __styles() {
-      const { style } = this.__restAttributes;
-      return modifyStyles(style);
+    __cells() {
+      return [];
     },
     __restAttributes() {
       return {};

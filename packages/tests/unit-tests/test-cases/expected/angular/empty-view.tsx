@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {}
 
@@ -13,11 +13,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget-with-props",
+  selector: 'dx-widget-with-props',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: ``,
 })
@@ -29,7 +29,7 @@ export class WidgetWithProps extends WidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,7 +1,7 @@
-import { Component, Input, ViewChild, ElementRef } from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { isSlotEmpty } from '@devextreme/runtime/angular';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetOneProps {
   @Input() text?: string;
@@ -19,13 +19,13 @@ import {
   Renderer2,
   ViewRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget-one",
+  selector: 'dx-widget-one',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["text"],
+  inputs: ['text'],
   template: `<ng-template #widgetTemplate
     ><div
       ><span>One -{{ text }}</span
@@ -43,7 +43,7 @@ export default class WidgetOne extends WidgetOneProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -52,7 +52,7 @@ export default class WidgetOne extends WidgetOneProps {
   ) {
     super();
   }
-  @ViewChild("slotChildren") set slotChildren(
+  @ViewChild('slotChildren') set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.children;

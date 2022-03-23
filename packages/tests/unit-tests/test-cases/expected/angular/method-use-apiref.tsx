@@ -1,7 +1,7 @@
-import BaseWidget, { DxWidgetModule } from "./method";
-import { Component, Input } from "@angular/core";
+import BaseWidget, { DxWidgetModule } from './method';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetWithApiRefInput {
   @Input() prop1?: number;
@@ -16,20 +16,20 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget-with-api-ref",
+  selector: 'dx-widget-with-api-ref',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["prop1"],
+  inputs: ['prop1'],
   template: `<ng-template #widgetTemplate
     ><dx-widget #baseRef [prop1]="prop1" style="display: contents"></dx-widget
     ><ng-content *ngTemplateOutlet="baseRef?.widgetTemplate"></ng-content
   ></ng-template>`,
 })
 export default class WidgetWithApiRef extends WidgetWithApiRefInput {
-  @ViewChild("baseRef", { static: false }) baseRef!: BaseWidget;
+  @ViewChild('baseRef', { static: false }) baseRef!: BaseWidget;
   getSomething(): string {
     return `${this.prop1} + ${this.baseRef?.getHeight(1, undefined)}`;
   }
@@ -40,7 +40,7 @@ export default class WidgetWithApiRef extends WidgetWithApiRefInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

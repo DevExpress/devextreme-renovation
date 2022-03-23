@@ -1,7 +1,3 @@
-import {
-  WidgetWithProps,
-  DxWidgetWithPropsModule,
-} from './dx-widget-with-props';
 import { Component } from '@angular/core';
 @Component({
   template: '',
@@ -19,42 +15,35 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  convertRulesToOptions,
+  DefaultOptionsRule,
+} from '../../../../jquery-helpers/default_options';
+
+type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetInput>>;
+
+const __defaultOptionRules: WidgetOptionRule[] = [];
+export function defaultOptions(rule: WidgetOptionRule) {
+  __defaultOptionRules.push(rule);
+}
 
 @Component({
   selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
-    ><dx-widget-with-props
-      (onClick)="__onClickWithoutArgs()"
-      #widgetwithprops1
-      style="display: contents"
-    ></dx-widget-with-props
-    ><ng-content
-      *ngTemplateOutlet="widgetwithprops1?.widgetTemplate"
-    ></ng-content
-    ><dx-widget-with-props
-      (onClick)="__onClickWithArgs($event)"
-      #widgetwithprops2
-      style="display: contents"
-    ></dx-widget-with-props
-    ><ng-content
-      *ngTemplateOutlet="widgetwithprops2?.widgetTemplate"
-    ></ng-content
-    ><dx-widget-with-props
-      (onClick)="__onClickGetter($event)"
-      #widgetwithprops3
-      style="display: contents"
-    ></dx-widget-with-props
-    ><ng-content
-      *ngTemplateOutlet="widgetwithprops3?.widgetTemplate"
-    ></ng-content
+    ><tr
+      ><ng-container *ngFor="let height of __cells"
+        ><td [ngStyle]="__processNgStyle({height})"></td></ng-container></tr
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  __onClickWithoutArgs(): any {}
-  __onClickWithArgs(args: unknown): any {}
-  get __onClickGetter(): any {
-    return () => {};
+  get __cells(): string[] {
+    if (this.__getterCache['cells'] !== undefined) {
+      return this.__getterCache['cells'];
+    }
+    return (this.__getterCache['cells'] = ((): string[] => {
+      return [];
+    })());
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -62,6 +51,10 @@ export default class Widget extends WidgetInput {
         this.changeDetection.detectChanges();
     });
   }
+
+  __getterCache: {
+    cells?: string[];
+  } = {};
 
   @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
@@ -71,12 +64,22 @@ export default class Widget extends WidgetInput {
     private viewContainerRef: ViewContainerRef
   ) {
     super();
+
+    const defaultOptions =
+      convertRulesToOptions<WidgetInput>(__defaultOptionRules);
+    Object.keys(defaultOptions).forEach((option) => {
+      (this as any)[option] = (defaultOptions as any)[option];
+    });
+  }
+
+  __processNgStyle(value: any) {
+    return normalizeStyles(value);
   }
 }
 @NgModule({
   declarations: [Widget],
-  imports: [DxWidgetWithPropsModule, CommonModule],
-  entryComponents: [WidgetWithProps],
+  imports: [CommonModule],
+
   exports: [Widget],
 })
 export class DxWidgetModule {}

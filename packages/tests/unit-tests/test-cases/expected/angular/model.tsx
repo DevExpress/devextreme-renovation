@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class ModelWidgetInput {
   @Input() baseStateProp?: boolean;
@@ -24,9 +24,9 @@ import {
   TemplateRef,
   forwardRef,
   HostListener,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,
@@ -34,11 +34,11 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   multi: true,
 };
 @Component({
-  selector: "dx-model-widget",
+  selector: 'dx-model-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
-  inputs: ["baseStateProp", "modelStateProp", "value"],
-  outputs: ["baseStatePropChange", "modelStatePropChange", "valueChange"],
+  inputs: ['baseStateProp', 'modelStateProp', 'value'],
+  outputs: ['baseStatePropChange', 'modelStatePropChange', 'valueChange'],
   template: `<ng-template #widgetTemplate
     ><div>{{ baseStateProp }}</div></ng-template
   >`,
@@ -54,8 +54,8 @@ export default class ModelWidget
     });
   }
 
-  @HostListener("modelStatePropChange", ["$event"]) change() {}
-  @HostListener("onBlur", ["$event"]) touched = () => {};
+  @HostListener('modelStatePropChange', ['$event']) change() {}
+  @HostListener('onBlur', ['$event']) touched = () => {};
 
   writeValue(value: any): void {
     this.modelStateProp = value;
@@ -72,7 +72,7 @@ export default class ModelWidget
   _baseStatePropChange: any;
   _modelStatePropChange: any;
   _valueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,9 +1,9 @@
 import WidgetWithRefProp, {
   DxWidgetWithRefPropModule,
-} from "./dx-widget-with-ref-prop";
-import { Component, Input } from "@angular/core";
+} from './dx-widget-with-ref-prop';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   @Input() nullableRef?: HTMLDivElement;
@@ -19,14 +19,16 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["nullableRef"],
+  inputs: ['nullableRef'],
   template: `<ng-template #widgetTemplate
     ><div #divRefLink
       ><dx-widget-with-ref-prop
@@ -41,7 +43,7 @@ import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("divRefLink", { static: false })
+  @ViewChild('divRefLink', { static: false })
   __divRef!: ElementRef<HTMLDivElement>;
   get divRef(): ElementRef<HTMLDivElement> {
     return this.__divRef
@@ -49,13 +51,13 @@ export default class Widget extends WidgetInput {
       : new UndefinedNativeElementRef<HTMLDivElement>();
   }
   __getDirectly(): any {
-    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
-    const nullableRefOuter = this.nullableRef?.outerHTML ?? "";
+    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? '';
+    const nullableRefOuter = this.nullableRef?.outerHTML ?? '';
     return divRefOuter + nullableRefOuter;
   }
   __getDestructed(): any {
-    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? "";
-    const nullableRefOuter = this.nullableRef?.outerHTML ?? "";
+    const divRefOuter = this.divRef.nativeElement?.outerHTML ?? '';
+    const nullableRefOuter = this.nullableRef?.outerHTML ?? '';
     return divRefOuter + nullableRefOuter;
   }
   _detectChanges(): void {
@@ -65,7 +67,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

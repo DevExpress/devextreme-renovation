@@ -1,15 +1,15 @@
-import { COMPONENT_INPUT_CLASS } from "./component-input";
+import { COMPONENT_INPUT_CLASS } from './component-input';
 import {
   WidgetTwo as ExternalComponent,
   DxWidgetTwoModule,
-} from "./component-pass-two";
-export const PREFIX = "dx";
-export const CLASS_NAME = PREFIX + "c1" + "c2" + COMPONENT_INPUT_CLASS;
+} from './component-pass-two';
+export const PREFIX = 'dx';
+export const CLASS_NAME = PREFIX + 'c1' + 'c2' + COMPONENT_INPUT_CLASS;
 export type Item = { text: string; key: number };
 const getKey = (item: Item) => item.key;
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() items: Item[] = [];
@@ -24,17 +24,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget-with-globals",
+  selector: 'dx-widget-with-globals',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["items"],
+  inputs: ['items'],
   template: `<ng-template #widgetTemplate
     ><div [class]="global_CLASS_NAME"
       ><span [class]="global_CLASS_NAME"></span
@@ -53,6 +53,7 @@ export default class WidgetWithGlobals extends WidgetProps {
   global_CLASS_NAME = CLASS_NAME;
   global_getKey = getKey;
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -72,7 +73,7 @@ export default class WidgetWithGlobals extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -81,7 +82,7 @@ export default class WidgetWithGlobals extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["items"].map((key) => ({
+    this.defaultEntries = ['items'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

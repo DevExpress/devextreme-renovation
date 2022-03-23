@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class HelperWidgetProps {
   @Input() forwardRef?: HTMLDivElement | null;
@@ -17,13 +17,13 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-helper-widget",
+  selector: 'dx-helper-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["forwardRef", "someRef", "refProp", "forwardRefProp"],
+  inputs: ['forwardRef', 'someRef', 'refProp', 'forwardRefProp'],
   template: `<ng-template #widgetTemplate
     ><div
       ><div>Ref:{{ someRef }}</div
@@ -41,7 +41,7 @@ export default class HelperWidget extends HelperWidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

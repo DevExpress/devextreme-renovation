@@ -1,4 +1,4 @@
-import BaseProps from "./component-bindings-only";
+import BaseProps from './component-bindings-only';
 export interface PropsI {
   p: string;
 }
@@ -7,12 +7,12 @@ interface WidgetI {
   onClick(): void;
 }
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput extends BaseProps {
-  @Input() p: string = "10";
+  @Input() p: string = '10';
 }
 
 import {
@@ -24,21 +24,22 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["p", "height", "data", "info"],
+  inputs: ['p', 'height', 'data', 'info'],
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   defaultEntries: DefaultEntries;
+
   __onClick(): void {}
   _detectChanges(): void {
     setTimeout(() => {
@@ -55,7 +56,7 @@ export default class Widget extends WidgetInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -64,7 +65,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["p", "height", "data", "info"].map((key) => ({
+    this.defaultEntries = ['p', 'height', 'data', 'info'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

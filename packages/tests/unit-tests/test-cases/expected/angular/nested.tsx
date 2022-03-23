@@ -1,4 +1,4 @@
-import { PickedProps, GridColumnProps } from "./nested-props";
+import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: GridColumnProps) => {};
 import {
   Component,
@@ -14,38 +14,38 @@ import {
   ContentChildren,
   QueryList,
   Directive,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import {
   EditingProps,
   CustomProps,
   ColumnEditingProps,
   AnotherCustomProps,
-} from "./nested-props";
+} from './nested-props';
 
 @Directive({
-  selector: "dxo-another-custom",
+  selector: 'dxo-another-custom',
 })
 export class DxWidgetEditingAnotherCustom extends AnotherCustomProps {}
 
 @Directive({
-  selector: "dxi-custom",
+  selector: 'dxi-custom',
 })
 export class DxWidgetEditingCustom extends CustomProps {}
 
 @Directive({
-  selector: "dxo-editing",
+  selector: 'dxo-editing',
 })
 export class DxWidgetColumnEditing extends ColumnEditingProps {}
 
 @Directive({
-  selector: "dxi-custom",
+  selector: 'dxi-custom',
 })
 export class DxWidgetColumnCustom extends CustomProps {}
 
 @Directive({
-  selector: "dxo-editing",
+  selector: 'dxo-editing',
 })
 export class DxWidgetEditing extends EditingProps {
   private __custom?: DxWidgetEditingCustom[];
@@ -81,7 +81,7 @@ export class DxWidgetEditing extends EditingProps {
 }
 
 @Directive({
-  selector: "dxi-column",
+  selector: 'dxi-column',
 })
 export class DxWidgetColumn extends GridColumnProps {
   private __editing?: DxWidgetColumnEditing;
@@ -117,14 +117,14 @@ export class DxWidgetColumn extends GridColumnProps {
 }
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["columns", "editing"],
+  inputs: ['columns', 'editing'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends PickedProps {
   __getColumns(): any {
-    return this.columns?.map((el) => (typeof el === "string" ? el : el.name));
+    return this.columns?.map((el) => (typeof el === 'string' ? el : el.name));
   }
   get __isEditable(): any {
     return this.editing.editEnabled || this.editing.custom?.length;
@@ -163,7 +163,7 @@ export default class Widget extends PickedProps {
     this._detectChanges();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -2,12 +2,12 @@ function isMaterial() {
   return true;
 }
 function format(key: string) {
-  return "localized_" + key;
+  return 'localized_' + key;
 }
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class BaseProps {
   @Input() empty?: string;
@@ -23,30 +23,30 @@ export class BaseProps {
     }
     return this.__baseNested__;
   }
-  public static __defaultNestedValues: any = { baseNested: { text: "3" } };
+  public static __defaultNestedValues: any = { baseNested: { text: '3' } };
 }
 
 @Component({
-  template: "",
+  template: '',
 })
 export class TextsProps {
-  @Input() text?: string = format("text");
+  @Input() text?: string = format('text');
 }
 
 @Component({
-  template: "",
+  template: '',
 })
 export class ExpressionProps {
   @Input() expressionDefault?: any = isMaterial() ? 20 : 10;
 }
 
-import { TemplateRef } from "@angular/core";
+import { TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps extends BaseProps {
-  @Input() text?: string = format("text");
-  @Input() texts1?: TextsProps = { text: format("text") };
+  @Input() text?: string = format('text');
+  @Input() texts1?: TextsProps = { text: format('text') };
   private __texts2__?: TextsProps;
   @Input() set texts2(value: TextsProps | undefined) {
     this.__texts2__ = value;
@@ -69,7 +69,7 @@ export class WidgetProps extends BaseProps {
   }
   @Input() template?: TemplateRef<any> | null = null;
   public static __defaultNestedValues: any = {
-    texts2: { text: format("text") },
+    texts2: { text: format('text') },
     texts3: new TextsProps(),
     baseNested: BaseProps?.__defaultNestedValues.baseNested,
   };
@@ -86,7 +86,7 @@ export class WidgetProps extends BaseProps {
 }
 
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetPropsType {
   @Input() text?: string = new WidgetProps().text;
@@ -144,47 +144,48 @@ import {
   ContentChildren,
   QueryList,
   Directive,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Directive({
-  selector: "dxo-base-nested",
+  selector: 'dxo-base-nested',
 })
 export class DxWidgetBaseNested extends TextsProps {}
 
 @Directive({
-  selector: "dxo-texts3",
+  selector: 'dxo-texts3',
 })
 export class DxWidgetTexts3 extends TextsProps {}
 
 @Directive({
-  selector: "dxo-texts2",
+  selector: 'dxo-texts2',
 })
 export class DxWidgetTexts2 extends TextsProps {}
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "text",
-    "texts1",
-    "texts2",
-    "texts3",
-    "template",
-    "empty",
-    "height",
-    "width",
-    "baseNested",
-    "expressionDefault",
+    'text',
+    'texts1',
+    'texts2',
+    'texts3',
+    'template',
+    'empty',
+    'height',
+    'width',
+    'baseNested',
+    'expressionDefault',
   ],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetPropsType {
   defaultEntries: DefaultEntries;
+
   private __texts2?: DxWidgetTexts2;
   @ContentChildren(DxWidgetTexts2) texts2Nested?: QueryList<DxWidgetTexts2>;
   get texts2(): DxWidgetTexts2 | undefined {
@@ -240,7 +241,7 @@ export default class Widget extends WidgetPropsType {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -250,11 +251,11 @@ export default class Widget extends WidgetPropsType {
     super();
     const defaultProps = new WidgetPropsType() as { [key: string]: any };
     this.defaultEntries = [
-      "text",
-      "texts1",
-      "height",
-      "width",
-      "expressionDefault",
+      'text',
+      'texts1',
+      'height',
+      'width',
+      'expressionDefault',
     ].map((key) => ({ key, value: defaultProps[key] }));
   }
   @Input() set texts2(value: DxWidgetTexts2 | undefined) {

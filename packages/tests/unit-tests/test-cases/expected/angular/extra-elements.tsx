@@ -1,7 +1,7 @@
-import { InnerLayout as Child, DxInnerLayoutModule } from "./inner-layout";
-import { Component, Input } from "@angular/core";
+import { InnerLayout as Child, DxInnerLayoutModule } from './inner-layout';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class Props {
   @Input() prop: number = 0;
@@ -18,17 +18,17 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-extra-element",
+  selector: 'dx-extra-element',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["prop", "rf"],
+  inputs: ['prop', 'rf'],
   template: `<ng-template #widgetTemplate>
       <pre><ng-container *ngIf="rf"><dx-inner-layout #rf
 [prop]="3"
@@ -58,7 +58,7 @@ export class ExtraElement extends Props {
 
   scheduledApplyAttributes = false;
   __applyAttributes__() {
-    this._elementRef.nativeElement.removeAttribute("id");
+    this._elementRef.nativeElement.removeAttribute('id');
   }
 
   ngAfterViewInit() {
@@ -79,7 +79,7 @@ export class ExtraElement extends Props {
     }
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -89,7 +89,7 @@ export class ExtraElement extends Props {
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["prop"].map((key) => ({
+    this.defaultEntries = ['prop'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

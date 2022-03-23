@@ -1,4 +1,4 @@
-import Props from "./component-bindings-only";
+import Props from './component-bindings-only';
 import {
   Component,
   NgModule,
@@ -9,16 +9,16 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
+} from '../../../../jquery-helpers/default_options';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 type WidgetOptionRule = DefaultOptionsRule<Partial<Props>>;
 
@@ -28,15 +28,16 @@ export function defaultOptions(rule: WidgetOptionRule) {
 }
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "data", "info"],
+  inputs: ['height', 'data', 'info'],
   template: `<ng-template #widgetTemplate
     ><div>{{ height }}</div></ng-template
   >`,
 })
 export default class Widget extends Props {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -52,7 +53,7 @@ export default class Widget extends Props {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -66,7 +67,7 @@ export default class Widget extends Props {
       (this as any)[option] = (defaultOptions as any)[option];
     });
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["height", "data", "info"].map((key) => ({
+    this.defaultEntries = ['height', 'data', 'info'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

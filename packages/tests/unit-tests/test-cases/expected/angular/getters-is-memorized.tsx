@@ -1,15 +1,15 @@
 import {
   InterfaceTemplateInput as externalInterface,
   Options as externalType,
-} from "./types.d";
+} from './types.d';
 
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetProps {
-  @Input() someProp: string = "";
-  @Input() type?: string = "";
+  @Input() someProp: string = '';
+  @Input() type?: string = '';
   @Input() currentDate: Date | number | string = new Date();
   @Output() currentDateChange: EventEmitter<Date | number | string> =
     new EventEmitter();
@@ -30,61 +30,62 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp", "type", "currentDate"],
-  outputs: ["currentDateChange"],
+  inputs: ['someProp', 'type', 'currentDate'],
+  outputs: ['currentDateChange'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   get __internalInterfaceGetter(): internalInterface {
-    if (this.__getterCache["internalInterfaceGetter"] !== undefined) {
-      return this.__getterCache["internalInterfaceGetter"];
+    if (this.__getterCache['internalInterfaceGetter'] !== undefined) {
+      return this.__getterCache['internalInterfaceGetter'];
     }
-    return (this.__getterCache["internalInterfaceGetter"] =
+    return (this.__getterCache['internalInterfaceGetter'] =
       ((): internalInterface => {
         return { field1: { a: this.someProp }, field2: 2, field3: 3 };
       })());
   }
   get __internalTypeGetter(): internalType {
-    if (this.__getterCache["internalTypeGetter"] !== undefined) {
-      return this.__getterCache["internalTypeGetter"];
+    if (this.__getterCache['internalTypeGetter'] !== undefined) {
+      return this.__getterCache['internalTypeGetter'];
     }
-    return (this.__getterCache["internalTypeGetter"] = ((): internalType => {
-      return { a: "1" };
+    return (this.__getterCache['internalTypeGetter'] = ((): internalType => {
+      return { a: '1' };
     })());
   }
   get __externalInterfaceGetter(): externalInterface {
-    if (this.__getterCache["externalInterfaceGetter"] !== undefined) {
-      return this.__getterCache["externalInterfaceGetter"];
+    if (this.__getterCache['externalInterfaceGetter'] !== undefined) {
+      return this.__getterCache['externalInterfaceGetter'];
     }
-    return (this.__getterCache["externalInterfaceGetter"] =
+    return (this.__getterCache['externalInterfaceGetter'] =
       ((): externalInterface => {
         return { inputInt: 2 };
       })());
   }
   get __externalTypeGetter(): externalType {
-    if (this.__getterCache["externalTypeGetter"] !== undefined) {
-      return this.__getterCache["externalTypeGetter"];
+    if (this.__getterCache['externalTypeGetter'] !== undefined) {
+      return this.__getterCache['externalTypeGetter'];
     }
-    return (this.__getterCache["externalTypeGetter"] = ((): externalType => {
-      return { value: "" };
+    return (this.__getterCache['externalTypeGetter'] = ((): externalType => {
+      return { value: '' };
     })());
   }
   get __someDate(): Date {
-    if (this.__getterCache["someDate"] !== undefined) {
-      return this.__getterCache["someDate"];
+    if (this.__getterCache['someDate'] !== undefined) {
+      return this.__getterCache['someDate'];
     }
-    return (this.__getterCache["someDate"] = ((): Date => {
+    return (this.__getterCache['someDate'] = ((): Date => {
       return new Date(this.currentDate);
     })());
   }
@@ -110,17 +111,17 @@ class Widget extends WidgetProps {
       this.defaultEntries
     );
 
-    if (["someProp"].some((d) => changes[d])) {
-      this.__getterCache["internalInterfaceGetter"] = undefined;
+    if (['someProp'].some((d) => changes[d])) {
+      this.__getterCache['internalInterfaceGetter'] = undefined;
     }
 
-    if (["currentDate"].some((d) => changes[d])) {
-      this.__getterCache["someDate"] = undefined;
+    if (['currentDate'].some((d) => changes[d])) {
+      this.__getterCache['someDate'] = undefined;
     }
   }
 
   _currentDateChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -129,13 +130,13 @@ class Widget extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["someProp", "type", "currentDate"].map((key) => ({
+    this.defaultEntries = ['someProp', 'type', 'currentDate'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
     this._currentDateChange = (e: any) => {
       this.currentDateChange.emit(e);
-      this.__getterCache["someDate"] = undefined;
+      this.__getterCache['someDate'] = undefined;
       this._detectChanges();
     };
   }

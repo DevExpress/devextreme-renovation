@@ -1,7 +1,7 @@
-import { Widget, DxWidgetModule } from "./export-named";
-import { Component, Input } from "@angular/core";
+import { Widget, DxWidgetModule } from './export-named';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class ChildInput {
   @Input() height: number = 10;
@@ -16,17 +16,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-child",
+  selector: 'dx-child',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height"],
+  inputs: ['height'],
   template: `<ng-template #widgetTemplate
     ><dx-widget [prop]="true" #widget1 style="display: contents"></dx-widget
     ><ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content
@@ -50,7 +50,7 @@ export default class Child extends ChildInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -59,7 +59,7 @@ export default class Child extends ChildInput {
   ) {
     super();
     const defaultProps = new ChildInput() as { [key: string]: any };
-    this.defaultEntries = ["height"].map((key) => ({
+    this.defaultEntries = ['height'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
