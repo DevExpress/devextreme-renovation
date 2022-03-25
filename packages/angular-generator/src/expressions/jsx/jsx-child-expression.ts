@@ -45,7 +45,6 @@ export const mergeToStringOptions = (
   dst.hasStyle = dst.hasStyle || src.hasStyle;
   dst.hasDynamicComponents = dst.hasDynamicComponents || src.hasDynamicComponents;
   dst.defaultTemplates = src.defaultTemplates || {};
-  dst.templateComponents = src.templateComponents || [];
   const trackBy = (dst.trackBy || []).concat(src.trackBy || []);
   dst.trackBy = [...new Set(trackBy)];
   return dst;
