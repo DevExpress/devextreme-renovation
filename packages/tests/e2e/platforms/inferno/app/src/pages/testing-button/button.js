@@ -27,7 +27,6 @@ var hooks_1 = require("@devextreme/runtime/inferno-hooks/hooks");
 var inferno_create_element_1 = require("inferno-create-element");
 var h = inferno_create_element_1.createElement;
 var inferno_1 = require("inferno");
-// import * as React from 'react';
 var react_1 = require("@devextreme/runtime/react");
 var utils_1 = require("../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/options/utils");
 var devices_1 = require("../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/devices");

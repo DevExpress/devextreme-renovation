@@ -30,7 +30,6 @@ var create_context_1 = require("../../../../../../../../../runtime/inferno-hooks
 var inferno_1 = require("inferno");
 require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/events/click");
 require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/events/hover");
-// import * as React from 'react';
 var type_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/type");
 var short_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/events/short");
 var combine_classes_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/utils/combine_classes");
@@ -38,7 +37,6 @@ var extend_1 = require("../../../../../../../../../../../DevExtreme/artifacts/re
 var selectors_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/ui/widget/selectors");
 var style_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/style");
 var base_props_1 = require("./base_props");
-// import { ConfigContextValue, ConfigContext } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/common/config_context';
 var config_provider_js_1 = require("./config_provider.js");
 var resolve_rtl_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/utils/resolve_rtl");
 var resize_callbacks_1 = require("../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/resize_callbacks");

@@ -1,3 +1,5 @@
+// Based on https://github.com/chrisdavies/xferno by Chris Davies
+
 /* eslint-disable @typescript-eslint/ban-types */
 export function equal(a: unknown, b: unknown): boolean {
   if (a === b) {

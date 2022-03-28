@@ -54,8 +54,5 @@
     "gulp-run": "^1.7.1",
     "lerna": "^4.0.0",
     "minimist": "^1.2.5"
-  },
-  "dependencies": {
-    "inferno-devtools": "^7.4.11"
   }
 }

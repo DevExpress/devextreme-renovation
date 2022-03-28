@@ -10,7 +10,7 @@ import {
 import { createElement } from "inferno-create-element";
 var h = createElement;
 import {forwardRef} from "inferno";
-import {RefObject as MutableRefObject} from '../../../../../../../../runtime/inferno-hooks/ref_object'
+import {RefObject as MutableRefObject} from '../../../../../../../../runtime/inferno-hooks'
 import { getTemplate } from '@devextreme/runtime/react';
 import {
   createDefaultOptionRules,

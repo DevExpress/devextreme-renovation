@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+
+// Based on https://github.com/chrisdavies/xferno by Chris Davies
+
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */

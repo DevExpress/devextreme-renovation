@@ -1,10 +1,17 @@
+// Based on https://github.com/chrisdavies/xferno by Chris Davies
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { Component } from 'inferno';
 import { equal } from './shallow-equal';
 
 const emptyProps = {};
+
+export interface RefObject<T> {
+  current: T | null;
+}
 
 let currentComponent: {
   getContextValue(consumer: { id: number }): any;

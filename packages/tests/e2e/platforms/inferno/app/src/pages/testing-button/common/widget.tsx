@@ -11,7 +11,7 @@ import {
 } from '@devextreme/runtime/inferno-hooks/hooks';
 import {
   RefObject as MutableRefObject,
-} from '../../../../../../../../../runtime/inferno-hooks/ref_object'
+} from '../../../../../../../../../runtime/inferno-hooks'
 
 import {createContext} from '../../../../../../../../../runtime/inferno-hooks/create_context';
 
