@@ -6,6 +6,8 @@ import {
   export const viewFunction = (model: InkRipple): any => (
     <div className="dx-inkripple" {...model.restAttributes} />
   );
+  import { createElement } from "inferno-create-element";
+  var h = createElement;
   
   export interface InkRippleConfig {
     isCentered?: boolean;

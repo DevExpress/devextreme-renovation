@@ -1,7 +1,5 @@
 import { Component } from 'inferno';
 
-// export const createContext = function<T>(defaultValue: T) { return defaultValue; };
-
 let contextId = 0;
 export const createContext = function<T>(defaultValue: T): { id: number, Provider: any } {
   const id = contextId++;
@@ -22,5 +20,4 @@ export const createContext = function<T>(defaultValue: T): { id: number, Provide
     },
 
   };
-//   // return defaultValue;
 };

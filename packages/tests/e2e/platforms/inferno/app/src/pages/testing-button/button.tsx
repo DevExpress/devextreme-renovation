@@ -11,7 +11,6 @@ import { createElement } from "inferno-create-element";
 var h = createElement;
 import {forwardRef} from "inferno";
 import {RefObject as MutableRefObject} from '../../../../../../../../runtime/inferno-hooks/ref_object'
-// import * as React from 'react';
 import { getTemplate } from '@devextreme/runtime/react';
 import {
   createDefaultOptionRules,
@@ -27,7 +26,6 @@ import {Icon}  from "./common/icon";
 import { InkRipple, InkRippleConfig, InkRippleRef } from './common/ink_ripple';
 import { InfernoWidgetFR as Widget, WidgetRef } from './common/widget';
 import { BaseWidgetProps } from './common/base_props';
-import { EffectReturn } from '../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/utils/effect_return';
 
 const stylingModes = ['outlined', 'text', 'contained'];
 const getCssClasses = (model: typeof ButtonProps): string => {

@@ -1,10 +1,10 @@
 import { getImageSourceType } from "../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/icon";
 import { combineClasses } from "../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/utils/combine_classes";
-// import * as React from "react";
 import {Fragment} from 'inferno'
 import { useCallback } from "@devextreme/runtime/inferno-hooks/hooks";
 import { getTemplate } from "@devextreme/runtime/react";
-
+import { createElement } from "inferno-create-element";
+var h = createElement;
 
 
 export declare type IconPropsType = {
@@ -51,7 +51,7 @@ export const viewFunction = ({
     </Fragment>
   );
 
-export function Icon(props: typeof IconProps & RestProps) {
+function Icon(props: typeof IconProps & RestProps) {
   const __sourceType = useCallback(
     function __sourceType(): string | false {
       return getImageSourceType(props.source);

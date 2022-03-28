@@ -18,7 +18,6 @@ import {createContext} from '../../../../../../../../../runtime/inferno-hooks/cr
 import {forwardRef} from 'inferno';
 import '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/events/click';
 import '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/events/hover';
-// import * as React from 'react';
 import { isFunction } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/type';
 import {
   active,
@@ -34,8 +33,6 @@ import { extend } from '../../../../../../../../../../../DevExtreme/artifacts/re
 import { focusable } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/ui/widget/selectors';
 import { normalizeStyleProp } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/core/utils/style';
 import { BaseWidgetProps } from './base_props';
-import { EffectReturn } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/utils/effect_return';
-// import { ConfigContextValue, ConfigContext } from '../../../../../../../../../../../DevExtreme/artifacts/react-typescript/renovation/common/config_context';
 import { ConfigProvider } from './config_provider.js';
 import {
   resolveRtlEnabled,

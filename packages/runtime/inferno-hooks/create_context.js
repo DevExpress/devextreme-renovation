@@ -28,7 +28,6 @@ var __assign = (this && this.__assign) || function () {
 exports.__esModule = true;
 exports.createContext = void 0;
 var inferno_1 = require("inferno");
-// export const createContext = function<T>(defaultValue: T) { return defaultValue; };
 var contextId = 0;
 var createContext = function (defaultValue) {
     var id = contextId++;
@@ -49,6 +48,5 @@ var createContext = function (defaultValue) {
             return class_1;
         }(inferno_1.Component))
     };
-    //   // return defaultValue;
 };
 exports.createContext = createContext;
