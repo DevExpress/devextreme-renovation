@@ -2,7 +2,7 @@ const ts = require('gulp-typescript');
 const gulp = require('gulp');
 const replace = require('gulp-replace');
 const shell = require('gulp-shell');
-const platforms = ['angular', 'react', 'vue', 'inferno', 'declarations'];
+const platforms = ['angular', 'react', 'vue', 'inferno', 'inferno-hooks', 'declarations'];
 
 const getPackageContent = (platform) => {
   return `

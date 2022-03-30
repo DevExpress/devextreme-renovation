@@ -1,6 +1,23 @@
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 const { getEntries, getPages } = require("../../helpers/pages");
+
+const infernoPath = path.resolve(__dirname, "./app/src");
+const infernoPages = ["inferno-hooks", "inferno-class"].map(
+  (page) =>
+    new HtmlWebpackPlugin({
+      filename: `${page}.html`,
+      chunks: [page],
+      template: `${infernoPath}/index.html`,
+    }));
+const infernoEntries =
+  ["inferno-hooks", "inferno-class"].reduce((entries, page) => {
+    return {
+      ...entries,
+      [page]: `${infernoPath}/${page}.js`,
+    };
+  }, {});
 
 const babelPresets = [
   "@babel/preset-env",
@@ -14,7 +31,7 @@ const babelPresets = [
 
 module.exports = {
   mode: "development",
-  entry: getEntries(path.resolve(__dirname, "./app/src"), "js"),
+  entry: {...getEntries((infernoPath), "js"), ...infernoEntries},
   module: {
     rules: [
       {
@@ -36,6 +53,17 @@ module.exports = {
             },
           },
         ],
+        exclude: ["/node_modules/", "/testing-button/"],
+      },
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: "ts-loader",
+            
+          },
+        ],
+        include: ["/testing-button/"],
         exclude: ["/node_modules/"],
       },
       {
@@ -62,7 +90,8 @@ module.exports = {
   },
 
   plugins: [
-    ...getPages(path.resolve(__dirname, "./app/src")),
+    ...getPages(path.resolve(__dirname, "./app/src"))
+    .concat(infernoPages),
     new webpack.HotModuleReplacementPlugin(),
   ],
 };

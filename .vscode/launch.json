@@ -5,6 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Inferno Hook Tests",
+            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+            "request": "launch",
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}/packages/runtime/inferno-hooks",
+            "skipFiles": [
+                "<node_internals>/**",
+                "<node_internals>/[eval]"
+            ],
+            "type": "pwa-node"
+        },
+    
+        {
             "type": "node",
             "request": "launch",
             "name": "Launch tests",
