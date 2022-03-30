@@ -38,7 +38,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
         `import {${common}} from "@devextreme/runtime/inferno"`,
       );
     }
-    result.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
+    result.push('import { normalizeStyles } from \'@devextreme/runtime/inferno\'');
 
     if (result.length) {
       return result.join(';\n');
