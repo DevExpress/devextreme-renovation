@@ -88,111 +88,63 @@ test('multiple useStates are allowed', async () => {
   expect(h1.innerHTML).toMatchInlineSnapshot('"Hi George Catt 43"');
 });
 
-// test('dynamic component switching works', async () => {
-//   const childMap: {
-//     [name: string]:(
-//       { name, setName }: { name: string, setName: SetState<string> }
-//     )=>JSX.Element } = {
-//     a({ name, setName }) {
-//       const [state] = useState('ahoy');
-//       return (
-//         <button type="button" onClick={() => setName('b')}>
-//           {state}
-//           {' '}
-//           {name}
-//         </button>
-//       );
-//     },
-//     b({ name, setName }) {
-//       const [state] = useState('there');
-//       return (
-//         <button type="button" onClick={() => setName('a')}>
-//           {state}
-//           {' '}
-//           {name}
-//         </button>
-//       );
-//     },
-//   };
+test('effects only run once', () => {
+  const fx = jest.fn();
+  const Hello = () => {
+    const [count, setState] = useState(0);
+    useEffect(fx, []);
+    return (
+      <h1 onClick={() => setState(count + 1)}>
+        Count is
+        {' '}
+        {count}
+      </h1>
+    );
+  };
 
-//   const Hello = () => {
-//     const [name, setName] = useState('a');
-//     const Child = childMap[name];
+  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
 
-//     return <HookComponent renderFn={Child} renderProps={{ name, setName }} />;
-//   };
+  emit('onClick', h1);
 
-//   const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
-//   const [btn] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+  expect(fx).toHaveBeenCalledTimes(1);
+  expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 1"');
+});
 
-//   expect(btn.innerHTML).toMatchInlineSnapshot('"ahoy a"');
+test('effects are disposed when unmounted', () => {
+  const dispose = jest.fn();
+  const fx = jest.fn(() => dispose);
 
-//   emit('onClick', btn);
+  const Child = () => {
+    useEffect(fx, []);
+    return <span>Child</span>;
+  };
 
-//   expect(btn.innerHTML).toMatchInlineSnapshot('"there b"');
+  const Hello = () => {
+    const [count, setState] = useState(0);
 
-//   emit('onClick', btn);
+    return (
+      <h1 onClick={() => setState(count + 1)}>
+        Count is
+        {' '}
+        {count}
+        {count < 2 && <HookComponent renderFn={Child} />}
+      </h1>
+    );
+  };
 
-//   expect(btn.innerHTML).toMatchInlineSnapshot('"ahoy a"');
-// });
+  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
 
-// test('effects only run once', () => {
-//   const fx = jest.fn();
-//   const Hello = () => {
-//     const [count, setState] = useState(0);
-//     useEffect(fx, []);
-//     return (
-//       <h1 onClick={() => setState(count + 1)}>
-//         Count is
-//         {' '}
-//         {count}
-//       </h1>
-//     );
-//   };
+  emit('onClick', h1);
 
-//   const rendered = util.renderIntoContainer(<HookComponent render={Hello} />);
-//   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
+  expect(fx).toHaveBeenCalledTimes(1);
+  expect(dispose).not.toHaveBeenCalled();
 
-//   emit('onClick', h1);
+  emit('onClick', h1);
 
-//   expect(fx).toHaveBeenCalledTimes(1);
-//   expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 1"');
-// });
-
-// test('effects are disposed when unmounted', () => {
-//   const dispose = jest.fn();
-//   const fx = jest.fn(() => dispose);
-
-//   const Child = () => {
-//     useEffect(fx, []);
-//     return <span>Child</span>;
-//   };
-
-//   const Hello = () => {
-//     const [count, setState] = useState(0);
-
-//     return (
-//       <h1 onClick={() => setState(count + 1)}>
-//         Count is
-//         {' '}
-//         {count}
-//         {count < 2 && <Child />}
-//       </h1>
-//     );
-//   };
-
-//   const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
-//   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
-
-//   emit('onClick', h1);
-
-//   expect(fx).toHaveBeenCalledTimes(1);
-//   expect(dispose).not.toHaveBeenCalled();
-
-//   emit('onClick', h1);
-
-//   expect(dispose).toHaveBeenCalledTimes(1);
-// });
+  expect(dispose).toHaveBeenCalledTimes(1);
+});
 
 test('use memo is only called when its watch list changes', () => {
   const fx = jest.fn((count) => `Count is ${count}`);
