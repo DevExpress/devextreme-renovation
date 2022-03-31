@@ -1036,7 +1036,6 @@ export class AngularComponent extends Component {
                 }`;
     }
     return '';
-    //    return '__processNgStyle = normalizeStyles';
   }
 
   compileLifeCycle(
