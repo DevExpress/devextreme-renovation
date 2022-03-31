@@ -39,7 +39,7 @@
     "no-eval": "warn",
     "no-irregular-whitespace": "warn",
     "no-nested-ternary": "warn",
-    "no-param-reassign": "warn",
+    "no-param-reassign": ["warn", {"props": false}],
     "no-plusplus": "warn",
     "import/no-extraneous-dependencies": ["error", {
       "devDependencies": [

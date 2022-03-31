@@ -2,3 +2,4 @@ componentFactory
 .nyc_output
 e2e/tests/temp
 e2e/tests/etalon
+e2e/platforms/inferno/app/src/transpiled-renovation-npm
