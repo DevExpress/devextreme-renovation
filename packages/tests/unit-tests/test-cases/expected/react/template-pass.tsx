@@ -19,6 +19,18 @@ function view(model: Widget) {
           <div>{data.id}</div>
         )}
       />
+
+      <WidgetWithTemplate
+        typedTemplate={({ array: [param1, param2], obj: { text } }) => (
+          <div>
+            {param1}
+
+            {param2}
+
+            {text}
+          </div>
+        )}
+      />
     </React.Fragment>
   );
 }

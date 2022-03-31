@@ -69,6 +69,16 @@ import { CommonModule } from "@angular/common";
     ><ng-content
       *ngTemplateOutlet="widgetwithtemplate2?.widgetTemplate"
     ></ng-content
+    ><dx-widget-with-template
+      [typedTemplate]="__typedtemplate__generated1"
+      #widgetwithtemplate3
+      style="display: contents"
+      ><ng-template #__typedtemplate__generated1 let-array="array" let-obj="obj"
+        ><div>{{ array[0] }}{{ array[1] }}{{ obj.text }}</div></ng-template
+      ></dx-widget-with-template
+    ><ng-content
+      *ngTemplateOutlet="widgetwithtemplate3?.widgetTemplate"
+    ></ng-content
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {

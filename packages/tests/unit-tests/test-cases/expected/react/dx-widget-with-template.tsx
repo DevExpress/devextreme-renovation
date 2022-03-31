@@ -2,12 +2,30 @@ export type WidgetWithTemplateInputType = {
   template?: any;
   componentTemplate?: any;
   arrowTemplate?: any;
+  typedTemplate?: React.FunctionComponent<
+    Partial<Omit<{ array: string[]; obj: { text: string } }, "array" | "obj">> &
+      Required<
+        Pick<{ array: string[]; obj: { text: string } }, "array" | "obj">
+      >
+  >;
   render?: any;
   component?: any;
   componentRender?: any;
   componentComponent?: any;
   arrowRender?: any;
   arrowComponent?: any;
+  typedRender?: React.FunctionComponent<
+    Partial<Omit<{ array: string[]; obj: { text: string } }, "array" | "obj">> &
+      Required<
+        Pick<{ array: string[]; obj: { text: string } }, "array" | "obj">
+      >
+  >;
+  typedComponent?: React.JSXElementConstructor<
+    Partial<Omit<{ array: string[]; obj: { text: string } }, "array" | "obj">> &
+      Required<
+        Pick<{ array: string[]; obj: { text: string } }, "array" | "obj">
+      >
+  >;
 };
 export const WidgetWithTemplateInput: WidgetWithTemplateInputType = {};
 import * as React from 'react';
@@ -40,6 +58,9 @@ export default function WidgetWithTemplate(
         componentTemplate,
         render,
         template,
+        typedComponent,
+        typedRender,
+        typedTemplate,
         ...restProps
       } = props;
       return restProps;
@@ -60,6 +81,11 @@ export default function WidgetWithTemplate(
         props.arrowTemplate,
         props.arrowRender,
         props.arrowComponent
+      ),
+      typedTemplate: getTemplate(
+        props.typedTemplate,
+        props.typedRender,
+        props.typedComponent
       ),
     },
     restAttributes: __restAttributes(),
