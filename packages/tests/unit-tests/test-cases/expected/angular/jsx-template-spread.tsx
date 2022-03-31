@@ -2,15 +2,15 @@ import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
-} from "./types.d";
+} from './types.d';
 
 interface TemplateInput {
   inputInt: number;
 }
 
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() PropFromClass?: ClassTemplateInput;
@@ -28,19 +28,19 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "PropFromClass",
-    "PropFromInterface",
-    "PropFromImportedInterface",
-    "PropFromImportedType",
-    "template",
-    "template2",
+    'PropFromClass',
+    'PropFromInterface',
+    'PropFromImportedInterface',
+    'PropFromImportedType',
+    'template',
+    'template2',
   ],
   template: `<ng-template #widgetTemplate
     ><div
@@ -92,14 +92,14 @@ import { CommonModule } from "@angular/common";
 })
 export default class Widget extends Props {
   get __spreadGetter(): { width: string; height: string } {
-    if (this.__getterCache["spreadGetter"] !== undefined) {
-      return this.__getterCache["spreadGetter"];
+    if (this.__getterCache['spreadGetter'] !== undefined) {
+      return this.__getterCache['spreadGetter'];
     }
-    return (this.__getterCache["spreadGetter"] = ((): {
+    return (this.__getterCache['spreadGetter'] = ((): {
       width: string;
       height: string;
     } => {
-      return { width: "40px", height: "30px" };
+      return { width: '40px', height: '30px' };
     })());
   }
   _detectChanges(): void {
@@ -113,7 +113,7 @@ export default class Widget extends Props {
     spreadGetter?: { width: string; height: string };
   } = {};
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {}
 
@@ -13,11 +13,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
@@ -69,7 +69,7 @@ export default class Widget extends WidgetInput {
     clearTimeout(this._effectTimeout);
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

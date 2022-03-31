@@ -1,10 +1,10 @@
 import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
-} from "./dx-widget-with-template";
-import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
-import { Component } from "@angular/core";
+} from './dx-widget-with-template';
+import InnerWidget, { DxInnerWidgetModule } from './dx-inner-widget';
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {}
 
@@ -17,11 +17,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-widget-with-template
@@ -79,7 +79,7 @@ export default class Widget extends WidgetProps {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

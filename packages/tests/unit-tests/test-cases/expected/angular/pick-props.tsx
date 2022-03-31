@@ -1,9 +1,9 @@
-import Props from "./component-bindings-only";
-import { Options } from "./types.d";
-import { Component, Input } from "@angular/core";
-import { AdditionalOptions } from "./types.d";
+import Props from './component-bindings-only';
+import { Options } from './types.d';
+import { Component, Input } from '@angular/core';
+import { AdditionalOptions } from './types.d';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetProps {
   @Input() data?: Options = new Props().data;
@@ -19,17 +19,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["data", "info"],
+  inputs: ['data', 'info'],
   template: `<ng-template #widgetTemplate
     ><div>{{
       data === undefined || data === null ? undefined : data.value
@@ -38,7 +38,8 @@ import {
 })
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
-  innerData: Options = { value: "" };
+
+  innerData: Options = { value: '' };
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -54,7 +55,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -63,7 +64,7 @@ export default class Widget extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["data", "info"].map((key) => ({
+    this.defaultEntries = ['data', 'info'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

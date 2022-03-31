@@ -244,6 +244,10 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dependency-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-template", function () {
     this.testGenerator(this.test!.title);
   });
@@ -394,6 +398,10 @@ mocha.describe("react-generation", function () {
   });
 
   mocha.it("method-use-api-forwardRef", function () {
+    this.testGenerator(this.test!.title);
+  });
+
+  mocha.it("second-level-component-with-style", function() {
     this.testGenerator(this.test!.title);
   });
 

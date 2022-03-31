@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class ModelWidgetInput {
   @Input() disabled?: boolean;
@@ -22,9 +22,9 @@ import {
   TemplateRef,
   forwardRef,
   HostListener,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   provide: NG_VALUE_ACCESSOR,
@@ -32,11 +32,11 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   multi: true,
 };
 @Component({
-  selector: "dx-model-widget",
+  selector: 'dx-model-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
-  inputs: ["disabled", "value", "notValue"],
-  outputs: ["valueChange", "notValueChange"],
+  inputs: ['disabled', 'value', 'notValue'],
+  outputs: ['valueChange', 'notValueChange'],
   template: `<ng-template #widgetTemplate
     ><div>{{ value }}</div></ng-template
   >`,
@@ -52,8 +52,8 @@ export default class ModelWidget
     });
   }
 
-  @HostListener("valueChange", ["$event"]) change() {}
-  @HostListener("onBlur", ["$event"]) touched = () => {};
+  @HostListener('valueChange', ['$event']) change() {}
+  @HostListener('onBlur', ['$event']) touched = () => {};
 
   writeValue(value: any): void {
     this.value = value;
@@ -73,7 +73,7 @@ export default class ModelWidget
 
   _valueChange: any;
   _notValueChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

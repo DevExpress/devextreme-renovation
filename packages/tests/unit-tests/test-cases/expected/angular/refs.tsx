@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetProps {
   @Input() outerDivRef?: (
@@ -26,33 +26,35 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   inputs: [
-    "outerDivRef",
-    "refProp",
-    "forwardRefProp",
-    "requiredRefProp",
-    "requiredForwardRefProp",
+    'outerDivRef',
+    'refProp',
+    'forwardRefProp',
+    'requiredRefProp',
+    'requiredForwardRefProp',
   ],
   template: `<ng-template #widgetTemplate
     ><div #divRefLink><div #outerDivRef__Ref__></div></div
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
-  @ViewChild("divRefLink", { static: false })
+  @ViewChild('divRefLink', { static: false })
   __divRef!: ElementRef<HTMLDivElement>;
   get divRef(): ElementRef<HTMLDivElement> {
     return this.__divRef
       ? this.__divRef
       : new UndefinedNativeElementRef<HTMLDivElement>();
   }
-  @ViewChild("refLink", { static: false }) __ref!: ElementRef<HTMLDivElement>;
+  @ViewChild('refLink', { static: false }) __ref!: ElementRef<HTMLDivElement>;
   get ref(): ElementRef<HTMLDivElement> {
     return this.__ref
       ? this.__ref
@@ -60,7 +62,7 @@ export default class Widget extends WidgetProps {
   }
   forwardRef: ElementRef<HTMLDivElement> =
     new UndefinedNativeElementRef<HTMLDivElement>();
-  @ViewChild("existingRefLink", { static: false })
+  @ViewChild('existingRefLink', { static: false })
   __existingRef!: ElementRef<HTMLDivElement>;
   get existingRef(): ElementRef<HTMLDivElement> {
     return this.__existingRef
@@ -120,17 +122,17 @@ export default class Widget extends WidgetProps {
       requiredForwardRefProp: restProps.requiredForwardRefProp()?.nativeElement,
     };
   }
-  @ViewChild("outerDivRef__Ref__", { static: false })
+  @ViewChild('outerDivRef__Ref__', { static: false })
   outerDivRef__Ref__?: ElementRef<HTMLDivElement>;
   forwardRefProp__Ref__?: ElementRef<HTMLDivElement>;
   requiredForwardRefProp__Ref__!: ElementRef<HTMLDivElement>;
   get forwardRef_forwardRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_forwardRef"] !== undefined) {
-      return this.__getterCache["forwardRef_forwardRef"];
+    if (this.__getterCache['forwardRef_forwardRef'] !== undefined) {
+      return this.__getterCache['forwardRef_forwardRef'];
     }
-    return (this.__getterCache["forwardRef_forwardRef"] = ((): ((
+    return (this.__getterCache['forwardRef_forwardRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -151,10 +153,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_existingForwardRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_existingForwardRef"] !== undefined) {
-      return this.__getterCache["forwardRef_existingForwardRef"];
+    if (this.__getterCache['forwardRef_existingForwardRef'] !== undefined) {
+      return this.__getterCache['forwardRef_existingForwardRef'];
     }
-    return (this.__getterCache["forwardRef_existingForwardRef"] = ((): ((
+    return (this.__getterCache['forwardRef_existingForwardRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -175,10 +177,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_outerDivRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
-    if (this.__getterCache["forwardRef_outerDivRef"] !== undefined) {
-      return this.__getterCache["forwardRef_outerDivRef"];
+    if (this.__getterCache['forwardRef_outerDivRef'] !== undefined) {
+      return this.__getterCache['forwardRef_outerDivRef'];
     }
-    return (this.__getterCache["forwardRef_outerDivRef"] = ((): ((
+    return (this.__getterCache['forwardRef_outerDivRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined) => {
       return function (
@@ -200,10 +202,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_forwardRefProp(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
-    if (this.__getterCache["forwardRef_forwardRefProp"] !== undefined) {
-      return this.__getterCache["forwardRef_forwardRefProp"];
+    if (this.__getterCache['forwardRef_forwardRefProp'] !== undefined) {
+      return this.__getterCache['forwardRef_forwardRefProp'];
     }
-    return (this.__getterCache["forwardRef_forwardRefProp"] = ((): ((
+    return (this.__getterCache['forwardRef_forwardRefProp'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined) => {
       return function (
@@ -225,10 +227,10 @@ export default class Widget extends WidgetProps {
   get forwardRef_requiredForwardRefProp(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_requiredForwardRefProp"] !== undefined) {
-      return this.__getterCache["forwardRef_requiredForwardRefProp"];
+    if (this.__getterCache['forwardRef_requiredForwardRefProp'] !== undefined) {
+      return this.__getterCache['forwardRef_requiredForwardRefProp'];
     }
-    return (this.__getterCache["forwardRef_requiredForwardRefProp"] = ((): ((
+    return (this.__getterCache['forwardRef_requiredForwardRefProp'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -277,7 +279,7 @@ export default class Widget extends WidgetProps {
     this.outerDivRef?.(this.outerDivRef__Ref__);
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

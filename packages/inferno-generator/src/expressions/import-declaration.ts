@@ -26,7 +26,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
     }
 
     if (this.has('Component')) {
-      common.push('BaseInfernoComponent', 'InfernoComponent', 'InfernoWrapperComponent', 'normalizeStyles');
+      common.push('BaseInfernoComponent', 'InfernoComponent', 'InfernoWrapperComponent');
     }
 
     if (this.has('createContext')) {
@@ -38,6 +38,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
         `import {${common}} from "@devextreme/runtime/inferno"`,
       );
     }
+    result.push('import { normalizeStyles } from \'@devextreme/runtime/inferno\'');
 
     if (result.length) {
       return result.join(';\n');

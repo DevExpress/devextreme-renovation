@@ -1,19 +1,19 @@
-export type EnumType = "data" | "none";
+export type EnumType = 'data' | 'none';
 export type Union = string | number;
 export type ObjType = { number: number; text: string };
 export type StringArr = Array<String>;
 export type StringType = String;
 export type StrDate = string | Date;
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
-  @Input() data: EnumType = "data";
-  @Input() union: Union = "uniontext";
-  @Input() obj: ObjType = { number: 123, text: "sda" };
-  @Input() strArr: StringArr = ["ba", "ab"];
-  @Input() s: StringType = "";
+  @Input() data: EnumType = 'data';
+  @Input() union: Union = 'uniontext';
+  @Input() obj: ObjType = { number: 123, text: 'sda' };
+  @Input() strArr: StringArr = ['ba', 'ab'];
+  @Input() s: StringType = '';
   @Input() strDate: StrDate = new Date();
   @Input() customTypeField?: { name: string; customField: CustomType }[];
 }
@@ -27,21 +27,22 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["data", "union", "obj", "strArr", "s", "strDate", "customTypeField"],
+  inputs: ['data', 'union', 'obj', 'strArr', 's', 'strDate', 'customTypeField'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -57,7 +58,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -67,12 +68,12 @@ export default class Widget extends WidgetProps {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
     this.defaultEntries = [
-      "data",
-      "union",
-      "obj",
-      "strArr",
-      "s",
-      "strDate",
+      'data',
+      'union',
+      'obj',
+      'strArr',
+      's',
+      'strDate',
     ].map((key) => ({ key, value: defaultProps[key] }));
   }
 }

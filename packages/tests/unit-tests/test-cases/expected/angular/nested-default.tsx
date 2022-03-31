@@ -1,4 +1,4 @@
-import { WithNestedInput } from "./nested-default-props";
+import { WithNestedInput } from './nested-default-props';
 import {
   Component,
   NgModule,
@@ -13,18 +13,18 @@ import {
   ContentChildren,
   QueryList,
   Directive,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { GridRow, GridCell } from "./nested-default-props";
+import { GridRow, GridCell } from './nested-default-props';
 
 @Directive({
-  selector: "dxi-cell",
+  selector: 'dxi-cell',
 })
 export class DxWithNestedRowCell extends GridCell {}
 
 @Directive({
-  selector: "dxi-row",
+  selector: 'dxi-row',
 })
 export class DxWithNestedRow extends GridRow {
   private __cells?: (DxWithNestedRowCell | string)[];
@@ -46,9 +46,9 @@ export class DxWithNestedRow extends GridRow {
 }
 
 @Component({
-  selector: "dx-with-nested",
+  selector: 'dx-with-nested',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["rows"],
+  inputs: ['rows'],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngIf="rows"
@@ -68,8 +68,8 @@ export default class WithNested extends WithNestedInput {
     const cells = this.rows?.[index].cells;
     return (
       cells
-        ?.map((cell) => (typeof cell === "string" ? cell : cell.gridData))
-        .join("|") || []
+        ?.map((cell) => (typeof cell === 'string' ? cell : cell.gridData))
+        .join('|') || []
     );
   }
   private __rows?: DxWithNestedRow[];
@@ -99,7 +99,7 @@ export default class WithNested extends WithNestedInput {
     this._detectChanges();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

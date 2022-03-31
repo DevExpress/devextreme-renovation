@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   @Input() size!: { width: number; height: number };
@@ -16,12 +16,12 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
-} from "../../../../jquery-helpers/default_options";
+} from '../../../../jquery-helpers/default_options';
 
 type WidgetOptionRule = DefaultOptionsRule<Partial<WidgetInput>>;
 
@@ -31,9 +31,9 @@ export function defaultOptions(rule: WidgetOptionRule) {
 }
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["size", "type"],
+  inputs: ['size', 'type'],
   template: ``,
 })
 export default class Widget extends WidgetInput {
@@ -51,7 +51,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

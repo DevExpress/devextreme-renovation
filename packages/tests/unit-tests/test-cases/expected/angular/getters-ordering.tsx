@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetProps {
-  @Input() someProp: string = "";
-  @Input() type?: string = "";
+  @Input() someProp: string = '';
+  @Input() type?: string = '';
   @Input() gridCompatibility?: boolean = true;
   @Input() pageIndex: number = 1;
   @Output() pageIndexChange: EventEmitter<number> = new EventEmitter();
@@ -18,18 +18,18 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp", "type", "gridCompatibility", "pageIndex"],
-  outputs: ["pageIndexChange"],
+  inputs: ['someProp', 'type', 'gridCompatibility', 'pageIndex'],
+  outputs: ['pageIndexChange'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 class Widget extends WidgetProps {
@@ -40,10 +40,10 @@ class Widget extends WidgetProps {
     return this.__g6;
   }
   get __g5(): (string | undefined)[] {
-    if (this.__getterCache["g5"] !== undefined) {
-      return this.__getterCache["g5"];
+    if (this.__getterCache['g5'] !== undefined) {
+      return this.__getterCache['g5'];
     }
-    return (this.__getterCache["g5"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g5'] = ((): (string | undefined)[] => {
       return [...this.g3(), this.__g2];
     })());
   }
@@ -60,18 +60,18 @@ class Widget extends WidgetProps {
     return [this.__g1, this.__g2];
   }
   get __g4(): (string | undefined)[] {
-    if (this.__getterCache["g4"] !== undefined) {
-      return this.__getterCache["g4"];
+    if (this.__getterCache['g4'] !== undefined) {
+      return this.__getterCache['g4'];
     }
-    return (this.__getterCache["g4"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g4'] = ((): (string | undefined)[] => {
       return [...this.g3(), this.__g1];
     })());
   }
   get __g6(): (string | undefined)[] {
-    if (this.__getterCache["g6"] !== undefined) {
-      return this.__getterCache["g6"];
+    if (this.__getterCache['g6'] !== undefined) {
+      return this.__getterCache['g6'];
     }
-    return (this.__getterCache["g6"] = ((): (string | undefined)[] => {
+    return (this.__getterCache['g6'] = ((): (string | undefined)[] => {
       return [...this.__g5, ...this.__g4];
     })());
   }
@@ -146,21 +146,21 @@ class Widget extends WidgetProps {
 
     if (
       this.__destroyEffects.length &&
-      ["someProp", "type"].some((d) => changes[d])
+      ['someProp', 'type'].some((d) => changes[d])
     ) {
       this.__schedule_someEffect();
     }
 
-    if (["someProp", "type"].some((d) => changes[d])) {
-      this.__getterCache["g5"] = undefined;
+    if (['someProp', 'type'].some((d) => changes[d])) {
+      this.__getterCache['g5'] = undefined;
     }
 
-    if (["someProp", "type"].some((d) => changes[d])) {
-      this.__getterCache["g4"] = undefined;
+    if (['someProp', 'type'].some((d) => changes[d])) {
+      this.__getterCache['g4'] = undefined;
     }
 
-    if (["someProp", "type"].some((d) => changes[d])) {
-      this.__getterCache["g6"] = undefined;
+    if (['someProp', 'type'].some((d) => changes[d])) {
+      this.__getterCache['g6'] = undefined;
     }
   }
   ngOnDestroy() {
@@ -172,7 +172,7 @@ class Widget extends WidgetProps {
   }
 
   _pageIndexChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -182,10 +182,10 @@ class Widget extends WidgetProps {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
     this.defaultEntries = [
-      "someProp",
-      "type",
-      "gridCompatibility",
-      "pageIndex",
+      'someProp',
+      'type',
+      'gridCompatibility',
+      'pageIndex',
     ].map((key) => ({ key, value: defaultProps[key] }));
     this._pageIndexChange = (e: any) => {
       this.pageIndexChange.emit(e);

@@ -304,6 +304,10 @@ mocha.describe("angular-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dependency-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("forward-ref-template", function () {
     this.testGenerator(this.test!.title);
   });
@@ -482,6 +486,9 @@ mocha.describe("angular-generation", function () {
       this.testGenerator(this.test!.title);
     });
     mocha.it("angular-inner-component", function () {
+      this.testGenerator(this.test!.title);
+    });
+    mocha.it("second-level-component-with-style", function () {
       this.testGenerator(this.test!.title);
     });
   });

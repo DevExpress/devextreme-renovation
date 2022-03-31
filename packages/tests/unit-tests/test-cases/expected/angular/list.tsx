@@ -1,12 +1,12 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
+} from './dx-widget-with-props';
 const noop = (e: any) => {};
 
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class ListInput {
   @Input() items?: Array<{ key: number; text: string }>;
@@ -21,13 +21,13 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-list",
+  selector: 'dx-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["items", "ListItem"],
+  inputs: ['items', 'ListItem'],
   template: `<ng-template #widgetTemplate
     ><div
       ><ng-container *ngFor="let item of items; trackBy: _trackBy_items_0"
@@ -94,7 +94,7 @@ export default class List extends ListInput {
     return item.key;
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -104,7 +104,7 @@ export default class List extends ListInput {
     super();
   }
 
-  WidgetWithPropsDefaults = { value: "default text", number: 42 };
+  WidgetWithPropsDefaults = { value: 'default text', number: 42 };
 }
 @NgModule({
   declarations: [List],

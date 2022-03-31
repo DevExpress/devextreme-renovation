@@ -1,8 +1,8 @@
-export const COMPONENT_INPUT_CLASS = "c3";
-import { Component, Input, ViewChild, ElementRef } from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+export const COMPONENT_INPUT_CLASS = 'c3';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { isSlotEmpty } from '@devextreme/runtime/angular';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() height?: number = 10;
@@ -21,23 +21,24 @@ import {
   Renderer2,
   ViewRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["height", "width"],
+  inputs: ['height', 'width'],
   template: `<ng-template #widgetTemplate
     ><div></div><ng-template #dxchildren><ng-content></ng-content></ng-template
   ></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   __onClick(): any {
     const v = this.height;
   }
@@ -56,7 +57,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -65,12 +66,12 @@ export default class Widget extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["height", "width"].map((key) => ({
+    this.defaultEntries = ['height', 'width'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
   }
-  @ViewChild("slotChildren") set slotChildren(
+  @ViewChild('slotChildren') set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.children;

@@ -1,6 +1,6 @@
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class Props {
   @Input() contentTemplate: TemplateRef<any> | null = null;
@@ -13,13 +13,13 @@ import {
   Renderer2,
   ViewRef,
   ViewChild,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-test-component",
+  selector: 'dx-test-component',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["contentTemplate"],
+  inputs: ['contentTemplate'],
   template: `<ng-template #widgetTemplate
     ><ng-container
       *ngTemplateOutlet="contentTemplate || contentTemplateDefault"
@@ -37,7 +37,7 @@ export class TestComponent extends Props {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

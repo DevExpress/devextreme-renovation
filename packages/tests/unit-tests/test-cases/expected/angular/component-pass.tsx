@@ -1,8 +1,8 @@
-import WidgetOne, { DxWidgetOneModule } from "./component-pass-one";
-import { WidgetTwo, DxWidgetTwoModule } from "./component-pass-two";
-import { Component, Input } from "@angular/core";
+import WidgetOne, { DxWidgetOneModule } from './component-pass-one';
+import { WidgetTwo, DxWidgetTwoModule } from './component-pass-two';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() mode?: boolean = false;
@@ -19,17 +19,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["mode", "firstText", "secondText"],
+  inputs: ['mode', 'firstText', 'secondText'],
   template: `<ng-template #widgetTemplate
     ><ng-container *ngIf="mode"
       ><dx-widget-one [text]="firstText" #widgetone1 style="display: contents"
@@ -92,6 +92,7 @@ import {
 })
 export default class Widget extends WidgetProps {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -107,7 +108,7 @@ export default class Widget extends WidgetProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -116,7 +117,7 @@ export default class Widget extends WidgetProps {
   ) {
     super();
     const defaultProps = new WidgetProps() as { [key: string]: any };
-    this.defaultEntries = ["mode"].map((key) => ({
+    this.defaultEntries = ['mode'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

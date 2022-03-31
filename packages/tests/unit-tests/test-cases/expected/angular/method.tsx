@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
   @Input() prop1?: number;
@@ -17,20 +17,22 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["prop1", "prop2"],
+  inputs: ['prop1', 'prop2'],
   template: `<ng-template #widgetTemplate
     ><div #divRefLink></div
   ></ng-template>`,
 })
 export default class Widget extends WidgetInput {
-  @ViewChild("divRefLink", { static: false })
+  @ViewChild('divRefLink', { static: false })
   __divRef!: ElementRef<HTMLDivElement>;
   get divRef(): ElementRef<HTMLDivElement> {
     return this.__divRef
@@ -52,7 +54,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -5,13 +5,13 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
-  @Input() p: string = "10";
-  @Input() r: string = "20";
+  @Input() p: string = '10';
+  @Input() r: string = '20';
   @Input() s: number = 10;
   @Output() sChange: EventEmitter<number> = new EventEmitter();
 }
@@ -25,18 +25,18 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["p", "r", "s"],
-  outputs: ["sChange"],
+  inputs: ['p', 'r', 's'],
+  outputs: ['sChange'],
   template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetInput {
@@ -112,7 +112,7 @@ export default class Widget extends WidgetInput {
       this.defaultEntries
     );
 
-    if (this.__destroyEffects.length && ["p", "s"].some((d) => changes[d])) {
+    if (this.__destroyEffects.length && ['p', 's'].some((d) => changes[d])) {
       this.__schedule_setupData();
     }
 
@@ -129,7 +129,7 @@ export default class Widget extends WidgetInput {
   }
 
   _sChange: any;
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -138,7 +138,7 @@ export default class Widget extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["p", "r", "s"].map((key) => ({
+    this.defaultEntries = ['p', 'r', 's'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

@@ -1,6 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetProps {
   @Input() someRef?: HTMLElement;
@@ -19,19 +19,19 @@ import {
   Injector,
   ElementRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { DomPortalOutlet, DomPortal } from "@angular/cdk/portal";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DomPortalOutlet, DomPortal } from '@angular/cdk/portal';
 
 @Component({
-  selector: "dx-portal",
+  selector: 'dx-portal',
   template: `<div #content style="display:contents" *ngIf="container">
     <ng-content></ng-content>
   </div>`,
 })
 class DxPortal {
   @Input() container?: HTMLElement;
-  @ViewChild("content") content?: ElementRef<HTMLDivElement>;
+  @ViewChild('content') content?: ElementRef<HTMLDivElement>;
   _portal?: DomPortal;
   _outlet?: DomPortalOutlet;
 
@@ -93,9 +93,9 @@ class DxPortal {
 }
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someRef"],
+  inputs: ['someRef'],
   template: `<ng-template #widgetTemplate
     ><div
       ><dx-portal [container]="document.body" *ngIf="rendered"
@@ -130,7 +130,7 @@ export default class Widget extends WidgetProps {
     clearTimeout(this._effectTimeout);
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

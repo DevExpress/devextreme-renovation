@@ -1,8 +1,8 @@
 type EventCallBack<Type> = (e: Type) => void;
 
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class WidgetInput {
   @Input() someProp?: { current: string };
@@ -17,21 +17,21 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["someProp"],
+  inputs: ['someProp'],
   template: `<ng-template #widgetTemplate><span></span></ng-template>`,
 })
 export default class Widget extends WidgetInput {
   someState?: { current: string };
-  existsState: { current: string } = { current: "value" };
+  existsState: { current: string } = { current: 'value' };
   __concatStrings(): any {
-    const fromProps = this.someProp?.current || "";
-    const fromState = this.someState?.current || "";
+    const fromProps = this.someProp?.current || '';
+    const fromState = this.someState?.current || '';
     return `${fromProps}${fromState}${this.existsState.current}`;
   }
   _detectChanges(): void {
@@ -41,7 +41,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

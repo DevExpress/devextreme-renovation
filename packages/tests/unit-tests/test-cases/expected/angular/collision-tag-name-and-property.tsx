@@ -1,9 +1,9 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class TextSvgElementProps {
-  @Input() text?: string | null = "";
+  @Input() text?: string | null = '';
 }
 
 import {
@@ -15,17 +15,17 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "g [TextSvgElement]",
+  selector: 'g [TextSvgElement]',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["text"],
+  inputs: ['text'],
   template: `<svg:text>
     <svg:ng-container *ngIf="![].length">
       {{ __computedProps.text }}
@@ -53,7 +53,7 @@ export class TextSvgElement extends TextSvgElementProps {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -62,7 +62,7 @@ export class TextSvgElement extends TextSvgElementProps {
   ) {
     super();
     const defaultProps = new TextSvgElementProps() as { [key: string]: any };
-    this.defaultEntries = ["text"].map((key) => ({
+    this.defaultEntries = ['text'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

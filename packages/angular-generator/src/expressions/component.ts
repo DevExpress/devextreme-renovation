@@ -630,8 +630,11 @@ export class AngularComponent extends Component {
       ...(propsWithDefault.length ? ['updateUndefinedFromDefaults', 'DefaultEntries'] : []),
       ...(hasRefProperty ? ['UndefinedNativeElementRef'] : []),
     ];
-    if (runTimeImports.length) {
+    if (runTimeImports.length > 0) {
       imports.push(`import {${runTimeImports.join(' ,')}} from '@devextreme/runtime/angular'`);
+    }
+    if (options?.hasStyle) {
+      imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
     }
   }
 
@@ -1202,8 +1205,8 @@ export class AngularComponent extends Component {
         if (twoWayMember) {
           const dependentGetters = this.members.filter(
             (m) => m instanceof GetAccessor
-            && m.isMemorized(options)
-            && m.getDependency(options).includes(twoWayMember),
+              && m.isMemorized(options)
+              && m.getDependency(options).includes(twoWayMember),
           );
           resetStatements = dependentGetters.map((g) => resetGetterStatement(g._name.toString()));
         }
@@ -1303,7 +1306,7 @@ export class AngularComponent extends Component {
 
   needHostElementRef(options?: toStringOptions): boolean {
     return options?.mutableOptions?.hasRestAttributes
-    || this.isPublicComponentWithPrivateProp;
+      || this.isPublicComponentWithPrivateProp;
   }
 
   compileContext(
@@ -1444,73 +1447,6 @@ export class AngularComponent extends Component {
     return '';
   }
 
-  compileStyleNormalizer(options: toStringOptions) {
-    return options.hasStyle
-      ? `const NUMBER_STYLES = new Set([
-          "animation-iteration-count",
-          "border-image-outset",
-          "border-image-slice",
-          "border-image-width",
-          "box-flex",
-          "box-flex-group",
-          "box-ordinal-group",
-          "column-count",
-          "fill-opacity",
-          "flex",
-          "flex-grow",
-          "flex-negative",
-          "flex-order",
-          "flex-positive",
-          "flex-shrink",
-          "flood-opacity",
-          "font-weight",
-          "grid-column",
-          "grid-row",
-          "line-clamp",
-          "line-height",
-          "opacity",
-          "order",
-          "orphans",
-          "stop-opacity",
-          "stroke-dasharray",
-          "stroke-dashoffset",
-          "stroke-miterlimit",
-          "stroke-opacity",
-          "stroke-width",
-          "tab-size",
-          "widows",
-          "z-index",
-          "zoom",
-        ]);
-
-        const uppercasePattern = /[A-Z]/g;
-        const kebabCase = (str: string) => {
-          return str.replace(uppercasePattern, "-$&").toLowerCase();
-        };
-
-        const isNumeric = (value: string | number) => {
-          if (typeof value === "number") return true;
-          return !isNaN(Number(value));
-        };
-
-        const getNumberStyleValue = (style: string, value: string | number) => {
-          return NUMBER_STYLES.has(style) ? value : \`\${value}px\`;
-        };
-
-        const normalizeStyles = (styles: unknown) => {
-          if (!(styles instanceof Object)) return undefined;
-
-          return Object.entries(styles).reduce((result: Record<string, string | number>, [key, value]) => {
-            const kebabString = kebabCase(key);
-            result[kebabString] = isNumeric(value)
-              ? getNumberStyleValue(kebabString, value)
-              : value;
-            return result;
-          }, {} as Record<string, string | number>)
-        };`
-      : '';
-  }
-
   compileDefaultTemplateImports(
     missedDefautTemplatesImports:
     ({ module: string, name: string, path: string, isDefault: boolean } | undefined)[][]
@@ -1562,8 +1498,8 @@ export class AngularComponent extends Component {
 
   getPropsWithDefault(): Property[] {
     return this.members.filter((m) => m instanceof Property
-    && (m.isState || m._hasDecorator(Decorators.OneWay))
-    && m.initializer && m.initializer.toString()) as Property[];
+      && (m.isState || m._hasDecorator(Decorators.OneWay))
+      && m.initializer && m.initializer.toString()) as Property[];
   }
 
   compileDefaultInputValues(
@@ -1633,7 +1569,7 @@ export class AngularComponent extends Component {
     return this.compileLifeCycle(
       'constructor',
       (constructorStatements.length || constructorArguments.length)
-                && this.heritageClauses.length
+        && this.heritageClauses.length
         ? ['super()'].concat(constructorStatements)
         : constructorStatements,
       constructorArguments,
@@ -1764,6 +1700,7 @@ export class AngularComponent extends Component {
       forwardRefs: decoratorToStringOptions.forwardRefs,
       isComponent: true,
       mutableOptions: decoratorToStringOptions.mutableOptions,
+      hasStyle: decoratorToStringOptions.hasStyle,
     };
 
     const memberStatements = this.members
@@ -1779,7 +1716,6 @@ export class AngularComponent extends Component {
         ${this.compileImports(coreImports, memberToStringOptions)}
         ${this.compileCdkImports(cdkImports)}
         ${this.compileDefaultTemplateImports(missedDefautTemplatesImports)}
-        ${this.compileStyleNormalizer(decoratorToStringOptions)}
         ${this.compileNestedComponents(nestedModules)}
         ${dynamicComponentDirective}
         ${portalComponent}

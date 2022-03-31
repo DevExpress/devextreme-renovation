@@ -1,7 +1,7 @@
-import Widget, { DxWidgetModule } from "./props-any-undefined-unknown";
-import { Component } from "@angular/core";
+import Widget, { DxWidgetModule } from './props-any-undefined-unknown';
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class MethodPassWidgetInput {}
 
@@ -14,11 +14,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-method-pass-widget",
+  selector: 'dx-method-pass-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-widget
@@ -41,7 +41,7 @@ export default class MethodPassWidget extends MethodPassWidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

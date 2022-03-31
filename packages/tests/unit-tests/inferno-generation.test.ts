@@ -136,6 +136,10 @@ mocha.describe("inferno-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("dependency-props", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("export-default", function () {
     this.testGenerator(this.test!.title);
   });

@@ -1,11 +1,11 @@
-import Widget, { DxSlotsWidgetModule } from "./slots";
-import { Component, Input, ViewChild, ElementRef } from "@angular/core";
-import { isSlotEmpty } from "@devextreme/runtime/angular";
+import Widget, { DxSlotsWidgetModule } from './slots';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { isSlotEmpty } from '@devextreme/runtime/angular';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {
-  @Input() p: string = "";
+  @Input() p: string = '';
   __slotChildren?: ElementRef<HTMLDivElement>;
   get children(): boolean {
     return !isSlotEmpty(this.__slotChildren);
@@ -20,17 +20,17 @@ import {
   Renderer2,
   ViewRef,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-slot-pass",
+  selector: 'dx-slot-pass',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["p"],
+  inputs: ['p'],
   template: `<ng-template #widgetTemplate
     ><div
       ><dx-slots-widget #widget1 style="display: contents"
@@ -67,7 +67,7 @@ export default class SlotPass extends WidgetInput {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -76,12 +76,12 @@ export default class SlotPass extends WidgetInput {
   ) {
     super();
     const defaultProps = new WidgetInput() as { [key: string]: any };
-    this.defaultEntries = ["p"].map((key) => ({
+    this.defaultEntries = ['p'].map((key) => ({
       key,
       value: defaultProps[key],
     }));
   }
-  @ViewChild("slotChildren") set slotChildren(
+  @ViewChild('slotChildren') set slotChildren(
     slot: ElementRef<HTMLDivElement>
   ) {
     const oldValue = this.children;

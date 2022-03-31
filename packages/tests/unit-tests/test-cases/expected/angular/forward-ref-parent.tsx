@@ -1,7 +1,7 @@
-import Child, { DxRefOnChildrenChildModule } from "./forward-ref-child";
-import { Component, Input } from "@angular/core";
+import Child, { DxRefOnChildrenChildModule } from './forward-ref-child';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() nullableRef?: (
@@ -19,14 +19,16 @@ import {
   ViewChild,
   TemplateRef,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-ref-on-children-parent",
+  selector: 'dx-ref-on-children-parent',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["nullableRef"],
+  inputs: ['nullableRef'],
   template: `<ng-template #widgetTemplate
     ><dx-ref-on-children-child
       [childRef]="forwardRef_child"
@@ -44,7 +46,7 @@ export default class RefOnChildrenParent extends Props {
   innerState: number = 10;
   __effect(): any {
     if (this.child.nativeElement) {
-      this.child.nativeElement.innerHTML = "Ref from child";
+      this.child.nativeElement.innerHTML = 'Ref from child';
     }
     const html = this.nullableRef?.()?.nativeElement?.innerHTML;
   }
@@ -52,10 +54,10 @@ export default class RefOnChildrenParent extends Props {
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_child"] !== undefined) {
-      return this.__getterCache["forwardRef_child"];
+    if (this.__getterCache['forwardRef_child'] !== undefined) {
+      return this.__getterCache['forwardRef_child'];
     }
-    return (this.__getterCache["forwardRef_child"] = ((): ((
+    return (this.__getterCache['forwardRef_child'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -76,10 +78,10 @@ export default class RefOnChildrenParent extends Props {
   get forwardRef_nullableRef(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> | undefined {
-    if (this.__getterCache["forwardRef_nullableRef"] !== undefined) {
-      return this.__getterCache["forwardRef_nullableRef"];
+    if (this.__getterCache['forwardRef_nullableRef'] !== undefined) {
+      return this.__getterCache['forwardRef_nullableRef'];
     }
-    return (this.__getterCache["forwardRef_nullableRef"] = ((): ((
+    return (this.__getterCache['forwardRef_nullableRef'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement> | undefined) => {
       return function (
@@ -144,7 +146,7 @@ export default class RefOnChildrenParent extends Props {
   ngOnChanges(changes: { [name: string]: any }) {
     if (
       this.__destroyEffects.length &&
-      ["child", "nullableRef"].some((d) => changes[d])
+      ['child', 'nullableRef'].some((d) => changes[d])
     ) {
       this.__schedule_effect();
     }
@@ -157,7 +159,7 @@ export default class RefOnChildrenParent extends Props {
     this._updateEffects();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

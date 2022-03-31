@@ -1,8 +1,8 @@
-import { InnerLayout, DxInnerLayoutModule } from "./inner-layout";
-import { InnerComponent, DxInnerComponentModule } from "./inner-component";
-import { Component, Input } from "@angular/core";
+import { InnerLayout, DxInnerLayoutModule } from './inner-layout';
+import { InnerComponent, DxInnerComponentModule } from './inner-component';
+import { Component, Input } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 export class Props {
   @Input() prop: number = 0;
@@ -17,19 +17,19 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   updateUndefinedFromDefaults,
   DefaultEntries,
-} from "@devextreme/runtime/angular";
+} from '@devextreme/runtime/angular';
 
-import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
+import InnerWidget, { DxInnerWidgetModule } from './dx-inner-widget';
 
 @Component({
-  selector: "dx-external-layout",
+  selector: 'dx-external-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["prop"],
+  inputs: ['prop'],
   template: `<ng-template #widgetTemplate
     ><dx-inner-layout
       [innerComponentTemplate]="InnerComponent"
@@ -53,6 +53,7 @@ import InnerWidget, { DxInnerWidgetModule } from "./dx-inner-widget";
 })
 export class ExternalLayout extends Props {
   defaultEntries: DefaultEntries;
+
   _detectChanges(): void {
     setTimeout(() => {
       if (this.changeDetection && !(this.changeDetection as ViewRef).destroyed)
@@ -68,7 +69,7 @@ export class ExternalLayout extends Props {
     );
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
@@ -77,7 +78,7 @@ export class ExternalLayout extends Props {
   ) {
     super();
     const defaultProps = new Props() as { [key: string]: any };
-    this.defaultEntries = ["prop"].map((key) => ({
+    this.defaultEntries = ['prop'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

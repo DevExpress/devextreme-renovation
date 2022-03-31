@@ -1,6 +1,6 @@
-import { Component, Input, TemplateRef } from "@angular/core";
+import { Component, Input, TemplateRef } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class Props {
   @Input() contentTemplate: TemplateRef<any> | null = null;
@@ -15,14 +15,16 @@ import {
   ViewRef,
   ViewChild,
   ElementRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { UndefinedNativeElementRef } from "@devextreme/runtime/angular";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  UndefinedNativeElementRef,
+} from '@devextreme/runtime/angular';
 
 @Component({
-  selector: "dx-ref-on-children-template",
+  selector: 'dx-ref-on-children-template',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  inputs: ["contentTemplate"],
+  inputs: ['contentTemplate'],
   template: `<ng-template #widgetTemplate
     ><ng-container
       *ngTemplateOutlet="
@@ -37,16 +39,16 @@ export default class RefOnChildrenTemplate extends Props {
     new UndefinedNativeElementRef<HTMLDivElement>();
   __effect(): any {
     if (this.child.nativeElement) {
-      this.child.nativeElement.innerHTML += "ParentText";
+      this.child.nativeElement.innerHTML += 'ParentText';
     }
   }
   get forwardRef_child(): (
     ref?: ElementRef<HTMLDivElement>
   ) => ElementRef<HTMLDivElement> {
-    if (this.__getterCache["forwardRef_child"] !== undefined) {
-      return this.__getterCache["forwardRef_child"];
+    if (this.__getterCache['forwardRef_child'] !== undefined) {
+      return this.__getterCache['forwardRef_child'];
     }
-    return (this.__getterCache["forwardRef_child"] = ((): ((
+    return (this.__getterCache['forwardRef_child'] = ((): ((
       ref?: ElementRef<HTMLDivElement>
     ) => ElementRef<HTMLDivElement>) => {
       return function (
@@ -105,7 +107,7 @@ export default class RefOnChildrenTemplate extends Props {
     this.__destroyEffects.push(this.__effect());
   }
   ngOnChanges(changes: { [name: string]: any }) {
-    if (this.__destroyEffects.length && ["child"].some((d) => changes[d])) {
+    if (this.__destroyEffects.length && ['child'].some((d) => changes[d])) {
       this.__schedule_effect();
     }
   }
@@ -117,7 +119,7 @@ export default class RefOnChildrenTemplate extends Props {
     this._updateEffects();
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,

@@ -1,10 +1,10 @@
 import {
   WidgetWithProps,
   DxWidgetWithPropsModule,
-} from "./dx-widget-with-props";
-import { Component } from "@angular/core";
+} from './dx-widget-with-props';
+import { Component } from '@angular/core';
 @Component({
-  template: "",
+  template: '',
 })
 class WidgetInput {}
 
@@ -17,11 +17,11 @@ import {
   ViewRef,
   ViewChild,
   TemplateRef,
-} from "@angular/core";
-import { CommonModule } from "@angular/common";
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "dx-widget",
+  selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-template #widgetTemplate
     ><dx-widget-with-props
@@ -63,7 +63,7 @@ export default class Widget extends WidgetInput {
     });
   }
 
-  @ViewChild("widgetTemplate", { static: true })
+  @ViewChild('widgetTemplate', { static: true })
   widgetTemplate!: TemplateRef<any>;
   constructor(
     private changeDetection: ChangeDetectorRef,
