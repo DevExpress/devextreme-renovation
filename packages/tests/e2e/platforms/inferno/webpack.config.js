@@ -19,15 +19,26 @@ const infernoEntries =
     };
   }, {});
 
-const babelPresets = [
-  "@babel/preset-env",
-  [
-    "@babel/preset-react",
-    {
-      pragma: "h",
-    },
+const babelOptions = {
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "loose": true,
+        "modules": false
+      },
+    ]
   ],
-];
+  "plugins": [
+    "@babel/plugin-syntax-jsx",
+    [
+      "babel-plugin-inferno",
+      {
+        "imports": true
+      }
+    ]
+  ]
+};
 
 module.exports = {
   mode: "development",
@@ -39,9 +50,7 @@ module.exports = {
         use: [
           {
             loader: "babel-loader",
-            options: {
-              presets: babelPresets,
-            },
+            options: babelOptions,
           },
           {
             loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
@@ -71,15 +80,13 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
-          options: {
-            presets: babelPresets,
-          },
+          options: babelOptions,
         },
       },
     ],
   },
   resolve: {
-    alias: {"@devextreme/runtime/inferno": "@devextreme/runtime/dist/inferno"},
+    alias: { "@devextreme/runtime/inferno": "@devextreme/runtime/dist/inferno" },
     extensions: [".js", ".tsx", ".ts"],
   },
   output: {

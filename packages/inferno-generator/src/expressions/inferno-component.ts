@@ -39,7 +39,7 @@ export class InfernoComponent extends PreactComponent {
   compileImportStatements(hooks: string[]): string[] {
     const coreImports = [];
     const hooksSet = new Set(hooks);
-    const imports = ['import { createElement as h } from "inferno-compat";'];
+    const imports = [];
 
     if (hooksSet.has('useRef')) {
       coreImports.push('createRef as infernoCreateRef');
