@@ -9,20 +9,17 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/react-in-jsx-scope */
 import * as util from 'inferno-test-utils';
-import { createElement } from 'inferno-create-element';
 import React from 'react';
+import { forwardRef } from 'inferno';
 import {
-  useState, useEffect, useMemo, HookComponent,
+  useState, useEffect, useMemo, HookComponent, useContext, useImperativeHandle, useRef,
 } from '../hooks';
-
-const h = createElement;
+import { createContext } from '../create_context';
 
 function emit(eventName: string, node: any, eventArgs?: any) {
   node.$EV[eventName](eventArgs);
 }
-type SetStateAction<S> = S | ((prevState: S) => S);
-type Dispatch<A> = (value: A) => void;
-type SetState<S> = Dispatch<SetStateAction<S>>;
+
 test('renders using state', async () => {
   const Hello = ({ name }: { name: string }) => {
     const [count] = useState(42);
@@ -169,4 +166,74 @@ test('use memo is only called when its watch list changes', () => {
   expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 2"');
 
   expect(fx).toHaveBeenCalledTimes(2);
+});
+
+test('context binded to state', () => {
+  interface ConfigContextValue {
+    rtlEnabled?: boolean;
+  }
+  const ConfigContext = createContext<ConfigContextValue | undefined>(
+    undefined,
+  );
+  const contextChildren = () => {
+    const config = useContext(ConfigContext);
+    return (<span id="context">{config?.rtlEnabled && 'rtlEnabled'}</span>);
+  };
+  const contextProvider = () => {
+    const [rtlState, changeRtlState] = useState(false);
+    return (
+      <div>
+        <button type="button" id="b1" onClick={() => { changeRtlState(!rtlState); }}>11</button>
+        <ConfigContext.Provider value={{ rtlEnabled: rtlState }}>
+          <HookComponent renderFn={contextChildren} />
+        </ConfigContext.Provider>
+      </div>
+    );
+  };
+  const rendered = util.renderIntoContainer(<HookComponent renderFn={contextProvider} />);
+  const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+  const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
+
+  expect(contextChildrenValue.innerHTML).toBe('');
+  emit('onClick', button);
+  expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
+});
+
+test.only('useRef with method call (useImperativeHandle)', () => {
+  const mockFunc = jest.fn();
+
+  const childrenComponent = (ref: any) => (props: any) => {
+    const someMethod = () => { mockFunc(); };
+    useImperativeHandle(ref,
+      () => ({
+        someMethod,
+      }), []);
+    return <div />;
+  };
+  function ChildrenComponentHook(props: any, ref: any) {
+    return (
+      <HookComponent
+        renderFn={
+        childrenComponent(ref)
+      }
+        renderProps={props}
+      />
+    );
+  }
+  const ChildrenFR = forwardRef(ChildrenComponentHook);
+
+  const parentComponent = () => {
+    const childRef = useRef(null);
+    return (
+      <div>
+        <button type="button" onClick={() => { console.log(childRef.current); childRef.current.someMethod(); }}>11</button>
+        <ChildrenFR ref={childRef} />
+      </div>
+    );
+  };
+  const rendered = util.renderIntoContainer(<HookComponent renderFn={parentComponent} />);
+  const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+
+  emit('onClick', button);
+  expect(mockFunc).toHaveBeenCalledTimes(1);
 });
