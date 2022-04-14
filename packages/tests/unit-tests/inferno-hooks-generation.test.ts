@@ -6,7 +6,7 @@ import path from 'path';
 import { createTestGenerator } from './helpers/common';
 import mocha from './helpers/mocha';
 
-mocha.describe("inferno-generation", function () {
+mocha.describe("inferno-hooks-generation", function () {
   const testGenerator = createTestGenerator("inferno-hooks");
   this.beforeAll(function () {
     compile(
