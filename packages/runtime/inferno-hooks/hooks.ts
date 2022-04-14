@@ -134,7 +134,7 @@ export class HookComponent extends Component<Record<string, unknown>, Record<str
   shouldComponentUpdate(
     nextProps: Record<string, unknown>,
     nextState: Record<string, unknown>,
-    context: undefined,
+    context: Record<string, unknown> | undefined,
   ): boolean {
     if (!this.recorder) {
       return true;
@@ -213,9 +213,9 @@ export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateA
   );
 }
 
-export function useEffect(fn: () => any, dependencies: unknown[]) {
+export function useEffect(fn: () => any, dependencies?: unknown[]) {
   return currentComponent.getHook(
-    dependencies,
+    dependencies || [],
     (hook: { isNew: any; dispose: any; didMount: any }) => {
       if (hook.isNew) {
         if (hook.didMount) {
