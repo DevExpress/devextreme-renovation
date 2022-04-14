@@ -44,8 +44,6 @@ export function InheritedFromInfernoWrapperComponent(
   return view();
 }
 
-export default InheritedFromInfernoWrapperComponent;
-
 InheritedFromInfernoWrapperComponent.defaultProps = SomeProps;
 
 function HooksInheritedFromInfernoWrapperComponent(

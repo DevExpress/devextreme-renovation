@@ -4,7 +4,7 @@ import { ObjectLiteral, isComponentWrapper, lowerizeFirstLetter } from '@devextr
 export class InfernoComponent extends ReactComponent {
   compileImportStatements(hooks: string[], compats: string[], core: string[]): string[] {
     const componentImports = this.jQueryRegistered
-      ? ['InfernoWrapperComponent', 'useRerenderEffect']
+      ? ['InfernoWrapperComponent', 'useReRenderEffect']
       : ['HookComponent'];
 
     const imports = [];
@@ -31,22 +31,26 @@ export class InfernoComponent extends ReactComponent {
           | undefined;
     return jqueryProp?.getProperty('register')?.toString() === 'true';
   }
+
+  get forwardRefApiType(): string {
+    return this.members.find((m) => m.inherited && m.isApiRef)
+      ?.typeDeclaration() || 'any';
+  }
   // if have apiMethod -> (ref)=>(props)=>{}
   // if have forwardRef -> forwardref((props, ref)=>{})
   // if jqueryRegistered -> createRerenderEffect
 
   compileHooksWrapper(): string {
     const name = this.name;
-    const forwardRefApiType = this.members.find((m) => m.inherited && m.isApiRef)
-      ?.typeDeclaration();
-    const createRerender = `function createRerenderEffect(ref: ${forwardRefApiType}){
+
+    const createRerender = `function createRerenderEffect(ref: ${this.forwardRefApiType}){
         useReRenderEffect()
         ${name}Fn(ref);
       }`;
 
     if (this.hasApiMethod) {
       return `let refs = new Map();
-      const ${name}Fn = (ref: ${forwardRefApiType})=>{
+      const ${name}Fn = (ref: ${this.forwardRefApiType})=>{
       if(!refs.has(ref)){
           refs.set(ref, ${name}(ref));
       }
@@ -54,10 +58,10 @@ export class InfernoComponent extends ReactComponent {
       return refs.get(ref)
       }
       ${this.jQueryRegistered ? createRerender : ''}
-      function Hooks${name}(props: ${this.compilePropsType}, ref: ${forwardRefApiType}) {
-      return <HookComponent renderFn={
-          ${this.jQueryRegistered ? 'createRerenderEffect(ref)' : `${name}(ref)`}
-        } renderProps={props} ></HookComponent>
+      function Hooks${name}(props: ${this.compilePropsType()}, ref: ${this.forwardRefApiType}) {
+      return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
+          ${this.jQueryRegistered ? 'createRerenderEffect(ref)' : `${name}Fn(ref)`}
+        } renderProps={props} />
       }
       const Hooks${name}FR = forwardRef(Hooks${name})
 
@@ -94,10 +98,9 @@ export class InfernoComponent extends ReactComponent {
               ${!this.hasApiMethod
     ? `${modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
-    : `const ${this.name} = forwardRef<${this.name
-    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
+    : `const ${this.name} = (ref: ${this.forwardRefApiType})=>(function ${lowerizeFirstLetter(
       this.name,
-    )}(props: ${this.compilePropsType()}, ref){`
+    )}(props: ${this.compilePropsType()}){`
 }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
@@ -112,17 +115,10 @@ export class InfernoComponent extends ReactComponent {
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
-              ${this.members.filter((m) => m.isApiMethod).length === 0
+              ${!this.hasApiMethod
     ? '}'
-    : `}) as ${this.compileFunctionalComponentType()};\n${this.modifiers.join(
-      ' ',
-    )} ${this.modifiers.join(' ') === 'export'
-      ? `{${this.name}}`
-      : this.name
-    };`
+    : `}) as ${this.compileFunctionalComponentType()};`
 }
-
-              ${this.compileDefaultComponentExport()}
 
               ${this.compileDefaultProps()}
               ${this.compileDefaultOptionsMethod()}

@@ -1,4 +1,3 @@
-import { createElement as h } from "inferno-create-element";
 import { Component, createRef, forwardRef } from "inferno";
 import { ConfigProvider } from '../transpiled-renovation-npm/renovation/common/config_provider';
 
