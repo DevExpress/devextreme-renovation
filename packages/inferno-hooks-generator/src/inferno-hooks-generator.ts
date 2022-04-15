@@ -3,6 +3,10 @@ import { Decorator, Identifier, HeritageClause } from '@devextreme-generator/cor
 import { InfernoComponent } from './inferno-component';
 
 export class InfernoGenerator extends ReactGenerator {
+  getPlatform(): string {
+    return 'inferno-hooks';
+  }
+
   createComponent(
     componentDecorator: Decorator,
     modifiers: string[] | undefined,
