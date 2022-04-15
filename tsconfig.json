@@ -8,6 +8,7 @@
       "@devextreme-generator/declarations": ["./declarations/src"],
       "@devextreme-generator/build-helpers": ["./build-helpers/src"],
       "@devextreme-generator/inferno": ["./inferno-generator/src"],
+      "@devextreme-generator/inferno-hooks": ["./inferno-hooks-generator/src"],
       "@devextreme-generator/preact": ["./preact-generator/src"],
       "@devextreme-generator/react": ["./react-generator/src"],
       "@devextreme-generator/vue": ["./vue-generator/src"],
