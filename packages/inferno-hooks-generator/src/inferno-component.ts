@@ -49,13 +49,12 @@ export class InfernoComponent extends ReactComponent {
       }`;
 
     if (this.hasApiMethod) {
-      return `let refs = new Map();
+      return `let refs = new WeakMap();
       const ${name}Fn = (ref: ${this.forwardRefApiType})=>{
-      if(!refs.has(ref)){
-          refs.set(ref, ${name}(ref));
-      }
-      
-      return refs.get(ref)
+        if(!refs.has(ref)){
+            refs.set(ref, ${name}(ref));
+        }
+        return refs.get(ref)
       }
       ${this.jQueryRegistered ? createRerender : ''}
       function Hooks${name}(props: ${this.compilePropsType()}, ref: ${this.forwardRefApiType}) {
@@ -81,7 +80,7 @@ export class InfernoComponent extends ReactComponent {
   }
 
   get hasApiMethod(): boolean {
-    return this.members.filter((m) => m.isApiMethod).length > 0;
+    return this.members.some((m) => m.isApiMethod);
   }
 
   toString(): string {
