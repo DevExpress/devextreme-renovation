@@ -56,12 +56,11 @@ const PublicWidgetWithProps = (ref: any) =>
 
 PublicWidgetWithProps.defaultProps = WidgetWithPropsInput;
 
-let refs = new Map();
+let refs = new WeakMap();
 const PublicWidgetWithPropsFn = (ref: any) => {
   if (!refs.has(ref)) {
     refs.set(ref, PublicWidgetWithProps(ref));
   }
-
   return refs.get(ref);
 };
 function createRerenderEffect(ref: any) {

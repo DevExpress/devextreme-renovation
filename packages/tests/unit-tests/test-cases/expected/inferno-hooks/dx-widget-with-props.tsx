@@ -53,12 +53,11 @@ const WidgetWithProps = (ref: any) =>
 
 WidgetWithProps.defaultProps = WidgetWithPropsInput;
 
-let refs = new Map();
+let refs = new WeakMap();
 const WidgetWithPropsFn = (ref: any) => {
   if (!refs.has(ref)) {
     refs.set(ref, WidgetWithProps(ref));
   }
-
   return refs.get(ref);
 };
 

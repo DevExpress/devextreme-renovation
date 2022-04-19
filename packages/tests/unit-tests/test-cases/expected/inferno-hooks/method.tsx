@@ -76,12 +76,11 @@ const Widget = (ref: any) =>
 
 Widget.defaultProps = WidgetInput;
 
-let refs = new Map();
+let refs = new WeakMap();
 const WidgetFn = (ref: any) => {
   if (!refs.has(ref)) {
     refs.set(ref, Widget(ref));
   }
-
   return refs.get(ref);
 };
 

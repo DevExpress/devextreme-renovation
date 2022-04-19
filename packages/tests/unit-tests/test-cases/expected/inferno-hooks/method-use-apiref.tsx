@@ -72,12 +72,11 @@ const WidgetWithApiRef = (ref: any) =>
 
 WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
 
-let refs = new Map();
+let refs = new WeakMap();
 const WidgetWithApiRefFn = (ref: any) => {
   if (!refs.has(ref)) {
     refs.set(ref, WidgetWithApiRef(ref));
   }
-
   return refs.get(ref);
 };
 
