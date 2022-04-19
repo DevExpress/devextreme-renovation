@@ -179,27 +179,21 @@ test('context binded to state', () => {
     const config = useContext(ConfigContext);
     return (<span id="context">{config?.rtlEnabled && 'rtlEnabled'}</span>);
   };
-  const contextProvider = () => {
-    const [rtlState, changeRtlState] = useState(false);
-    return (
-      <div>
-        <button type="button" id="b1" onClick={() => { changeRtlState(!rtlState); }}>11</button>
-        <ConfigContext.Provider value={{ rtlEnabled: rtlState }}>
-          <HookComponent renderFn={contextChildren} />
-        </ConfigContext.Provider>
-      </div>
-    );
-  };
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={contextProvider} />);
-  const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+  const contextProvider = (props: { rtlEnabled: boolean }) => (
+    <div>
+      <ConfigContext.Provider value={{ rtlEnabled: props.rtlEnabled }}>
+        <HookComponent renderFn={contextChildren} />
+      </ConfigContext.Provider>
+    </div>
+  );
+  const rendered = util.renderIntoContainer(
+    <HookComponent renderFn={contextProvider} renderProps={{ rtlEnabled: true }} />,
+  );
   const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
-
-  expect(contextChildrenValue.innerHTML).toBe('');
-  emit('onClick', button);
   expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
 });
 
-test.only('useRef with method call (useImperativeHandle)', () => {
+test('useRef with method call (useImperativeHandle)', () => {
   const mockFunc = jest.fn();
 
   const childrenComponent = (ref: any) => (props: any) => {
@@ -226,7 +220,7 @@ test.only('useRef with method call (useImperativeHandle)', () => {
     const childRef = useRef(null);
     return (
       <div>
-        <button type="button" onClick={() => { console.log(childRef.current); childRef.current.someMethod(); }}>11</button>
+        <button type="button" onClick={() => { childRef.current.someMethod(); }}>11</button>
         <ChildrenFR ref={childRef} />
       </div>
     );
