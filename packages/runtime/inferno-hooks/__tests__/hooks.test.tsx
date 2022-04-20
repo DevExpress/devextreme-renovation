@@ -85,11 +85,11 @@ test('multiple useStates are allowed', async () => {
   expect(h1.innerHTML).toMatchInlineSnapshot('"Hi George Catt 43"');
 });
 
-test('effects only run once', () => {
+test('effects only run once without dep array', () => {
   const fx = jest.fn();
   const Hello = () => {
     const [count, setState] = useState(0);
-    useEffect(fx, []);
+    useEffect(fx);
     return (
       <h1 onClick={() => setState(count + 1)}>
         Count is
