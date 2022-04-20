@@ -13,6 +13,7 @@ const packages = [
   'react-generator',
   'preact-generator',
   'inferno-generator',
+  'inferno-hooks-generator',
   'declarations',
   'build-helpers',
   'runtime'

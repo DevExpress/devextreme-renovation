@@ -53,7 +53,7 @@ export function generateComponents(generator: GeneratorAPI) {
   return stream;
 }
 
-export function compile(dir: string, outDir: string, platform: 'vue' | 'react' | 'inferno' | 'angular') {
+export function compile(dir: string, outDir: string, platform: 'vue' | 'react' | 'inferno' | 'angular'| 'inferno-hooks') {
   if (fs.existsSync(outDir)) {
     deleteFolderRecursive(outDir);
   }
