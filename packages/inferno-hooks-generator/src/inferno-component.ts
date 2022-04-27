@@ -1,5 +1,5 @@
 import { ReactComponent, GetAccessor } from '@devextreme-generator/react';
-import { ObjectLiteral, isComponentWrapper, lowerizeFirstLetter } from '@devextreme-generator/core';
+import { ObjectLiteral, isComponentWrapper } from '@devextreme-generator/core';
 
 export class InfernoComponent extends ReactComponent {
   compileImportStatements(hooks: string[], compats: string[], core: string[]): string[] {
@@ -10,17 +10,18 @@ export class InfernoComponent extends ReactComponent {
     const imports = [];
     const namedImports = hooks
       .concat(core)
-      .concat(componentImports);
+      .concat(componentImports)
+      .concat(compats);
     if (namedImports.length) {
+      if (compats.includes('forwardRef')) {
+        namedImports.push('RefObject');
+      }
       imports.push(`import {${namedImports.join(',')}} from '@devextreme/runtime/inferno-hooks'`);
     }
     imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
     if (this.props.some((p) => p.isTemplate) && !isComponentWrapper(this.context.imports)) {
       const runTimeImports = isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate';
       imports.push(`import { ${runTimeImports} } from '@devextreme/runtime/react'`);
-    }
-    if (compats.length > 0) {
-      imports.push(`import {${compats.join(', ')}} from 'inferno'`);
     }
     return imports;
   }
@@ -32,51 +33,44 @@ export class InfernoComponent extends ReactComponent {
     return jqueryProp?.getProperty('register')?.toString() === 'true';
   }
 
-  get forwardRefApiType(): string {
-    return this.members.find((m) => m.inherited && m.isApiRef)
-      ?.typeDeclaration() || 'any';
+  get apiRefType(): string {
+    return this.members.find((m) => m.isApiMethod)
+      ? `${this.name}Ref`
+      : 'any';
   }
-  // if have apiMethod -> (ref)=>(props)=>{}
+
+  defaultPropsDest(): string {
+    return `Hooks${this.name.toString()}.defaultProps`;
+  }
   // if have forwardRef -> forwardref((props, ref)=>{})
   // if jqueryRegistered -> createRerenderEffect
 
   compileHooksWrapper(): string {
     const name = this.name;
-
-    const createRerender = `function createRerenderEffect(ref: ${this.forwardRefApiType}){
-        useReRenderEffect()
-        ${name}Fn(ref);
-      }`;
-
     if (this.hasApiMethod) {
-      return `let refs = new WeakMap();
-      const ${name}Fn = (ref: ${this.forwardRefApiType})=>{
-        if(!refs.has(ref)){
-            refs.set(ref, ${name}(ref));
-        }
-        return refs.get(ref)
-      }
-      ${this.jQueryRegistered ? createRerender : ''}
-      function Hooks${name}(props: ${this.compilePropsType()}, ref: ${this.forwardRefApiType}) {
+      return `
+      function Hooks${name}(props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) {
       return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
-          ${this.jQueryRegistered ? 'createRerenderEffect(ref)' : `${name}Fn(ref)`}
-        } renderProps={props} />
+          React${name}
+        } renderProps={props} renderRef={ref} defaultProps={Hooks${this.name}.defaultProps}/>
       }
-      const Hooks${name}FR = forwardRef(Hooks${name})
+      const ${name} = forwardRef(Hooks${name});
 
 
-      export { Hooks${name}FR };
+      export { ${name} };
 
-      export default Hooks${name}FR;
+      export default ${name};
     `;
     }
+    // check default props with forwardRef
     return `
-    function Hooks${this.name}(props: ${this.compilePropsType()}) {
-    return <HookComponent renderFn={
-        ${this.name}
-      } renderProps={props} ></HookComponent>
+    function Hooks${name}(props: ${this.compilePropsType()}) {
+    return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
+      React${name}
+      } renderProps={props} defaultProps={Hooks${this.name}.defaultProps}/>
     }
-    export default Hooks${this.name};`;
+    export {Hooks${name} as ${name}}
+    export default Hooks${name};`; // remove default props as excessive
   }
 
   get hasApiMethod(): boolean {
@@ -85,7 +79,7 @@ export class InfernoComponent extends ReactComponent {
 
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
-    const modifiers = this.modifiers.filter((m) => m !== 'default');
+    // const modifiers = this.modifiers.filter((m) => m !== 'default');
     return `
               ${this.compileImports()}
               ${this.compilePortalComponent()}
@@ -95,11 +89,8 @@ export class InfernoComponent extends ReactComponent {
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
               ${!this.hasApiMethod
-    ? `${modifiers.join(' ')} function ${this.name
-    }(props: ${this.compilePropsType()}){`
-    : `const ${this.name} = (ref: ${this.forwardRefApiType})=>(function ${lowerizeFirstLetter(
-      this.name,
-    )}(props: ${this.compilePropsType()}){`
+    ? `function React${this.name}(props: ${this.compilePropsType()}){`
+    : `const React${this.name} = (props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) => {`
 }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
@@ -114,10 +105,7 @@ export class InfernoComponent extends ReactComponent {
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}
                   return ${this.compileViewCall()}
-              ${!this.hasApiMethod
-    ? '}'
-    : `}) as ${this.compileFunctionalComponentType()};`
-}
+    }
 
               ${this.compileDefaultProps()}
               ${this.compileDefaultOptionsMethod()}

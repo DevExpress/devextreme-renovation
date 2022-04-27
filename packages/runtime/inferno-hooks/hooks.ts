@@ -4,13 +4,17 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Component } from 'inferno';
+import { Component, SFC, ForwardRef as infernoForwardRef } from 'inferno';
 import { equal } from './shallow-equal';
-
-const emptyProps = {};
 
 export interface RefObject<T> {
   current: T | null;
+}
+
+export function forwardRef<T=Record<string, unknown>, P=Record<string, unknown>>(
+  render: (props: T, ref: RefObject<P>)=>InfernoElement<T>,
+): SFC<T> & infernoForwardRef {
+  return forwardRef(render);
 }
 
 let currentComponent: {
@@ -21,14 +25,15 @@ let currentComponent: {
   state: { [x: string]: any } | null;
 };
 
-function renderChild(component: HookComponent,
-  { renderFn, renderProps }: any,
-  context: any) {
+function renderChild(component: HookComponent, {
+  renderFn, renderProps, renderRef, defaultProps,
+}: any) {
   const prevRecorder = currentComponent;
   currentComponent = component;
-
+  // const props = defaultProps ? { ...defaultProps, ...renderProps } : renderProps;
+  const props = renderProps;
   try {
-    return renderFn(renderProps || emptyProps, context);
+    return renderFn(props || {}, renderRef || {});
   } finally {
     currentComponent = prevRecorder;
   }
@@ -80,14 +85,14 @@ function createRecorder(component: HookComponent) {
 
     shouldComponentUpdate(
       nextProps: { renderProps?: any; renderFn?: any },
-      nextState: any, context: any,
+      nextState: any,
     ) {
       shouldUpdate = !equal(component.props.renderProps, nextProps.renderProps);
       component.state = nextState;
 
       nextId = 0;
 
-      const renderResult = renderChild(component, nextProps, context);
+      const renderResult = renderChild(component, nextProps);
 
       if (shouldUpdate) {
         recorder.renderResult = renderResult;
@@ -111,13 +116,24 @@ function createRecorder(component: HookComponent) {
   return recorder;
 }
 
-export class HookComponent extends Component<Record<string, unknown>, Record<string, unknown>> {
+export class HookComponent extends Component<
+{ renderFn: (props: any) => JSX.Element,
+  renderProps?: Record<string, unknown>,
+  renderRef?: RefObject<Record<string, unknown>>,
+  defaultProps?: Record<string, unknown>
+},
+Record<string, unknown>
+> {
   recorder!: ReturnType<typeof createRecorder> | undefined;
 
-  constructor(props: any) {
-    super(props);
-    this.state = null;
-  }
+  // eslint-disable-next-line react/state-in-constructor
+  state = {} as Record<string, unknown>;
+
+  refs: any;
+  // constructor(props: any) {
+  //   super(props);
+  //   this.state = null;
+  // }
 
   componentDidMount(): void {
     if (this.recorder) {
@@ -134,13 +150,14 @@ export class HookComponent extends Component<Record<string, unknown>, Record<str
   shouldComponentUpdate(
     nextProps: Record<string, unknown>,
     nextState: Record<string, unknown>,
-    context: Record<string, unknown> | undefined,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _context: Record<string, unknown> | undefined,
   ): boolean {
     if (!this.recorder) {
       return true;
     }
 
-    return this.recorder.shouldComponentUpdate(nextProps, nextState, context);
+    return this.recorder.shouldComponentUpdate(nextProps, nextState);
   }
 
   componentWillUnmount(): void {
@@ -162,14 +179,14 @@ export class HookComponent extends Component<Record<string, unknown>, Record<str
     if (this.recorder) {
       this.recorder.dispose();
     }
-    this.state = null;
+    this.state = {};
     this.recorder = undefined;
   }
 
   render(): JSX.Element {
     return this.recorder
       ? this.recorder.renderResult
-      : renderChild(this, this.props as any, this.context);
+      : renderChild(this, this.props as any);
   }
 }
 
@@ -182,8 +199,10 @@ interface Hook {
   didMount: any,
   dependencies: number | unknown[]
 }
+
 type SetStateAction<S> = S | ((prevState: S) => S);
 type Dispatch<A> = (value: A) => void;
+
 export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>] {
   return currentComponent.getHook(
     0,
@@ -258,7 +277,7 @@ export function useContext(consumer: { id: number }) {
   return currentComponent.getContextValue(consumer);
 }
 
-export function useRef<T>(initialValue: T) {
+export function useRef<T>(initialValue: T | null) {
   return currentComponent.getHook(0,
     (hook: { isNew: boolean; value: unknown; dispose: unknown }) => {
       if (hook.isNew) {

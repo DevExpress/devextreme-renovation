@@ -2,7 +2,7 @@ import {
   BaseInfernoComponent,
 } from '@devextreme/runtime/inferno';
 function view() {
-  return <div></div>;
+  return <Widget/>;
 }
 
 export type WidgetPropsType = {};

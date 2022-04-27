@@ -16,8 +16,9 @@ import {
   useCallback,
   useImperativeHandle,
   HookComponent,
+  forwardRef,
+  RefObject,
 } from '@devextreme/runtime/inferno-hooks';
-import { forwardRef } from 'inferno';
 
 export type WidgetWithPropsRef = { doSomething: () => any };
 type RestProps = {
@@ -31,42 +32,37 @@ interface WidgetWithProps {
   restAttributes: RestProps;
 }
 
-const WidgetWithProps = (ref: any) =>
-  function widgetWithProps(props: typeof WidgetWithPropsInput & RestProps) {
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const { number, onClick, optionalValue, value, ...restProps } = props;
-        return restProps;
-      },
-      [props]
-    );
-    const __doSomething = useCallback(function __doSomething(): any {}, []);
+const WidgetWithProps = (
+  props: typeof WidgetWithPropsInput & RestProps,
+  ref: RefObject<WidgetWithPropsRef>
+) => {
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { number, onClick, optionalValue, value, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+  const __doSomething = useCallback(function __doSomething(): any {}, []);
 
-    useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
-      __doSomething,
-    ]);
-    return view({ props: { ...props }, restAttributes: __restAttributes() });
-  } as React.FC<
-    typeof WidgetWithPropsInput &
-      RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
-  > & { defaultProps: typeof WidgetWithPropsInput };
+  useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
+    __doSomething,
+  ]);
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
+};
 
 WidgetWithProps.defaultProps = WidgetWithPropsInput;
 
-let refs = new WeakMap();
-const WidgetWithPropsFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, WidgetWithProps(ref));
-  }
-  return refs.get(ref);
-};
-
 function HooksWidgetWithProps(
   props: typeof WidgetWithPropsInput & RestProps,
-  ref: any
+  ref: RefObject<WidgetWithPropsRef>
 ) {
   return (
-    <HookComponent renderFn={WidgetWithPropsFn(ref)} renderProps={props} />
+    <HookComponent
+      renderFn={WidgetWithProps}
+      renderProps={props}
+      renderRef={ref}
+    />
   );
 }
 const HooksWidgetWithPropsFR = forwardRef(HooksWidgetWithProps);

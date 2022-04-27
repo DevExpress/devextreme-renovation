@@ -168,7 +168,7 @@ test('use memo is only called when its watch list changes', () => {
   expect(fx).toHaveBeenCalledTimes(2);
 });
 
-test('context binded to state', () => {
+test('context from props', () => {
   interface ConfigContextValue {
     rtlEnabled?: boolean;
   }
@@ -196,7 +196,7 @@ test('context binded to state', () => {
 test('useRef with method call (useImperativeHandle)', () => {
   const mockFunc = jest.fn();
 
-  const childrenComponent = (ref: any) => (props: any) => {
+  const childrenComponent = (props: any, ref: any) => {
     const someMethod = () => { mockFunc(); };
     useImperativeHandle(ref,
       () => ({
@@ -207,10 +207,9 @@ test('useRef with method call (useImperativeHandle)', () => {
   function ChildrenComponentHook(props: any, ref: any) {
     return (
       <HookComponent
-        renderFn={
-        childrenComponent(ref)
-      }
+        renderFn={childrenComponent}
         renderProps={props}
+        renderRef={ref}
       />
     );
   }

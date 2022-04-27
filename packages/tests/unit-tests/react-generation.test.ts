@@ -48,6 +48,9 @@ mocha.describe("react-generation", function () {
   mocha.it("variable-declaration", function () {
     this.testGenerator(this.test!.title);
   });
+  mocha.it.only("app", function () {
+    this.testGenerator(this.test!.title);
+  });
 
   mocha.it("functions", function () {
     this.testGenerator(this.test!.title);

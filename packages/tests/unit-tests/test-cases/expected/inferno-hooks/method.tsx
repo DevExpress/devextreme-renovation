@@ -13,8 +13,9 @@ import {
   useRef,
   useImperativeHandle,
   HookComponent,
+  forwardRef,
+  RefObject,
 } from '@devextreme/runtime/inferno-hooks';
-import { forwardRef } from 'inferno';
 
 export type WidgetRef = {
   getHeight: (p: number, p1: any) => string;
@@ -32,60 +33,57 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-const Widget = (ref: any) =>
-  function widget(props: typeof WidgetInput & RestProps) {
-    const __divRef: MutableRefObject<HTMLDivElement | null> =
-      useRef<HTMLDivElement>(null);
+const Widget = (
+  props: typeof WidgetInput & RestProps,
+  ref: RefObject<WidgetRef>
+) => {
+  const __divRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
 
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const { prop1, prop2, ...restProps } = props;
-        return restProps;
-      },
-      [props]
-    );
-    const __getHeight = useCallback(
-      function __getHeight(p: number = 10, p1: any): string {
-        return `${props.prop1} + ${props.prop2} + ${__divRef.current?.innerHTML} + ${p}`;
-      },
-      [props.prop1, props.prop2]
-    );
-    const __getSize = useCallback(
-      function __getSize(): string {
-        return `${props.prop1} + ${__divRef.current?.innerHTML} + ${__getHeight(
-          0,
-          0
-        )}`;
-      },
-      [props.prop1, __getHeight]
-    );
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { prop1, prop2, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+  const __getHeight = useCallback(
+    function __getHeight(p: number = 10, p1: any): string {
+      return `${props.prop1} + ${props.prop2} + ${__divRef.current?.innerHTML} + ${p}`;
+    },
+    [props.prop1, props.prop2]
+  );
+  const __getSize = useCallback(
+    function __getSize(): string {
+      return `${props.prop1} + ${__divRef.current?.innerHTML} + ${__getHeight(
+        0,
+        0
+      )}`;
+    },
+    [props.prop1, __getHeight]
+  );
 
-    useImperativeHandle(
-      ref,
-      () => ({ getHeight: __getHeight, getSize: __getSize }),
-      [__getHeight, __getSize]
-    );
-    return view({
-      props: { ...props },
-      divRef: __divRef,
-      restAttributes: __restAttributes(),
-    });
-  } as React.FC<
-    typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }
-  > & { defaultProps: typeof WidgetInput };
+  useImperativeHandle(
+    ref,
+    () => ({ getHeight: __getHeight, getSize: __getSize }),
+    [__getHeight, __getSize]
+  );
+  return view({
+    props: { ...props },
+    divRef: __divRef,
+    restAttributes: __restAttributes(),
+  });
+};
 
 Widget.defaultProps = WidgetInput;
 
-let refs = new WeakMap();
-const WidgetFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, Widget(ref));
-  }
-  return refs.get(ref);
-};
-
-function HooksWidget(props: typeof WidgetInput & RestProps, ref: any) {
-  return <HookComponent renderFn={WidgetFn(ref)} renderProps={props} />;
+function HooksWidget(
+  props: typeof WidgetInput & RestProps,
+  ref: RefObject<WidgetRef>
+) {
+  return (
+    <HookComponent renderFn={Widget} renderProps={props} renderRef={ref} />
+  );
 }
 const HooksWidgetFR = forwardRef(HooksWidget);
 

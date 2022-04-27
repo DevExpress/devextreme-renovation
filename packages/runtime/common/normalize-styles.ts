@@ -42,13 +42,15 @@ const isNumeric = (value: string | number) => {
 
 const getNumberStyleValue = (style: string, value: string | number) => (NUMBER_STYLES.has(style) ? value : `${value}px`);
 
+const kebabize = (str: string) => str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? '-' : '') + $.toLowerCase());
+
 export function normalizeStyles(styles: unknown): Record<string, string | number> | undefined {
   if (!(styles instanceof Object)) { return undefined; }
 
   return Object
     .entries(styles)
     .reduce((acc: Record<string, string | number>, [key, value]) => {
-      acc[key] = isNumeric(value)
+      acc[kebabize(key)] = isNumeric(value)
         ? getNumberStyleValue(key, value)
         : value;
       return acc;

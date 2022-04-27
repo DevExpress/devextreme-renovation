@@ -25,8 +25,9 @@ import {
   useMemo,
   useImperativeHandle,
   HookComponent,
+  forwardRef,
+  RefObject,
 } from '@devextreme/runtime/inferno-hooks';
-import { forwardRef } from 'inferno';
 
 export type WidgetRef = { changeState: (newValue: string) => any };
 type RestProps = {
@@ -47,85 +48,82 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-const Widget = (ref: any) =>
-  function widget(props: typeof WidgetProps & RestProps) {
-    const [__state_someState, __state_setSomeState] = useState<string>('');
+const Widget = (
+  props: typeof WidgetProps & RestProps,
+  ref: RefObject<WidgetRef>
+) => {
+  const [__state_someState, __state_setSomeState] = useState<string>('');
 
-    const __someObj = useMemo(
-      function __someObj(): GetterType {
-        return { stateField: __state_someState, propField: props.someProp };
-      },
-      [__state_someState, props.someProp]
-    );
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const { objectProp, someProp, type, ...restProps } = props;
-        return restProps;
-      },
-      [props]
-    );
-    const __changeState = useCallback(function __changeState(
-      newValue: string
-    ): any {
-      __state_setSomeState((__state_someState) => newValue);
+  const __someObj = useMemo(
+    function __someObj(): GetterType {
+      return { stateField: __state_someState, propField: props.someProp };
     },
-    []);
-    const __arrayFromObj = useMemo(
-      function __arrayFromObj(): (string | undefined)[] {
-        const { propField, stateField } = __someObj;
-        return [stateField, propField];
-      },
-      [__someObj]
-    );
-    const __objectFromDestructured = useMemo(
-      function __objectFromDestructured(): GetterType {
-        const { propField, stateField } = __someObj;
-        return { stateField, propField };
-      },
-      [__someObj]
-    );
-    const __someGetter = useMemo(
-      function __someGetter(): GetterType | undefined {
-        const { propField, stateField: stateField2 } = __someObj;
-        return { stateField: stateField2, propField };
-      },
-      [__someObj]
-    );
-    const __arrayFromArr = useMemo(
-      function __arrayFromArr(): (string | undefined)[] {
-        const [stateField, propField] = __arrayFromObj;
-        return [stateField, propField];
-      },
-      [__arrayFromObj]
-    );
-    const __someMethodFromDestructured = useCallback(
-      function __someMethodFromDestructured(): GetterType {
-        const { propField, stateField } = __objectFromDestructured;
-        return { stateField, propField };
-      },
-      [__objectFromDestructured]
-    );
+    [__state_someState, props.someProp]
+  );
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { objectProp, someProp, type, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+  const __changeState = useCallback(function __changeState(
+    newValue: string
+  ): any {
+    __state_setSomeState((__state_someState) => newValue);
+  },
+  []);
+  const __arrayFromObj = useMemo(
+    function __arrayFromObj(): (string | undefined)[] {
+      const { propField, stateField } = __someObj;
+      return [stateField, propField];
+    },
+    [__someObj]
+  );
+  const __objectFromDestructured = useMemo(
+    function __objectFromDestructured(): GetterType {
+      const { propField, stateField } = __someObj;
+      return { stateField, propField };
+    },
+    [__someObj]
+  );
+  const __someGetter = useMemo(
+    function __someGetter(): GetterType | undefined {
+      const { propField, stateField: stateField2 } = __someObj;
+      return { stateField: stateField2, propField };
+    },
+    [__someObj]
+  );
+  const __arrayFromArr = useMemo(
+    function __arrayFromArr(): (string | undefined)[] {
+      const [stateField, propField] = __arrayFromObj;
+      return [stateField, propField];
+    },
+    [__arrayFromObj]
+  );
+  const __someMethodFromDestructured = useCallback(
+    function __someMethodFromDestructured(): GetterType {
+      const { propField, stateField } = __objectFromDestructured;
+      return { stateField, propField };
+    },
+    [__objectFromDestructured]
+  );
 
-    useImperativeHandle(ref, () => ({ changeState: __changeState }), [
-      __changeState,
-    ]);
-    return view();
-  } as React.FC<
-    typeof WidgetProps & RestProps & { ref?: React.Ref<WidgetRef> }
-  > & { defaultProps: typeof WidgetProps };
+  useImperativeHandle(ref, () => ({ changeState: __changeState }), [
+    __changeState,
+  ]);
+  return view();
+};
 
 Widget.defaultProps = WidgetProps;
 
-let refs = new WeakMap();
-const WidgetFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, Widget(ref));
-  }
-  return refs.get(ref);
-};
-
-function HooksWidget(props: typeof WidgetProps & RestProps, ref: any) {
-  return <HookComponent renderFn={WidgetFn(ref)} renderProps={props} />;
+function HooksWidget(
+  props: typeof WidgetProps & RestProps,
+  ref: RefObject<WidgetRef>
+) {
+  return (
+    <HookComponent renderFn={Widget} renderProps={props} renderRef={ref} />
+  );
 }
 const HooksWidgetFR = forwardRef(HooksWidget);
 
