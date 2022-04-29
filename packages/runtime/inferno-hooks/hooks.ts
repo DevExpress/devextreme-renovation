@@ -26,11 +26,10 @@ let currentComponent: {
 };
 
 function renderChild(component: HookComponent, {
-  renderFn, renderProps, renderRef, defaultProps,
+  renderFn, renderProps, renderRef,
 }: any) {
   const prevRecorder = currentComponent;
   currentComponent = component;
-  // const props = defaultProps ? { ...defaultProps, ...renderProps } : renderProps;
   const props = renderProps;
   try {
     return renderFn(props || {}, renderRef || {});
@@ -120,7 +119,6 @@ export class HookComponent extends Component<
 { renderFn: (props: any) => JSX.Element,
   renderProps?: Record<string, unknown>,
   renderRef?: RefObject<Record<string, unknown>>,
-  defaultProps?: Record<string, unknown>
 },
 Record<string, unknown>
 > {

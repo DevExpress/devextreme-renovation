@@ -18,26 +18,26 @@ import PageSelector from "./page-selector";
 function view(model: ContextApp) {
   return (
     <div>
-      <div id="context-simple-context">
+      {/* <div id="context-simple-context">
         <SimpleProviderComponent />
         <SimpleContextConsumerComponents />
 
         <GetterProvider p={model.pageIndex} />
-      </div>
+      </div> */}
 
       <GridComponent>
-        <Pager />
+        {/* <Pager />
         <Paging
           pageIndex={model.pageIndex}
           pageIndexChange={model.setPageIndex}
-        />
+        /> */}
       </GridComponent>
-      <div id="context-page-selector">
+      {/* <div id="context-page-selector">
         <PageSelector
           value={model.pageIndex}
           valueChange={model.pageIndexChange}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

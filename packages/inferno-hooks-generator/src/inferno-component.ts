@@ -52,7 +52,7 @@ export class InfernoComponent extends ReactComponent {
       function Hooks${name}(props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) {
       return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
           React${name}
-        } renderProps={props} renderRef={ref} defaultProps={Hooks${this.name}.defaultProps}/>
+        } renderProps={props} renderRef={ref}/>
       }
       const ${name} = forwardRef(Hooks${name});
 
@@ -67,10 +67,10 @@ export class InfernoComponent extends ReactComponent {
     function Hooks${name}(props: ${this.compilePropsType()}) {
     return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
       React${name}
-      } renderProps={props} defaultProps={Hooks${this.name}.defaultProps}/>
+      } renderProps={props}/>
     }
     export {Hooks${name} as ${name}}
-    export default Hooks${name};`; // remove default props as excessive
+    export default Hooks${name};`;
   }
 
   get hasApiMethod(): boolean {

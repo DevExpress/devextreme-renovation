@@ -1,32 +1,30 @@
 import {
   Component,
-  OneWay,
   ComponentBindings,
   JSXComponent,
+  Provider,
+  Slot,
+  createContext
 } from "@devextreme-generator/declarations";
 
-function view(model: SimpleComponent) {
-  return (
-    <div
-      id="simple"
-      style={{
-        backgroundColor: model.props.color,
-        width: model.props.width,
-        height: model.props.height,
-      }}
-    ></div>
-  );
+import { Context } from "./context";
+import { PluginContext } from "./context";
+
+function view(model: GridComponent) {
+  return <div>{model.props.children}</div>;
 }
+const context = createContext({});
 
 @ComponentBindings()
-export class WidgetInput {
-  @OneWay() height: number = 10;
-  @OneWay() width: number = 10;
-  @OneWay() color?: string = "red";
+class Props {
+  @Slot() children: any;
 }
 
 @Component({
   view,
-  jQuery: {register:true},
+  jQuery: {register: true},
 })
-export class SimpleComponent extends JSXComponent(WidgetInput) {}
+export default class GridComponent extends JSXComponent(Props) {
+  @Provider(Context)
+  contextProvider: PluginContext = new PluginContext();
+}

@@ -1,31 +1,20 @@
-function view(model: SimpleComponent) {
-  return (
-    <div
-      id="simple"
-      style={normalizeStyles({
-        backgroundColor: model.props.color,
-        width: model.props.width,
-        height: model.props.height,
-      })}
-    ></div>
-  );
+import { createContext } from '@devextreme/runtime/inferno-hooks';
+import { Context } from './context';
+import { PluginContext } from './context';
+function view(model: GridComponent) {
+  return <div>{model.props.children}</div>;
 }
+const context = createContext({});
 
-export type WidgetInputType = {
-  height: number;
-  width: number;
-  color?: string;
+export type PropsType = {
+  children: React.ReactNode;
 };
-export const WidgetInput: WidgetInputType = {
-  height: 10,
-  width: 10,
-  color: 'red',
-};
+const Props: PropsType = {} as any as PropsType;
 import {
+  useState,
   useCallback,
   InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
-import { normalizeStyles } from '@devextreme/runtime/common';
 
 type RestProps = {
   className?: string;
@@ -33,33 +22,42 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface SimpleComponent {
-  props: typeof WidgetInput & RestProps;
+interface GridComponent {
+  props: typeof Props & RestProps;
+  contextProvider: PluginContext;
   restAttributes: RestProps;
 }
 
-function ReactSimpleComponent(props: typeof WidgetInput & RestProps) {
+function ReactGridComponent(props: typeof Props & RestProps) {
+  const [contextProvider] = useState(new PluginContext());
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { color, height, width, ...restProps } = props;
+      const { children, ...restProps } = props;
       return restProps;
     },
     [props]
   );
 
-  return view({ props: { ...props }, restAttributes: __restAttributes() });
+  return (
+    <Context.Provider value={contextProvider}>
+      {view({
+        props: { ...props },
+        contextProvider,
+        restAttributes: __restAttributes(),
+      })}
+    </Context.Provider>
+  );
 }
 
-HooksSimpleComponent.defaultProps = WidgetInput;
+HooksGridComponent.defaultProps = Props;
 
-function HooksSimpleComponent(props: typeof WidgetInput & RestProps) {
+function HooksGridComponent(props: typeof Props & RestProps) {
   return (
     <InfernoWrapperComponent
-      renderFn={ReactSimpleComponent}
+      renderFn={ReactGridComponent}
       renderProps={props}
-      defaultProps={HooksSimpleComponent.defaultProps}
     />
   );
 }
-export { HooksSimpleComponent as SimpleComponent };
-export default HooksSimpleComponent;
+export { HooksGridComponent as GridComponent };
+export default HooksGridComponent;

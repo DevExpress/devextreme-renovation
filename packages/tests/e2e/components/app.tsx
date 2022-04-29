@@ -160,7 +160,7 @@ function view(model: App) {
         Check templates
         <TemplateApp />
       </div>
-      {/* <ContextApp /> */}
+      <ContextApp />
       <PortalContainer />
       <TestPropertyAccessChain />
       <div style={{ border: "1px solid grey", padding: "5px" }}>

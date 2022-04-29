@@ -1,6 +1,9 @@
 import { ReactGenerator, Method, Property } from '@devextreme-generator/react';
-import { Decorator, Identifier, HeritageClause } from '@devextreme-generator/core';
+import {
+  Decorator, Identifier, HeritageClause, ImportClause, StringLiteral,
+} from '@devextreme-generator/core';
 import { InfernoComponent } from './inferno-component';
+import { ImportDeclaration } from './import-declaration';
 
 export class InfernoGenerator extends ReactGenerator {
   getPlatform(): string {
@@ -22,6 +25,21 @@ export class InfernoGenerator extends ReactGenerator {
       typeParameters,
       heritageClauses,
       members,
+      this.getContext(),
+    );
+  }
+
+  createImportDeclarationCore(
+    decorators: Decorator[] = [],
+    modifiers: string[] = [],
+    importClause: ImportClause,
+    moduleSpecifier: StringLiteral,
+  ) {
+    return new ImportDeclaration(
+      decorators,
+      modifiers,
+      importClause,
+      moduleSpecifier,
       this.getContext(),
     );
   }
