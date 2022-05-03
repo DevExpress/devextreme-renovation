@@ -2,29 +2,31 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-  Provider,
-  Slot,
-  createContext
+  Ref,
+  Effect,
+  RefObject,
 } from "@devextreme-generator/declarations";
 
-import { Context } from "./context";
-import { PluginContext } from "./context";
-
-function view(model: GridComponent) {
-  return <div>{model.props.children}</div>;
+function view(model: RefProps) {
+  return <div>{"Ref Props"}</div>;
 }
-const context = createContext({});
 
 @ComponentBindings()
 class Props {
-  @Slot() children: any;
+  @Ref() parentRef!: RefObject<HTMLDivElement>;
 }
 
 @Component({
   view,
-  jQuery: {register: true},
+  jQuery: { register: true },
 })
-export default class GridComponent extends JSXComponent(Props) {
-  @Provider(Context)
-  contextProvider: PluginContext = new PluginContext();
+export default class RefProps extends JSXComponent<Props, "parentRef">() {
+  @Effect()
+  loadEffect() {
+    const parentRef = this.props.parentRef;
+    if (parentRef.current) {
+      parentRef.current.style.backgroundColor = "#aaaaff";
+      parentRef.current.innerHTML += "childText";
+    }
+  }
 }

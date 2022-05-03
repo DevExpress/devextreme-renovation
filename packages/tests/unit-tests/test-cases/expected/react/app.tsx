@@ -1,17 +1,13 @@
-import { createContext } from 'react';
-import { Context } from './context';
-import { PluginContext } from './context';
-function view(model: GridComponent) {
-  return <div>{model.props.children}</div>;
+import { MutableRefObject } from 'react';
+function view(model: RefProps) {
+  return <div>{'Ref Props'}</div>;
 }
-const context = createContext({});
 
 export type PropsType = {
-  children: React.ReactNode;
+  parentRef: MutableRefObject<HTMLDivElement | null>;
 };
 const Props: PropsType = {} as any as PropsType;
-import * as React from 'react';
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 type RestProps = {
   className?: string;
@@ -19,31 +15,28 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface GridComponent {
+interface RefProps {
   props: typeof Props & RestProps;
-  contextProvider: PluginContext;
   restAttributes: RestProps;
 }
 
-export default function GridComponent(props: typeof Props & RestProps) {
-  const [contextProvider] = useState(new PluginContext());
+export default function RefProps(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, ...restProps } = props;
+      const { parentRef, ...restProps } = props;
       return restProps;
     },
     [props]
   );
+  useEffect(() => {
+    const parentRef = props.parentRef;
+    if (parentRef.current) {
+      parentRef.current.style.backgroundColor = '#aaaaff';
+      parentRef.current.innerHTML += 'childText';
+    }
+  }, []);
 
-  return (
-    <Context.Provider value={contextProvider}>
-      {view({
-        props: { ...props },
-        contextProvider,
-        restAttributes: __restAttributes(),
-      })}
-    </Context.Provider>
-  );
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-GridComponent.defaultProps = Props;
+RefProps.defaultProps = Props;

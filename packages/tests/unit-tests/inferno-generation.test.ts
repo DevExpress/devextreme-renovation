@@ -44,6 +44,9 @@ mocha.describe("inferno-generation", function () {
     generator.resetCache();
   });
 
+  mocha.it.only("app", function () {
+    this.testGenerator(this.test!.title);
+  });
   mocha.it("class", function () {
     this.testGenerator(this.test!.title);
   });
@@ -127,7 +130,7 @@ mocha.describe("inferno-generation", function () {
   mocha.it("nested", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("nested-pick", function () {
     this.testGenerator(this.test!.title);
   });

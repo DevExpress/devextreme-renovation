@@ -1,18 +1,14 @@
-import { createContext } from '@devextreme/runtime/inferno-hooks';
-import { Context } from './context';
-import { PluginContext } from './context';
-function view(model: GridComponent) {
-  return <div>{model.props.children}</div>;
+function view(model: RefProps) {
+  return <div>{'Ref Props'}</div>;
 }
-const context = createContext({});
 
 export type PropsType = {
-  children: React.ReactNode;
+  parentRef: MutableRefObject<HTMLDivElement | null>;
 };
 const Props: PropsType = {} as any as PropsType;
 import {
-  useState,
   useCallback,
+  useEffect,
   InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
 
@@ -22,42 +18,36 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface GridComponent {
+interface RefProps {
   props: typeof Props & RestProps;
-  contextProvider: PluginContext;
   restAttributes: RestProps;
 }
 
-function ReactGridComponent(props: typeof Props & RestProps) {
-  const [contextProvider] = useState(new PluginContext());
+function ReactRefProps(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { children, ...restProps } = props;
+      const { parentRef, ...restProps } = props;
       return restProps;
     },
     [props]
   );
+  useEffect(() => {
+    const parentRef = props.parentRef;
+    if (parentRef.current) {
+      parentRef.current.style.backgroundColor = '#aaaaff';
+      parentRef.current.innerHTML += 'childText';
+    }
+  }, []);
 
-  return (
-    <Context.Provider value={contextProvider}>
-      {view({
-        props: { ...props },
-        contextProvider,
-        restAttributes: __restAttributes(),
-      })}
-    </Context.Provider>
-  );
+  return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-HooksGridComponent.defaultProps = Props;
+HooksRefProps.defaultProps = Props;
 
-function HooksGridComponent(props: typeof Props & RestProps) {
+function HooksRefProps(props: typeof Props & RestProps) {
   return (
-    <InfernoWrapperComponent
-      renderFn={ReactGridComponent}
-      renderProps={props}
-    />
+    <InfernoWrapperComponent renderFn={ReactRefProps} renderProps={props} />
   );
 }
-export { HooksGridComponent as GridComponent };
-export default HooksGridComponent;
+export { HooksRefProps as RefProps };
+export default HooksRefProps;

@@ -4,15 +4,17 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { Component, SFC, ForwardRef as infernoForwardRef } from 'inferno';
+import {
+  Component, SFC, ForwardRef as infernoForwardRef,
+} from 'inferno';
 import { equal } from './shallow-equal';
 
 export interface RefObject<T> {
   current: T | null;
 }
 
-export function forwardRef<T=Record<string, unknown>, P=Record<string, unknown>>(
-  render: (props: T, ref: RefObject<P>)=>InfernoElement<T>,
+export function forwardRef<T = Record<string, unknown>, P = Record<string, unknown>>(
+  render: (props: T, ref: RefObject<P>) => InfernoElement<T>,
 ): SFC<T> & infernoForwardRef {
   return forwardRef(render);
 }
@@ -115,13 +117,14 @@ function createRecorder(component: HookComponent) {
   return recorder;
 }
 
-export class HookComponent extends Component<
-{ renderFn: (props: any) => JSX.Element,
-  renderProps?: Record<string, unknown>,
-  renderRef?: RefObject<Record<string, unknown>>,
-},
-Record<string, unknown>
-> {
+export class HookComponent extends Component
+  <{
+    renderFn: (props: any) => JSX.Element,
+    renderProps?: Record<string, unknown>,
+    renderRef?: RefObject<Record<string, unknown>>,
+  },
+  Record<string, unknown>
+  > {
   recorder!: ReturnType<typeof createRecorder> | undefined;
 
   // eslint-disable-next-line react/state-in-constructor
@@ -139,7 +142,7 @@ Record<string, unknown>
     }
   }
 
-  UNSAFE_componentWillReceiveProps({ renderFn }: { renderFn: ()=> JSX.Element }): void {
+  UNSAFE_componentWillReceiveProps({ renderFn }: { renderFn: () => JSX.Element }): void {
     if (renderFn !== this.props.renderFn) {
       this.dispose();
     }
@@ -256,7 +259,7 @@ export function useMemo<T>(fn: () => T, dependencies: unknown[]): T {
 }
 
 export function useCallback
-<T extends (...args: never[]) => unknown>(fn: T, dependencies: unknown[]): T {
+  <T extends (...args: never[]) => unknown>(fn: T, dependencies: unknown[]): T {
   return currentComponent.getHook(dependencies, (hook: { isNew: boolean; value: any }) => {
     if (hook.isNew) {
       hook.value = fn;
