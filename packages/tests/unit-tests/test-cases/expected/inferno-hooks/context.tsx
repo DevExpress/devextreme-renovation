@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget): any {
   return <span></span>;
 }
@@ -35,7 +35,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+function ReactWidget(props: typeof Props & RestProps) {
   const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
   const consumer = useContext(ContextForConsumer);
@@ -73,9 +73,10 @@ export function Widget(props: typeof Props & RestProps) {
   );
 }
 
-Widget.defaultProps = Props;
+HooksWidget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

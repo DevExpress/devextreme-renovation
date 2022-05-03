@@ -44,7 +44,7 @@ mocha.describe("inferno-hooks-generation", function () {
     generator.resetCache();
   });
 
-  mocha.it.only("app", function () {
+  mocha.it("app", function () {
     this.testGenerator(this.test!.title);
   });
   mocha.it("class", function () {

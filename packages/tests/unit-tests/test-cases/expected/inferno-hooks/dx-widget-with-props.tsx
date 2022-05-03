@@ -32,8 +32,7 @@ interface WidgetWithProps {
   restAttributes: RestProps;
 }
 
-<<<<<<< HEAD
-const WidgetWithProps = (
+const ReactWidgetWithProps = (
   props: typeof WidgetWithPropsInput & RestProps,
   ref: RefObject<WidgetWithPropsRef>
 ) => {
@@ -44,7 +43,7 @@ const WidgetWithProps = (
     },
     [props]
   );
-  const __doSomething = useCallback(function __doSomething(): any { }, []);
+  const __doSomething = useCallback(function __doSomething(): any {}, []);
 
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
@@ -52,7 +51,7 @@ const WidgetWithProps = (
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
 
-WidgetWithProps.defaultProps = WidgetWithPropsInput;
+HooksWidgetWithProps.defaultProps = WidgetWithPropsInput;
 
 function HooksWidgetWithProps(
   props: typeof WidgetWithPropsInput & RestProps,
@@ -60,52 +59,14 @@ function HooksWidgetWithProps(
 ) {
   return (
     <HookComponent
-      renderFn={WidgetWithProps}
+      renderFn={ReactWidgetWithProps}
       renderProps={props}
       renderRef={ref}
     />
-=======
-const WidgetWithProps = (ref: any) =>
-  function widgetWithProps(props: typeof WidgetWithPropsInput & RestProps) {
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const { number, onClick, optionalValue, value, ...restProps } = props;
-        return restProps;
-      },
-      [props]
-    );
-    const __doSomething = useCallback(function __doSomething(): any {}, []);
-
-    useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
-      __doSomething,
-    ]);
-    return view({ props: { ...props }, restAttributes: __restAttributes() });
-  } as React.FC<
-    typeof WidgetWithPropsInput &
-      RestProps & { ref?: React.Ref<WidgetWithPropsRef> }
-  > & { defaultProps: typeof WidgetWithPropsInput };
-
-WidgetWithProps.defaultProps = WidgetWithPropsInput;
-
-let refs = new WeakMap();
-const WidgetWithPropsFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, WidgetWithProps(ref));
-  }
-  return refs.get(ref);
-};
-
-function HooksWidgetWithProps(
-  props: typeof WidgetWithPropsInput & RestProps,
-  ref: any
-) {
-  return (
-    <HookComponent renderFn={WidgetWithPropsFn(ref)} renderProps={props} />
->>>>>>> master
   );
 }
-const HooksWidgetWithPropsFR = forwardRef(HooksWidgetWithProps);
+const WidgetWithProps = forwardRef(HooksWidgetWithProps);
 
-export { HooksWidgetWithPropsFR };
+export { WidgetWithProps };
 
-export default HooksWidgetWithPropsFR;
+export default WidgetWithProps;

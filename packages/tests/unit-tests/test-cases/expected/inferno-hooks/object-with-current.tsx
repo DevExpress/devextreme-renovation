@@ -27,7 +27,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+function ReactWidget(props: typeof WidgetInput & RestProps) {
   const [__state_someState, __state_setSomeState] = useState<
     { current: string } | undefined
   >(undefined);
@@ -60,9 +60,10 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetInput;
+HooksWidget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

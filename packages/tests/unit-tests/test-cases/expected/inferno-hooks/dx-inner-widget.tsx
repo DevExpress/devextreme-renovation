@@ -31,7 +31,7 @@ interface InnerWidget {
   restAttributes: RestProps;
 }
 
-export function InnerWidget(props: typeof InnerWidgetProps & RestProps) {
+function ReactInnerWidget(props: typeof InnerWidgetProps & RestProps) {
   const [__state_value, __state_setValue] = useState<number>(() =>
     props.value !== undefined ? props.value : props.defaultValue!
   );
@@ -63,11 +63,10 @@ export function InnerWidget(props: typeof InnerWidgetProps & RestProps) {
   });
 }
 
-InnerWidget.defaultProps = InnerWidgetProps;
+HooksInnerWidget.defaultProps = InnerWidgetProps;
 
 function HooksInnerWidget(props: typeof InnerWidgetProps & RestProps) {
-  return (
-    <HookComponent renderFn={InnerWidget} renderProps={props}></HookComponent>
-  );
+  return <HookComponent renderFn={ReactInnerWidget} renderProps={props} />;
 }
+export { HooksInnerWidget as InnerWidget };
 export default HooksInnerWidget;

@@ -1,4 +1,3 @@
-import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
 }
@@ -33,7 +32,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-const Widget = (
+const ReactWidget = (
   props: typeof WidgetInput & RestProps,
   ref: RefObject<WidgetRef>
 ) => {
@@ -75,18 +74,18 @@ const Widget = (
   });
 };
 
-Widget.defaultProps = WidgetInput;
+HooksWidget.defaultProps = WidgetInput;
 
 function HooksWidget(
   props: typeof WidgetInput & RestProps,
   ref: RefObject<WidgetRef>
 ) {
   return (
-    <HookComponent renderFn={Widget} renderProps={props} renderRef={ref} />
+    <HookComponent renderFn={ReactWidget} renderProps={props} renderRef={ref} />
   );
 }
-const HooksWidgetFR = forwardRef(HooksWidget);
+const Widget = forwardRef(HooksWidget);
 
-export { HooksWidgetFR };
+export { Widget };
 
-export default HooksWidgetFR;
+export default Widget;

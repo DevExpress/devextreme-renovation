@@ -1,5 +1,5 @@
 function view() {
-  return <div></div>;
+  return <Widget />;
 }
 
 export type WidgetPropsType = {};
@@ -21,7 +21,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+function ReactWidget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -33,7 +33,7 @@ export function Widget(props: typeof WidgetProps & RestProps) {
   return view();
 }
 
-Widget.defaultProps = Object.create(
+HooksWidget.defaultProps = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(WidgetProps),
@@ -50,10 +50,10 @@ type WidgetOptionRule = DefaultOptionsRule<typeof WidgetProps>;
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = Object.create(
+  HooksWidget.defaultProps = Object.create(
     Object.prototype,
     Object.assign(
-      Object.getOwnPropertyDescriptors(Widget.defaultProps),
+      Object.getOwnPropertyDescriptors(HooksWidget.defaultProps),
       Object.getOwnPropertyDescriptors(
         convertRulesToOptions<typeof WidgetProps>([
           { device: true, options: {} },
@@ -67,6 +67,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 }
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

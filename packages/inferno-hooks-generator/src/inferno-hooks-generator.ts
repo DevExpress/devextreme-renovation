@@ -1,14 +1,9 @@
 import { ReactGenerator, Method, Property } from '@devextreme-generator/react';
-<<<<<<< HEAD
 import {
   Decorator, Identifier, HeritageClause, ImportClause, StringLiteral,
 } from '@devextreme-generator/core';
 import { InfernoComponent } from './inferno-component';
 import { ImportDeclaration } from './import-declaration';
-=======
-import { Decorator, Identifier, HeritageClause } from '@devextreme-generator/core';
-import { InfernoComponent } from './inferno-component';
->>>>>>> master
 
 export class InfernoGenerator extends ReactGenerator {
   getPlatform(): string {

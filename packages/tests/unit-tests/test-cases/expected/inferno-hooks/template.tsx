@@ -78,7 +78,7 @@ interface WidgetWithTemplate {
   restAttributes: RestProps;
 }
 
-export function WidgetWithTemplate(props: typeof WidgetInput & RestProps) {
+function ReactWidgetWithTemplate(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -142,16 +142,14 @@ export function WidgetWithTemplate(props: typeof WidgetInput & RestProps) {
   });
 }
 
-WidgetWithTemplate.defaultProps = WidgetInput;
+HooksWidgetWithTemplate.defaultProps = WidgetInput;
 
 function HooksWidgetWithTemplate(props: typeof WidgetInput & RestProps) {
   return (
-    <HookComponent
-      renderFn={WidgetWithTemplate}
-      renderProps={props}
-    ></HookComponent>
+    <HookComponent renderFn={ReactWidgetWithTemplate} renderProps={props} />
   );
 }
+export { HooksWidgetWithTemplate as WidgetWithTemplate };
 export default HooksWidgetWithTemplate;
 function view(viewModel: WidgetWithTemplate) {
   const myvar = viewModel.props.someProp;

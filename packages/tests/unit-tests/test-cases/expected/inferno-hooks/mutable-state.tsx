@@ -26,7 +26,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+function ReactWidget(props: typeof WidgetInput & RestProps) {
   const obj = useRef<{ value?: number }>();
   const notDefinedObj = useRef<{ value?: number } | undefined>();
   const definedObj = useRef<{ value?: number }>({ value: 0 });
@@ -84,9 +84,10 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetInput;
+HooksWidget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

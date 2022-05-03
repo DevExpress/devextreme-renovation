@@ -5,6 +5,7 @@ export type PropsType = {
 const Props: PropsType = {};
 import {
   useCallback,
+  InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
 import { normalizeStyles } from '@devextreme/runtime/common';
 
@@ -19,7 +20,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+function ReactWidget(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, width, ...restProps } = props;
@@ -31,11 +32,12 @@ export function Widget(props: typeof Props & RestProps) {
   return view1({ props: { ...props }, restAttributes: __restAttributes() });
 }
 
-Widget.defaultProps = Props;
+HooksWidget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <InfernoWrapperComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;
 function view1(viewModel: Widget) {
   return (

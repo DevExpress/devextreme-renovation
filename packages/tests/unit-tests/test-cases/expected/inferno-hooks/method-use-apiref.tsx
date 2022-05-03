@@ -1,7 +1,4 @@
-import { MutableRefObject } from 'react';
-import { createElement as h } from 'inferno-create-element';
 import BaseWidget from './method';
-import { BaseInfernoComponent } from '@devextreme/runtime/inferno'
 function view(viewModel: WidgetWithApiRef) {
   return (
     <BaseWidget
@@ -38,7 +35,7 @@ interface WidgetWithApiRef {
   restAttributes: RestProps;
 }
 
-const WidgetWithApiRef = (
+const ReactWidgetWithApiRef = (
   props: typeof WidgetWithApiRefInput & RestProps,
   ref: RefObject<WidgetWithApiRefRef>
 ) => {
@@ -69,7 +66,7 @@ const WidgetWithApiRef = (
   });
 };
 
-WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
+HooksWidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
 
 function HooksWidgetWithApiRef(
   props: typeof WidgetWithApiRefInput & RestProps,
@@ -77,14 +74,14 @@ function HooksWidgetWithApiRef(
 ) {
   return (
     <HookComponent
-      renderFn={WidgetWithApiRef}
+      renderFn={ReactWidgetWithApiRef}
       renderProps={props}
       renderRef={ref}
     />
   );
 }
-const HooksWidgetWithApiRefFR = forwardRef(HooksWidgetWithApiRef);
+const WidgetWithApiRef = forwardRef(HooksWidgetWithApiRef);
 
-export { HooksWidgetWithApiRefFR };
+export { WidgetWithApiRef };
 
-export default HooksWidgetWithApiRefFR;
+export default WidgetWithApiRef;

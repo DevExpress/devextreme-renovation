@@ -30,7 +30,6 @@ export class ImportDeclaration extends BaseImportDeclaration {
         `import {${common}} from "@devextreme/runtime/inferno-hooks"`,
       );
     }
-    result.push('import { normalizeStyles } from \'@devextreme/runtime/inferno\'');
 
     if (result.length) {
       return result.join(';\n');

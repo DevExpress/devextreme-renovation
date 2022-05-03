@@ -16,7 +16,6 @@ import {
   useCallback,
   useImperativeHandle,
   InfernoWrapperComponent,
-  useReRenderEffect,
   forwardRef,
   RefObject,
 } from '@devextreme/runtime/inferno-hooks';
@@ -33,7 +32,7 @@ interface PublicWidgetWithProps {
   restAttributes: RestProps;
 }
 
-const PublicWidgetWithProps = (
+const ReactPublicWidgetWithProps = (
   props: typeof WidgetWithPropsInput & RestProps,
   ref: RefObject<PublicWidgetWithPropsRef>
 ) => {
@@ -44,7 +43,7 @@ const PublicWidgetWithProps = (
     },
     [props]
   );
-  const __doSomething = useCallback(function __doSomething(): any { }, []);
+  const __doSomething = useCallback(function __doSomething(): any {}, []);
 
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,
@@ -52,29 +51,22 @@ const PublicWidgetWithProps = (
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 };
 
-PublicWidgetWithProps.defaultProps = WidgetWithPropsInput;
+HooksPublicWidgetWithProps.defaultProps = WidgetWithPropsInput;
 
-function createRerenderEffect(
-  props: typeof WidgetWithPropsInput & RestProps,
-  ref: RefObject<PublicWidgetWithPropsRef>
-) {
-  useReRenderEffect();
-  return PublicWidgetWithProps(props, ref);
-}
 function HooksPublicWidgetWithProps(
   props: typeof WidgetWithPropsInput & RestProps,
   ref: RefObject<PublicWidgetWithPropsRef>
 ) {
   return (
     <InfernoWrapperComponent
-      renderFn={createRerenderEffect}
+      renderFn={ReactPublicWidgetWithProps}
       renderProps={props}
       renderRef={ref}
     />
   );
 }
-const HooksPublicWidgetWithPropsFR = forwardRef(HooksPublicWidgetWithProps);
+const PublicWidgetWithProps = forwardRef(HooksPublicWidgetWithProps);
 
-export { HooksPublicWidgetWithPropsFR };
+export { PublicWidgetWithProps };
 
-export default HooksPublicWidgetWithPropsFR;
+export default PublicWidgetWithProps;

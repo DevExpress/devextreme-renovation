@@ -1,3 +1,4 @@
+
 export type WidgetPropsType = {
   someProp: string;
   type?: string;
@@ -48,7 +49,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-const Widget = (
+const ReactWidget = (
   props: typeof WidgetProps & RestProps,
   ref: RefObject<WidgetRef>
 ) => {
@@ -72,7 +73,7 @@ const Widget = (
   ): any {
     __state_setSomeState((__state_someState) => newValue);
   },
-    []);
+  []);
   const __arrayFromObj = useMemo(
     function __arrayFromObj(): (string | undefined)[] {
       const { propField, stateField } = __someObj;
@@ -115,18 +116,18 @@ const Widget = (
   return view();
 };
 
-Widget.defaultProps = WidgetProps;
+HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(
   props: typeof WidgetProps & RestProps,
   ref: RefObject<WidgetRef>
 ) {
   return (
-    <HookComponent renderFn={Widget} renderProps={props} renderRef={ref} />
+    <HookComponent renderFn={ReactWidget} renderProps={props} renderRef={ref} />
   );
 }
-const HooksWidgetFR = forwardRef(HooksWidget);
+const Widget = forwardRef(HooksWidget);
 
-export { HooksWidgetFR };
+export { Widget };
 
-export default HooksWidgetFR;
+export default Widget;

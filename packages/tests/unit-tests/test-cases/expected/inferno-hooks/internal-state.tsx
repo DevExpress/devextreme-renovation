@@ -20,7 +20,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: {} & RestProps) {
+function ReactWidget(props: {} & RestProps) {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
   const __updateState = useCallback(
@@ -46,6 +46,7 @@ export function Widget(props: {} & RestProps) {
 }
 
 function HooksWidget(props: {} & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

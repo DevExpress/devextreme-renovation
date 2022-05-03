@@ -1,5 +1,4 @@
-import { MutableRefObject } from 'react';
-import { createPortal } from 'react-dom';
+import { Portal as createPortal } from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget) {
   return (
     <div>
@@ -53,7 +52,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+function ReactWidget(props: typeof WidgetProps & RestProps) {
   const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
@@ -74,9 +73,10 @@ export function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetProps;
+HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

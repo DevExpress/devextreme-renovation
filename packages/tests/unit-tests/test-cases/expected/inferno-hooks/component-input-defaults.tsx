@@ -125,7 +125,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetPropsType & RestProps) {
+function ReactWidget(props: typeof WidgetPropsType & RestProps) {
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedBaseNested = useMemo(
@@ -211,9 +211,10 @@ export function Widget(props: typeof WidgetPropsType & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetPropsType;
+HooksWidget.defaultProps = WidgetPropsType;
 
 function HooksWidget(props: typeof WidgetPropsType & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;
