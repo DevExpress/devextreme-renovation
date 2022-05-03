@@ -8,9 +8,9 @@ import {
 } from "@devextreme-generator/declarations";
 import RefProps from "./ref-props";
 
-function view({ contentRef, onRefClick }: RefPass) {
+function view({ contentRef }: RefPass) {
   return (
-    <div ref={contentRef} onClick={onRefClick}>
+    <div ref={contentRef}>
       <RefProps parentRef={contentRef} />
     </div>
   );
@@ -25,10 +25,6 @@ class Props { }
 })
 export default class RefPass extends JSXComponent(Props) {
   @Ref() contentRef!: RefObject<HTMLDivElement>;
-
-  onRefClick() {
-    console.log(this.contentRef)
-  }
 
   @Effect()
   loadEffect() {

@@ -18,7 +18,7 @@ import {
   useCallback,
   HookComponent,
 } from '@devextreme/runtime/inferno-hooks';
-import { normalizeStyles } from '@devextreme/runtime/common';
+import { normalizeStyles } from '@devextreme/runtime/inferno';
 
 type RestProps = {
   className?: string;

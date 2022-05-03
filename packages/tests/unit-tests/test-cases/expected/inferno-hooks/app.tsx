@@ -1,16 +1,29 @@
-function view(model: RefProps) {
-  return <div>{'Ref Props'}</div>;
+function view(model: EffectsDOMUpdate) {
+  return (
+    <div>
+      <span>{model.props.text}</span>
+
+      <div
+        id={model.props.name}
+        ref={model.divRef}
+        style={normalizeStyles({ backgroundColor: '#b3b3b3' })}
+      ></div>
+    </div>
+  );
 }
 
 export type PropsType = {
-  parentRef: MutableRefObject<HTMLDivElement | null>;
+  name?: string;
+  text: string;
 };
 const Props: PropsType = {} as any as PropsType;
 import {
   useCallback,
   useEffect,
+  useRef,
   InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
+import { normalizeStyles } from '@devextreme/runtime/inferno';
 
 type RestProps = {
   className?: string;
@@ -18,36 +31,52 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface RefProps {
+interface EffectsDOMUpdate {
   props: typeof Props & RestProps;
+  divRef: any;
   restAttributes: RestProps;
 }
 
-function ReactRefProps(props: typeof Props & RestProps) {
+function ReactEffectsDOMUpdate(props: typeof Props & RestProps) {
+  const __divRef: MutableRefObject<HTMLDivElement | null> =
+    useRef<HTMLDivElement>(null);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { parentRef, ...restProps } = props;
+      const { name, text, ...restProps } = props;
       return restProps;
     },
     [props]
   );
   useEffect(() => {
-    const parentRef = props.parentRef;
-    if (parentRef.current) {
-      parentRef.current.style.backgroundColor = '#aaaaff';
-      parentRef.current.innerHTML += 'childText';
-    }
+    __divRef.current?.insertAdjacentText('beforeend', `(no deps)`);
+  }, []);
+  useEffect(() => {
+    __divRef.current?.insertAdjacentText('beforeend', `(${props.text} deps)`);
+  }, [props.text]);
+  useEffect(() => {
+    __divRef.current?.insertAdjacentText('beforeend', '(always)');
+  });
+  useEffect(() => {
+    __divRef.current?.insertAdjacentText('beforeend', `(once)`);
   }, []);
 
-  return view({ props: { ...props }, restAttributes: __restAttributes() });
+  return view({
+    props: { ...props },
+    divRef: __divRef,
+    restAttributes: __restAttributes(),
+  });
 }
 
-HooksRefProps.defaultProps = Props;
+HooksEffectsDOMUpdate.defaultProps = Props;
 
-function HooksRefProps(props: typeof Props & RestProps) {
+function HooksEffectsDOMUpdate(props: typeof Props & RestProps) {
   return (
-    <InfernoWrapperComponent renderFn={ReactRefProps} renderProps={props} />
+    <InfernoWrapperComponent
+      renderFn={ReactEffectsDOMUpdate}
+      renderProps={props}
+    />
   );
 }
-export { HooksRefProps as RefProps };
-export default HooksRefProps;
+export { HooksEffectsDOMUpdate as EffectsDOMUpdate };
+export default HooksEffectsDOMUpdate;

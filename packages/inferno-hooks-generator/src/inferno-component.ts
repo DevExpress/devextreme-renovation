@@ -18,7 +18,7 @@ export class InfernoComponent extends ReactComponent {
       }
       imports.push(`import {${namedImports.join(',')}} from '@devextreme/runtime/inferno-hooks'`);
     }
-    imports.push('import { normalizeStyles } from \'@devextreme/runtime/common\'');
+    imports.push('import { normalizeStyles } from \'@devextreme/runtime/inferno\'');
     if (this.props.some((p) => p.isTemplate) && !isComponentWrapper(this.context.imports)) {
       const runTimeImports = isComponentWrapper(this.context.imports) ? 'getWrapperTemplate' : 'getTemplate';
       imports.push(`import { ${runTimeImports} } from '@devextreme/runtime/react'`);

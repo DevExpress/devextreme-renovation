@@ -22,7 +22,8 @@ export function forwardRef<T = Record<string, unknown>, P = Record<string, unkno
 let currentComponent: {
   getContextValue(consumer: { id: number }): any;
   getHook: (
-    arg0: number | unknown[], arg1: { (hook: any): void; (hook: any): void; (hook: any): void }
+    arg0: number | unknown[] | undefined,
+    arg1: { (hook: any): void; (hook: any): void; (hook: any): void }
   ) => any;
   state: { [x: string]: any } | null;
 };
@@ -48,12 +49,16 @@ function createRecorder(component: HookComponent) {
 
   component.state = {};
 
-  function nextHook(dependencies: number | unknown[]) {
+  function nextHook(dependencies: number | unknown[] | undefined) {
     const id = nextId;
     nextId += 1;
     let hook = hookInstances[id];
 
-    if (hook && equal(hook.dependencies, dependencies)) {
+    if (hook
+      && equal(hook.dependencies, dependencies)) {
+      if (hook.dependencies === undefined && hook.didMount) {
+        hook.didMount();
+      }
       hook.isNew = false;
       return hook;
     }
@@ -76,7 +81,7 @@ function createRecorder(component: HookComponent) {
   const recorder = {
     renderResult: undefined,
 
-    getHook(dependencies: number | unknown[], fn: (arg0: any) => void) {
+    getHook(dependencies: number | unknown[] | undefined, fn: (arg0: any) => void) {
       const hook = nextHook(dependencies);
       const value = hook.value;
       fn(hook);
@@ -108,7 +113,10 @@ function createRecorder(component: HookComponent) {
     didMount() {
       hookInstances.forEach((hook) => {
         if (hook.didMount) {
-          hook.didMount(); hook.didMount = true;
+          hook.didMount();
+          if (hook.dependencies !== undefined) {
+            hook.didMount = true;
+          }
         }
       });
     },
@@ -131,10 +139,6 @@ export class HookComponent extends Component
   state = {} as Record<string, unknown>;
 
   refs: any;
-  // constructor(props: any) {
-  //   super(props);
-  //   this.state = null;
-  // }
 
   componentDidMount(): void {
     if (this.recorder) {
@@ -165,7 +169,7 @@ export class HookComponent extends Component
     this.dispose();
   }
 
-  getHook(dependencies: number | unknown[], fn: any): any {
+  getHook(dependencies: number | unknown[] | undefined, fn: any): any {
     if (!this.recorder) {
       this.recorder = createRecorder(this);
     }
@@ -235,7 +239,7 @@ export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateA
 
 export function useEffect(fn: () => any, dependencies?: unknown[]) {
   return currentComponent.getHook(
-    dependencies || [],
+    dependencies,
     (hook: { isNew: any; dispose: any; didMount: any }) => {
       if (hook.isNew) {
         if (hook.didMount) {

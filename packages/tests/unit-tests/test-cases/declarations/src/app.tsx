@@ -2,31 +2,58 @@ import {
   Component,
   ComponentBindings,
   JSXComponent,
-  Ref,
   Effect,
+  Ref,
+  OneWay,
   RefObject,
 } from "@devextreme-generator/declarations";
 
-function view(model: RefProps) {
-  return <div>{"Ref Props"}</div>;
+function view(model: EffectsDOMUpdate) {
+  return (
+    <div>
+      <span>{model.props.text}</span>
+      <div
+        id={model.props.name}
+        ref={model.divRef}
+        style={{ backgroundColor: "#b3b3b3" }}
+      ></div>
+    </div>
+  );
 }
 
 @ComponentBindings()
 class Props {
-  @Ref() parentRef!: RefObject<HTMLDivElement>;
+  @OneWay() name?: string;
+  @OneWay() text!: string;
 }
 
 @Component({
   view,
-  jQuery: { register: true },
+  jQuery: {register: true},
 })
-export default class RefProps extends JSXComponent<Props, "parentRef">() {
+export default class EffectsDOMUpdate extends JSXComponent<Props, "text">() {
+  @Ref() divRef!: RefObject<HTMLDivElement>;
+
   @Effect()
-  loadEffect() {
-    const parentRef = this.props.parentRef;
-    if (parentRef.current) {
-      parentRef.current.style.backgroundColor = "#aaaaff";
-      parentRef.current.innerHTML += "childText";
-    }
+  noDepsEffect() {
+    this.divRef.current?.insertAdjacentText("beforeend", `(no deps)`);
+  }
+
+  @Effect()
+  depsEffect() {
+    this.divRef.current?.insertAdjacentText(
+      "beforeend",
+      `(${this.props.text} deps)`
+    );
+  }
+
+  @Effect({ run: "always" })
+  alwaysEffect() {
+    this.divRef.current?.insertAdjacentText("beforeend", "(always)");
+  }
+
+  @Effect({ run: "once" })
+  onceEffect() {
+    this.divRef.current?.insertAdjacentText("beforeend", `(once)`);
   }
 }
