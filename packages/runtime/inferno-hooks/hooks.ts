@@ -119,7 +119,7 @@ function createRecorder(component: HookComponent) {
 
 export class HookComponent extends Component
   <{
-    renderFn: (props: any) => JSX.Element,
+    renderFn: (props: any, ref?: any) => JSX.Element,
     renderProps?: Record<string, unknown>,
     renderRef?: RefObject<Record<string, unknown>>,
   },

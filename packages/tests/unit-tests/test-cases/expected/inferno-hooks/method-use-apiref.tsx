@@ -1,5 +1,5 @@
 import { MutableRefObject } from 'react';
-import {createElement as h} from 'inferno-create-element';
+import { createElement as h } from 'inferno-create-element';
 import BaseWidget from './method';
 import { BaseInfernoComponent } from '@devextreme/runtime/inferno'
 function view(viewModel: WidgetWithApiRef) {

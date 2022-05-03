@@ -28,8 +28,8 @@ export class InfernoComponent extends ReactComponent {
 
   get jQueryRegistered(): boolean {
     const jqueryProp = this.decorators[0].getParameter('jQuery') as
-          | ObjectLiteral
-          | undefined;
+      | ObjectLiteral
+      | undefined;
     return jqueryProp?.getProperty('register')?.toString() === 'true';
   }
 
@@ -89,18 +89,18 @@ export class InfernoComponent extends ReactComponent {
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
               ${!this.hasApiMethod
-    ? `function React${this.name}(props: ${this.compilePropsType()}){`
-    : `const React${this.name} = (props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) => {`
-}
+        ? `function React${this.name}(props: ${this.compilePropsType()}){`
+        : `const React${this.name} = (props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) => {`
+      }
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
                   ${this.members
-    .filter(
-      (m) => (m.isConsumer || m.isProvider)
+        .filter(
+          (m) => (m.isConsumer || m.isProvider)
             && !(m instanceof GetAccessor),
-    )
-    .map((m) => m.toString(this.getToStringOptions()))
-    .join(';\n')}
+        )
+        .map((m) => m.toString(this.getToStringOptions()))
+        .join(';\n')}
                   ${this.compileGettersAndMethods()}
                   ${this.compileUseEffect()}
                   ${this.compileUseImperativeHandle()}

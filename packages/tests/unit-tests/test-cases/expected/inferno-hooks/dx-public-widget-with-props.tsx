@@ -44,7 +44,7 @@ const PublicWidgetWithProps = (
     },
     [props]
   );
-  const __doSomething = useCallback(function __doSomething(): any {}, []);
+  const __doSomething = useCallback(function __doSomething(): any { }, []);
 
   useImperativeHandle(ref, () => ({ doSomething: __doSomething }), [
     __doSomething,

@@ -72,7 +72,7 @@ const Widget = (
   ): any {
     __state_setSomeState((__state_someState) => newValue);
   },
-  []);
+    []);
   const __arrayFromObj = useMemo(
     function __arrayFromObj(): (string | undefined)[] {
       const { propField, stateField } = __someObj;
