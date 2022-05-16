@@ -1,13 +1,18 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
 }
 
-export type ChildInputType = typeof WidgetProps & {
-  height: number;
-  onClick: (a: number) => void;
-};
-const ChildInput: ChildInputType = Object.create(
+interface ChildInputType extends GetPropsType<typeof WidgetProps> {
+  height?: number;
+  onClick?: (a: number) => void;
+}
+
+const ChildInput = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(WidgetProps),
@@ -16,7 +21,7 @@ const ChildInput: ChildInputType = Object.create(
       onClick: () => {},
     })
   )
-);
+) as Partial<ChildInputType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -25,13 +30,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type ChildInputModel = Required<
+  Omit<GetPropsType<typeof ChildInput>, 'children'>
+> &
+  Partial<Pick<GetPropsType<typeof ChildInput>, 'children'>>;
 interface Child {
-  props: typeof ChildInput & RestProps;
+  props: ChildInputModel & RestProps;
   getProps: () => typeof WidgetProps;
   restAttributes: RestProps;
 }
+export default function Child(inProps: typeof ChildInput & RestProps) {
+  const props = combineWithDefaultProps<ChildInputModel>(ChildInput, inProps);
 
-export default function Child(props: typeof ChildInput & RestProps) {
   const __getProps = useCallback(
     function __getProps(): typeof WidgetProps {
       return { height: props.height } as typeof WidgetProps;
@@ -41,7 +51,7 @@ export default function Child(props: typeof ChildInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, height, onClick, width, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -52,5 +62,3 @@ export default function Child(props: typeof ChildInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Child.defaultProps = ChildInput;

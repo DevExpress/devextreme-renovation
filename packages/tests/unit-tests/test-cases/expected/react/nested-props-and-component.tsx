@@ -1,15 +1,19 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view(model: UndefWidget) {
   return <div></div>;
 }
 
-export type FakeNestedType = {
-  numberProp: number;
-};
-export const FakeNested: FakeNestedType = {
+interface FakeNestedType {
+  numberProp?: number;
+}
+export const FakeNested = {
   numberProp: 2,
-};
-export type WidgetPropsType = {
+} as Partial<FakeNestedType>;
+interface WidgetPropsType {
   oneWayProp?: number;
   twoWayProp?: number;
   someEvent?: () => void;
@@ -25,13 +29,13 @@ export type WidgetPropsType = {
   renderProp?: React.FunctionComponent<any>;
   componentProp?: React.JSXElementConstructor<any>;
   children?: React.ReactNode;
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   __defaultNestedValues: Object.freeze({
     anotherNestedPropInit: [FakeNested],
   }) as any,
   twoWayPropChange: () => {},
-};
+} as Partial<WidgetPropsType>;
 import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
 import * as React from 'react';
 import { useState, useCallback, useMemo, useRef } from 'react';
@@ -49,8 +53,42 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetProps>,
+    | 'oneWayProp'
+    | 'twoWayProp'
+    | 'someEvent'
+    | 'someRef'
+    | 'someForwardRef'
+    | 'slotProp'
+    | 'templateProp'
+    | 'nestedProp'
+    | 'defaultTwoWayProp'
+    | 'renderProp'
+    | 'componentProp'
+    | 'children'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetProps>,
+      | 'oneWayProp'
+      | 'twoWayProp'
+      | 'someEvent'
+      | 'someRef'
+      | 'someForwardRef'
+      | 'slotProp'
+      | 'templateProp'
+      | 'nestedProp'
+      | 'defaultTwoWayProp'
+      | 'renderProp'
+      | 'componentProp'
+      | 'children'
+    >
+  >;
 interface UndefWidget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   __getNestedAnotherNestedPropInit: typeof FakeNested[];
   __getNestedNestedProp: typeof FakeNested[] | undefined;
   oneway: any;
@@ -64,8 +102,9 @@ interface UndefWidget {
   nestedinit: any;
   restAttributes: RestProps;
 }
+export default function UndefWidget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
 
-export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   const [__state_twoWayProp, __state_setTwoWayProp] = useState<
     number | undefined
   >(() =>
@@ -221,7 +260,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
         nestedProp: __getNestedNestedProp,
         anotherNestedPropInit: __getNestedAnotherNestedPropInit,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_twoWayProp]
   );
@@ -253,5 +292,3 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-UndefWidget.defaultProps = WidgetProps;

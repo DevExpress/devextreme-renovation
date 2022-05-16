@@ -3,8 +3,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   template: '',
 })
 export class InnerWidgetProps {
+  @Input() visible: boolean = true;
   @Input() selected?: boolean;
   @Input() value: number = 14;
+  @Input() required!: boolean;
   @Output() valueChange: EventEmitter<number> = new EventEmitter();
 }
 
@@ -37,7 +39,7 @@ const CUSTOM_VALUE_ACCESSOR_PROVIDER = {
   selector: 'dx-inner-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CUSTOM_VALUE_ACCESSOR_PROVIDER],
-  inputs: ['selected', 'value'],
+  inputs: ['visible', 'selected', 'value', 'required'],
   outputs: ['valueChange'],
   template: `<ng-template #widgetTemplate
     ><div [ngStyle]="__processNgStyle({ width: 100, height: 100 })"></div
@@ -49,12 +51,8 @@ export default class InnerWidget
 {
   defaultEntries: DefaultEntries;
 
-  get __someGetter(): InnerWidgetProps {
-    return {
-      selected: this.selected,
-      value: this.value,
-      valueChange: this._valueChange,
-    };
+  get __someGetter(): string {
+    return this.value.toString() + this.required.toString();
   }
   _detectChanges(): void {
     setTimeout(() => {
@@ -96,7 +94,7 @@ export default class InnerWidget
   ) {
     super();
     const defaultProps = new InnerWidgetProps() as { [key: string]: any };
-    this.defaultEntries = ['value'].map((key) => ({
+    this.defaultEntries = ['visible', 'value'].map((key) => ({
       key,
       value: defaultProps[key],
     }));

@@ -1,16 +1,18 @@
+import { GetPropsType } from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {
-  propState: number;
-  defaultPropState: number;
+interface WidgetInputType {
+  propState?: number;
+  defaultPropState?: number;
   propStateChange?: (propState: number) => void;
-};
-const WidgetInput: WidgetInputType = {
+}
+
+const WidgetInput = {
   defaultPropState: 1,
   propStateChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -24,7 +26,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   innerState: number;
   updateState: () => any;
   restAttributes: RestProps;
@@ -101,7 +103,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
         propState:
           props.propState !== undefined ? props.propState : __state_propState,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_propState]
   );
@@ -117,8 +119,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

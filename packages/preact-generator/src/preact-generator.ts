@@ -27,7 +27,6 @@ import {
   UnionTypeNode,
 } from '@devextreme-generator/core';
 import {
-  ComponentInput as BaseComponentInput,
   HeritageClause,
   JsxAttribute as ReactJsxAttribute,
   JsxClosingElement as ReactJsxClosingElement,
@@ -36,11 +35,18 @@ import {
   ReactComponent,
   ReactGenerator,
   TypeReferenceNode as ReactTypeReferenceNode,
+  compileGettersCompatibleExtend,
 } from '@devextreme-generator/react';
+
+import { ComponentInput as BaseComponentInput } from './component-input';
 
 const BASE_JQUERY_WIDGET = 'BASE_JQUERY_WIDGET';
 
 const processModuleFileName = (module: string) => `${module}`;
+export function lowerizeFirstLetter(string: string | Identifier): string {
+  const result = string.toString();
+  return result.charAt(0).toLowerCase() + result.slice(1);
+}
 
 export class ComponentInput extends BaseComponentInput {
   context!: GeneratorContext;
@@ -115,6 +121,121 @@ export class PreactComponent extends ReactComponent {
   get REF_OBJECT_TYPE() {
     return 'RefObject';
   }
+
+  /* Vitik: Copy frmo react-generator start */
+
+  getDefaultPropsName(): string {
+    const baseDefaultPropsObj = this.heritageClauses
+      .filter((h) => h.defaultProps.length)[0]?.defaultProps[0];
+    const defaultProps = this.compileDefaultPropsObjectProperties();
+
+    let defaultPropsObj = baseDefaultPropsObj;
+
+    if (defaultProps.length) {
+      defaultPropsObj = `{ ${defaultProps.join(',\n')} }`;
+      if (baseDefaultPropsObj) {
+        defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj, defaultPropsObj);
+      }
+    }
+    return defaultPropsObj;
+  }
+
+  compileDefaultProps() {
+    const defaultPropsObj = this.getDefaultPropsName();
+
+    if (this.needGenerateDefaultOptions) {
+      return `
+                  ${this.state.length
+    ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
+                          const twoWayProps:string[] = [${this.state.map(
+    (s) => `"${s.name}"`,
+  )}];
+
+                          return Object.keys(defaultProps).reduce((props, propName)=>{
+                              const propValue = (defaultProps as any)[propName];
+                              const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
+                              (props as any)[defaultPropName] = propValue;
+                              return props;
+                          }, {});
+                      }`
+    : ''
+}
+                  ${this.defaultPropsDest()} = ${defaultPropsObj};
+              `;
+    }
+
+    if (defaultPropsObj) {
+      return `${this.defaultPropsDest()} = ${defaultPropsObj}`;
+    }
+
+    return '';
+  }
+
+  compileModelPropsType():string {
+    return '';
+  }
+
+  getPropsType(): string {
+    if (this.isJSXComponent) {
+      const type = this.heritageClauses[0].types[0];
+      if (
+        type.expression instanceof Call
+        && type.expression.typeArguments?.length
+      ) {
+        return type.expression.typeArguments[0].toString();
+      }
+
+      return this.compileDefaultOptionsPropsType();
+    }
+    return `{${this.props
+      .concat(this.state)
+      .concat(this.slots)
+      .map((p) => p.typeDeclaration())
+      .join(',\n')}
+    }`;
+  }
+
+  compileComponentInterface(): string {
+    const props = this.isJSXComponent
+      ? [`props: ${this.compilePropsType()}`]
+      : [];
+    const forwardRefApiProps = this.members.filter((m) => m.inherited && m.isApiRef);
+    return `interface ${this.name}{
+              ${props
+    .concat(
+      this.members
+        .filter(
+          (m) => !m.inherited
+                && !m.isEffect
+                && !m.isApiMethod
+                && !m.isPrivate
+                && !m.isMutable,
+        )
+        .concat(forwardRefApiProps)
+        .map((m) => m.typeDeclaration()),
+    )
+    .join(';\n')}
+          }`;
+  }
+
+  compileDefaultOptionsPropsType(): string {
+    const heritageClause = this.heritageClauses[0];
+    return `typeof ${heritageClause.propsType}`;
+  }
+
+  compileComponentFunctionDefinition(): string {
+    return `${this.members.filter((m) => m.isApiMethod).length === 0
+      ? `${this.modifiers.join(' ')} function ${this.name
+      }(props: ${this.compilePropsType()}){`
+      : `const ${this.name} = forwardRef<${this.name
+      }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
+        this.name,
+      )}(props: ${this.compilePropsType()}, ref){`
+    }
+  `;
+  }
+
+  /* Vitik: Copy frmo react-generator end */
 
   getPlatform() {
     return 'preact';
@@ -441,7 +562,7 @@ class JQueryComponent {
 export class Property extends ReactProperty {
   typeDeclaration() {
     if (this.isSlot || this.isTemplate) {
-      return `${this.name}${this.compileTypeDeclarationType('any')}`;
+      return `${this.name}${this.compileTypeDeclarationType('any', this.questionOrExclamationToken)}`;
     }
     return super.typeDeclaration();
   }

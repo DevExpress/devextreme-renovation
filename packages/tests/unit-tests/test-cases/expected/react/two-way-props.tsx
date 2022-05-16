@@ -1,18 +1,23 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <span></span>;
 }
 
-export type WidgetInputType = {
-  height: number;
-  selected: boolean;
-  defaultSelected: boolean;
+interface WidgetInputType {
+  height?: number;
+  selected?: boolean;
+  defaultSelected?: boolean;
   selectedChange?: (selected: boolean) => void;
-};
-const WidgetInput: WidgetInputType = {
+}
+
+const WidgetInput = {
   height: 10,
   defaultSelected: false,
   selectedChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -21,14 +26,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   getHeight: () => number;
   getProps: () => any;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetInput>>
+  >(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_selected, __state_setSelected] = useState<boolean>(() =>
     props.selected !== undefined ? props.selected : props.defaultSelected!
   );
@@ -64,7 +73,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         selected:
           props.selected !== undefined ? props.selected : __state_selected,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_selected]
   );
@@ -80,5 +89,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

@@ -1,5 +1,8 @@
-export type SomePropsType = {};
-const SomeProps: SomePropsType = {};
+import { GetPropsType } from '@devextreme/runtime/react';
+
+interface SomePropsType {}
+
+const SomeProps = {} as Partial<SomePropsType>;
 function view() {
   return <span></span>;
 }
@@ -18,7 +21,7 @@ type RestProps = {
   ref?: any;
 };
 interface InheritedFromInfernoComponent {
-  props: typeof SomeProps & RestProps;
+  props: Required<GetPropsType<typeof SomeProps>> & RestProps;
   _hovered: Boolean;
   someGetter: any;
   restAttributes: RestProps;
@@ -38,7 +41,7 @@ export function InheritedFromInfernoComponent(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -46,8 +49,6 @@ export function InheritedFromInfernoComponent(
 
   return view();
 }
-
-InheritedFromInfernoComponent.defaultProps = SomeProps;
 
 function HooksInheritedFromInfernoComponent(
   props: typeof SomeProps & RestProps

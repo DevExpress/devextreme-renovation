@@ -14,22 +14,22 @@ function isDevice() {
   return true;
 }
 
-export type WidgetInputType = {
-  height: number;
-  export: object;
-  array: any;
-  currentDate: any;
-  expressionDefault: string;
-  expressionDefault1: boolean;
-  expressionDefault2: boolean | string;
+interface WidgetInputType {
+  height?: number;
+  export?: object;
+  array?: any;
+  currentDate?: any;
+  expressionDefault?: string;
+  expressionDefault1?: boolean;
+  expressionDefault2?: boolean | string;
   sizes?: { height: number; width: number };
-  stringValue: string;
-  onClick: (a: number) => void;
-  onSomething: EventCallBack<number>;
-  defaultStringValue: string;
+  stringValue?: string;
+  onClick?: (a: number) => void;
+  onSomething?: EventCallBack<number>;
+  defaultStringValue?: string;
   stringValueChange?: (stringValue: string) => void;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   height: 10,
   export: Object.freeze({}) as any,
   array: Object.freeze(['1']) as any,
@@ -47,7 +47,7 @@ export const WidgetInput: WidgetInputType = {
   onSomething: () => {},
   defaultStringValue: '',
   stringValueChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -61,7 +61,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   getHeight: () => number;
   getRestProps: () => { export: object; onSomething: EventCallBack<number> };
   restAttributes: RestProps;
@@ -123,7 +123,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
             ? props.stringValue
             : __state_stringValue,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_stringValue]
   );
@@ -141,8 +141,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

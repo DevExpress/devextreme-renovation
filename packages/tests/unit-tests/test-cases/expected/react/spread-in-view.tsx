@@ -1,16 +1,20 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 export const viewFunction = ({ props: { a, ...rest } }: Widget) => {
   return <div {...rest}></div>;
 };
 
-export type WidgetPropsType = {
-  a: Array<Number>;
-  id: string;
+interface WidgetPropsType {
+  a?: Array<Number>;
+  id?: string;
   onClick?: (e: any) => void;
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   a: Object.freeze([1, 2, 3]) as any,
   id: '1',
-};
+} as Partial<WidgetPropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -19,16 +23,21 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<GetPropsType<typeof WidgetProps>, 'onClick'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetProps>, 'onClick'>>;
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { a, id, onClick, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -38,5 +47,3 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;

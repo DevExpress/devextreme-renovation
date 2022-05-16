@@ -1,9 +1,14 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {};
-const WidgetInput: WidgetInputType = {};
+interface WidgetInputType {}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -12,13 +17,17 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   simpleGetter: () => any;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetInput>>
+  >(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_decoratedState, __state_setDecoratedState] =
     useState<string>('');
   const [__state_simpleState, __state_setSimpleState] = useState<string>('');
@@ -38,7 +47,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -49,5 +58,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

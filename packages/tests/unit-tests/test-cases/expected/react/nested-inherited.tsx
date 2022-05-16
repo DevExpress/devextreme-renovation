@@ -1,26 +1,28 @@
-export type FakeNestedType = {
-  baseProp: number;
-};
-export const FakeNested: FakeNestedType = {
+import { GetPropsType } from '@devextreme/runtime/react';
+
+interface FakeNestedType {
+  baseProp?: number;
+}
+export const FakeNested = {
   baseProp: 0,
-};
-export type WidgetPropsType = {
-  baseProp: number;
+} as Partial<FakeNestedType>;
+interface WidgetPropsType {
+  baseProp?: number;
   someProp?: typeof FakeNested;
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   baseProp: 0,
   __defaultNestedValues: Object.freeze({ someProp: FakeNested }) as any,
-};
-export type TooltipPropsType = {
-  tooltipValue: number;
+} as Partial<WidgetPropsType>;
+interface TooltipPropsType {
+  tooltipValue?: number;
   tooltipNested?: typeof WidgetProps[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const TooltipProps: TooltipPropsType = {
+}
+export const TooltipProps = {
   tooltipValue: 0,
   __defaultNestedValues: Object.freeze({
     tooltipNested: [
@@ -29,13 +31,13 @@ export const TooltipProps: TooltipPropsType = {
         : WidgetProps,
     ],
   }) as any,
-};
-export type BulletPropsType = typeof WidgetProps & {
-  value: number;
+} as Partial<TooltipPropsType>;
+interface BulletPropsType extends GetPropsType<typeof WidgetProps> {
+  value?: number;
   tooltip?: typeof TooltipProps;
   __defaultNestedValues?: any;
-};
-export const BulletProps: BulletPropsType = Object.create(
+}
+export const BulletProps = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(WidgetProps),
@@ -49,12 +51,12 @@ export const BulletProps: BulletPropsType = Object.create(
       }) as any,
     })
   )
-);
-export type BulletProps2Type = typeof BulletProps & {
+) as Partial<BulletPropsType>;
+interface BulletProps2Type extends GetPropsType<typeof BulletProps> {
   fakeNestedArr?: typeof FakeNested[];
   __defaultNestedValues?: any;
-};
-export const BulletProps2: BulletProps2Type = Object.create(
+}
+export const BulletProps2 = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BulletProps),
@@ -66,12 +68,12 @@ export const BulletProps2: BulletProps2Type = Object.create(
       }) as any,
     })
   )
-);
-export type BulletProps3Type = typeof BulletProps2 & {
+) as Partial<BulletProps2Type>;
+interface BulletProps3Type extends GetPropsType<typeof BulletProps2> {
   fakeNestedArr2?: typeof FakeNested[];
   __defaultNestedValues?: any;
-};
-export const BulletProps3: BulletProps3Type = Object.create(
+}
+export const BulletProps3 = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BulletProps2),
@@ -84,4 +86,4 @@ export const BulletProps3: BulletProps3Type = Object.create(
       }) as any,
     })
   )
-);
+) as Partial<BulletProps3Type>;

@@ -1,3 +1,6 @@
+
+
+
 import * as React from 'react';
 import { useCallback } from 'react';
 import { normalizeStyles } from '@devextreme/runtime/common';
@@ -8,19 +11,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   height?: number;
   width?: number;
   restAttributes: RestProps;
 }
-
 export default function Widget(
   props: { height?: number; width?: number } & RestProps
 ) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, width, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

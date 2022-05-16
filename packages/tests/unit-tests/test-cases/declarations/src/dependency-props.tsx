@@ -13,16 +13,18 @@ import {
   
   @ComponentBindings()
   export class InnerWidgetProps {
+    @OneWay() visible = true;
     @OneWay() selected?: boolean;
     @TwoWay() value = 14;
+    @OneWay() required!: boolean;
   }
 
   
   @Component({
     view: view,
   })
-  export default class InnerWidget extends JSXComponent(InnerWidgetProps) {
-      get someGetter(): InnerWidgetProps{
-          return this.props;
+  export default class InnerWidget extends JSXComponent<InnerWidgetProps, 'required'>(InnerWidgetProps) {
+      get someGetter(): string {
+          return this.props.value.toString() + this.props.required.toString();
       }
   }

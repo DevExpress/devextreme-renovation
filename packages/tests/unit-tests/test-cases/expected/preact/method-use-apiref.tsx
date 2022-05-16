@@ -24,6 +24,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface WidgetWithApiRef {
   props: typeof WidgetWithApiRefInput & RestProps;
   baseRef: any;
@@ -42,7 +43,7 @@ const WidgetWithApiRef = forwardRef<
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop1, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

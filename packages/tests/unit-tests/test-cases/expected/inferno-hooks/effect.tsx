@@ -1,3 +1,4 @@
+import { GetPropsType } from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -8,19 +9,19 @@ function unsubscribe(id: number) {
   return undefined;
 }
 
-export type WidgetInputType = {
-  p: string;
-  r: string;
-  s: number;
-  defaultS: number;
+interface WidgetInputType {
+  p?: string;
+  r?: string;
+  s?: number;
+  defaultS?: number;
   sChange?: (s: number) => void;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   p: '10',
   r: '20',
   defaultS: 10,
   sChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -35,7 +36,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   i: number;
   j: number;
   getP: () => any;
@@ -61,7 +62,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
         ...props,
         s: props.s !== undefined ? props.s : __state_s,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_s]
   );
@@ -96,8 +97,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

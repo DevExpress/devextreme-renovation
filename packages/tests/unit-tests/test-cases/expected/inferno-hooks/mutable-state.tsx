@@ -1,9 +1,11 @@
+import { GetPropsType } from '@devextreme/runtime/react';
 function view(viewModel: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {};
-const WidgetInput: WidgetInputType = {};
+interface WidgetInputType {}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import {
   useCallback,
   useEffect,
@@ -18,7 +20,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   setObj: () => any;
   getValue: () => any;
   getObj: () => any;
@@ -66,7 +68,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -83,8 +85,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

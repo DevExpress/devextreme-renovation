@@ -4,8 +4,9 @@ import {
   JSXComponent,
   Fragment,
 } from "@devextreme-generator/declarations";
+import InnerWidget from './dependency-props';
 import WidgetWithTemplate from "./dx-widget-with-template";
-import InnerWidget from "./dx-inner-widget";
+
 
 const CustomTemplate = ({ text }: { text: string; value: number }) => {
   return <span>{text}</span>;

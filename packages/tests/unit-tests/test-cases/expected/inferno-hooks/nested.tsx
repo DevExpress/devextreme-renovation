@@ -56,7 +56,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof PickedProps & RestProps;
+  props: PickedPropsModel & RestProps;
   __getNestedEditing: typeof EditingProps;
   __getNestedColumns: Array<typeof GridColumnProps | string> | undefined;
   getColumns: () => any;
@@ -124,7 +124,7 @@ export function Widget(props: typeof PickedProps & RestProps) {
         columns: __getNestedColumns,
         editing: __getNestedEditing,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -142,8 +142,6 @@ export function Widget(props: typeof PickedProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = PickedProps;
 
 function HooksWidget(props: typeof PickedProps & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

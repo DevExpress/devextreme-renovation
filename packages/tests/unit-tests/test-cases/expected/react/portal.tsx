@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 import { createPortal } from 'react-dom';
 function view(model: Widget) {
@@ -16,10 +20,10 @@ function view(model: Widget) {
   );
 }
 
-export type WidgetPropsType = {
+interface WidgetPropsType {
   someRef?: MutableRefObject<HTMLElement | null>;
-};
-export const WidgetProps: WidgetPropsType = {};
+}
+export const WidgetProps = {} as Partial<WidgetPropsType>;
 import * as React from 'react';
 import { useState, useCallback, useEffect } from 'react';
 
@@ -43,19 +47,24 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<GetPropsType<typeof WidgetProps>, 'someRef'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetProps>, 'someRef'>>;
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   rendered: boolean;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { someRef, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -69,5 +78,3 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;

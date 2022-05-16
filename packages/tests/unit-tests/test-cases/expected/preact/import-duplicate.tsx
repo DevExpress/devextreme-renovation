@@ -20,6 +20,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Marker {
   props: typeof MarkerProps & RestProps;
   restAttributes: RestProps;
@@ -29,7 +30,7 @@ export function Marker(props: typeof MarkerProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { color, config, date, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

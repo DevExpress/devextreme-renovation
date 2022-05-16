@@ -1,13 +1,15 @@
+import { GetPropsType } from '@devextreme/runtime/react';
 import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
 }
 
-export type ChildInputType = typeof WidgetProps & {
-  height: number;
-  onClick: (a: number) => void;
-};
-const ChildInput: ChildInputType = Object.create(
+interface ChildInputType extends GetPropsType<typeof WidgetProps> {
+  height?: number;
+  onClick?: (a: number) => void;
+}
+
+const ChildInput = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(WidgetProps),
@@ -16,7 +18,7 @@ const ChildInput: ChildInputType = Object.create(
       onClick: () => {},
     })
   )
-);
+) as Partial<ChildInputType>;
 import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -26,7 +28,7 @@ type RestProps = {
   ref?: any;
 };
 interface Child {
-  props: typeof ChildInput & RestProps;
+  props: ChildInputModel & RestProps;
   getProps: () => typeof WidgetProps;
   restAttributes: RestProps;
 }
@@ -41,7 +43,7 @@ export function Child(props: typeof ChildInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, height, onClick, width, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -52,8 +54,6 @@ export function Child(props: typeof ChildInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Child.defaultProps = ChildInput;
 
 function HooksChild(props: typeof ChildInput & RestProps) {
   return <HookComponent renderFn={Child} renderProps={props}></HookComponent>;

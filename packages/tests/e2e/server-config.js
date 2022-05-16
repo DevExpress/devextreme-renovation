@@ -16,13 +16,6 @@ const servers = [
     instance: null,
   },
   {
-    platform: "Preact",
-    port: 3003,
-    contentBase: path.join(__dirname, "./platforms/preact/app/dist/"),
-    config: require("./platforms/preact/webpack.config"),
-    instance: null,
-  },
-  {
     platform: "Inferno",
     port: 3004,
     contentBase: path.join(__dirname, "./platforms/inferno/app/dist/"),

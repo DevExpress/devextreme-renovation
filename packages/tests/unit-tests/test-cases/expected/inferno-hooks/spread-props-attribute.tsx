@@ -9,15 +9,15 @@ function view({ attributes, props, restAttributes }: Widget) {
   );
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   visible?: boolean;
   value?: boolean;
   defaultValue?: boolean;
   valueChange?: (value?: boolean) => void;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   valueChange: () => {},
-};
+} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -31,7 +31,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   counter: number;
   notUsedValue: number;
   attributes: any;
@@ -57,7 +57,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
         ...props,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_value]
   );
@@ -73,8 +73,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

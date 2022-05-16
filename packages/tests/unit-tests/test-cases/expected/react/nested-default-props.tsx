@@ -1,36 +1,37 @@
-export type GridCellType = {
-  gridData: string;
-};
-export const GridCell: GridCellType = {
+
+interface GridCellType {
+  gridData?: string;
+}
+export const GridCell = {
   gridData: 'defaultValue',
-};
-export type GridRowType = {
+} as Partial<GridCellType>;
+interface GridRowType {
   cells?: (typeof GridCell | string)[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const GridRow: GridRowType = {
+}
+export const GridRow = {
   __defaultNestedValues: Object.freeze({ cells: [GridCell] }) as any,
-};
-export type WithNestedInputType = {
+} as Partial<GridRowType>;
+interface WithNestedInputType {
   rows?: typeof GridRow[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const WithNestedInput: WithNestedInputType = {
+}
+export const WithNestedInput = {
   __defaultNestedValues: Object.freeze({
     rows: [
       GridRow.__defaultNestedValues ? GridRow.__defaultNestedValues : GridRow,
     ],
   }) as any,
-};
-export type EmptyClassType = {};
-export const EmptyClass: EmptyClassType = {};
-export type FakeNestedType = {
+} as Partial<WithNestedInputType>;
+interface EmptyClassType {}
+export const EmptyClass = {} as Partial<EmptyClassType>;
+interface FakeNestedType {
   value?: typeof EmptyClass[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const FakeNested: FakeNestedType = {
+}
+export const FakeNested = {
   __defaultNestedValues: Object.freeze({ value: [EmptyClass] }) as any,
-};
+} as Partial<FakeNestedType>;

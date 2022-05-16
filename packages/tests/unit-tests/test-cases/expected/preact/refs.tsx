@@ -23,6 +23,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   divRef: any;
@@ -110,7 +111,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         requiredRefProp,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

@@ -1,9 +1,14 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {};
-const WidgetInput: WidgetInputType = {};
+interface WidgetInputType {}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import * as React from 'react';
 import { useCallback, useImperativeHandle, forwardRef } from 'react';
 
@@ -14,17 +19,21 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   restAttributes: RestProps;
 }
-
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
-  function widget(props: typeof WidgetInput & RestProps, ref) {
+  function widget(inProps: typeof WidgetInput & RestProps, ref) {
+    const props = combineWithDefaultProps<
+      Required<GetPropsType<typeof WidgetInput>>
+    >(WidgetInput, inProps);
+
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { ...restProps } = props;
-        return restProps;
+        return restProps as RestProps;
       },
       [props]
     );
@@ -35,11 +44,7 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
     useImperativeHandle(ref, () => ({ getValue: __getValue }), [__getValue]);
     return view({ props: { ...props }, restAttributes: __restAttributes() });
   }
-) as React.FC<
-  typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }
-> & { defaultProps: typeof WidgetInput };
+) as React.FC<typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }>;
 export { Widget };
 
 export default Widget;
-
-Widget.defaultProps = WidgetInput;

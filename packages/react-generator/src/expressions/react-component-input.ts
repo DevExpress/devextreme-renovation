@@ -89,8 +89,9 @@ export class ComponentInput extends BaseComponentInput {
     return [...super.membersFromTypeDeclarationIgnoreMembers(), ...(this.typeDeclarationIgnoreMembers || [])];
   }
 
-  compileImports() {
-    return this.getImports(this.context).join(';\n');
+  compileImports(): string {
+    return `${this.getImports(this.context).join(';\n')}
+    `;
   }
 
   shouldGenerateDefaultNested(members: (Property | Method)[]): boolean {
@@ -99,7 +100,7 @@ export class ComponentInput extends BaseComponentInput {
 
   toString(): string {
     const types = this.heritageClauses.reduce(
-      (t: string[], h) => t.concat(h.typeNodes.map((t) => `typeof ${t}`)),
+      (t: string[], h) => t.concat(h.typeNodes.map((type) => type.toString())),
       [],
     );
     const typeName = `${this.name}Type`;
@@ -108,25 +109,15 @@ export class ComponentInput extends BaseComponentInput {
       (m) => !(m as Property).inherited,
     ) as Property[];
 
-    const typeDeclaration = `export type ${typeName} = ${types
-      .concat([
-        `{
-              ${properties.map((p) => p.typeDeclaration()).join(';\n')}
-              ${isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''}
-          }`,
-      ])
-      .join('&')}`;
+    const propsDeclaration = [
+      ...properties.map((p) => p.typeDeclaration(true)),
+      ...[isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''],
+    ];
 
-    const typeCasting = properties.some(
-      (p) => (p.questionOrExclamationToken === SyntaxKind.ExclamationToken
-        && !p.initializer)
-        || (p.type.toString() === 'any'
-          && !p.questionOrExclamationToken
-          && !p.initializer)
-        || (p.isState && p.questionOrExclamationToken === ''),
-    )
-      ? ` as any as ${typeName}`
-      : '';
+    const typeDeclaration = `interface ${typeName}
+    ${types.length > 0 ? `extends ${types.map((t) => `GetPropsType<typeof ${t}>`)}` : ''}{
+    ${propsDeclaration.join(';\n')}
+    }`;
 
     const declarationModifiers = this.modifiers.indexOf('default') !== -1 ? [] : this.modifiers;
 
@@ -152,7 +143,6 @@ export class ComponentInput extends BaseComponentInput {
       ),
       fromType: this.fromType,
     };
-
     const defaultObject = `{
       ${propertiesWithInitializer
     .map((p) => p.defaultProps(options))
@@ -170,7 +160,8 @@ export class ComponentInput extends BaseComponentInput {
     }
     return `${this.compileImports()}
           ${typeDeclaration}
-          ${declarationModifiers.join(' ')} const ${this.name}:${typeName}=${defaultProps}${typeCasting};
+          ${declarationModifiers.join(' ')} 
+          const ${this.name}=${defaultProps} as Partial<${typeName}>;
           ${declarationModifiers !== this.modifiers
     ? `${this.modifiers.join(' ')} ${this.name}`
     : ''

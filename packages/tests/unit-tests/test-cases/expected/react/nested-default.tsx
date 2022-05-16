@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { WithNestedInput } from './nested-default-props';
 function view({ getRowCells, props: { rows } }: WithNested) {
   return (
@@ -43,14 +47,24 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WithNestedInputModel = Required<
+  Omit<GetPropsType<typeof WithNestedInput>, 'children'>
+> &
+  Partial<Pick<GetPropsType<typeof WithNestedInput>, 'children'>>;
 interface WithNested {
-  props: typeof WithNestedInput & RestProps;
+  props: WithNestedInputModel & RestProps;
   __getNestedRows: typeof GridRow[];
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
 }
+export default function WithNested(
+  inProps: typeof WithNestedInput & RestProps
+) {
+  const props = combineWithDefaultProps<WithNestedInputModel>(
+    WithNestedInput,
+    inProps
+  );
 
-export default function WithNested(props: typeof WithNestedInput & RestProps) {
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedRows = useMemo(
@@ -83,7 +97,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
         ...props,
         rows: __getNestedRows,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -95,5 +109,3 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-WithNested.defaultProps = WithNestedInput;

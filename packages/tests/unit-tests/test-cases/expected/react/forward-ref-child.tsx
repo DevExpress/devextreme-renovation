@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   return (
@@ -7,12 +11,13 @@ function view({ props: { childRef, nullableRef } }: RefOnChildrenChild) {
   );
 }
 
-export type PropsType = {
-  childRef: MutableRefObject<HTMLDivElement | null>;
+interface PropsType {
+  childRef?: MutableRefObject<HTMLDivElement | null>;
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
   state?: number;
-};
-const Props: PropsType = {} as any as PropsType;
+}
+
+const Props = {} as Partial<PropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -21,13 +26,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'nullableRef' | 'state'>
+> &
+  Partial<Pick<GetPropsType<typeof Props>, 'nullableRef' | 'state'>>;
 interface RefOnChildrenChild {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   method: () => any;
   restAttributes: RestProps;
 }
+export default function RefOnChildrenChild(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
 
-export default function RefOnChildrenChild(props: typeof Props & RestProps) {
   const __method = useCallback(
     function __method(): any {
       const { nullableRef } = props;
@@ -42,7 +52,7 @@ export default function RefOnChildrenChild(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { childRef, nullableRef, state, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -53,5 +63,3 @@ export default function RefOnChildrenChild(props: typeof Props & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-RefOnChildrenChild.defaultProps = Props;

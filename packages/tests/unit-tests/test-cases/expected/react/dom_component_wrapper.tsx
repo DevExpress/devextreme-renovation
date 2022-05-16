@@ -1,9 +1,14 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: DomComponentWrapper): any {
   return <span></span>;
 }
 
-export type DomComponentWrapperPropsType = {};
-export const DomComponentWrapperProps: DomComponentWrapperPropsType = {};
+interface DomComponentWrapperPropsType {}
+export const DomComponentWrapperProps =
+  {} as Partial<DomComponentWrapperPropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -12,23 +17,25 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface DomComponentWrapper {
-  props: typeof DomComponentWrapperProps & RestProps;
+  props: Required<GetPropsType<typeof DomComponentWrapperProps>> & RestProps;
   restAttributes: RestProps;
 }
-
 export default function DomComponentWrapper(
-  props: typeof DomComponentWrapperProps & RestProps
+  inProps: typeof DomComponentWrapperProps & RestProps
 ) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof DomComponentWrapperProps>>
+  >(DomComponentWrapperProps, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-DomComponentWrapper.defaultProps = DomComponentWrapperProps;

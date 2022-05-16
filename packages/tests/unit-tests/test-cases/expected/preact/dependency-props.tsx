@@ -3,12 +3,15 @@ function view(model: InnerWidget) {
 }
 
 export type InnerWidgetPropsType = {
+  visible: boolean;
   selected?: boolean;
   value: number;
+  required: boolean;
   defaultValue: number;
   valueChange?: (value: number) => void;
 };
 export const InnerWidgetProps: InnerWidgetPropsType = {
+  visible: true,
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
@@ -21,9 +24,10 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface InnerWidget {
   props: typeof InnerWidgetProps & RestProps;
-  someGetter: typeof InnerWidgetProps;
+  someGetter: string;
   restAttributes: RestProps;
 }
 
@@ -35,21 +39,29 @@ export default function InnerWidget(
   );
 
   const __someGetter = useCallback(
-    function __someGetter(): typeof InnerWidgetProps {
-      return {
-        ...props,
-        value: props.value !== undefined ? props.value : __state_value,
-      };
+    function __someGetter(): string {
+      return (
+        (props.value !== undefined ? props.value : __state_value).toString() +
+        props.required.toString()
+      );
     },
-    [props, __state_value]
+    [props.value, __state_value, props.required]
   );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { defaultValue, selected, value, valueChange, ...restProps } = {
+      const {
+        defaultValue,
+        required,
+        selected,
+        value,
+        valueChange,
+        visible,
+        ...restProps
+      } = {
         ...props,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_value]
   );

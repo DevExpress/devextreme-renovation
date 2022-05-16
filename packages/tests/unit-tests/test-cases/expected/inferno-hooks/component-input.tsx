@@ -3,15 +3,15 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetPropsType = {
+interface WidgetPropsType {
   height?: number;
   width?: number;
   children?: React.ReactNode;
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   height: 10,
   width: 10,
-};
+} as Partial<WidgetPropsType>;
 import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -21,7 +21,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   onClick: () => any;
   restAttributes: RestProps;
 }
@@ -36,7 +36,7 @@ export function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, height, width, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -47,8 +47,6 @@ export function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

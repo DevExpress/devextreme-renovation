@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import DynamicComponent, { WidgetInput } from './props';
 function view({ Components, onComponentClick }: DynamicComponentCreator): any {
   return (
@@ -9,12 +13,13 @@ function view({ Components, onComponentClick }: DynamicComponentCreator): any {
   );
 }
 
-export type PropsType = {
-  height: number;
-};
-const Props: PropsType = {
+interface PropsType {
+  height?: number;
+}
+
+const Props = {
   height: 10,
-};
+} as Partial<PropsType>;
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 
@@ -24,21 +29,26 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface DynamicComponentCreator {
-  props: typeof Props & RestProps;
-  Components: React.FunctionComponent<Partial<typeof WidgetInput>>[];
+  props: Required<GetPropsType<typeof Props>> & RestProps;
+  Components: React.FunctionComponent<GetPropsType<typeof WidgetInput>>[];
   onComponentClick: () => any;
   restAttributes: RestProps;
 }
-
 export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
+  inProps: typeof Props & RestProps
 ) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
+
   const __Components = useMemo(function __Components(): React.FunctionComponent<
-    Partial<typeof WidgetInput>
+    GetPropsType<typeof WidgetInput>
   >[] {
     return [DynamicComponent] as React.FunctionComponent<
-      Partial<typeof WidgetInput>
+      GetPropsType<typeof WidgetInput>
     >[];
   },
   []);
@@ -47,7 +57,7 @@ export default function DynamicComponentCreator(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -59,5 +69,3 @@ export default function DynamicComponentCreator(
     restAttributes: __restAttributes(),
   });
 }
-
-DynamicComponentCreator.defaultProps = Props;

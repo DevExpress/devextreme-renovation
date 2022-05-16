@@ -141,18 +141,18 @@ export class ImportDeclaration {
     public context: GeneratorContext,
   ) {}
 
-  replaceSpecifier(search: string | RegExp, replaceValue: string) {
+  replaceSpecifier(search: string | RegExp, replaceValue: string): void {
     this.moduleSpecifier.expression = this.moduleSpecifier.expression.replace(
       search,
       replaceValue,
     );
   }
 
-  add(name: string) {
+  add(name: string): void {
     this.importClause.add(name);
   }
 
-  has(name: string) {
+  has(name: string): boolean {
     return this.importClause.has(name);
   }
 
@@ -173,17 +173,17 @@ export class ImportDeclaration {
     );
   }
 
-  isCommonDeclarationModule() {
+  isCommonDeclarationModule(): boolean {
     return (
       this.moduleSpecifier.expression.toString() === '@devextreme-generator/declarations'
     );
   }
 
-  compileComponentDeclarationImport() {
+  compileComponentDeclarationImport(): string {
     return '';
   }
 
-  toString() {
+  toString(): string {
     if (this.isCommonDeclarationModule()) {
       return this.compileComponentDeclarationImport();
     }

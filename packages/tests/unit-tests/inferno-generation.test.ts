@@ -210,7 +210,11 @@ mocha.describe("inferno-generation", function () {
       generator.setContext(null);
       generator.options = {};
     });
-
+    
+    mocha.it("default-options-with-state", function () {
+      this.testGenerator(this.test!.title);
+    });
+  
     mocha.it("default-options-empty", function () {
       this.testGenerator(this.test!.title);
     });

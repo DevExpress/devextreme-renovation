@@ -32,7 +32,7 @@ export function Widget(props: {} & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

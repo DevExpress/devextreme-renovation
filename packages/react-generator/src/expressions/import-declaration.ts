@@ -4,7 +4,9 @@ export class ImportDeclaration extends BaseImportDeclaration {
   compileComponentDeclarationImport() {
     const react: string[] = [];
     const reactDom: string[] = [];
-    const result: string[] = [];
+    const result: string[] = [
+      'import { GetPropsType, combineWithDefaultProps } from \'@devextreme/runtime/react\'',
+    ];
     if (this.has('createContext')) {
       react.push('createContext');
     }

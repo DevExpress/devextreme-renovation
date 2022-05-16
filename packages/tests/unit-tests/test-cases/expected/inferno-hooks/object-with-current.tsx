@@ -3,10 +3,10 @@ function view(model: Widget): any {
 }
 type EventCallBack<Type> = (e: Type) => void;
 
-export type WidgetInputType = {
+interface WidgetInputType {
   someProp?: { current: string };
-};
-export const WidgetInput: WidgetInputType = {};
+}
+export const WidgetInput = {} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -20,7 +20,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   someState?: { current: string };
   existsState: { current: string };
   concatStrings: () => any;
@@ -46,7 +46,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { someProp, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -59,8 +59,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

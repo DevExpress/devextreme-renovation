@@ -2,17 +2,17 @@ function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
-export type InnerWidgetPropsType = {
+interface InnerWidgetPropsType {
   selected?: boolean;
-  value: number;
+  value?: number;
   onSelect?: (e: any) => any;
-  defaultValue: number;
+  defaultValue?: number;
   valueChange?: (value: number) => void;
-};
-export const InnerWidgetProps: InnerWidgetPropsType = {
+}
+export const InnerWidgetProps = {
   defaultValue: 14,
   valueChange: () => {},
-} as any as InnerWidgetPropsType;
+} as Partial<InnerWidgetPropsType>;
 import {
   useState,
   useCallback,
@@ -27,7 +27,7 @@ type RestProps = {
   ref?: any;
 };
 interface InnerWidget {
-  props: typeof InnerWidgetProps & RestProps;
+  props: InnerWidgetPropsModel & RestProps;
   restAttributes: RestProps;
 }
 
@@ -49,7 +49,7 @@ export function InnerWidget(props: typeof InnerWidgetProps & RestProps) {
         ...props,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_value]
   );
@@ -62,8 +62,6 @@ export function InnerWidget(props: typeof InnerWidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-InnerWidget.defaultProps = InnerWidgetProps;
 
 function HooksInnerWidget(props: typeof InnerWidgetProps & RestProps) {
   return (

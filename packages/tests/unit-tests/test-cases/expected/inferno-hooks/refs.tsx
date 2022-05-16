@@ -7,14 +7,15 @@ function view(viewModel: Widget) {
   );
 }
 
-export type WidgetPropsType = {
+interface WidgetPropsType {
   outerDivRef?: MutableRefObject<HTMLDivElement | null>;
   refProp?: MutableRefObject<HTMLDivElement | null>;
   forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
-  requiredRefProp: MutableRefObject<HTMLDivElement | null>;
-  requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
-};
-const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
+  requiredRefProp?: MutableRefObject<HTMLDivElement | null>;
+  requiredForwardRefProp?: MutableRefObject<HTMLDivElement | null>;
+}
+
+const WidgetProps = {} as Partial<WidgetPropsType>;
 import {
   useCallback,
   useRef,
@@ -28,7 +29,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   divRef: any;
   ref: any;
   forwardRef: any;
@@ -119,7 +120,7 @@ export function Widget(props: typeof WidgetProps & RestProps) {
         requiredRefProp,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -137,8 +138,6 @@ export function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

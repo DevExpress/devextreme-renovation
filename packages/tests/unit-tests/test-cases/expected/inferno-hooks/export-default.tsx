@@ -2,10 +2,11 @@ function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   prop?: boolean;
-};
-const WidgetInput: WidgetInputType = {};
+}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -15,7 +16,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
 
@@ -23,15 +24,13 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

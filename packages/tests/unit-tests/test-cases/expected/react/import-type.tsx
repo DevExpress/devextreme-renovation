@@ -1,12 +1,16 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import type { Options } from './types.d';
 export const viewFunction = (viewModel: Import) => {
   return <div>{viewModel.props.Test?.value}</div>;
 };
 
-export type ImportPropsType = {
+interface ImportPropsType {
   Test?: Options;
-};
-export const ImportProps: ImportPropsType = {};
+}
+export const ImportProps = {} as Partial<ImportPropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -15,16 +19,21 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type ImportPropsModel = Required<
+  Omit<GetPropsType<typeof ImportProps>, 'Test'>
+> &
+  Partial<Pick<GetPropsType<typeof ImportProps>, 'Test'>>;
 interface Import {
-  props: typeof ImportProps & RestProps;
+  props: ImportPropsModel & RestProps;
   restAttributes: RestProps;
 }
+export default function Import(inProps: typeof ImportProps & RestProps) {
+  const props = combineWithDefaultProps<ImportPropsModel>(ImportProps, inProps);
 
-export default function Import(props: typeof ImportProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { Test, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -34,5 +43,3 @@ export default function Import(props: typeof ImportProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Import.defaultProps = ImportProps;

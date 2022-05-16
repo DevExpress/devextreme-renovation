@@ -1,7 +1,7 @@
+import InnerWidget, { DxInnerWidgetModule } from './dependency-props';
 import WidgetWithTemplate, {
   DxWidgetWithTemplateModule,
 } from './dx-widget-with-template';
-import InnerWidget, { DxInnerWidgetModule } from './dx-inner-widget';
 import { Component } from '@angular/core';
 @Component({
   template: '',
@@ -32,14 +32,18 @@ import { CommonModule } from '@angular/common';
       style="display: contents"
       ><ng-template
         #InnerWidget
+        let-visible="visible"
         let-selected="selected"
         let-value="value"
-        let-onSelect="onSelect"
+        let-required="required"
         let-valueChange="valueChange"
         ><dx-inner-widget
+          [visible]="
+            visible !== undefined ? visible : InnerWidgetDefaults.visible
+          "
           [selected]="selected"
           [value]="value !== undefined ? value : InnerWidgetDefaults.value"
-          (onSelect)="onSelect($event)"
+          [required]="required"
           (valueChange)="
             (valueChange !== undefined
               ? valueChange
@@ -89,12 +93,12 @@ export default class Widget extends WidgetProps {
     super();
   }
 
-  InnerWidgetDefaults = { value: 14, valueChange: () => {} };
+  InnerWidgetDefaults = { visible: true, value: 14, valueChange: () => {} };
 }
 @NgModule({
   declarations: [Widget],
-  imports: [DxWidgetWithTemplateModule, DxInnerWidgetModule, CommonModule],
-  entryComponents: [WidgetWithTemplate, InnerWidget],
+  imports: [DxInnerWidgetModule, DxWidgetWithTemplateModule, CommonModule],
+  entryComponents: [InnerWidget, WidgetWithTemplate],
   exports: [Widget],
 })
 export class DxWidgetModule {}

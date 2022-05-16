@@ -1,15 +1,29 @@
-export type WidgetWithTemplateInputType = {
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+import InnerWidget, { InnerWidgetProps } from './dependency-props';
+
+interface WidgetWithTemplateInputType {
   template?: any;
-  componentTemplate?: any;
+  componentTemplate?: React.FunctionComponent<
+    GetPropsType<typeof InnerWidgetProps>
+  >;
   arrowTemplate?: any;
   render?: any;
   component?: any;
-  componentRender?: any;
-  componentComponent?: any;
+  componentRender?: React.FunctionComponent<
+    GetPropsType<typeof InnerWidgetProps>
+  >;
+  componentComponent?: React.JSXElementConstructor<
+    GetPropsType<typeof InnerWidgetProps>
+  >;
   arrowRender?: any;
   arrowComponent?: any;
-};
-export const WidgetWithTemplateInput: WidgetWithTemplateInputType = {};
+}
+export const WidgetWithTemplateInput = {
+  componentTemplate: InnerWidget,
+} as Partial<WidgetWithTemplateInputType>;
 import * as React from 'react';
 import { useCallback } from 'react';
 import { getTemplate } from '@devextreme/runtime/react';
@@ -20,14 +34,44 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetWithTemplateInputModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetWithTemplateInput>,
+    | 'template'
+    | 'arrowTemplate'
+    | 'render'
+    | 'component'
+    | 'componentRender'
+    | 'componentComponent'
+    | 'arrowRender'
+    | 'arrowComponent'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetWithTemplateInput>,
+      | 'template'
+      | 'arrowTemplate'
+      | 'render'
+      | 'component'
+      | 'componentRender'
+      | 'componentComponent'
+      | 'arrowRender'
+      | 'arrowComponent'
+    >
+  >;
 interface WidgetWithTemplate {
-  props: typeof WidgetWithTemplateInput & RestProps;
+  props: WidgetWithTemplateInputModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function WidgetWithTemplate(
-  props: typeof WidgetWithTemplateInput & RestProps
+  inProps: typeof WidgetWithTemplateInput & RestProps
 ) {
+  const props = combineWithDefaultProps<WidgetWithTemplateInputModel>(
+    WidgetWithTemplateInput,
+    inProps
+  );
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -42,7 +86,7 @@ export default function WidgetWithTemplate(
         template,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -66,11 +110,10 @@ export default function WidgetWithTemplate(
   });
 }
 
-WidgetWithTemplate.defaultProps = WidgetWithTemplateInput;
 function view(viewModel: WidgetWithTemplate) {
   return (
     <div>
-      {viewModel.props.componentTemplate({})}
+      {viewModel.props.componentTemplate({ required: true })}
 
       {viewModel.props.template({})}
 

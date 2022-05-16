@@ -2,18 +2,16 @@ import {
   TypeExpression,
   TypeReferenceNode as BaseTypeReferenceNode,
 } from '@devextreme-generator/core';
-import { ComponentInput } from './react-component-input';
+import { ComponentInput } from './component-input';
 
 // TODO: move these types to generator's common
 //       (for example as DxFunctionalComponentType and DxComponentType)
-export function compileJSXTemplateProps(args: TypeExpression[]):string {
-  if (args.length === 2) {
-    // TODO reexport warn('JSXTemplate type can have only one argument.');
-  }
-  if (args.length === 0) {
-    return 'any';
-  }
-  return `GetPropsType<${args[0].toString()}>`;
+export function compileJSXTemplateProps(args: TypeExpression[]) {
+  return args.length
+    ? args.length === 1
+      ? `Partial<${args[0]}>`
+      : `Partial<Omit<${args}>> & Required<Pick<${args}>>`
+    : 'any';
 }
 
 export class TypeReferenceNode extends BaseTypeReferenceNode {

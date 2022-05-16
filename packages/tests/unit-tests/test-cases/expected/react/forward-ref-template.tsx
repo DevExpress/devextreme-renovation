@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view(model: RefOnChildrenTemplate) {
   return (
@@ -7,12 +11,13 @@ function view(model: RefOnChildrenTemplate) {
   );
 }
 
-export type PropsType = {
+interface PropsType {
   contentTemplate: any;
   contentRender?: any;
   contentComponent?: any;
-};
-const Props: PropsType = {} as any as PropsType;
+}
+
+const Props = {} as Partial<PropsType>;
 import * as React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
 import { getTemplate } from '@devextreme/runtime/react';
@@ -23,13 +28,21 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'contentRender' | 'contentComponent'>
+> &
+  Partial<
+    Pick<GetPropsType<typeof Props>, 'contentRender' | 'contentComponent'>
+  >;
 interface RefOnChildrenTemplate {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   child: any;
   restAttributes: RestProps;
 }
-
-export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
+export default function RefOnChildrenTemplate(
+  inProps: typeof Props & RestProps
+) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
   const __child: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
 
@@ -37,7 +50,7 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     function __restAttributes(): RestProps {
       const { contentComponent, contentRender, contentTemplate, ...restProps } =
         props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -60,5 +73,3 @@ export default function RefOnChildrenTemplate(props: typeof Props & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-RefOnChildrenTemplate.defaultProps = Props;

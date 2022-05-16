@@ -1,17 +1,23 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import Props from './component-bindings-only';
 import { Options } from './types.d';
 function view(model: Widget) {
   return <div>{model.props.data?.value}</div>;
 }
 import { AdditionalOptions } from './types.d';
-export type WidgetPropsType = {
+
+interface WidgetPropsType {
   data?: Options;
   info?: AdditionalOptions;
-};
-const WidgetProps: WidgetPropsType = {
+}
+
+const WidgetProps = {
   data: Props.data,
   info: Props.info,
-};
+} as Partial<WidgetPropsType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -20,13 +26,17 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   innerData: Options;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetProps>>
+  >(WidgetProps, inProps);
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const [__state_innerData, __state_setInnerData] = useState<Options>({
     value: '',
   });
@@ -34,7 +44,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { data, info, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -45,5 +55,3 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;

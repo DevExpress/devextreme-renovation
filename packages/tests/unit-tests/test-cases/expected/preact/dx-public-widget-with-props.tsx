@@ -23,6 +23,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface PublicWidgetWithProps {
   props: typeof WidgetWithPropsInput & RestProps;
   restAttributes: RestProps;
@@ -38,7 +39,7 @@ const PublicWidgetWithProps = forwardRef<
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { number, onClick, optionalValue, value, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

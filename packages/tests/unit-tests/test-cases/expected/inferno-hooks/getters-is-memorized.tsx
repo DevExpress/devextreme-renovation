@@ -1,21 +1,23 @@
+import { GetPropsType } from '@devextreme/runtime/react';
 import {
   InterfaceTemplateInput as externalInterface,
   Options as externalType,
 } from './types.d';
 
-export type WidgetPropsType = {
-  someProp: string;
+interface WidgetPropsType {
+  someProp?: string;
   type?: string;
-  currentDate: Date | number | string;
-  defaultCurrentDate: Date | number | string;
+  currentDate?: Date | number | string;
+  defaultCurrentDate?: Date | number | string;
   currentDateChange?: (currentDate: Date | number | string) => void;
-};
-const WidgetProps: WidgetPropsType = {
+}
+
+const WidgetProps = {
   someProp: '',
   type: '',
   defaultCurrentDate: Object.freeze(new Date()) as any,
   currentDateChange: () => {},
-} as any as WidgetPropsType;
+} as Partial<WidgetPropsType>;
 interface internalInterface {
   field1: { a: string };
   field2: number;
@@ -38,7 +40,7 @@ type RestProps = {
   ref?: any;
 };
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   internalInterfaceGetter: internalInterface;
   internalTypeGetter: internalType;
   externalInterfaceGetter: externalInterface;
@@ -106,15 +108,13 @@ function Widget(props: typeof WidgetProps & RestProps) {
             ? props.currentDate
             : __state_currentDate,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_currentDate]
   );
 
   return view();
 }
-
-Widget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
