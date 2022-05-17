@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -119,6 +122,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsTypeModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetPropsType>,
+    'empty' | 'children' | 'render' | 'component'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetPropsType>,
+      'empty' | 'children' | 'render' | 'component'
+    >
+  >;
 interface Widget {
   props: WidgetPropsTypeModel & RestProps;
   __getNestedBaseNested: typeof TextsProps | string;
@@ -127,7 +142,12 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetPropsType & RestProps) {
+export function Widget(inProps: typeof WidgetPropsType & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsTypeModel>(
+    WidgetPropsType,
+    inProps
+  );
+
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedBaseNested = useMemo(

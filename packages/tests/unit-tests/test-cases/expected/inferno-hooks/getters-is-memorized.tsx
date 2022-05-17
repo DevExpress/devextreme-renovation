@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import {
   InterfaceTemplateInput as externalInterface,
   Options as externalType,
@@ -39,6 +42,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   internalInterfaceGetter: internalInterface;
@@ -49,7 +53,11 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-function Widget(props: typeof WidgetProps & RestProps) {
+function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetProps>>
+  >(WidgetProps, inProps);
+
   const [__state_currentDate, __state_setCurrentDate] = useState<
     Date | number | string
   >(() =>

@@ -1,18 +1,24 @@
-export type WidgetPropsType = {
-  someProp: string;
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+
+interface WidgetPropsType {
+  someProp?: string;
   type?: string;
   gridCompatibility?: boolean;
-  pageIndex: number;
-  defaultPageIndex: number;
+  pageIndex?: number;
+  defaultPageIndex?: number;
   pageIndexChange?: (pageIndex: number) => void;
-};
-const WidgetProps: WidgetPropsType = {
+}
+
+const WidgetProps = {
   someProp: '',
   type: '',
   gridCompatibility: true,
   defaultPageIndex: 1,
   pageIndexChange: () => {},
-} as any as WidgetPropsType;
+} as Partial<WidgetPropsType>;
 const view = (model: Widget) => <div></div>;
 
 import {
@@ -32,8 +38,9 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   someState: number;
   g7: any;
   g5: (string | undefined)[];
@@ -51,7 +58,11 @@ interface Widget {
 }
 
 const Widget = (ref: any) =>
-  function widget(props: typeof WidgetProps & RestProps) {
+  function widget(inProps: typeof WidgetProps & RestProps) {
+    const props = combineWithDefaultProps<
+      Required<GetPropsType<typeof WidgetProps>>
+    >(WidgetProps, inProps);
+
     const [__state_pageIndex, __state_setPageIndex] = useState<number>(() =>
       props.pageIndex !== undefined ? props.pageIndex : props.defaultPageIndex!
     );
@@ -105,7 +116,7 @@ const Widget = (ref: any) =>
           pageIndex:
             props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
         };
-        return restProps;
+        return restProps as RestProps;
       },
       [props, __state_pageIndex]
     );
@@ -175,9 +186,7 @@ const Widget = (ref: any) =>
     });
   } as React.FC<
     typeof WidgetProps & RestProps & { ref?: React.Ref<WidgetRef> }
-  > & { defaultProps: typeof WidgetProps };
-
-Widget.defaultProps = WidgetProps;
+  >;
 
 let refs = new WeakMap();
 const WidgetFn = (ref: any) => {

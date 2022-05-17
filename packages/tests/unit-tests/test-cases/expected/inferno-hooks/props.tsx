@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
   return (
@@ -60,6 +64,10 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'sizes'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'sizes'>>;
 interface Widget {
   props: WidgetInputModel & RestProps;
   getHeight: () => number;
@@ -67,7 +75,9 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const [__state_stringValue, __state_setStringValue] = useState<string>(() =>
     props.stringValue !== undefined
       ? props.stringValue

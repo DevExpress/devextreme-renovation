@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 export const COMPONENT_INPUT_CLASS = 'c3';
 function view(model: Widget) {
   return <div></div>;
@@ -20,13 +24,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<GetPropsType<typeof WidgetProps>, 'children'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetProps>, 'children'>>;
 interface Widget {
   props: WidgetPropsModel & RestProps;
   onClick: () => any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+export function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
+
   const __onClick = useCallback(
     function __onClick(): any {
       const v = props.height;

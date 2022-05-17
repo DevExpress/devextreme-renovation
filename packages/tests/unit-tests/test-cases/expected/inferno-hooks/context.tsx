@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { createContext } from 'react';
 function view(model: Widget): any {
   return <span></span>;
@@ -27,6 +30,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: Required<GetPropsType<typeof Props>> & RestProps;
   contextConsumer: number;
@@ -37,7 +41,12 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
+
   const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
   const consumer = useContext(ContextForConsumer);

@@ -1,17 +1,21 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view({ props: { optionalValue, value } }: PublicWidgetWithProps) {
   return <div>{optionalValue || value}</div>;
 }
 
-export type WidgetWithPropsInputType = {
-  value: string;
+interface WidgetWithPropsInputType {
+  value?: string;
   optionalValue?: string;
   number?: number;
   onClick?: (e: any) => void;
-};
-export const WidgetWithPropsInput: WidgetWithPropsInputType = {
+}
+export const WidgetWithPropsInput = {
   value: 'default text',
   number: 42,
-};
+} as Partial<WidgetWithPropsInputType>;
 import {
   useCallback,
   useImperativeHandle,
@@ -27,19 +31,30 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetWithPropsInputModel = Required<
+  Omit<GetPropsType<typeof WidgetWithPropsInput>, 'optionalValue' | 'onClick'>
+> &
+  Partial<
+    Pick<GetPropsType<typeof WidgetWithPropsInput>, 'optionalValue' | 'onClick'>
+  >;
 interface PublicWidgetWithProps {
-  props: typeof WidgetWithPropsInput & RestProps;
+  props: WidgetWithPropsInputModel & RestProps;
   restAttributes: RestProps;
 }
 
 const PublicWidgetWithProps = (ref: any) =>
   function publicWidgetWithProps(
-    props: typeof WidgetWithPropsInput & RestProps
+    inProps: typeof WidgetWithPropsInput & RestProps
   ) {
+    const props = combineWithDefaultProps<WidgetWithPropsInputModel>(
+      WidgetWithPropsInput,
+      inProps
+    );
+
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { number, onClick, optionalValue, value, ...restProps } = props;
-        return restProps;
+        return restProps as RestProps;
       },
       [props]
     );
@@ -52,9 +67,7 @@ const PublicWidgetWithProps = (ref: any) =>
   } as React.FC<
     typeof WidgetWithPropsInput &
       RestProps & { ref?: React.Ref<PublicWidgetWithPropsRef> }
-  > & { defaultProps: typeof WidgetWithPropsInput };
-
-PublicWidgetWithProps.defaultProps = WidgetWithPropsInput;
+  >;
 
 let refs = new WeakMap();
 const PublicWidgetWithPropsFn = (ref: any) => {

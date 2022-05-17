@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(viewModel: Widget) {
   return <div></div>;
 }
@@ -19,6 +22,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   setObj: () => any;
@@ -28,7 +32,11 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetInput>>
+  >(WidgetInput, inProps);
+
   const obj = useRef<{ value?: number }>();
   const notDefinedObj = useRef<{ value?: number } | undefined>();
   const definedObj = useRef<{ value?: number }>({ value: 0 });

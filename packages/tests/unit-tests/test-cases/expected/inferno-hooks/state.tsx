@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import BaseState from './model';
 function view(model: Widget) {
   return (
@@ -40,6 +44,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetInput>,
+    'state1' | 'stateProp' | 'defaultStateProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetInput>,
+      'state1' | 'stateProp' | 'defaultStateProp'
+    >
+  >;
 interface Widget {
   props: WidgetInputModel & RestProps;
   internalState: number;
@@ -53,7 +69,9 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const [__state_state1, __state_setState1] = useState<boolean | undefined>(
     () => (props.state1 !== undefined ? props.state1 : props.defaultState1)
   );

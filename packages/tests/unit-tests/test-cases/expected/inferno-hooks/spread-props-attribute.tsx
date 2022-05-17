@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
   return (
@@ -30,6 +34,12 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'visible' | 'value' | 'defaultValue'>
+> &
+  Partial<
+    Pick<GetPropsType<typeof WidgetInput>, 'visible' | 'value' | 'defaultValue'>
+  >;
 interface Widget {
   props: WidgetInputModel & RestProps;
   counter: number;
@@ -38,7 +48,9 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const [__state_value, __state_setValue] = useState<boolean | undefined>(() =>
     props.value !== undefined ? props.value : props.defaultValue
   );

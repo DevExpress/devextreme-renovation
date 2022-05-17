@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import Base, { WidgetProps } from './component-input';
 function view(model: Child) {
   return <Base height={model.getProps().height} />;
@@ -27,13 +30,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type ChildInputModel = Required<
+  Omit<GetPropsType<typeof ChildInput>, 'children'>
+> &
+  Partial<Pick<GetPropsType<typeof ChildInput>, 'children'>>;
 interface Child {
   props: ChildInputModel & RestProps;
   getProps: () => typeof WidgetProps;
   restAttributes: RestProps;
 }
 
-export function Child(props: typeof ChildInput & RestProps) {
+export function Child(inProps: typeof ChildInput & RestProps) {
+  const props = combineWithDefaultProps<ChildInputModel>(ChildInput, inProps);
+
   const __getProps = useCallback(
     function __getProps(): typeof WidgetProps {
       return { height: props.height } as typeof WidgetProps;

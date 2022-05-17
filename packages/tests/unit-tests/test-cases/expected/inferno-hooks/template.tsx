@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { PublicWidgetWithProps } from './dx-public-widget-with-props';
 import { WidgetWithProps, WidgetWithPropsInput } from './dx-widget-with-props';
 
@@ -67,12 +70,48 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetInput>,
+    | 'headerRender'
+    | 'headerComponent'
+    | 'render'
+    | 'component'
+    | 'contentRender'
+    | 'contentComponent'
+    | 'footerRender'
+    | 'footerComponent'
+    | 'componentRender'
+    | 'componentComponent'
+    | 'publicComponentRender'
+    | 'publicComponentComponent'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetInput>,
+      | 'headerRender'
+      | 'headerComponent'
+      | 'render'
+      | 'component'
+      | 'contentRender'
+      | 'contentComponent'
+      | 'footerRender'
+      | 'footerComponent'
+      | 'componentRender'
+      | 'componentComponent'
+      | 'publicComponentRender'
+      | 'publicComponentComponent'
+    >
+  >;
 interface WidgetWithTemplate {
   props: WidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
 
-export function WidgetWithTemplate(props: typeof WidgetInput & RestProps) {
+export function WidgetWithTemplate(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {

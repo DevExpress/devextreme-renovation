@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return (
@@ -28,6 +32,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetProps>,
+    'outerDivRef' | 'refProp' | 'forwardRefProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetProps>,
+      'outerDivRef' | 'refProp' | 'forwardRefProp'
+    >
+  >;
 interface Widget {
   props: WidgetPropsModel & RestProps;
   divRef: any;
@@ -46,7 +62,8 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+export function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
   const __divRef: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
   const __ref: MutableRefObject<HTMLDivElement | null> =

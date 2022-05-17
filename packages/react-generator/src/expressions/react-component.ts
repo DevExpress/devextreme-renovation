@@ -892,7 +892,8 @@ export class ReactComponent extends Component {
   compileComponentFunctionDefinition(): string {
     const propsNormalization = this.compileInPropsNormalization();
     const propsName = propsNormalization ? `inProps: ${this.compilePropsType()}` : `props: ${this.compilePropsType()}`;
-    return `${this.members.filter((m) => m.isApiMethod).length === 0
+    const hasApiMethod = this.members.some((m) => m.isApiMethod);
+    return `${!hasApiMethod
       ? `${this.modifiers.join(' ')} function ${this.name
       }(${propsName}){`
 
@@ -901,7 +902,7 @@ export class ReactComponent extends Component {
         this.name,
       )}(${propsName}, ref){`
     }
-    ${this.compileInPropsNormalization()}`;
+    ${propsNormalization}`;
   }
 
   toString(): string {

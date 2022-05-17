@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget): any {
   return <span></span>;
 }
@@ -19,6 +23,10 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'someProp'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'someProp'>>;
 interface Widget {
   props: WidgetInputModel & RestProps;
   someState?: { current: string };
@@ -27,7 +35,9 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const [__state_someState, __state_setSomeState] = useState<
     { current: string } | undefined
   >(undefined);

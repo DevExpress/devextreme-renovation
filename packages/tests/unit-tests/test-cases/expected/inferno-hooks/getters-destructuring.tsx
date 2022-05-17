@@ -1,12 +1,18 @@
-export type WidgetPropsType = {
-  someProp: string;
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+
+interface WidgetPropsType {
+  someProp?: string;
   type?: string;
   objectProp?: { someField: number };
-};
-const WidgetProps: WidgetPropsType = {
+}
+
+const WidgetProps = {
   someProp: '',
   type: '',
-};
+} as Partial<WidgetPropsType>;
 interface FirstGetter {
   field1: string;
   field2: number;
@@ -35,8 +41,12 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<GetPropsType<typeof WidgetProps>, 'objectProp'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetProps>, 'objectProp'>>;
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   someState: string;
   arrayFromObj: (string | undefined)[];
   arrayFromArr: (string | undefined)[];
@@ -48,7 +58,12 @@ interface Widget {
 }
 
 const Widget = (ref: any) =>
-  function widget(props: typeof WidgetProps & RestProps) {
+  function widget(inProps: typeof WidgetProps & RestProps) {
+    const props = combineWithDefaultProps<WidgetPropsModel>(
+      WidgetProps,
+      inProps
+    );
+
     const [__state_someState, __state_setSomeState] = useState<string>('');
 
     const __someObj = useMemo(
@@ -60,7 +75,7 @@ const Widget = (ref: any) =>
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { objectProp, someProp, type, ...restProps } = props;
-        return restProps;
+        return restProps as RestProps;
       },
       [props]
     );
@@ -112,9 +127,7 @@ const Widget = (ref: any) =>
     return view();
   } as React.FC<
     typeof WidgetProps & RestProps & { ref?: React.Ref<WidgetRef> }
-  > & { defaultProps: typeof WidgetProps };
-
-Widget.defaultProps = WidgetProps;
+  >;
 
 let refs = new WeakMap();
 const WidgetFn = (ref: any) => {

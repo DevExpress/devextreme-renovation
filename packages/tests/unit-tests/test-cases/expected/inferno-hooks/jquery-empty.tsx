@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 
 interface PropsType {
   height?: number;
@@ -16,12 +20,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'height' | 'width'>
+> &
+  Partial<Pick<GetPropsType<typeof Props>, 'height' | 'width'>>;
 interface Widget {
   props: PropsModel & RestProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, width, ...restProps } = props;

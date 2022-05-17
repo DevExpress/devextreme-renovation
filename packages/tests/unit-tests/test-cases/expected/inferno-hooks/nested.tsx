@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { PickedProps, GridColumnProps } from './nested-props';
 export const CustomColumnComponent = (props: typeof GridColumnProps) => {};
 function view(model: Widget) {
@@ -55,6 +59,10 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PickedPropsModel = Required<
+  Omit<GetPropsType<typeof PickedProps>, 'columns' | 'children'>
+> &
+  Partial<Pick<GetPropsType<typeof PickedProps>, 'columns' | 'children'>>;
 interface Widget {
   props: PickedPropsModel & RestProps;
   __getNestedEditing: typeof EditingProps;
@@ -64,7 +72,9 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof PickedProps & RestProps) {
+export function Widget(inProps: typeof PickedProps & RestProps) {
+  const props = combineWithDefaultProps<PickedPropsModel>(PickedProps, inProps);
+
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedEditing = useMemo(

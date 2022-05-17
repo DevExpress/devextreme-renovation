@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { createContext } from 'react';
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
@@ -26,6 +29,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: Required<GetPropsType<typeof Props>> & RestProps;
   i: number;
@@ -40,7 +44,12 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
+
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);

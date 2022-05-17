@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -15,12 +19,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'prop'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'prop'>>;
 interface Widget {
   props: WidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop, ...restProps } = props;

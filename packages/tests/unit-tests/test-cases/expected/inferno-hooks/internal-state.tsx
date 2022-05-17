@@ -1,3 +1,5 @@
+
+
 function view(model: Widget) {
   return <span></span>;
 }
@@ -14,6 +16,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   _hovered: Boolean;
   updateState: () => any;

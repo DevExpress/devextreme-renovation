@@ -1,4 +1,7 @@
-import { GetPropsType } from '@devextreme/runtime/react';
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 
 interface SomePropsType {}
 
@@ -19,6 +22,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface InheritedFromBaseComponent {
   props: Required<GetPropsType<typeof SomeProps>> & RestProps;
   _hovered: Boolean;
@@ -27,8 +31,12 @@ interface InheritedFromBaseComponent {
 }
 
 export function InheritedFromBaseComponent(
-  props: typeof SomeProps & RestProps
+  inProps: typeof SomeProps & RestProps
 ) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof SomeProps>>
+  >(SomeProps, inProps);
+
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
   const __updateState = useCallback(
