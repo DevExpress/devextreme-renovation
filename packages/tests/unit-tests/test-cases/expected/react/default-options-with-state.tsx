@@ -2,7 +2,9 @@ import {
   GetPropsType,
   combineWithDefaultProps,
 } from '@devextreme/runtime/react';
-function view() {}
+function view() {
+  return '';
+}
 
 interface WidgetPropsType {
   p1?: string;

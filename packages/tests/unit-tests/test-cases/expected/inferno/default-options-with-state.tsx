@@ -1,7 +1,9 @@
 import {
   BaseInfernoComponent,
 } from '@devextreme/runtime/inferno';
-function view() {}
+function view() {
+  return '';
+}
 
 export type WidgetPropsType = {
   p1: string;
