@@ -3,57 +3,56 @@ import {
   ComponentBindings,
   JSXComponent,
   Effect,
+  InternalState,
   Ref,
-  OneWay,
   RefObject,
 } from "@devextreme-generator/declarations";
 
-function view(model: EffectsDOMUpdate) {
+function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
   return (
     <div>
-      <span>{model.props.text}</span>
-      <div
-        id={model.props.name}
-        ref={model.divRef}
-        style={{ backgroundColor: "#b3b3b3" }}
-      ></div>
+      <span
+        ref={buttonRef}
+        style={{
+          border: "1px solid black",
+        }}
+        id="effect-subscribe-unsubscribe-button"
+      >
+        Update State
+      </span>
+      :
+      <span
+        ref={contentRef}
+        id="effect-subscribe-unsubscribe-button-content"
+      ></span>
     </div>
   );
 }
 
 @ComponentBindings()
-class Props {
-  @OneWay() name?: string;
-  @OneWay() text!: string;
-}
+class Props {}
 
 @Component({
   view,
   jQuery: {register: true},
 })
-export default class EffectsDOMUpdate extends JSXComponent<Props, "text">() {
-  @Ref() divRef!: RefObject<HTMLDivElement>;
+export default class EffectSubscribeUnsubscribe extends JSXComponent(Props) {
+  @Ref() buttonRef!: RefObject<HTMLSpanElement>;
+  @Ref() contentRef!: RefObject<HTMLSpanElement>;
+  @InternalState() state1: number = 0;
 
   @Effect()
-  noDepsEffect() {
-    this.divRef.current?.insertAdjacentText("beforeend", `(no deps)`);
+  subscribeOnClick() {
+    const handler = this.onButtonClick.bind(this);
+    this.buttonRef.current?.addEventListener("click", handler);
+    return () => this.buttonRef.current?.removeEventListener("click", handler);
   }
 
-  @Effect()
-  depsEffect() {
-    this.divRef.current?.insertAdjacentText(
-      "beforeend",
-      `(${this.props.text} deps)`
-    );
-  }
-
-  @Effect({ run: "always" })
-  alwaysEffect() {
-    this.divRef.current?.insertAdjacentText("beforeend", "(always)");
-  }
-
-  @Effect({ run: "once" })
-  onceEffect() {
-    this.divRef.current?.insertAdjacentText("beforeend", `(once)`);
+  onButtonClick() {
+    const value = this.state1;
+    if (this.contentRef.current) {
+      this.contentRef.current.innerHTML = value.toString();
+    }
+    this.state1 = this.state1 + 1;
   }
 }

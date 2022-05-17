@@ -1,4 +1,6 @@
-import { ReactComponent, GetAccessor } from '@devextreme-generator/react';
+import {
+  ReactComponent, GetAccessor,
+} from '@devextreme-generator/react';
 import { ObjectLiteral, isComponentWrapper } from '@devextreme-generator/core';
 
 export class InfernoComponent extends ReactComponent {
@@ -75,6 +77,20 @@ export class InfernoComponent extends ReactComponent {
 
   get hasApiMethod(): boolean {
     return this.members.some((m) => m.isApiMethod);
+  }
+
+  compilePortalComponentCore(): string {
+    return `
+    type PortalProps = {
+      container?: HTMLElement | null;
+      children: React.ReactNode,
+    }
+    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
+      if(container) {
+        return createPortal({container, children});
+      }
+      return null; 
+    }`;
   }
 
   toString(): string {

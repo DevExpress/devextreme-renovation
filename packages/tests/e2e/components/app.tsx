@@ -172,7 +172,6 @@ function view(model: App) {
       <DynamicComponent />
       <StylesWidget />
       <RefParent />
-      {/* Check */}
       <GetterCache />
       <div>
         <UndefPropParent

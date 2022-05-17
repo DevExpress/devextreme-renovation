@@ -34,6 +34,7 @@ export default class ForwardRefParent extends JSXComponent(Props) {
     if (this.firstChild.current) {
       this.firstChild.current.style.backgroundColor = "rgb(120, 120, 120)";
     }
+    debugger;
     if (this.secondChild.current) {
       this.secondChild.current.style.backgroundColor = "rgb(200, 200, 200)";
     }

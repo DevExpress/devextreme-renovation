@@ -58,7 +58,6 @@ export class InfernoWrapperComponent extends HookComponent {
 
   componentDidUpdate(): void {
     const el = this.vDomElement;
-
     if (el !== null) {
       el.dxClasses.added.forEach((className: string): void => el.classList.add(className));
       el.dxClasses.removed.forEach((className: string): void => el.classList.remove(className));
@@ -66,6 +65,7 @@ export class InfernoWrapperComponent extends HookComponent {
         ? el.className.split(' ')
         : [];
     }
+    super.componentDidUpdate();
   }
 
   shouldComponentUpdate(nextProps: Record<string, unknown>,

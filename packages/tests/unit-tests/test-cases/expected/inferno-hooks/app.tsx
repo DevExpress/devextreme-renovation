@@ -1,23 +1,26 @@
-function view(model: EffectsDOMUpdate) {
+function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
   return (
     <div>
-      <span>{model.props.text}</span>
-
-      <div
-        id={model.props.name}
-        ref={model.divRef}
-        style={normalizeStyles({ backgroundColor: '#b3b3b3' })}
-      ></div>
+      <span
+        ref={buttonRef}
+        style={normalizeStyles({ border: '1px solid black' })}
+        id="effect-subscribe-unsubscribe-button"
+      >
+        Update State
+      </span>
+      :
+      <span
+        ref={contentRef}
+        id="effect-subscribe-unsubscribe-button-content"
+      ></span>
     </div>
   );
 }
 
-export type PropsType = {
-  name?: string;
-  text: string;
-};
-const Props: PropsType = {} as any as PropsType;
+export type PropsType = {};
+const Props: PropsType = {};
 import {
+  useState,
   useCallback,
   useEffect,
   useRef,
@@ -31,52 +34,64 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface EffectsDOMUpdate {
+interface EffectSubscribeUnsubscribe {
   props: typeof Props & RestProps;
-  divRef: any;
+  buttonRef: any;
+  contentRef: any;
+  state1: number;
+  onButtonClick: () => any;
   restAttributes: RestProps;
 }
 
-function ReactEffectsDOMUpdate(props: typeof Props & RestProps) {
-  const __divRef: MutableRefObject<HTMLDivElement | null> =
-    useRef<HTMLDivElement>(null);
+function ReactEffectSubscribeUnsubscribe(props: typeof Props & RestProps) {
+  const __buttonRef: MutableRefObject<HTMLSpanElement | null> =
+    useRef<HTMLSpanElement>(null);
+  const __contentRef: MutableRefObject<HTMLSpanElement | null> =
+    useRef<HTMLSpanElement>(null);
+  const [__state_state1, __state_setState1] = useState<number>(0);
 
+  const __onButtonClick = useCallback(
+    function __onButtonClick(): any {
+      const value = __state_state1;
+      if (__contentRef.current) {
+        __contentRef.current.innerHTML = value.toString();
+      }
+      __state_setState1((__state_state1) => __state_state1 + 1);
+    },
+    [__state_state1]
+  );
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
-      const { name, text, ...restProps } = props;
+      const { ...restProps } = props;
       return restProps;
     },
     [props]
   );
   useEffect(() => {
-    __divRef.current?.insertAdjacentText('beforeend', `(no deps)`);
-  }, []);
-  useEffect(() => {
-    __divRef.current?.insertAdjacentText('beforeend', `(${props.text} deps)`);
-  }, [props.text]);
-  useEffect(() => {
-    __divRef.current?.insertAdjacentText('beforeend', '(always)');
-  });
-  useEffect(() => {
-    __divRef.current?.insertAdjacentText('beforeend', `(once)`);
-  }, []);
+    const handler = __onButtonClick.bind(this);
+    __buttonRef.current?.addEventListener('click', handler);
+    return () => __buttonRef.current?.removeEventListener('click', handler);
+  }, [__onButtonClick]);
 
   return view({
     props: { ...props },
-    divRef: __divRef,
+    state1: __state_state1,
+    buttonRef: __buttonRef,
+    contentRef: __contentRef,
+    onButtonClick: __onButtonClick,
     restAttributes: __restAttributes(),
   });
 }
 
-HooksEffectsDOMUpdate.defaultProps = Props;
+HooksEffectSubscribeUnsubscribe.defaultProps = Props;
 
-function HooksEffectsDOMUpdate(props: typeof Props & RestProps) {
+function HooksEffectSubscribeUnsubscribe(props: typeof Props & RestProps) {
   return (
     <InfernoWrapperComponent
-      renderFn={ReactEffectsDOMUpdate}
+      renderFn={ReactEffectSubscribeUnsubscribe}
       renderProps={props}
     />
   );
 }
-export { HooksEffectsDOMUpdate as EffectsDOMUpdate };
-export default HooksEffectsDOMUpdate;
+export { HooksEffectSubscribeUnsubscribe as EffectSubscribeUnsubscribe };
+export default HooksEffectSubscribeUnsubscribe;

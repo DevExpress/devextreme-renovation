@@ -1,11 +1,12 @@
+import { Fragment } from 'inferno';
 import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
   return (
-    <React.Fragment>
+    <Fragment>
       <InnerWidget {...(props as any)} {...restAttributes} />
 
       <div {...(attributes as any)} />
-    </React.Fragment>
+    </Fragment>
   );
 }
 
