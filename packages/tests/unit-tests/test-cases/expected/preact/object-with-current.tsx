@@ -15,6 +15,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   someState?: { current: string };
@@ -42,7 +43,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { someProp, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

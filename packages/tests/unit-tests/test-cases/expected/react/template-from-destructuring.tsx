@@ -1,11 +1,16 @@
-export type PropsType = {
-  contentTemplate: React.FunctionComponent<Partial<any>>;
-  contentRender?: React.FunctionComponent<Partial<any>>;
-  contentComponent?: React.JSXElementConstructor<Partial<any>>;
-};
-export const Props: PropsType = {
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+
+interface PropsType {
+  contentTemplate?: React.FunctionComponent<GetPropsType<any>>;
+  contentRender?: React.FunctionComponent<GetPropsType<any>>;
+  contentComponent?: React.JSXElementConstructor<GetPropsType<any>>;
+}
+export const Props = {
   contentTemplate: () => <div />,
-};
+} as Partial<PropsType>;
 export const viewFunction = ({ props }: TestComponent): any => {
   const { contentTemplate: AnotherTemplate } = props;
   return AnotherTemplate({});
@@ -21,17 +26,24 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'contentRender' | 'contentComponent'>
+> &
+  Partial<
+    Pick<GetPropsType<typeof Props>, 'contentRender' | 'contentComponent'>
+  >;
 interface TestComponent {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   restAttributes: RestProps;
 }
+export function TestComponent(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
 
-export function TestComponent(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { contentComponent, contentRender, contentTemplate, ...restProps } =
         props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -50,5 +62,3 @@ export function TestComponent(props: typeof Props & RestProps) {
 }
 
 export default TestComponent;
-
-TestComponent.defaultProps = Props;

@@ -13,10 +13,10 @@ import { Component, Input, TemplateRef } from '@angular/core';
   template: '',
 })
 class Props {
-  @Input() PropFromClass?: ClassTemplateInput;
-  @Input() PropFromInterface?: TemplateInput;
-  @Input() PropFromImportedInterface?: InterfaceTemplateInput;
-  @Input() PropFromImportedType?: TypeTemplateInput;
+  @Input() PropFromClass!: ClassTemplateInput;
+  @Input() PropFromInterface!: TemplateInput;
+  @Input() PropFromImportedInterface!: InterfaceTemplateInput;
+  @Input() PropFromImportedType!: TypeTemplateInput;
   @Input() template: TemplateRef<any> | null = null;
   @Input() template2: TemplateRef<any> | null = null;
 }
@@ -87,8 +87,9 @@ import { CommonModule } from '@angular/common';
       <div></div>
     </ng-template>
     <ng-template #template2Default let-inputInt="inputInt">
-      <div></div> </ng-template
-  ></ng-template>`,
+      <div>{{ inputInt }}</div>
+    </ng-template></ng-template
+  >`,
 })
 export default class Widget extends Props {
   get __spreadGetter(): { width: string; height: string } {

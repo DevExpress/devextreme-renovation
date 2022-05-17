@@ -3,9 +3,10 @@
     ><WidgetWithTemplate
       ><template v-slot:componentTemplate="slotProps"
         ><InnerWidget
+          :visible="slotProps.visible"
           :selected="slotProps.selected"
           :value="slotProps.value"
-          @select="slotProps.onSelect"
+          :required="slotProps.required"
           @update:value="slotProps.valueChange" /></template
       ><template v-slot:template="{ text }"
         ><span>{{ text }}</span></template
@@ -20,14 +21,14 @@
   >
 </template>
 <script>
+import InnerWidget from "./dependency-props";
 import WidgetWithTemplate from "./dx-widget-with-template";
-import InnerWidget from "./dx-inner-widget";
 export const WidgetProps = {};
 export const DxWidget = {
   name: "Widget",
   components: {
-    WidgetWithTemplate,
     InnerWidget,
+    WidgetWithTemplate,
   },
   props: WidgetProps,
   computed: {

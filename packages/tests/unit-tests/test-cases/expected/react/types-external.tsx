@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 export type EnumType = 'data' | 'none';
 export type Union = string | number;
 export type ObjType = { number: number; text: string };
@@ -8,23 +12,23 @@ export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
 };
 
-export type WidgetPropsType = {
-  data: EnumType;
-  union: Union;
-  obj: ObjType;
-  strArr: StringArr;
-  s: StringType;
-  strDate: StrDate;
+interface WidgetPropsType {
+  data?: EnumType;
+  union?: Union;
+  obj?: ObjType;
+  strArr?: StringArr;
+  s?: StringType;
+  strDate?: StrDate;
   customTypeField?: { name: string; customField: CustomType }[];
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   data: 'data',
   union: 'uniontext',
   obj: Object.freeze({ number: 123, text: 'sda' }) as any,
   strArr: Object.freeze(['ba', 'ab']) as any,
   s: '',
   strDate: Object.freeze(new Date()) as any,
-};
+} as Partial<WidgetPropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -33,12 +37,17 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<GetPropsType<typeof WidgetProps>, 'customTypeField'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetProps>, 'customTypeField'>>;
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -51,7 +60,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         union,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -61,8 +70,6 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;
 
 export interface CustomType {
   name: string;

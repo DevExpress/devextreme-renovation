@@ -20,6 +20,7 @@ import {
   capitalizeFirstLetter,
 } from '@devextreme-generator/core';
 import { PreactComponent } from '@devextreme-generator/preact';
+import { compileGettersCompatibleExtend } from '@devextreme-generator/react';
 
 import { GetAccessor } from './class-members/get-accessor';
 import { Property } from './class-members/property';
@@ -352,6 +353,17 @@ export class InfernoComponent extends PreactComponent {
     }
 
     return '';
+  }
+
+  compileDefaultOptionsMethod(): string {
+    return super.compileDefaultOptionsMethod('[]', [
+      `${this.defaultPropsDest()} = ${compileGettersCompatibleExtend(
+        this.defaultPropsDest(),
+        ...(this.defaultOptionRules && this.needGenerateDefaultOptions
+          ? [this.compileConvertRulesToOptions(this.defaultOptionRules)] : []),
+        this.compileConvertRulesToOptions('__defaultOptionRules'),
+      )}`,
+    ]);
   }
 
   toString(): string {

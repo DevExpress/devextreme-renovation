@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(viewModel: SlotsWidget) {
   return (
     <div>
@@ -10,12 +14,13 @@ function view(viewModel: SlotsWidget) {
   );
 }
 
-export type SlotsWidgetPropsType = {
+interface SlotsWidgetPropsType {
   namedSlot?: React.ReactNode;
   selectorNamedSlot?: React.ReactNode;
   children?: React.ReactNode;
-};
-const SlotsWidgetProps: SlotsWidgetPropsType = {};
+}
+
+const SlotsWidgetProps = {} as Partial<SlotsWidgetPropsType>;
 import * as React from 'react';
 import { useCallback } from 'react';
 
@@ -25,23 +30,37 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type SlotsWidgetPropsModel = Required<
+  Omit<
+    GetPropsType<typeof SlotsWidgetProps>,
+    'namedSlot' | 'selectorNamedSlot' | 'children'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof SlotsWidgetProps>,
+      'namedSlot' | 'selectorNamedSlot' | 'children'
+    >
+  >;
 interface SlotsWidget {
-  props: typeof SlotsWidgetProps & RestProps;
+  props: SlotsWidgetPropsModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function SlotsWidget(
-  props: typeof SlotsWidgetProps & RestProps
+  inProps: typeof SlotsWidgetProps & RestProps
 ) {
+  const props = combineWithDefaultProps<SlotsWidgetPropsModel>(
+    SlotsWidgetProps,
+    inProps
+  );
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, namedSlot, selectorNamedSlot, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-SlotsWidget.defaultProps = SlotsWidgetProps;

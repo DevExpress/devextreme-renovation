@@ -1,3 +1,5 @@
+
+
 function view(model: Widget) {
   return <span></span>;
 }
@@ -10,12 +12,12 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   _hovered: Boolean;
   updateState: () => any;
   restAttributes: RestProps;
 }
-
 export default function Widget(props: {} & RestProps) {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
@@ -28,7 +30,7 @@ export default function Widget(props: {} & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

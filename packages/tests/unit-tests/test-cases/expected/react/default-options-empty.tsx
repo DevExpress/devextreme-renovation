@@ -1,9 +1,13 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view() {
   return <div></div>;
 }
 
-export type WidgetPropsType = {};
-export const WidgetProps: WidgetPropsType = {};
+interface WidgetPropsType {}
+export const WidgetProps = {} as Partial<WidgetPropsType>;
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
@@ -16,16 +20,36 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetProps>>
+  >(
+    Object.create(
+      Object.prototype,
+      Object.assign(
+        Object.getOwnPropertyDescriptors(WidgetProps),
+        Object.getOwnPropertyDescriptors({
+          ...convertRulesToOptions<typeof WidgetProps>([
+            { device: true, options: {} },
+          ]),
+        }),
+        Object.getOwnPropertyDescriptors(
+          convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
+        )
+      )
+    ),
+    inProps
+  );
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -33,35 +57,9 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   return view();
 }
 
-Widget.defaultProps = Object.create(
-  Object.prototype,
-  Object.assign(
-    Object.getOwnPropertyDescriptors(WidgetProps),
-    Object.getOwnPropertyDescriptors({
-      ...convertRulesToOptions<typeof WidgetProps>([
-        { device: true, options: {} },
-      ]),
-    })
-  )
-);
-
 type WidgetOptionRule = DefaultOptionsRule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = Object.create(
-    Object.prototype,
-    Object.assign(
-      Object.getOwnPropertyDescriptors(Widget.defaultProps),
-      Object.getOwnPropertyDescriptors(
-        convertRulesToOptions<typeof WidgetProps>([
-          { device: true, options: {} },
-        ])
-      ),
-      Object.getOwnPropertyDescriptors(
-        convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
-      )
-    )
-  );
 }

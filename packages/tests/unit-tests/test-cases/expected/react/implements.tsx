@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import BaseProps from './component-bindings-only';
 const view = (model: Widget) => <span />;
 
@@ -9,10 +13,11 @@ interface WidgetI {
   onClick(): void;
 }
 
-export type WidgetInputType = typeof BaseProps & {
-  p: string;
-};
-const WidgetInput: WidgetInputType = Object.create(
+interface WidgetInputType extends GetPropsType<typeof BaseProps> {
+  p?: string;
+}
+
+const WidgetInput = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
@@ -20,7 +25,7 @@ const WidgetInput: WidgetInputType = Object.create(
       p: '10',
     })
   )
-);
+) as Partial<WidgetInputType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -29,18 +34,22 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   onClick: () => void;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetInput>>
+  >(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const __onClick = useCallback(function __onClick(): void {}, []);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { data, height, info, p, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -51,5 +60,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

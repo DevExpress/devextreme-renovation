@@ -27,8 +27,8 @@ export class InfernoComponent extends ReactComponent {
 
   get jQueryRegistered(): boolean {
     const jqueryProp = this.decorators[0].getParameter('jQuery') as
-          | ObjectLiteral
-          | undefined;
+      | ObjectLiteral
+      | undefined;
     return jqueryProp?.getProperty('register')?.toString() === 'true';
   }
 
@@ -79,28 +79,36 @@ export class InfernoComponent extends ReactComponent {
     export default Hooks${this.name};`;
   }
 
+  compileComponentFunctionDefinition(): string {
+    const propsNormalization = this.compileInPropsNormalization();
+    const propsName = propsNormalization ? `inProps: ${this.compilePropsType()}` : `props: ${this.compilePropsType()}`;
+    const modifiers = this.modifiers.filter((m) => m !== 'default');
+    return `${!this.hasApiMethod
+      ? `${modifiers.join(' ')} function ${this.name
+      }(${propsName}){`
+      : `const ${this.name} = (ref: ${this.forwardRefApiType})=>function ${lowerizeFirstLetter(
+        this.name,
+      )}(${propsName}){`
+    }
+    ${propsNormalization}`;
+  }
+
   get hasApiMethod(): boolean {
     return this.members.some((m) => m.isApiMethod);
   }
 
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
-    const modifiers = this.modifiers.filter((m) => m !== 'default');
     return `
               ${this.compileImports()}
               ${this.compilePortalComponent()}
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
+              ${this.compileModelPropsType()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
-              ${!this.hasApiMethod
-    ? `${modifiers.join(' ')} function ${this.name
-    }(props: ${this.compilePropsType()}){`
-    : `const ${this.name} = (ref: ${this.forwardRefApiType})=>(function ${lowerizeFirstLetter(
-      this.name,
-    )}(props: ${this.compilePropsType()}){`
-}
+              ${this.compileComponentFunctionDefinition()}
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
                   ${this.members
@@ -116,7 +124,7 @@ export class InfernoComponent extends ReactComponent {
                   return ${this.compileViewCall()}
               ${!this.hasApiMethod
     ? '}'
-    : `}) as ${this.compileFunctionalComponentType()};`
+    : `} as ${this.compileFunctionalComponentType()};`
 }
 
               ${this.compileDefaultProps()}

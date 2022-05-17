@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import DynamicComponent, { WidgetInput } from './props';
 import DynamicComponentWithTemplate, {
   WidgetInput as PropsWithTemplate,
@@ -30,12 +34,13 @@ function view({
   );
 }
 
-export type PropsType = {
-  height: number;
-};
-const Props: PropsType = {
+interface PropsType {
+  height?: number;
+}
+
+const Props = {
   height: 10,
-};
+} as Partial<PropsType>;
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { normalizeStyles } from '@devextreme/runtime/common';
@@ -46,22 +51,29 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface DynamicComponentCreator {
-  props: typeof Props & RestProps;
+  props: Required<GetPropsType<typeof Props>> & RestProps;
   internalStateValue: number;
   Component: typeof DynamicComponent;
-  JSXTemplateComponent: React.FunctionComponent<Partial<typeof WidgetInput>>;
+  JSXTemplateComponent: React.FunctionComponent<
+    GetPropsType<typeof WidgetInput>
+  >;
   ComponentWithTemplate: React.FunctionComponent<
-    Partial<typeof PropsWithTemplate>
+    GetPropsType<typeof PropsWithTemplate>
   >;
   spreadProps: any;
   onComponentClick: () => any;
   restAttributes: RestProps;
 }
-
 export default function DynamicComponentCreator(
-  props: typeof Props & RestProps
+  inProps: typeof Props & RestProps
 ) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
+
   const [__state_internalStateValue, __state_setInternalStateValue] =
     useState<number>(0);
 
@@ -73,20 +85,20 @@ export default function DynamicComponentCreator(
   );
   const __JSXTemplateComponent = useCallback(
     function __JSXTemplateComponent(): React.FunctionComponent<
-      Partial<typeof WidgetInput>
+      GetPropsType<typeof WidgetInput>
     > {
       return DynamicComponent as React.FunctionComponent<
-        Partial<typeof WidgetInput>
+        GetPropsType<typeof WidgetInput>
       >;
     },
     []
   );
   const __ComponentWithTemplate = useCallback(
     function __ComponentWithTemplate(): React.FunctionComponent<
-      Partial<typeof PropsWithTemplate>
+      GetPropsType<typeof PropsWithTemplate>
     > {
       return DynamicComponentWithTemplate as React.FunctionComponent<
-        Partial<typeof PropsWithTemplate>
+        GetPropsType<typeof PropsWithTemplate>
       >;
     },
     []
@@ -99,7 +111,7 @@ export default function DynamicComponentCreator(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -115,5 +127,3 @@ export default function DynamicComponentCreator(
     restAttributes: __restAttributes(),
   });
 }
-
-DynamicComponentCreator.defaultProps = Props;

@@ -7,12 +7,15 @@ function view(model: InnerWidget) {
 }
 
 export type InnerWidgetPropsType = {
+  visible: boolean;
   selected?: boolean;
   value: number;
+  required: boolean;
   defaultValue: number;
   valueChange?: (value: number) => void;
 };
 export const InnerWidgetProps: InnerWidgetPropsType = {
+  visible: true,
   defaultValue: 14,
   valueChange: () => {},
 } as any as InnerWidgetPropsType;
@@ -38,15 +41,24 @@ export default class InnerWidget extends BaseInfernoComponent<any> {
     };
   }
 
-  get someGetter(): typeof InnerWidgetProps {
-    return {
-      ...this.props,
-      value:
-        this.props.value !== undefined ? this.props.value : this.state.value,
-    };
+  get someGetter(): string {
+    return (
+      (this.props.value !== undefined
+        ? this.props.value
+        : this.state.value
+      ).toString() + this.props.required.toString()
+    );
   }
   get restAttributes(): RestProps {
-    const { defaultValue, selected, value, valueChange, ...restProps } = {
+    const {
+      defaultValue,
+      required,
+      selected,
+      value,
+      valueChange,
+      visible,
+      ...restProps
+    } = {
       ...this.props,
       value:
         this.props.value !== undefined ? this.props.value : this.state.value,

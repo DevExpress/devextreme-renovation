@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
@@ -8,48 +12,48 @@ function format(key: string) {
   return 'localized_' + key;
 }
 
-export type BasePropsType = {
+interface BasePropsType {
   empty?: string;
   height?: number;
   width?: number;
   baseNested?: typeof TextsProps | string;
   __defaultNestedValues?: any;
   children?: React.ReactNode;
-};
-export const BaseProps: BasePropsType = {
+}
+export const BaseProps = {
   height: 10,
   get width() {
     return isMaterial() ? 20 : 10;
   },
   __defaultNestedValues: Object.freeze({ baseNested: { text: '3' } }) as any,
-};
-export type TextsPropsType = {
+} as Partial<BasePropsType>;
+interface TextsPropsType {
   text?: string;
-};
-export const TextsProps: TextsPropsType = {
+}
+export const TextsProps = {
   get text() {
     return format('text');
   },
-};
-export type ExpressionPropsType = {
+} as Partial<TextsPropsType>;
+interface ExpressionPropsType {
   expressionDefault?: any;
-};
-export const ExpressionProps: ExpressionPropsType = {
+}
+export const ExpressionProps = {
   get expressionDefault() {
     return isMaterial() ? 20 : 10;
   },
-};
-export type WidgetPropsType = typeof BaseProps & {
+} as Partial<ExpressionPropsType>;
+interface WidgetPropsType extends GetPropsType<typeof BaseProps> {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
   texts3?: typeof TextsProps;
-  template?: React.FunctionComponent<Partial<void>>;
+  template?: React.FunctionComponent<GetPropsType<void>>;
   __defaultNestedValues?: any;
-  render?: React.FunctionComponent<Partial<void>>;
-  component?: React.JSXElementConstructor<Partial<void>>;
-};
-export const WidgetProps: WidgetPropsType = Object.create(
+  render?: React.FunctionComponent<GetPropsType<void>>;
+  component?: React.JSXElementConstructor<GetPropsType<void>>;
+}
+export const WidgetProps = Object.create(
   Object.prototype,
   Object.assign(
     Object.getOwnPropertyDescriptors(BaseProps),
@@ -66,13 +70,13 @@ export const WidgetProps: WidgetPropsType = Object.create(
       }) as any,
     })
   )
-);
-export type WidgetPropsTypeType = {
+) as Partial<WidgetPropsType>;
+interface WidgetPropsTypeType {
   text?: string;
   texts1?: typeof TextsProps;
   texts2?: typeof TextsProps;
   texts3?: typeof TextsProps;
-  template?: React.FunctionComponent<Partial<void>>;
+  template?: React.FunctionComponent<GetPropsType<void>>;
   empty?: string;
   height?: number;
   width?: number;
@@ -80,10 +84,11 @@ export type WidgetPropsTypeType = {
   children?: React.ReactNode;
   expressionDefault?: any;
   __defaultNestedValues?: any;
-  render?: React.FunctionComponent<Partial<void>>;
-  component?: React.JSXElementConstructor<Partial<void>>;
-};
-const WidgetPropsType: WidgetPropsTypeType = {
+  render?: React.FunctionComponent<GetPropsType<void>>;
+  component?: React.JSXElementConstructor<GetPropsType<void>>;
+}
+
+const WidgetPropsType = {
   text: WidgetProps.text,
   texts1: WidgetProps.texts1,
   template: WidgetProps.template,
@@ -95,7 +100,7 @@ const WidgetPropsType: WidgetPropsTypeType = {
     texts3: WidgetProps.texts3,
     baseNested: WidgetProps.baseNested,
   }) as any,
-};
+} as Partial<WidgetPropsTypeType>;
 import { __collectChildren, equalByValue } from '@devextreme/runtime/react';
 import {
   useCallback,
@@ -117,15 +122,32 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsTypeModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetPropsType>,
+    'empty' | 'children' | 'render' | 'component'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetPropsType>,
+      'empty' | 'children' | 'render' | 'component'
+    >
+  >;
 interface Widget {
-  props: typeof WidgetPropsType & RestProps;
+  props: WidgetPropsTypeModel & RestProps;
   __getNestedBaseNested: typeof TextsProps | string;
   __getNestedTexts3: typeof TextsProps;
   __getNestedTexts2: typeof TextsProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetPropsType & RestProps) {
+export function Widget(inProps: typeof WidgetPropsType & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsTypeModel>(
+    WidgetPropsType,
+    inProps
+  );
+
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedBaseNested = useMemo(
@@ -191,7 +213,7 @@ export function Widget(props: typeof WidgetPropsType & RestProps) {
         texts3: __getNestedTexts3,
         baseNested: __getNestedBaseNested,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -210,8 +232,6 @@ export function Widget(props: typeof WidgetPropsType & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetPropsType;
 
 function HooksWidget(props: typeof WidgetPropsType & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

@@ -1,4 +1,8 @@
 import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+import {
   EnumType,
   Union,
   ObjType,
@@ -9,23 +13,23 @@ export const viewFunction = (viewModel: Widget) => {
   return <div></div>;
 };
 
-export type WidgetPropsType = {
-  str: String;
-  num: Number;
-  bool: Boolean;
-  arr: Array<any>;
-  strArr: Array<String>;
-  obj: Object;
-  date: Date;
-  func: Function;
-  symbol: Symbol;
-  externalEnum: EnumType;
-  externalUnion: Union;
-  externalObj: ObjType;
-  externalArray: StringArr;
-  externalString: StringType;
-};
-export const WidgetProps: WidgetPropsType = {
+interface WidgetPropsType {
+  str?: String;
+  num?: Number;
+  bool?: Boolean;
+  arr?: Array<any>;
+  strArr?: Array<String>;
+  obj?: Object;
+  date?: Date;
+  func?: Function;
+  symbol?: Symbol;
+  externalEnum?: EnumType;
+  externalUnion?: Union;
+  externalObj?: ObjType;
+  externalArray?: StringArr;
+  externalString?: StringType;
+}
+export const WidgetProps = {
   str: '',
   num: 1,
   bool: true,
@@ -42,7 +46,7 @@ export const WidgetProps: WidgetPropsType = {
   externalObj: Object.freeze({ number: 0, text: 'text' }) as any,
   externalArray: Object.freeze(['s1', 's2']) as any,
   externalString: 'someValue',
-};
+} as Partial<WidgetPropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -51,12 +55,16 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetProps>>
+  >(WidgetProps, inProps);
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -76,7 +84,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
         symbol,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -87,12 +95,13 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetProps;
 import { CustomType } from './types-external';
-export type BaseViewPropsTypeType = {
-  strArr: Array<String>;
+
+interface BaseViewPropsTypeType {
+  strArr?: Array<String>;
   customTypeField?: { name: string; customField: CustomType }[];
-};
-const BaseViewPropsType: BaseViewPropsTypeType = {
+}
+
+const BaseViewPropsType = {
   strArr: WidgetProps.strArr,
-};
+} as Partial<BaseViewPropsTypeType>;

@@ -1,18 +1,22 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: InnerWidget) {
   return <div style={normalizeStyles({ width: 100, height: 100 })}></div>;
 }
 
-export type InnerWidgetPropsType = {
+interface InnerWidgetPropsType {
   selected?: boolean;
-  value: number;
+  value?: number;
   onSelect?: (e: any) => any;
-  defaultValue: number;
+  defaultValue?: number;
   valueChange?: (value: number) => void;
-};
-export const InnerWidgetProps: InnerWidgetPropsType = {
+}
+export const InnerWidgetProps = {
   defaultValue: 14,
   valueChange: () => {},
-} as any as InnerWidgetPropsType;
+} as Partial<InnerWidgetPropsType>;
 import { useState, useCallback } from 'react';
 import { normalizeStyles } from '@devextreme/runtime/common';
 
@@ -22,14 +26,22 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type InnerWidgetPropsModel = Required<
+  Omit<GetPropsType<typeof InnerWidgetProps>, 'selected' | 'onSelect'>
+> &
+  Partial<Pick<GetPropsType<typeof InnerWidgetProps>, 'selected' | 'onSelect'>>;
 interface InnerWidget {
-  props: typeof InnerWidgetProps & RestProps;
+  props: InnerWidgetPropsModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function InnerWidget(
-  props: typeof InnerWidgetProps & RestProps
+  inProps: typeof InnerWidgetProps & RestProps
 ) {
+  const props = combineWithDefaultProps<InnerWidgetPropsModel>(
+    InnerWidgetProps,
+    inProps
+  );
+
   const [__state_value, __state_setValue] = useState<number>(() =>
     props.value !== undefined ? props.value : props.defaultValue!
   );
@@ -47,7 +59,7 @@ export default function InnerWidget(
         ...props,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_value]
   );
@@ -60,5 +72,3 @@ export default function InnerWidget(
     restAttributes: __restAttributes(),
   });
 }
-
-InnerWidget.defaultProps = InnerWidgetProps;

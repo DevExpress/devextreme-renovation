@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 const loadingJSX = ({ text }: any) => {
   return <div>{text}</div>;
 };
@@ -5,14 +9,14 @@ function infoJSX(text: string, name: string) {
   return <span>{`${text} ${name}`}</span>;
 }
 
-export type WidgetInputType = {
-  loading: boolean;
-  greetings: string;
-};
-export const WidgetInput: WidgetInputType = {
+interface WidgetInputType {
+  loading?: boolean;
+  greetings?: string;
+}
+export const WidgetInput = {
   loading: true,
   greetings: 'Hello',
-};
+} as Partial<WidgetInputType>;
 import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -21,14 +25,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: Required<GetPropsType<typeof WidgetInput>> & RestProps;
   loadingProps: any;
   name: any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetInput>>
+  >(WidgetInput, inProps);
+
   const __loadingProps = useCallback(function __loadingProps(): any {
     return { text: 'Loading...' };
   }, []);
@@ -38,7 +47,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { greetings, loading, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -50,8 +59,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

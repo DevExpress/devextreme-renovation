@@ -27,6 +27,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;
   restAttributes: RestProps;
@@ -51,7 +52,7 @@ export default function WidgetWithTemplate(
         template,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

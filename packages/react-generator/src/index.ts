@@ -12,5 +12,6 @@ export * from './expressions/property-access';
 export * from './expressions/react-component-input';
 export * from './expressions/react-component';
 export * from './expressions/type-reference-node';
+export { compileGettersCompatibleExtend } from './expressions/common';
 
 export default new ReactGenerator();

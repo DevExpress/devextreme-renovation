@@ -1,8 +1,12 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: ModelWidget) {
   return <div>{model.props.baseStateProp}</div>;
 }
 
-export type ModelWidgetInputType = {
+interface ModelWidgetInputType {
   baseStateProp?: boolean;
   baseStatePropChange?: (stateProp?: boolean) => void;
   modelStateProp?: boolean;
@@ -12,11 +16,12 @@ export type ModelWidgetInputType = {
   modelStatePropChange?: (modelStateProp?: boolean) => void;
   defaultValue?: boolean;
   valueChange?: (value?: boolean) => void;
-};
-const ModelWidgetInput: ModelWidgetInputType = {
+}
+
+const ModelWidgetInput = {
   modelStatePropChange: () => {},
   valueChange: () => {},
-};
+} as Partial<ModelWidgetInputType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -25,14 +30,42 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type ModelWidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof ModelWidgetInput>,
+    | 'baseStateProp'
+    | 'baseStatePropChange'
+    | 'modelStateProp'
+    | 'value'
+    | 'defaultBaseStateProp'
+    | 'defaultModelStateProp'
+    | 'defaultValue'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof ModelWidgetInput>,
+      | 'baseStateProp'
+      | 'baseStatePropChange'
+      | 'modelStateProp'
+      | 'value'
+      | 'defaultBaseStateProp'
+      | 'defaultModelStateProp'
+      | 'defaultValue'
+    >
+  >;
 interface ModelWidget {
-  props: typeof ModelWidgetInput & RestProps;
+  props: ModelWidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function ModelWidget(
-  props: typeof ModelWidgetInput & RestProps
+  inProps: typeof ModelWidgetInput & RestProps
 ) {
+  const props = combineWithDefaultProps<ModelWidgetInputModel>(
+    ModelWidgetInput,
+    inProps
+  );
+
   const [__state_baseStateProp, __state_setBaseStateProp] = useState<
     boolean | undefined
   >(() =>
@@ -76,7 +109,7 @@ export default function ModelWidget(
             : __state_modelStateProp,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_baseStateProp, __state_modelStateProp, __state_value]
   );
@@ -97,5 +130,3 @@ export default function ModelWidget(
     restAttributes: __restAttributes(),
   });
 }
-
-ModelWidget.defaultProps = ModelWidgetInput;

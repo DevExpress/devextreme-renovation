@@ -12,6 +12,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof PickedProps & RestProps;
   getColumns: () => any;
@@ -36,7 +37,7 @@ export default function Widget(props: typeof PickedProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { columns, editing, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

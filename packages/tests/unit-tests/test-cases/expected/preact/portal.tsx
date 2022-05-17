@@ -38,6 +38,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetProps & RestProps;
   rendered: boolean;
@@ -50,7 +51,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { someRef, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

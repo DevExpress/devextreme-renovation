@@ -6,30 +6,38 @@
       ></div> </slot
     ><slot :name="template2" v-bind="PropFromClass">
       <div style="display: contents" :set="(template2Default = {})"
-        ><div></div
-      ></div> </slot
+        ><div>{{ template2Default.inputInt }}</div></div
+      > </slot
     ><slot :name="template2" v-bind="PropFromInterface">
       <div style="display: contents" :set="(template2Default = {})"
-        ><div></div
-      ></div> </slot
+        ><div>{{ template2Default.inputInt }}</div></div
+      > </slot
     ><slot :name="template2" v-bind="PropFromImportedInterface">
       <div style="display: contents" :set="(template2Default = {})"
-        ><div></div
-      ></div> </slot
+        ><div>{{ template2Default.inputInt }}</div></div
+      > </slot
     ><slot :name="template2" v-bind="PropFromImportedType">
       <div style="display: contents" :set="(template2Default = {})"
-        ><div></div
-      ></div> </slot
-  ></div>
+        ><div>{{ template2Default.inputInt }}</div></div
+      >
+    </slot></div
+  >
 </template>
 <script>
 const Props = {
-  PropFromClass: {},
+  PropFromClass: {
+    required: true,
+  },
   PropFromInterface: {
     type: Object,
+    required: true,
   },
-  PropFromImportedInterface: {},
-  PropFromImportedType: {},
+  PropFromImportedInterface: {
+    required: true,
+  },
+  PropFromImportedType: {
+    required: true,
+  },
   template: {
     type: String,
     default() {

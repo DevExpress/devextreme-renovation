@@ -24,6 +24,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface SlotsWidget {
   props: typeof SlotsWidgetProps & RestProps;
   restAttributes: RestProps;
@@ -35,7 +36,7 @@ export default function SlotsWidget(
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { children, namedSlot, selectorNamedSlot, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

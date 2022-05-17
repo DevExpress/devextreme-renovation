@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget): any {
   const sizes = model.props.sizes ?? { width: 0, height: 0 };
   return (
@@ -14,22 +18,22 @@ function isDevice() {
   return true;
 }
 
-export type WidgetInputType = {
-  height: number;
-  export: object;
-  array: any;
-  currentDate: any;
-  expressionDefault: string;
-  expressionDefault1: boolean;
-  expressionDefault2: boolean | string;
+interface WidgetInputType {
+  height?: number;
+  export?: object;
+  array?: any;
+  currentDate?: any;
+  expressionDefault?: string;
+  expressionDefault1?: boolean;
+  expressionDefault2?: boolean | string;
   sizes?: { height: number; width: number };
-  stringValue: string;
-  onClick: (a: number) => void;
-  onSomething: EventCallBack<number>;
-  defaultStringValue: string;
+  stringValue?: string;
+  onClick?: (a: number) => void;
+  onSomething?: EventCallBack<number>;
+  defaultStringValue?: string;
   stringValueChange?: (stringValue: string) => void;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   height: 10,
   export: Object.freeze({}) as any,
   array: Object.freeze(['1']) as any,
@@ -47,7 +51,7 @@ export const WidgetInput: WidgetInputType = {
   onSomething: () => {},
   defaultStringValue: '',
   stringValueChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -56,14 +60,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'sizes'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'sizes'>>;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   getHeight: () => number;
   getRestProps: () => { export: object; onSomething: EventCallBack<number> };
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_stringValue, __state_setStringValue] = useState<string>(() =>
     props.stringValue !== undefined
       ? props.stringValue
@@ -119,7 +128,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
             ? props.stringValue
             : __state_stringValue,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_stringValue]
   );
@@ -137,5 +146,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

@@ -35,6 +35,8 @@ import {
   isComponentWrapper,
   If,
   Decorators,
+  TypeReferenceNode,
+  TypeCast,
 } from '@devextreme-generator/core';
 import { GetAccessor } from './class-members/get-accessor';
 import { Method, calculateMethodDependencyString } from './class-members/method';
@@ -66,6 +68,8 @@ function getSubscriptions(methods: Method[]) {
 }
 
 export class ReactComponent extends Component {
+  optionalMembers: Array<BaseProperty | BaseMethod>;
+
   constructor(
     decorator: Decorator,
     modifiers: string[] = [],
@@ -84,6 +88,13 @@ export class ReactComponent extends Component {
       members,
       context,
     );
+    const componentName = heritageClauses[0]?.defaultProps[0];
+    const propsMembers = componentName ? context.components?.[componentName].members || [] : [];
+    this.optionalMembers = propsMembers
+      .filter((p) => {
+        const hasDefaulValueAndNotState = (p as Property).initializer && !p.isState;
+        return !(hasDefaulValueAndNotState) && ((p as Property).questionOrExclamationToken === '?');
+      });
 
     this.refs = this.refs.concat(
       this.members.filter((m) => m.isForwardRef) as Property[],
@@ -199,7 +210,7 @@ export class ReactComponent extends Component {
           SyntaxKind.ConstKeyword,
         ),
       ),
-      new ReturnStatement(new SimpleExpression('restProps')),
+      new ReturnStatement(new TypeCast(new SimpleExpression('restProps'), 'RestProps')),
     ];
 
     return this.createGetAccessor(
@@ -332,7 +343,7 @@ export class ReactComponent extends Component {
     return defaultProps;
   }
 
-  compileDefaultProps(): string {
+  getDefaultPropsName(): string {
     const baseDefaultPropsObj = this.heritageClauses
       .filter((h) => h.defaultProps.length)[0]?.defaultProps[0];
     const defaultProps = this.compileDefaultPropsObjectProperties();
@@ -342,36 +353,35 @@ export class ReactComponent extends Component {
     if (defaultProps.length) {
       defaultPropsObj = `{ ${defaultProps.join(',\n')} }`;
       if (baseDefaultPropsObj) {
-        defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj, defaultPropsObj);
+        if (this.needGenerateDefaultOptions) {
+          defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj, defaultPropsObj,
+            this.compileConvertRulesToOptions('__defaultOptionRules'));
+        } else {
+          defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj, defaultPropsObj);
+        }
       }
+    } else if (this.needGenerateDefaultOptions) {
+      defaultPropsObj = compileGettersCompatibleExtend(baseDefaultPropsObj,
+        this.compileConvertRulesToOptions('__defaultOptionRules'));
     }
+    return defaultPropsObj;
+  }
 
-    if (this.needGenerateDefaultOptions) {
-      return `
-                  ${this.state.length
-    ? `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
-                          const twoWayProps:string[] = [${this.state.map(
+  compileDefaultProps(): string {
+    if (this.needGenerateDefaultOptions && this.state.length) {
+      return `function __processTwoWayProps(defaultProps: ${this.compilePropsType()}){
+        const twoWayProps:string[] = [${this.state.map(
     (s) => `"${s.name}"`,
   )}];
 
-                          return Object.keys(defaultProps).reduce((props, propName)=>{
-                              const propValue = (defaultProps as any)[propName];
-                              const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
-                              (props as any)[defaultPropName] = propValue;
-                              return props;
-                          }, {});
-                      }`
-    : ''
-}
-
-                  ${this.defaultPropsDest()} = ${defaultPropsObj};
-              `;
+        return Object.keys(defaultProps).reduce((props, propName)=>{
+            const propValue = (defaultProps as any)[propName];
+            const defaultPropName = twoWayProps.some(p=>p===propName) ? "default"+propName.charAt(0).toUpperCase() + propName.slice(1): propName;
+            (props as any)[defaultPropName] = propValue;
+            return props;
+        }, {});
+    }`;
     }
-
-    if (defaultPropsObj) {
-      return `${this.defaultPropsDest()} = ${defaultPropsObj}`;
-    }
-
     return '';
   }
 
@@ -460,7 +470,7 @@ export class ReactComponent extends Component {
 
   compileComponentInterface(): string {
     const props = this.isJSXComponent
-      ? [`props: ${this.compilePropsType()}`]
+      ? [`props: ${this.getModelPropsName()} & RestProps`]
       : [];
     const forwardRefApiProps = this.members.filter((m) => m.inherited && m.isApiRef);
     return `interface ${this.name}{
@@ -590,11 +600,32 @@ export class ReactComponent extends Component {
 
       return this.compileDefaultOptionsPropsType();
     }
-    return `{${this.props
-      .concat(this.state)
-      .concat(this.slots)
-      .map((p) => p.typeDeclaration())
-      .join(',\n')}
+    return `{${[
+      ...this.props,
+      ...this.state,
+      ...this.slots,
+    ].map((p) => p.typeDeclaration()).join(',\n')}
+    }`;
+  }
+
+  getPropsTypeName(): string {
+    if (this.isJSXComponent) {
+      const type = this.heritageClauses[0].types[0];
+      if (
+        type.expression instanceof Call
+        && type.expression.typeArguments?.length
+      ) {
+        const componentPropsType = type.expression.typeArguments[0] as TypeReferenceNode;
+        return `${componentPropsType.typeName}`;
+      }
+
+      return `${this.heritageClauses[0].propsType}`;
+    }
+    return `{${[
+      ...this.props,
+      ...this.state,
+      ...this.slots,
+    ].map((p) => p.typeDeclaration()).join(',\n')}
     }`;
   }
 
@@ -763,20 +794,8 @@ export class ReactComponent extends Component {
     return callView;
   }
 
-  compileDefaultOptionsMethod() {
-    return super.compileDefaultOptionsMethod('[]', [
-      `${this.defaultPropsDest()} = ${compileGettersCompatibleExtend(
-        this.defaultPropsDest(),
-        ...(this.defaultOptionRules && this.needGenerateDefaultOptions
-          ? [this.compileConvertRulesToOptions(this.defaultOptionRules)] : []),
-        this.compileConvertRulesToOptions('__defaultOptionRules'),
-      )}`,
-    ]);
-  }
-
   compileFunctionalComponentType(): string {
-    return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${this.name
-    }Ref> }> & { defaultProps: ${this.getPropsType()}}`;
+    return `React.FC<${this.compilePropsType()} & { ref?: React.Ref<${this.name}Ref> }>`;
   }
 
   compileGettersAndMethods(): string {
@@ -812,7 +831,9 @@ export class ReactComponent extends Component {
       if (dependantMethods.length === 0) {
         return 0;
       }
-      return Math.max(...dependantMethods.map((method) => level(method, [...previousDep, m.method]))) + 1;
+      return Math.max(
+        ...dependantMethods.map((method) => level(method, [...previousDep, m.method])),
+      ) + 1;
     }
     const methodsWithDepLevelCounted = methodsWithDep.map((m) => ({
       method: m.method,
@@ -835,6 +856,55 @@ export class ReactComponent extends Component {
       .join('\n');
   }
 
+  hasModelPropsType(): boolean {
+    return this.isJSXComponent && this.optionalMembers.length > 0;
+  }
+
+  getModelPropsName(): string {
+    if (this.hasModelPropsType()) {
+      return `${this.getPropsTypeName()}Model`;
+    }
+    return `Required<GetPropsType<${this.getPropsType()}>>`;
+  }
+
+  compileModelPropsType(): string {
+    if (this.hasModelPropsType()) {
+      const optionalProps = this.optionalMembers
+        .map((p) => `'${p.name}'`)
+        .join(' | ');
+
+      const modelPropTypeDeclaration = `type ${this.getModelPropsName()} = 
+      Required<Omit<GetPropsType<${this.getPropsType()}>, ${optionalProps}>> & 
+      Partial<Pick<GetPropsType<${this.getPropsType()}>, ${optionalProps}>>;`;
+      return modelPropTypeDeclaration;
+    }
+    return '';
+  }
+
+  compileInPropsNormalization(): string {
+    const defaultPropName = this.getDefaultPropsName();
+    if (defaultPropName) {
+      return `const props = combineWithDefaultProps<${this.getModelPropsName()}>(${defaultPropName}, inProps)`;
+    }
+    return '';
+  }
+
+  compileComponentFunctionDefinition(): string {
+    const propsNormalization = this.compileInPropsNormalization();
+    const propsName = propsNormalization ? `inProps: ${this.compilePropsType()}` : `props: ${this.compilePropsType()}`;
+    const hasApiMethod = this.members.some((m) => m.isApiMethod);
+    return `${!hasApiMethod
+      ? `${this.modifiers.join(' ')} function ${this.name
+      }(${propsName}){`
+
+      : `const ${this.name} = forwardRef<${this.name
+      }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
+        this.name,
+      )}(${propsName}, ref){`
+    }
+    ${propsNormalization}`;
+  }
+
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
     return `
@@ -843,16 +913,10 @@ export class ReactComponent extends Component {
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
+              ${this.compileModelPropsType()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
-              ${this.members.filter((m) => m.isApiMethod).length === 0
-    ? `${this.modifiers.join(' ')} function ${this.name
-    }(props: ${this.compilePropsType()}){`
-    : `const ${this.name} = forwardRef<${this.name
-    }Ref, ${this.compilePropsType()}>(function ${lowerizeFirstLetter(
-      this.name,
-    )}(props: ${this.compilePropsType()}, ref){`
-}
+              ${this.compileComponentFunctionDefinition()}
                   ${this.compileUseRef()}
                   ${this.stateDeclaration()}
                   ${this.members

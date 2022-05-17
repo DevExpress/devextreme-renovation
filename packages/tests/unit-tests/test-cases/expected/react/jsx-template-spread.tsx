@@ -1,4 +1,8 @@
 import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+import {
   InterfaceTemplateInput,
   ClassTemplateInput,
   TypeTemplateInput,
@@ -8,31 +12,29 @@ interface TemplateInput {
   inputInt: number;
 }
 
-export type PropsType = {
+interface PropsType {
   PropFromClass?: ClassTemplateInput;
   PropFromInterface?: TemplateInput;
   PropFromImportedInterface?: InterfaceTemplateInput;
   PropFromImportedType?: TypeTemplateInput;
-  template: React.FunctionComponent<
-    Partial<Omit<{ width: string; height: string }, 'width'>> &
-      Required<Pick<{ width: string; height: string }, 'width'>>
+  template?: React.FunctionComponent<
+    GetPropsType<{ width: string; height: string }>
   >;
-  template2: React.FunctionComponent<Partial<TemplateInput>>;
+  template2?: React.FunctionComponent<GetPropsType<TemplateInput>>;
   render?: React.FunctionComponent<
-    Partial<Omit<{ width: string; height: string }, 'width'>> &
-      Required<Pick<{ width: string; height: string }, 'width'>>
+    GetPropsType<{ width: string; height: string }>
   >;
   component?: React.JSXElementConstructor<
-    Partial<Omit<{ width: string; height: string }, 'width'>> &
-      Required<Pick<{ width: string; height: string }, 'width'>>
+    GetPropsType<{ width: string; height: string }>
   >;
-  render2?: React.FunctionComponent<Partial<TemplateInput>>;
-  component2?: React.JSXElementConstructor<Partial<TemplateInput>>;
-};
-const Props: PropsType = {
-  template: (props) => <div></div>,
-  template2: () => <div></div>,
-};
+  render2?: React.FunctionComponent<GetPropsType<TemplateInput>>;
+  component2?: React.JSXElementConstructor<GetPropsType<TemplateInput>>;
+}
+
+const Props = {
+  template: () => <div></div>,
+  template2: (props: TemplateInput) => <div>{props.inputInt}</div>,
+} as Partial<PropsType>;
 function view(model: Widget) {
   return (
     <div>
@@ -59,13 +61,26 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<
+    GetPropsType<typeof Props>,
+    'render' | 'component' | 'render2' | 'component2'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof Props>,
+      'render' | 'component' | 'render2' | 'component2'
+    >
+  >;
 interface Widget {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   spreadGetter: { width: string; height: string };
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
 
-export default function Widget(props: typeof Props & RestProps) {
   const __spreadGetter = useMemo(function __spreadGetter(): {
     width: string;
     height: string;
@@ -88,7 +103,7 @@ export default function Widget(props: typeof Props & RestProps) {
         template2,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -103,5 +118,3 @@ export default function Widget(props: typeof Props & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = Props;

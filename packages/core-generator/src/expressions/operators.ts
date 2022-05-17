@@ -18,7 +18,20 @@ const unaryPlusOrMinus = (operator: string) => (
   operator === SyntaxKind.PlusPlusToken
     || operator === SyntaxKind.MinusMinusToken
 );
+export class TypeCast extends Expression {
+  constructor(
+    public expression: Expression,
+    public type: string,
+  ) {
+    super();
+    this.expression = expression;
+    this.type = type;
+  }
 
+  toString(options: toStringOptions): string {
+    return `${this.expression.toString(options)} as ${this.type}`;
+  }
+}
 export class Binary extends Expression {
   left: Expression;
 

@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { createContext } from 'react';
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
@@ -5,12 +9,12 @@ function view(viewModel: Widget) {
 }
 type UserType = 'user' | 'not';
 
-export type PropsType = {
-  p: number;
-};
-export const Props: PropsType = {
+interface PropsType {
+  p?: number;
+}
+export const Props = {
   p: 10,
-};
+} as Partial<PropsType>;
 import * as React from 'react';
 import { useState, useContext, useCallback, useMemo, useRef } from 'react';
 
@@ -20,8 +24,9 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof Props & RestProps;
+  props: Required<GetPropsType<typeof Props>> & RestProps;
   i: number;
   provide: any;
   cons: number;
@@ -33,8 +38,12 @@ interface Widget {
   userGet: UserType;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
 
-export default function Widget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
@@ -80,7 +89,7 @@ export default function Widget(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { p, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -103,8 +112,6 @@ export default function Widget(props: typeof Props & RestProps) {
     </SimpleContext.Provider>
   );
 }
-
-Widget.defaultProps = Props;
 
 class SomeClass {
   i: number = 2;

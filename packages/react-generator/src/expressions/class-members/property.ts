@@ -85,32 +85,42 @@ export class Property extends BaseProperty {
     return new TypeReferenceNode(typeName, typeArguments, context);
   }
 
-  compileTypeDeclarationType(type: string | TypeExpression) {
+  getTypeArguments(type: TypeReferenceNode): TypeExpression[] {
+    if (type.typeArguments.length) {
+      if (type.typeArguments.toString() === 'any') {
+        return type.typeArguments;
+      }
+      return [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)];
+    }
+    return [new SimpleTypeExpression('any')];
+  }
+
+  compileTypeDeclarationType(
+    type: string | TypeExpression,
+    questionOrExclamationToken: string,
+  ): string {
+    let typeRererence = type;
     if (
       (this.isRefProp || this.isForwardRefProp)
       && type instanceof TypeReferenceNode
       && type.toString() !== 'any'
     ) {
-      const typeArguments = type.typeArguments.length
-        ? type.typeArguments.toString() === 'any'
-          ? type.typeArguments
-          : [new SimpleTypeExpression(`${type.typeArguments[0]} | null`)]
-        : [new SimpleTypeExpression('any')];
-      type = this.compileTypeReferenceNode(
+      const typeArguments = this.getTypeArguments(type);
+      typeRererence = this.compileTypeReferenceNode(
         type.typeName,
         typeArguments,
         type.context,
       );
     }
     return compileType(
-      type.toString(),
-      this.questionOrExclamationToken === SyntaxKind.ExclamationToken
+      typeRererence.toString(),
+      questionOrExclamationToken === SyntaxKind.ExclamationToken
         ? ''
-        : this.questionOrExclamationToken,
+        : questionOrExclamationToken,
     );
   }
 
-  typeDeclaration() {
+  typeDeclaration(patchToken = false): string {
     let type = this.type;
 
     if (this.isSlot) {
@@ -129,8 +139,11 @@ export class Property extends BaseProperty {
     if (this.isRef || this.isForwardRef || this.isApiRef) {
       name = this._name.toString();
     }
-
-    return `${name}${this.compileTypeDeclarationType(type)}`;
+    if (patchToken) {
+      const token = (this.questionOrExclamationToken || this.initializer) ? '?' : '';
+      return `${name}${this.compileTypeDeclarationType(type, token)}`;
+    }
+    return `${name}${this.compileTypeDeclarationType(type, this.questionOrExclamationToken)}`;
   }
 
   getter(componentContext?: string) {

@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { WidgetWithProps } from './dx-widget-with-props';
 export const viewFunction = (model: TemplateDefaultValue) => (
   <div>
@@ -12,100 +16,40 @@ export const viewFunction = (model: TemplateDefaultValue) => (
   </div>
 );
 
-export type TemplateDefaultValuePropsType = {
-  defaultCompTemplate: React.FunctionComponent<
-    Partial<
-      Omit<
-        {
-          optionalValue?: string | undefined;
-          onClick?: (e: any) => void;
-          value: string;
-        },
-        'value'
-      >
-    > &
-      Required<
-        Pick<
-          {
-            optionalValue?: string | undefined;
-            onClick?: (e: any) => void;
-            value: string;
-          },
-          'value'
-        >
-      >
+interface TemplateDefaultValuePropsType {
+  defaultCompTemplate?: React.FunctionComponent<
+    GetPropsType<{
+      optionalValue?: string | undefined;
+      onClick?: (e: any) => void;
+      value: string;
+    }>
   >;
-  defaultFuncTemplate: React.FunctionComponent<
-    Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
-    > &
-      Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
-      >
+  defaultFuncTemplate?: React.FunctionComponent<
+    GetPropsType<{ optionalValue?: string | undefined; value: string }>
   >;
-  stringToRender: string;
+  stringToRender?: string;
   defaultCompRender?: React.FunctionComponent<
-    Partial<
-      Omit<
-        {
-          optionalValue?: string | undefined;
-          onClick?: (e: any) => void;
-          value: string;
-        },
-        'value'
-      >
-    > &
-      Required<
-        Pick<
-          {
-            optionalValue?: string | undefined;
-            onClick?: (e: any) => void;
-            value: string;
-          },
-          'value'
-        >
-      >
+    GetPropsType<{
+      optionalValue?: string | undefined;
+      onClick?: (e: any) => void;
+      value: string;
+    }>
   >;
   defaultCompComponent?: React.JSXElementConstructor<
-    Partial<
-      Omit<
-        {
-          optionalValue?: string | undefined;
-          onClick?: (e: any) => void;
-          value: string;
-        },
-        'value'
-      >
-    > &
-      Required<
-        Pick<
-          {
-            optionalValue?: string | undefined;
-            onClick?: (e: any) => void;
-            value: string;
-          },
-          'value'
-        >
-      >
+    GetPropsType<{
+      optionalValue?: string | undefined;
+      onClick?: (e: any) => void;
+      value: string;
+    }>
   >;
   defaultFuncRender?: React.FunctionComponent<
-    Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
-    > &
-      Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
-      >
+    GetPropsType<{ optionalValue?: string | undefined; value: string }>
   >;
   defaultFuncComponent?: React.JSXElementConstructor<
-    Partial<
-      Omit<{ optionalValue?: string | undefined; value: string }, 'value'>
-    > &
-      Required<
-        Pick<{ optionalValue?: string | undefined; value: string }, 'value'>
-      >
+    GetPropsType<{ optionalValue?: string | undefined; value: string }>
   >;
-};
-export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
+}
+export const TemplateDefaultValueProps = {
   defaultCompTemplate: WidgetWithProps,
   defaultFuncTemplate: (props) => (
     <div>
@@ -115,7 +59,7 @@ export const TemplateDefaultValueProps: TemplateDefaultValuePropsType = {
     </div>
   ),
   stringToRender: 'strCompDefault',
-};
+} as Partial<TemplateDefaultValuePropsType>;
 import * as React from 'react';
 import { useCallback } from 'react';
 import { getTemplate } from '@devextreme/runtime/react';
@@ -126,14 +70,36 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type TemplateDefaultValuePropsModel = Required<
+  Omit<
+    GetPropsType<typeof TemplateDefaultValueProps>,
+    | 'defaultCompRender'
+    | 'defaultCompComponent'
+    | 'defaultFuncRender'
+    | 'defaultFuncComponent'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof TemplateDefaultValueProps>,
+      | 'defaultCompRender'
+      | 'defaultCompComponent'
+      | 'defaultFuncRender'
+      | 'defaultFuncComponent'
+    >
+  >;
 interface TemplateDefaultValue {
-  props: typeof TemplateDefaultValueProps & RestProps;
+  props: TemplateDefaultValuePropsModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function TemplateDefaultValue(
-  props: typeof TemplateDefaultValueProps & RestProps
+  inProps: typeof TemplateDefaultValueProps & RestProps
 ) {
+  const props = combineWithDefaultProps<TemplateDefaultValuePropsModel>(
+    TemplateDefaultValueProps,
+    inProps
+  );
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -146,7 +112,7 @@ export default function TemplateDefaultValue(
         stringToRender,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -168,5 +134,3 @@ export default function TemplateDefaultValue(
     restAttributes: __restAttributes(),
   });
 }
-
-TemplateDefaultValue.defaultProps = TemplateDefaultValueProps;

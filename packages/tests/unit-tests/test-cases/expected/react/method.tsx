@@ -1,13 +1,18 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return <div ref={viewModel.divRef}></div>;
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   prop1?: number;
   prop2?: number;
-};
-const WidgetInput: WidgetInputType = {};
+}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import * as React from 'react';
 import { useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 
@@ -21,21 +26,28 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'prop1' | 'prop2'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'prop1' | 'prop2'>>;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   divRef: any;
   restAttributes: RestProps;
 }
-
 const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
-  function widget(props: typeof WidgetInput & RestProps, ref) {
+  function widget(inProps: typeof WidgetInput & RestProps, ref) {
+    const props = combineWithDefaultProps<WidgetInputModel>(
+      WidgetInput,
+      inProps
+    );
     const __divRef: MutableRefObject<HTMLDivElement | null> =
       useRef<HTMLDivElement>(null);
 
     const __restAttributes = useCallback(
       function __restAttributes(): RestProps {
         const { prop1, prop2, ...restProps } = props;
-        return restProps;
+        return restProps as RestProps;
       },
       [props]
     );
@@ -66,9 +78,5 @@ const Widget = forwardRef<WidgetRef, typeof WidgetInput & RestProps>(
       restAttributes: __restAttributes(),
     });
   }
-) as React.FC<
-  typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }
-> & { defaultProps: typeof WidgetInput };
+) as React.FC<typeof WidgetInput & RestProps & { ref?: React.Ref<WidgetRef> }>;
 export default Widget;
-
-Widget.defaultProps = WidgetInput;

@@ -17,15 +17,15 @@ interface TemplateInput {
 
 @ComponentBindings()
 class Props {
-  @OneWay() PropFromClass?: ClassTemplateInput;
-  @OneWay() PropFromInterface?: TemplateInput;
-  @OneWay() PropFromImportedInterface?: InterfaceTemplateInput;
-  @OneWay() PropFromImportedType?: TypeTemplateInput;
+  @OneWay() PropFromClass!: ClassTemplateInput;
+  @OneWay() PropFromInterface!: TemplateInput;
+  @OneWay() PropFromImportedInterface!: InterfaceTemplateInput;
+  @OneWay() PropFromImportedType!: TypeTemplateInput;
   @Template() template: JSXTemplate<
     { width: string; height: string },
     "width"
-  > = (props) => <div></div>;
-  @Template() template2: JSXTemplate<TemplateInput> = () => <div></div>;
+  > = () => <div></div>;
+  @Template() template2: JSXTemplate<TemplateInput, 'inputInt'> = (props: TemplateInput) => <div>{props.inputInt}</div>;
 }
 function view(model: Widget) {
   return (

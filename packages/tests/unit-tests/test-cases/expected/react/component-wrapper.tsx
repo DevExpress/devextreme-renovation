@@ -1,21 +1,25 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import DomComponentWrapper from './dom_component_wrapper';
 function view(model: Widget): any {
   return <DomComponentWrapper></DomComponentWrapper>;
 }
 
-export type WidgetInputType = {
-  prop1: number;
-  prop2: string;
+interface WidgetInputType {
+  prop1?: number;
+  prop2?: string;
   templateProp?: any;
   renderProp?: any;
   componentProp?: any;
   isReactComponentWrapper?: boolean;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   prop1: 10,
   prop2: 'text',
   isReactComponentWrapper: true,
-};
+} as Partial<WidgetInputType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -25,12 +29,25 @@ type RestProps = {
   ref?: any;
   isReactComponentWrapper?: boolean;
 };
+type WidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetInput>,
+    'templateProp' | 'renderProp' | 'componentProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetInput>,
+      'templateProp' | 'renderProp' | 'componentProp'
+    >
+  >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -42,12 +59,10 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         templateProp,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-Widget.defaultProps = WidgetInput;

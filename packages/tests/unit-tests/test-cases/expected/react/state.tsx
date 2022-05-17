@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import BaseState from './model';
 function view(model: Widget) {
   return (
@@ -9,24 +13,25 @@ function view(model: Widget) {
   );
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   state1?: boolean;
-  state2: boolean;
+  state2?: boolean;
   stateProp?: boolean;
-  defaultState1: boolean;
+  defaultState1?: boolean;
   state1Change?: (state1?: boolean) => void;
-  defaultState2: boolean;
+  defaultState2?: boolean;
   state2Change?: (state2: boolean) => void;
   defaultStateProp?: boolean;
   statePropChange?: (stateProp?: boolean) => void;
-};
-const WidgetInput: WidgetInputType = {
+}
+
+const WidgetInput = {
   defaultState1: false,
   state1Change: () => {},
   defaultState2: false,
   state2Change: () => {},
   statePropChange: () => {},
-} as any as WidgetInputType;
+} as Partial<WidgetInputType>;
 import { useState, useCallback } from 'react';
 
 type RestProps = {
@@ -35,8 +40,20 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetInput>,
+    'state1' | 'stateProp' | 'defaultStateProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetInput>,
+      'state1' | 'stateProp' | 'defaultStateProp'
+    >
+  >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   internalState: number;
   innerData?: string;
   updateState: () => any;
@@ -47,8 +64,9 @@ interface Widget {
   stateChange: (stateProp?: boolean) => any;
   restAttributes: RestProps;
 }
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
 
-export default function Widget(props: typeof WidgetInput & RestProps) {
   const [__state_state1, __state_setState1] = useState<boolean | undefined>(
     () => (props.state1 !== undefined ? props.state1 : props.defaultState1)
   );
@@ -130,7 +148,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
         stateProp:
           props.stateProp !== undefined ? props.stateProp : __state_stateProp,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_state1, __state_state2, __state_stateProp]
   );
@@ -154,5 +172,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

@@ -15,6 +15,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof Props & RestProps;
   clickHandler: () => any;
@@ -31,7 +32,7 @@ export function Widget(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { onClick, type, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

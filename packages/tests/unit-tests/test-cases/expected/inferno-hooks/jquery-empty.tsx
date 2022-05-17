@@ -1,8 +1,14 @@
-export type PropsType = {
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+
+interface PropsType {
   height?: number;
   width?: number;
-};
-const Props: PropsType = {};
+}
+
+const Props = {} as Partial<PropsType>;
 import {
   useCallback,
 } from '@devextreme/runtime/inferno-hooks';
@@ -14,24 +20,28 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'height' | 'width'>
+> &
+  Partial<Pick<GetPropsType<typeof Props>, 'height' | 'width'>>;
 interface Widget {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { height, width, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view1({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-Widget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

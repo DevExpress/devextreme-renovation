@@ -3,6 +3,12 @@
 </template>
 <script>
 export const InnerWidgetProps = {
+  visible: {
+    type: Boolean,
+    default() {
+      return true;
+    },
+  },
   selected: {
     type: Boolean,
     default() {
@@ -13,6 +19,13 @@ export const InnerWidgetProps = {
     type: Number,
     default() {
       return 14;
+    },
+  },
+  required: {
+    type: Boolean,
+    required: true,
+    default() {
+      return undefined;
     },
   },
 };
@@ -32,15 +45,17 @@ export const DxInnerWidget = {
   },
   computed: {
     __someGetter() {
-      return this.props;
+      return this.value_state.toString() + this.required.toString();
     },
     __restAttributes() {
       return {};
     },
     props() {
       return {
+        visible: this.visible,
         ...(this.selected !== undefined && { selected: this.selected }),
         value: this.value_state,
+        required: this.required,
         valueChange: this.valueChange,
       };
     },

@@ -56,6 +56,7 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   props: typeof WidgetInput & RestProps;
   getHeight: () => number;
@@ -119,7 +120,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
             ? props.stringValue
             : __state_stringValue,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_stringValue]
   );

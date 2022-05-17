@@ -5,7 +5,7 @@ import {
   TwoWay,
 } from "@devextreme-generator/declarations";
 
-function view() {}
+function view() { return ''}
 
 @ComponentBindings()
 export class WidgetProps {

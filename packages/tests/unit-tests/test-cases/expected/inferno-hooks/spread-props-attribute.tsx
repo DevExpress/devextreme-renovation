@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
   return (
@@ -9,15 +13,15 @@ function view({ attributes, props, restAttributes }: Widget) {
   );
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   visible?: boolean;
   value?: boolean;
   defaultValue?: boolean;
   valueChange?: (value?: boolean) => void;
-};
-export const WidgetInput: WidgetInputType = {
+}
+export const WidgetInput = {
   valueChange: () => {},
-};
+} as Partial<WidgetInputType>;
 import {
   useState,
   useCallback,
@@ -30,15 +34,23 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'visible' | 'value' | 'defaultValue'>
+> &
+  Partial<
+    Pick<GetPropsType<typeof WidgetInput>, 'visible' | 'value' | 'defaultValue'>
+  >;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   counter: number;
   notUsedValue: number;
   attributes: any;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const [__state_value, __state_setValue] = useState<boolean | undefined>(() =>
     props.value !== undefined ? props.value : props.defaultValue
   );
@@ -57,7 +69,7 @@ export function Widget(props: typeof WidgetInput & RestProps) {
         ...props,
         value: props.value !== undefined ? props.value : __state_value,
       };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_value]
   );
@@ -73,8 +85,6 @@ export function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

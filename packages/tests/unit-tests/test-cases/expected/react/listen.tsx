@@ -1,3 +1,5 @@
+
+
 function view(model: Widget) {
   return <div></div>;
 }
@@ -10,12 +12,12 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
   onClick: (e: Event) => any;
   onPointerMove: (a: any, b: any, c: any) => any;
   restAttributes: RestProps;
 }
-
 export function Widget(props: {} & RestProps) {
   const __onClick = useCallback(function __onClick(e: Event): any {}, []);
   const __onPointerMove = useCallback(function __onPointerMove(
@@ -27,7 +29,7 @@ export function Widget(props: {} & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );

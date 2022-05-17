@@ -1,14 +1,19 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import WidgetWithTemplate from './dx-widget-with-template';
 
-export type TemplateTransitWidgetInputType = {
+interface TemplateTransitWidgetInputType {
   templateProp?: any;
   componentTemplateProp?: any;
   renderProp?: any;
   componentProp?: any;
   componentRenderProp?: any;
   componentComponentProp?: any;
-};
-export const TemplateTransitWidgetInput: TemplateTransitWidgetInputType = {};
+}
+export const TemplateTransitWidgetInput =
+  {} as Partial<TemplateTransitWidgetInputType>;
 import * as React from 'react';
 import { useCallback } from 'react';
 import { getTemplate } from '@devextreme/runtime/react';
@@ -19,14 +24,40 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type TemplateTransitWidgetInputModel = Required<
+  Omit<
+    GetPropsType<typeof TemplateTransitWidgetInput>,
+    | 'templateProp'
+    | 'componentTemplateProp'
+    | 'renderProp'
+    | 'componentProp'
+    | 'componentRenderProp'
+    | 'componentComponentProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof TemplateTransitWidgetInput>,
+      | 'templateProp'
+      | 'componentTemplateProp'
+      | 'renderProp'
+      | 'componentProp'
+      | 'componentRenderProp'
+      | 'componentComponentProp'
+    >
+  >;
 interface TemplateTransitWidget {
-  props: typeof TemplateTransitWidgetInput & RestProps;
+  props: TemplateTransitWidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
-
 export default function TemplateTransitWidget(
-  props: typeof TemplateTransitWidgetInput & RestProps
+  inProps: typeof TemplateTransitWidgetInput & RestProps
 ) {
+  const props = combineWithDefaultProps<TemplateTransitWidgetInputModel>(
+    TemplateTransitWidgetInput,
+    inProps
+  );
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const {
@@ -38,7 +69,7 @@ export default function TemplateTransitWidget(
         templateProp,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -61,7 +92,6 @@ export default function TemplateTransitWidget(
   });
 }
 
-TemplateTransitWidget.defaultProps = TemplateTransitWidgetInput;
 function view_1({
   props: { componentTemplateProp: ComponentTemplateProp, templateProp },
 }: TemplateTransitWidget) {

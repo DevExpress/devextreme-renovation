@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 import WidgetWithRefProp from './dx-widget-with-ref-prop';
 function view(viewModel: Widget) {
@@ -11,10 +15,11 @@ function view(viewModel: Widget) {
   );
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   nullableRef?: MutableRefObject<HTMLDivElement | null>;
-};
-const WidgetInput: WidgetInputType = {};
+}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import { useCallback, useRef } from 'react';
 
 type RestProps = {
@@ -23,15 +28,19 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'nullableRef'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'nullableRef'>>;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   divRef: any;
   getDirectly: () => any;
   getDestructed: () => any;
   restAttributes: RestProps;
 }
-
-export default function Widget(props: typeof WidgetInput & RestProps) {
+export default function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
   const __divRef: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
 
@@ -55,7 +64,7 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { nullableRef, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -68,5 +77,3 @@ export default function Widget(props: typeof WidgetInput & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetInput;

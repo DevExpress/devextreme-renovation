@@ -1,19 +1,25 @@
-function view() {}
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
+function view() {
+  return '';
+}
 
-export type WidgetPropsType = {
-  p1: string;
-  p2: string;
-  defaultP1: string;
+interface WidgetPropsType {
+  p1?: string;
+  p2?: string;
+  defaultP1?: string;
   p1Change?: (p1: string) => void;
-  defaultP2: string;
+  defaultP2?: string;
   p2Change?: (p2: string) => void;
-};
-export const WidgetProps: WidgetPropsType = {
+}
+export const WidgetProps = {
   defaultP1: '',
   p1Change: () => {},
   defaultP2: '',
   p2Change: () => {},
-} as any as WidgetPropsType;
+} as Partial<WidgetPropsType>;
 import {
   convertRulesToOptions,
   DefaultOptionsRule,
@@ -26,12 +32,30 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: Required<GetPropsType<typeof WidgetProps>> & RestProps;
   restAttributes: RestProps;
 }
 
-export default function Widget(props: typeof WidgetProps & RestProps) {
+export default function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<
+    Required<GetPropsType<typeof WidgetProps>>
+  >(
+    Object.create(
+      Object.prototype,
+      Object.assign(
+        Object.getOwnPropertyDescriptors(WidgetProps),
+        Object.getOwnPropertyDescriptors(
+          __processTwoWayProps(
+            convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
+          )
+        )
+      )
+    ),
+    inProps
+  );
+
   const [__state_p1, __state_setP1] = useState<string>(() =>
     props.p1 !== undefined ? props.p1 : props.defaultP1!
   );
@@ -47,7 +71,7 @@ export default function Widget(props: typeof WidgetProps & RestProps) {
           p1: props.p1 !== undefined ? props.p1 : __state_p1,
           p2: props.p2 !== undefined ? props.p2 : __state_p2,
         };
-      return restProps;
+      return restProps as RestProps;
     },
     [props, __state_p1, __state_p2]
   );
@@ -67,23 +91,9 @@ function __processTwoWayProps(defaultProps: typeof WidgetProps & RestProps) {
     return props;
   }, {});
 }
-
-Widget.defaultProps = WidgetProps;
-
 type WidgetOptionRule = DefaultOptionsRule<typeof WidgetProps>;
 
 const __defaultOptionRules: WidgetOptionRule[] = [];
 export function defaultOptions(rule: WidgetOptionRule) {
   __defaultOptionRules.push(rule);
-  Widget.defaultProps = Object.create(
-    Object.prototype,
-    Object.assign(
-      Object.getOwnPropertyDescriptors(Widget.defaultProps),
-      Object.getOwnPropertyDescriptors(
-        __processTwoWayProps(
-          convertRulesToOptions<typeof WidgetProps>(__defaultOptionRules)
-        )
-      )
-    )
-  );
 }

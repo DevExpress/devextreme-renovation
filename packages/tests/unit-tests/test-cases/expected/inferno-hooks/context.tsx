@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { createContext } from 'react';
 function view(model: Widget): any {
   return <span></span>;
@@ -6,12 +10,13 @@ const P1Context = createContext(5);
 const ContextForConsumer = createContext(null);
 const GetterContext = createContext('default');
 
-export type PropsType = {
-  p1: number;
-};
-const Props: PropsType = {
+interface PropsType {
+  p1?: number;
+}
+
+const Props = {
   p1: 10,
-};
+} as Partial<PropsType>;
 import {
   useState,
   useContext,
@@ -25,8 +30,9 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+
 interface Widget {
-  props: typeof Props & RestProps;
+  props: Required<GetPropsType<typeof Props>> & RestProps;
   contextConsumer: number;
   provider: number;
   consumer: any;
@@ -35,7 +41,12 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<Required<GetPropsType<typeof Props>>>(
+    Props,
+    inProps
+  );
+
   const contextConsumer = useContext(P1Context);
   const [provider] = useState(10);
   const consumer = useContext(ContextForConsumer);
@@ -51,7 +62,7 @@ export function Widget(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { p1, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -72,8 +83,6 @@ export function Widget(props: typeof Props & RestProps) {
     </GetterContext.Provider>
   );
 }
-
-Widget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

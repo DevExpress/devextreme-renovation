@@ -1,11 +1,16 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export type WidgetInputType = {
+interface WidgetInputType {
   prop?: boolean;
-};
-const WidgetInput: WidgetInputType = {};
+}
+
+const WidgetInput = {} as Partial<WidgetInputType>;
 import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -14,24 +19,28 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetInputModel = Required<
+  Omit<GetPropsType<typeof WidgetInput>, 'prop'>
+> &
+  Partial<Pick<GetPropsType<typeof WidgetInput>, 'prop'>>;
 interface Widget {
-  props: typeof WidgetInput & RestProps;
+  props: WidgetInputModel & RestProps;
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+export function Widget(inProps: typeof WidgetInput & RestProps) {
+  const props = combineWithDefaultProps<WidgetInputModel>(WidgetInput, inProps);
+
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { prop, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
 
   return view({ props: { ...props }, restAttributes: __restAttributes() });
 }
-
-Widget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

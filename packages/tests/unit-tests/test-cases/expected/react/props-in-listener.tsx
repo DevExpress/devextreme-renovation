@@ -1,12 +1,16 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 function view(model: Widget) {
   return <div></div>;
 }
 
-export type PropsType = {
+interface PropsType {
   type?: string;
   onClick?: (e: any) => void;
-};
-export const Props: PropsType = {};
+}
+export const Props = {} as Partial<PropsType>;
 import { useCallback } from 'react';
 
 type RestProps = {
@@ -15,13 +19,18 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type PropsModel = Required<
+  Omit<GetPropsType<typeof Props>, 'type' | 'onClick'>
+> &
+  Partial<Pick<GetPropsType<typeof Props>, 'type' | 'onClick'>>;
 interface Widget {
-  props: typeof Props & RestProps;
+  props: PropsModel & RestProps;
   clickHandler: () => any;
   restAttributes: RestProps;
 }
+export function Widget(inProps: typeof Props & RestProps) {
+  const props = combineWithDefaultProps<PropsModel>(Props, inProps);
 
-export function Widget(props: typeof Props & RestProps) {
   const __clickHandler = useCallback(
     function __clickHandler(): any {
       props.onClick!({ type: props.type });
@@ -31,7 +40,7 @@ export function Widget(props: typeof Props & RestProps) {
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { onClick, type, ...restProps } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -44,5 +53,3 @@ export function Widget(props: typeof Props & RestProps) {
 }
 
 export default Widget;
-
-Widget.defaultProps = Props;

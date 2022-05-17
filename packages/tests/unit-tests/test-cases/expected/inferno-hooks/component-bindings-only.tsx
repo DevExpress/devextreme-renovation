@@ -1,13 +1,14 @@
 import { Options, AdditionalOptions } from './types.d';
 
-export type WidgetPropsType = {
+interface WidgetPropsType {
   height?: number;
   data?: Options;
   info?: AdditionalOptions;
-};
-const WidgetProps: WidgetPropsType = {
+}
+
+const WidgetProps = {
   height: 10,
   data: Object.freeze({ value: '' }) as any,
   info: Object.freeze({ index: 0 }) as any,
-};
+} as Partial<WidgetPropsType>;
 export default WidgetProps;

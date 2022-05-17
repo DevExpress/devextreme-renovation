@@ -1,3 +1,7 @@
+import {
+  GetPropsType,
+  combineWithDefaultProps,
+} from '@devextreme/runtime/react';
 import { MutableRefObject } from 'react';
 function view(viewModel: Widget) {
   return (
@@ -7,14 +11,15 @@ function view(viewModel: Widget) {
   );
 }
 
-export type WidgetPropsType = {
+interface WidgetPropsType {
   outerDivRef?: MutableRefObject<HTMLDivElement | null>;
   refProp?: MutableRefObject<HTMLDivElement | null>;
   forwardRefProp?: MutableRefObject<HTMLDivElement | null>;
-  requiredRefProp: MutableRefObject<HTMLDivElement | null>;
-  requiredForwardRefProp: MutableRefObject<HTMLDivElement | null>;
-};
-const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
+  requiredRefProp?: MutableRefObject<HTMLDivElement | null>;
+  requiredForwardRefProp?: MutableRefObject<HTMLDivElement | null>;
+}
+
+const WidgetProps = {} as Partial<WidgetPropsType>;
 import {
   useCallback,
   useRef,
@@ -27,8 +32,20 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
+type WidgetPropsModel = Required<
+  Omit<
+    GetPropsType<typeof WidgetProps>,
+    'outerDivRef' | 'refProp' | 'forwardRefProp'
+  >
+> &
+  Partial<
+    Pick<
+      GetPropsType<typeof WidgetProps>,
+      'outerDivRef' | 'refProp' | 'forwardRefProp'
+    >
+  >;
 interface Widget {
-  props: typeof WidgetProps & RestProps;
+  props: WidgetPropsModel & RestProps;
   divRef: any;
   ref: any;
   forwardRef: any;
@@ -45,7 +62,8 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+export function Widget(inProps: typeof WidgetProps & RestProps) {
+  const props = combineWithDefaultProps<WidgetPropsModel>(WidgetProps, inProps);
   const __divRef: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
   const __ref: MutableRefObject<HTMLDivElement | null> =
@@ -119,7 +137,7 @@ export function Widget(props: typeof WidgetProps & RestProps) {
         requiredRefProp,
         ...restProps
       } = props;
-      return restProps;
+      return restProps as RestProps;
     },
     [props]
   );
@@ -137,8 +155,6 @@ export function Widget(props: typeof WidgetProps & RestProps) {
     restAttributes: __restAttributes(),
   });
 }
-
-Widget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
   return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;

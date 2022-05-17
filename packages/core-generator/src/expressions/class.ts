@@ -125,7 +125,7 @@ export class Class extends Expression {
 
   _name: Identifier;
 
-  members: Array<Property | Method>;
+  readonly members: Array<Property | Method>;
 
   modifiers: string[];
 
