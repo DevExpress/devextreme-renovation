@@ -35,7 +35,7 @@ const Portal = ({
   children,
 }: PortalProps): React.ReactPortal | null => {
   if (container) {
-    return createPortal(children, container);
+    return createPortal({ container, children });
   }
   return null;
 };

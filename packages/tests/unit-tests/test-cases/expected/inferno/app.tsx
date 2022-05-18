@@ -3,15 +3,30 @@ import {
   RefObject,
   InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno';
-function view(model: RefProps) {
-  return <div>{'Ref Props'}</div>;
+import { normalizeStyles } from '@devextreme/runtime/inferno';
+function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
+  return (
+    <div>
+      <span
+        ref={buttonRef}
+        style={normalizeStyles({ border: '1px solid black' })}
+        id="effect-subscribe-unsubscribe-button"
+      >
+        Update State
+      </span>
+      :
+      <span
+        ref={contentRef}
+        id="effect-subscribe-unsubscribe-button-content"
+      ></span>
+    </div>
+  );
 }
 
-export type PropsType = {
-  parentRef: RefObject<HTMLDivElement | null>;
-};
-const Props: PropsType = {} as any as PropsType;
+export type PropsType = {};
+const Props: PropsType = {};
 import { createReRenderEffect } from '@devextreme/runtime/inferno';
+import { createRef as infernoCreateRef } from 'inferno';
 type RestProps = {
   className?: string;
   style?: { [name: string]: any };
@@ -19,36 +34,50 @@ type RestProps = {
   ref?: any;
 };
 
-export default class RefProps extends InfernoWrapperComponent<any> {
-  state = {};
+export default class EffectSubscribeUnsubscribe extends InfernoWrapperComponent<any> {
+  state: { state1: number };
+
   refs: any;
+  buttonRef: RefObject<HTMLSpanElement> = infernoCreateRef<HTMLSpanElement>();
+  contentRef: RefObject<HTMLSpanElement> = infernoCreateRef<HTMLSpanElement>();
 
   constructor(props: any) {
     super(props);
-
-    this.loadEffect = this.loadEffect.bind(this);
-    this.getParentRef = this.getParentRef.bind(this);
+    this.state = {
+      state1: 0,
+    };
+    this.subscribeOnClick = this.subscribeOnClick.bind(this);
+    this.onButtonClick = this.onButtonClick.bind(this);
   }
+
+  state1!: number;
 
   createEffects() {
-    return [new InfernoEffect(this.loadEffect, []), createReRenderEffect()];
+    return [
+      new InfernoEffect(this.subscribeOnClick, [this.state.state1]),
+      createReRenderEffect(),
+    ];
   }
   updateEffects() {
-    this._effects[0]?.update([]);
+    this._effects[0]?.update([this.state.state1]);
   }
 
-  loadEffect(): any {
-    const parentRef = this.getParentRef();
-    if (parentRef.current) {
-      parentRef.current.style.backgroundColor = '#aaaaff';
-      parentRef.current.innerHTML += 'childText';
-    }
+  subscribeOnClick(): any {
+    const handler = this.onButtonClick.bind(this);
+    this.buttonRef.current?.addEventListener('click', handler);
+    return () => this.buttonRef.current?.removeEventListener('click', handler);
   }
-  getParentRef(): any {
-    return this.props.parentRef;
+  onButtonClick(): any {
+    const value = this.state.state1;
+    if (this.contentRef.current) {
+      this.contentRef.current.innerHTML = value.toString();
+    }
+    this.setState((__state_argument: any) => ({
+      state1: __state_argument.state1 + 1,
+    }));
   }
   get restAttributes(): RestProps {
-    const { parentRef, ...restProps } = this.props as any;
+    const { ...restProps } = this.props as any;
     return restProps;
   }
 
@@ -56,10 +85,13 @@ export default class RefProps extends InfernoWrapperComponent<any> {
     const props = this.props;
     return view({
       props: { ...props },
-      getParentRef: this.getParentRef,
+      state1: this.state.state1,
+      buttonRef: this.buttonRef,
+      contentRef: this.contentRef,
+      onButtonClick: this.onButtonClick,
       restAttributes: this.restAttributes,
-    } as RefProps);
+    } as EffectSubscribeUnsubscribe);
   }
 }
 
-RefProps.defaultProps = Props;
+EffectSubscribeUnsubscribe.defaultProps = Props;
