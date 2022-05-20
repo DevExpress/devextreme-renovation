@@ -1,27 +1,16 @@
-import { MutableRefObject } from 'react';
-function view({ buttonRef, contentRef }: EffectSubscribeUnsubscribe) {
+import { SimpleContext } from './context';
+function view(model: ConsumerComponent) {
   return (
-    <div>
-      <span
-        ref={buttonRef}
-        style={normalizeStyles({ border: '1px solid black' })}
-        id="effect-subscribe-unsubscribe-button"
-      >
-        Update State
-      </span>
-      :
-      <span
-        ref={contentRef}
-        id="effect-subscribe-unsubscribe-button-content"
-      ></span>
-    </div>
+    <span id="3">
+      Consumer Value:
+      {model.contextConsumer}
+    </span>
   );
 }
 
 export type PropsType = {};
 const Props: PropsType = {};
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { normalizeStyles } from '@devextreme/runtime/common';
+import { useContext, useCallback } from 'react';
 
 type RestProps = {
   className?: string;
@@ -29,34 +18,14 @@ type RestProps = {
   key?: any;
   ref?: any;
 };
-interface EffectSubscribeUnsubscribe {
+interface ConsumerComponent {
   props: typeof Props & RestProps;
-  buttonRef: any;
-  contentRef: any;
-  state1: number;
-  onButtonClick: () => any;
+  contextConsumer: number;
   restAttributes: RestProps;
 }
 
-export default function EffectSubscribeUnsubscribe(
-  props: typeof Props & RestProps
-) {
-  const __buttonRef: MutableRefObject<HTMLSpanElement | null> =
-    useRef<HTMLSpanElement>(null);
-  const __contentRef: MutableRefObject<HTMLSpanElement | null> =
-    useRef<HTMLSpanElement>(null);
-  const [__state_state1, __state_setState1] = useState<number>(0);
-
-  const __onButtonClick = useCallback(
-    function __onButtonClick(): any {
-      const value = __state_state1;
-      if (__contentRef.current) {
-        __contentRef.current.innerHTML = value.toString();
-      }
-      __state_setState1((__state_state1) => __state_state1 + 1);
-    },
-    [__state_state1]
-  );
+export default function ConsumerComponent(props: typeof Props & RestProps) {
+  const contextConsumer = useContext(SimpleContext);
   const __restAttributes = useCallback(
     function __restAttributes(): RestProps {
       const { ...restProps } = props;
@@ -64,20 +33,12 @@ export default function EffectSubscribeUnsubscribe(
     },
     [props]
   );
-  useEffect(() => {
-    const handler = __onButtonClick.bind(this);
-    __buttonRef.current?.addEventListener('click', handler);
-    return () => __buttonRef.current?.removeEventListener('click', handler);
-  }, [__onButtonClick]);
 
   return view({
     props: { ...props },
-    state1: __state_state1,
-    buttonRef: __buttonRef,
-    contentRef: __contentRef,
-    onButtonClick: __onButtonClick,
+    contextConsumer,
     restAttributes: __restAttributes(),
   });
 }
 
-EffectSubscribeUnsubscribe.defaultProps = Props;
+ConsumerComponent.defaultProps = Props;

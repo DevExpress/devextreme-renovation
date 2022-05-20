@@ -5,7 +5,7 @@ import {
     Effect,
   } from "@devextreme-generator/declarations";
   
-  function view(model: ButtonTemplate) {
+  function view(model: ChildB) {
     return <div>ChildB</div>;
   }
   
@@ -16,7 +16,7 @@ import {
     view,
     jQuery: {register: true},
   })
-  export default class ButtonTemplate extends JSXComponent(Props) {
+  export default class ChildB extends JSXComponent(Props) {
       @Effect()
       effectB(){
         console.log('childB');

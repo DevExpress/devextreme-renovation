@@ -27,13 +27,15 @@ let currentComponent: {
     hookInitialization: (hook: any, addEffectHook: (effect: ()=>void)=>void)=> void,
   ) => any;
   state: { [x: string]: any } | null;
+  context: any;
 };
 
 function renderChild(component: HookComponent, {
   renderFn, renderProps, renderRef,
-}: any) {
+}: any, context: any) {
   const prevRecorder = currentComponent;
   currentComponent = component;
+  currentComponent.context = context;
   const props = renderProps;
   try {
     return renderFn(props || {}, renderRef || {});
@@ -104,13 +106,14 @@ function createRecorder(component: HookComponent) {
     shouldComponentUpdate(
       nextProps: { renderProps?: any; renderFn?: any },
       nextState: any,
+      context: any,
     ) {
       shouldUpdate = !equal(component.props.renderProps, nextProps.renderProps);
       component.state = nextState;
 
       nextId = 0;
 
-      const renderResult = renderChild(component, nextProps);
+      const renderResult = renderChild(component, nextProps, context);
 
       if (shouldUpdate) {
         recorder.renderResult = renderResult;
@@ -167,12 +170,12 @@ export class HookComponent extends Component
     nextProps: Record<string, unknown>,
     nextState: Record<string, unknown>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _context: Record<string, unknown> | undefined,
+    context: Record<string, unknown> | undefined,
   ): boolean {
     if (!this.recorder) {
       return true;
     }
-    const result = this.recorder.shouldComponentUpdate(nextProps, nextState);
+    const result = this.recorder.shouldComponentUpdate(nextProps, nextState, context);
     if (result) {
       EffectsHost.increment();
     }
@@ -212,7 +215,7 @@ export class HookComponent extends Component
   render(): JSX.Element {
     return this.recorder
       ? this.recorder.renderResult
-      : renderChild(this, this.props as any);
+      : renderChild(this, this.props as any, this.context);
   }
 }
 
@@ -306,8 +309,8 @@ export function useImperativeHandle(ref: any, init: () => any, dependencies?: an
     }
   });
 }
-export function useContext(consumer: { id: number }) {
-  return currentComponent.getContextValue(consumer);
+export function useContext(consumer: { id: number, defaultValue: unknown }) {
+  return currentComponent.getContextValue(consumer) || consumer.defaultValue;
 }
 
 export function useRef<T>(initialValue: T | null) {

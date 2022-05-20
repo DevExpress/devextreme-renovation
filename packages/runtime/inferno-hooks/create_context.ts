@@ -1,11 +1,14 @@
 import { Component } from 'inferno';
 
 let contextId = 0;
-export const createContext = function<T>(defaultValue: T): { id: number, Provider: any } {
+export const createContext = function<T>(defaultValue: T): { id: number,
+  Provider: any,
+  defaultValue: unknown } {
   const id = contextId++;
 
   return {
     id,
+    defaultValue,
     Provider: class extends Component<{ value: T }> {
       getChildContext() {
         return {
