@@ -44,9 +44,6 @@ mocha.describe("inferno-generation", function () {
     generator.resetCache();
   });
 
-  mocha.it("app", function () {
-    this.testGenerator(this.test!.title);
-  });
   mocha.it("class", function () {
     this.testGenerator(this.test!.title);
   });
