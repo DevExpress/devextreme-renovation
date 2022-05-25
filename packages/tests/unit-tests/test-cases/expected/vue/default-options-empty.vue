@@ -1,5 +1,5 @@
 <template>
-  <Widget />
+  <div></div>
 </template>
 <script>
 export const WidgetProps = {};

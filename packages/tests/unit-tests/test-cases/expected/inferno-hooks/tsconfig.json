@@ -1,0 +1,12 @@
+// this config is needed for test compile-check
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+      "typeRoots": ["node_modules/@types"],
+      "declaration": true,
+      "target": "ES2016",
+      "skipLibCheck": true,
+      "noImplicitAny": false
+    },
+    "exclude": ["node_modules"]
+}

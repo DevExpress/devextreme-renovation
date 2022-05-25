@@ -1,4 +1,7 @@
-import { Portal as createPortal } from '@devextreme/runtime/inferno-hooks';
+import {
+  Portal as createPortal,
+  MutableRefObject,
+} from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget) {
   return (
     <div>

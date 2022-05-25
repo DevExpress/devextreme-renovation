@@ -56,6 +56,10 @@ mocha.describe("inferno-hooks-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
+  mocha.it("model", function () {
+    this.testGenerator(this.test!.title);
+  });
+
   mocha.it("state", function () {
     this.testGenerator(this.test!.title);
   });

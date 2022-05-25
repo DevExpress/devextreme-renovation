@@ -313,7 +313,7 @@ export function useContext(consumer: { id: number, defaultValue: unknown }) {
   return currentComponent.getContextValue(consumer) || consumer.defaultValue;
 }
 
-export function useRef<T>(initialValue: T | null) {
+export function useRef<T>(initialValue?: T | null) {
   return currentComponent.getHook(0,
     (hook: { isNew: boolean; value: unknown; dispose: unknown }) => {
       if (hook.isNew) {

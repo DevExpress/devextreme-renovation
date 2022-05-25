@@ -17,9 +17,9 @@ export class ImportDeclaration extends BaseImportDeclaration {
       common.push('Portal as createPortal');
     }
 
-    // if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {
-    //   common.push('RefObject');
-    // }
+    if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {
+      common.push('MutableRefObject');
+    }
 
     if (this.has('createContext')) {
       common.push('createContext');

@@ -32,10 +32,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 @Component({
   selector: 'dx-widget',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<ng-template #widgetTemplate
-    ><dx-widget #widget1 style="display: contents"></dx-widget
-    ><ng-content *ngTemplateOutlet="widget1?.widgetTemplate"></ng-content
-  ></ng-template>`,
+  template: `<ng-template #widgetTemplate><div></div></ng-template>`,
 })
 export default class Widget extends WidgetProps {
   _detectChanges(): void {

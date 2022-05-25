@@ -1,3 +1,4 @@
+import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>

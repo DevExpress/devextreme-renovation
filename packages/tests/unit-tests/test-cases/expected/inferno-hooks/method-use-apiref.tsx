@@ -1,3 +1,4 @@
+import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 import BaseWidget from './method';
 function view(viewModel: WidgetWithApiRef) {
   return (

@@ -5,7 +5,7 @@ import {
 } from "@devextreme-generator/declarations";
 
 function view() {
-  return <Widget />;
+  return <div></div>;
 }
 
 @ComponentBindings()

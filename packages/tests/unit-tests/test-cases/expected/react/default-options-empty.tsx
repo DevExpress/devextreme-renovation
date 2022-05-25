@@ -1,5 +1,5 @@
 function view() {
-  return <Widget />;
+  return <div></div>;
 }
 
 export type WidgetPropsType = {};
