@@ -9,7 +9,7 @@ import {
   useCallback,
   useMemo,
   useRef,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 import {
@@ -146,7 +146,7 @@ function ReactWidget(props: typeof PickedProps & RestProps) {
 HooksWidget.defaultProps = PickedProps;
 
 function HooksWidget(props: typeof PickedProps & RestProps) {
-  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
 export { HooksWidget as Widget };
 export default HooksWidget;

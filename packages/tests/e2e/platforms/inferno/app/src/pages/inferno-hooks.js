@@ -10,7 +10,7 @@ const buttonTemplate = ({ text }) => (
   <div style={{ border: "1px solid blue" }}>{text + "!"}</div>
 );
 
-import { HookComponent, useState, useRef, useContext, useEffect, useCallback, useImperativeHandle } from "@devextreme/runtime/inferno-hooks/hooks";
+import { HookContainer, useState, useRef, useContext, useEffect, useCallback, useImperativeHandle } from "@devextreme/runtime/inferno-hooks/hooks";
 import { createContext } from "@devextreme/runtime/dist/esm/inferno-hooks/create_context";
 
 
@@ -62,7 +62,7 @@ class ClassTest extends Component {
 
 
 function Test(props, ref) {
-  return <HookComponent renderFn={
+  return <HookContainer renderFn={
     () => {
       const [state, setState] = useState(1);
       const [depState, setDepState] = useState(1);

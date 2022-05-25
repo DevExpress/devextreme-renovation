@@ -7,7 +7,7 @@ export class InfernoComponent extends ReactComponent {
   compileImportStatements(hooks: string[], compats: string[], core: string[]): string[] {
     const componentImports = this.jQueryRegistered
       ? ['InfernoWrapperComponent', 'useReRenderEffect']
-      : ['HookComponent'];
+      : ['HookContainer'];
 
     const imports = [];
     const namedImports = hooks
@@ -52,7 +52,7 @@ export class InfernoComponent extends ReactComponent {
     if (this.hasApiMethod) {
       return `
       function Hooks${name}(props: ${this.compilePropsType()}, ref: RefObject<${this.apiRefType}>) {
-      return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
+      return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookContainer'} renderFn={
           React${name}
         } renderProps={props} renderRef={ref}/>
       }
@@ -67,7 +67,7 @@ export class InfernoComponent extends ReactComponent {
     // check default props with forwardRef
     return `
     function Hooks${name}(props: ${this.compilePropsType()}) {
-    return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookComponent'} renderFn={
+    return <${this.jQueryRegistered ? 'InfernoWrapperComponent' : 'HookContainer'} renderFn={
       React${name}
       } renderProps={props}/>
     }

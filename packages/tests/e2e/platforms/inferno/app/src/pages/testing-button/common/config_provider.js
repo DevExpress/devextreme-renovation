@@ -32,7 +32,7 @@ exports.ConfigProviderProps = {};
 // import * as React from "react";
 var hooks_1 = require("@devextreme/runtime/inferno-hooks/hooks");
 function ConfigProvider(props) {
-    return <hooks_1.HookComponent renderFn={function () {
+    return <hooks_1.HookContainer renderFn={function () {
         var __config = hooks_1.useCallback(function __config() {
             return { rtlEnabled: props.rtlEnabled };
         }, [props.rtlEnabled]);

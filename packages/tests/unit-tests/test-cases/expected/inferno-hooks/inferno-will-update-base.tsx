@@ -8,7 +8,7 @@ function view() {
 import {
   useState,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -48,7 +48,7 @@ HooksInheritedFromBaseComponent.defaultProps = SomeProps;
 
 function HooksInheritedFromBaseComponent(props: typeof SomeProps & RestProps) {
   return (
-    <HookComponent
+    <HookContainer
       renderFn={ReactInheritedFromBaseComponent}
       renderProps={props}
     />

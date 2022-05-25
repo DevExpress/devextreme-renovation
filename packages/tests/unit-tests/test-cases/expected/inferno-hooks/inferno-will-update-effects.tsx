@@ -9,7 +9,7 @@ import {
   useState,
   useCallback,
   useEffect,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -54,7 +54,7 @@ function HooksInheritedFromInfernoComponent(
   props: typeof SomeProps & RestProps
 ) {
   return (
-    <HookComponent
+    <HookContainer
       renderFn={ReactInheritedFromInfernoComponent}
       renderProps={props}
     />

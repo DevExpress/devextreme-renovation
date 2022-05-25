@@ -21,7 +21,7 @@ export const WidgetInput: WidgetInputType = {
   defaultS: 10,
   sChange: () => {},
 } as any as WidgetInputType;
-import {HookComponent} from '@devextreme/runtime/inferno-hooks';
+import {HookContainer} from '@devextreme/runtime/inferno-hooks';
 import {forwardRef} from 'inferno';
 
 import { useState, useCallback, useEffect } from '@devextreme/runtime/inferno-hooks';
@@ -107,7 +107,7 @@ const WidgetFn = (ref:any) => {
 };
 function InfernoWidget(props:typeof WidgetInput & RestProps, ref:any) {
   return (
-    <HookComponent renderFn={WidgetFn(ref)} renderProps={props}></HookComponent>
+    <HookContainer renderFn={WidgetFn(ref)} renderProps={props}></HookContainer>
   );
 }
 const InfernoWidgetFR = forwardRef(InfernoWidget);

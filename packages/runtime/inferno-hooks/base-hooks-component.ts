@@ -1,5 +1,5 @@
 import { findDOMfromVNode } from 'inferno';
-import { HookComponent } from './hooks';
+import { HookContainer } from './hooks';
 
 interface VDomCustomClassesData {
   previous: string[];
@@ -10,7 +10,7 @@ interface VDomCustomClassesData {
 type ElementWithCustomClassesData = Element & {
   dxClasses: VDomCustomClassesData;
 };
-export class InfernoWrapperComponent extends HookComponent {
+export class InfernoWrapperComponent extends HookContainer {
   vDomElement: ElementWithCustomClassesData | null = null;
 
   vDomUpdateClasses(): void {

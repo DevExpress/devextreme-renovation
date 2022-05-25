@@ -16,7 +16,7 @@ import {
   useState,
   useContext,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -76,7 +76,7 @@ function ReactWidget(props: typeof Props & RestProps) {
 HooksWidget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
-  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
 export { HooksWidget as Widget };
 export default HooksWidget;

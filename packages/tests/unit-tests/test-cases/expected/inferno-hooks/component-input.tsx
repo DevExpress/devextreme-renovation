@@ -12,7 +12,7 @@ export const WidgetProps: WidgetPropsType = {
   height: 10,
   width: 10,
 };
-import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
+import { useCallback, HookContainer } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
   className?: string;
@@ -51,7 +51,7 @@ function ReactWidget(props: typeof WidgetProps & RestProps) {
 HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
 export { HooksWidget as Widget };
 export default HooksWidget;

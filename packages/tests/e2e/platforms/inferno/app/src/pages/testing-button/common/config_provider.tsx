@@ -11,7 +11,7 @@ export declare type ConfigProviderPropsType = {
 export const ConfigProviderProps: ConfigProviderPropsType =
   {} as any as ConfigProviderPropsType;
 // import * as React from "react";
-import { useState, useCallback, HookComponent } from "@devextreme/runtime/inferno-hooks/hooks";
+import { useState, useCallback, HookContainer } from "@devextreme/runtime/inferno-hooks/hooks";
 
 declare type RestProps = {
   className?: string;
@@ -26,7 +26,7 @@ interface ConfigProvider {
 }
 
 export function ConfigProvider(props: typeof ConfigProviderProps & RestProps) {
-  return <HookComponent renderFn={
+  return <HookContainer renderFn={
     ()=>{
       const __config = useCallback(
         function __config(): ConfigContextValue {

@@ -233,7 +233,7 @@ var ButtonFn = function (ref) {
 // const ButtonFn2 = Button(ref1)
 function InfernoButton(props, ref) {
     // const ButtonFn2 = ButtonFn(ref)
-    return <hooks_1.HookComponent renderFn={ButtonFn(ref)} renderProps={props}></hooks_1.HookComponent>;
+    return <hooks_1.HookContainer renderFn={ButtonFn(ref)} renderProps={props}></hooks_1.HookContainer>;
 }
 exports.InfernoButton = InfernoButton;
 // forwardRef(

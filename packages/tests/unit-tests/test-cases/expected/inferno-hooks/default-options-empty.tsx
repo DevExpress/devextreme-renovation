@@ -8,7 +8,7 @@ import {
   convertRulesToOptions,
   DefaultOptionsRule,
 } from '../../../../jquery-helpers/default_options';
-import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
+import { useCallback, HookContainer } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
   className?: string;
@@ -67,7 +67,7 @@ export function defaultOptions(rule: WidgetOptionRule) {
 }
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={ReactWidget} renderProps={props} />;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
 export { HooksWidget as Widget };
 export default HooksWidget;

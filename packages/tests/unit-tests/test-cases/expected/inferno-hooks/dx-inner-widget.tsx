@@ -16,7 +16,7 @@ export const InnerWidgetProps: InnerWidgetPropsType = {
 import {
   useState,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 import { normalizeStyles } from '@devextreme/runtime/inferno';
 
@@ -66,7 +66,7 @@ function ReactInnerWidget(props: typeof InnerWidgetProps & RestProps) {
 HooksInnerWidget.defaultProps = InnerWidgetProps;
 
 function HooksInnerWidget(props: typeof InnerWidgetProps & RestProps) {
-  return <HookComponent renderFn={ReactInnerWidget} renderProps={props} />;
+  return <HookContainer renderFn={ReactInnerWidget} renderProps={props} />;
 }
 export { HooksInnerWidget as InnerWidget };
 export default HooksInnerWidget;

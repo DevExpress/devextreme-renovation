@@ -12,7 +12,7 @@ import * as util from 'inferno-test-utils';
 import React from 'react';
 import { forwardRef } from 'inferno';
 import {
-  useState, useEffect, useMemo, HookComponent, useContext, useImperativeHandle, useRef,
+  useState, useEffect, useMemo, HookContainer, useContext, useImperativeHandle, useRef,
 } from '../hooks';
 import { createContext } from '../create_context';
 
@@ -33,7 +33,7 @@ test('renders using state', async () => {
       </h1>
     );
   };
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} renderProps={{ name: 'George' }} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} renderProps={{ name: 'George' }} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
   expect(h1.innerHTML).toMatchInlineSnapshot('"Hi George 42"');
 });
@@ -47,7 +47,7 @@ test('ensures that props is not empty', async () => {
     </h1>
   );
 
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
   expect(h1.innerHTML).toMatchInlineSnapshot('"Hey.You are awesome."');
 });
@@ -72,7 +72,7 @@ test('multiple useStates are allowed', async () => {
     );
   };
 
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} renderProps={{ name: 'George' }} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} renderProps={{ name: 'George' }} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
   const [btn] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
 
@@ -99,7 +99,7 @@ test('effects only run once with empty dep array', () => {
     );
   };
 
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
 
   emit('onClick', h1);
@@ -125,12 +125,12 @@ test('effects are disposed when unmounted', () => {
         Count is
         {' '}
         {count}
-        {count < 2 && <HookComponent renderFn={Child} />}
+        {count < 2 && <HookContainer renderFn={Child} />}
       </h1>
     );
   };
 
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
 
   emit('onClick', h1);
@@ -143,6 +143,40 @@ test('effects are disposed when unmounted', () => {
   expect(dispose).toHaveBeenCalledTimes(1);
 });
 
+test('effects co-dependent on state works ', () => {
+  const EffectsStateChange = () => {
+    const [stateA, setStateA] = useState(0);
+    const [stateB, setStateB] = useState(0);
+    useEffect(() => {
+      if (stateB < 5) {
+        setStateB(stateB + 1);
+      }
+    });
+
+    useEffect(() => {
+      setStateA(stateB);
+    });
+
+    return (
+      <div>
+        <div className="state">{stateA}</div>
+        <div className="state">{stateB}</div>
+      </div>
+    );
+  };
+
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={EffectsStateChange} />);
+
+  // setTimeout here is needed because at the moment of running expect effects were called only once
+
+  setTimeout(() => {
+    const [stateA, stateB] = util.scryRenderedDOMElementsWithClass(rendered, 'state');
+    expect(stateA.innerHTML).toEqual('5');
+
+    expect(stateB.innerHTML).toEqual('5');
+  });
+});
+
 test('use memo is only called when its watch list changes', () => {
   const fx = jest.fn((count) => `Count is ${count}`);
 
@@ -152,7 +186,7 @@ test('use memo is only called when its watch list changes', () => {
     return <h1 onClick={() => setState(count + 1)}>{name}</h1>;
   };
 
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={Hello} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
   const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
 
   expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 0"');
@@ -182,12 +216,12 @@ test('context from props', () => {
   const contextProvider = (props: { rtlEnabled: boolean }) => (
     <div>
       <ConfigContext.Provider value={{ rtlEnabled: props.rtlEnabled }}>
-        <HookComponent renderFn={contextChildren} />
+        <HookContainer renderFn={contextChildren} />
       </ConfigContext.Provider>
     </div>
   );
   const rendered = util.renderIntoContainer(
-    <HookComponent renderFn={contextProvider} renderProps={{ rtlEnabled: true }} />,
+    <HookContainer renderFn={contextProvider} renderProps={{ rtlEnabled: true }} />,
   );
   const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
   expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
@@ -206,7 +240,7 @@ test('useRef with method call (useImperativeHandle)', () => {
   };
   function ChildrenComponentHook(props: any, ref: any) {
     return (
-      <HookComponent
+      <HookContainer
         renderFn={childrenComponent}
         renderProps={props}
         renderRef={ref}
@@ -224,7 +258,7 @@ test('useRef with method call (useImperativeHandle)', () => {
       </div>
     );
   };
-  const rendered = util.renderIntoContainer(<HookComponent renderFn={parentComponent} />);
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={parentComponent} />);
   const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
 
   emit('onClick', button);

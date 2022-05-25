@@ -15,7 +15,7 @@ export const WidgetWithPropsInput: WidgetWithPropsInputType = {
 import {
   useCallback,
   useImperativeHandle,
-  HookComponent,
+  HookContainer,
   forwardRef,
   RefObject,
 } from '@devextreme/runtime/inferno-hooks';
@@ -58,7 +58,7 @@ function HooksWidgetWithProps(
   ref: RefObject<WidgetWithPropsRef>
 ) {
   return (
-    <HookComponent
+    <HookContainer
       renderFn={ReactWidgetWithProps}
       renderProps={props}
       renderRef={ref}

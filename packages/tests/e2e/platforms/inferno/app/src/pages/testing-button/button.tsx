@@ -4,7 +4,7 @@ import {
   useEffect,
   useRef,
   useImperativeHandle,
-  HookComponent
+  HookContainer
 } from '@devextreme/runtime/inferno-hooks/hooks';
 
 import { createElement } from "inferno-create-element";
@@ -420,9 +420,9 @@ const ButtonFn = (ref)=>{
 // const ButtonFn2 = Button(ref1)
 function InfernoButton(props, ref) {
   // const ButtonFn2 = ButtonFn(ref)
-  return <HookComponent renderFn={
+  return <HookContainer renderFn={
     ButtonFn(ref)
-  } renderProps={props}></HookComponent>
+  } renderProps={props}></HookContainer>
 }
 
 // forwardRef(

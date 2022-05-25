@@ -53,7 +53,7 @@ import UndefPropParent from "./undefined-prop-parent";
 import CachedGetterWithTwoWay from './getter-cached-with-two-way';
 import DefaultTemplateValueWithMap from './default-template/default-template-map';
 import RestAttributesWidget from './rest-attributes/button';
-// import ConditionalEffect from './conditional-effect/conditional-effect-parent';
+
 function view(model: App) {
   return (
     <div>
@@ -183,7 +183,7 @@ function view(model: App) {
       <CachedGetterWithTwoWay />
       <DefaultTemplateValueWithMap />
       <RestAttributesWidget className="myclass" role="button" style={{ width: 200, color: 'red' }} />
-      {/* <ConditionalEffect /> */}
+
     </div>
   );
 }

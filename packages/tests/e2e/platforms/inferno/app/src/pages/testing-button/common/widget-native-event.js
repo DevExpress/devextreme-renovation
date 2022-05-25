@@ -409,7 +409,7 @@ var WidgetFn = function (ref) {
     return refs.get(ref);
 };
 function InfernoWidget(props, ref) {
-    return <hooks_1.HookComponent renderFn={WidgetFn(ref)} childProps={props}></hooks_1.HookComponent>;
+    return <hooks_1.HookContainer renderFn={WidgetFn(ref)} childProps={props}></hooks_1.HookContainer>;
 }
 var InfernoWidgetFR = inferno_1.forwardRef(InfernoWidget);
 exports.InfernoWidgetFR = InfernoWidgetFR;

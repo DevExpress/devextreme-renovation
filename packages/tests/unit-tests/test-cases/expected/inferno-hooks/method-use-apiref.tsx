@@ -17,7 +17,7 @@ import {
   useCallback,
   useRef,
   useImperativeHandle,
-  HookComponent,
+  HookContainer,
   forwardRef,
   RefObject,
 } from '@devextreme/runtime/inferno-hooks';
@@ -73,7 +73,7 @@ function HooksWidgetWithApiRef(
   ref: RefObject<WidgetWithApiRefRef>
 ) {
   return (
-    <HookComponent
+    <HookContainer
       renderFn={ReactWidgetWithApiRef}
       renderProps={props}
       renderRef={ref}

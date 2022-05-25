@@ -7,7 +7,7 @@ import {
   useImperativeHandle,
   useCallback,
   useContext,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks/hooks';
 import {
   RefObject as MutableRefObject,
@@ -617,9 +617,9 @@ const WidgetFn = (ref)=>{
  return refs.get(ref)
 }
 function InfernoWidget(props, ref) {
-  return <HookComponent renderFn={
+  return <HookContainer renderFn={
     WidgetFn(ref)
-  } renderProps={props} ></HookComponent>
+  } renderProps={props} ></HookContainer>
 }
 const InfernoWidgetFR = forwardRef(InfernoWidget)
 
