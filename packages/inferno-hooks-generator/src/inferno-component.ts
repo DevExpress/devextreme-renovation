@@ -44,8 +44,6 @@ export class InfernoComponent extends ReactComponent {
   defaultPropsDest(): string {
     return `Hooks${this.name.toString()}.defaultProps`;
   }
-  // if have forwardRef -> forwardref((props, ref)=>{})
-  // if jqueryRegistered -> createRerenderEffect
 
   compileHooksWrapper(): string {
     const name = this.name;
@@ -95,7 +93,6 @@ export class InfernoComponent extends ReactComponent {
 
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
-    // const modifiers = this.modifiers.filter((m) => m !== 'default');
     return `
               ${this.compileImports()}
               ${this.compilePortalComponent()}

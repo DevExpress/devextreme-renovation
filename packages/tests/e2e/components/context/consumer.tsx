@@ -8,7 +8,7 @@ import {
 import { SimpleContext } from "./context";
 
 function view(model: ConsumerComponent) {
-  return <span id="3">Consumer Value: {model.contextConsumer}</span>;
+  return <span>Consumer Value: {model.contextConsumer}</span>;
 }
 
 @ComponentBindings()
