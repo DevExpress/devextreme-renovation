@@ -53,16 +53,6 @@ function createRecorder(component: HookContainer) {
 
   component.state = {};
 
-  const isDependenciesEqual = (
-    prevDependencies: number | unknown[] | undefined,
-    dependencies: number | unknown[] | undefined,
-  ) => {
-    if (prevDependencies === undefined) {
-      return false;
-    }
-    return equal(prevDependencies, dependencies);
-  };
-
   function nextHook(dependencies: number | unknown[] | undefined) {
     const id = nextId;
     nextId += 1;
@@ -73,13 +63,11 @@ function createRecorder(component: HookContainer) {
         id,
         isNew: true,
         dependencies,
-        isDependenciesEqual: isDependenciesEqual(dependencies, dependencies),
       };
       hookInstances[id] = hook;
     } else {
-      hook.isDependenciesEqual = isDependenciesEqual(hook.dependencies, dependencies);
-      hook.dependencies = dependencies;
       hook.isNew = false;
+      hook.newDeps = dependencies;
     }
 
     return hook;
@@ -226,9 +214,9 @@ export interface Hook {
   value: any,
   dispose: any,
   didMount: any,
-  dependencies: number | unknown[],
+  dependencies?: number | unknown[],
   effect?: ()=>void,
-  isDependenciesEqual: boolean
+  newDeps?: number | unknown[],
 }
 
 type SetStateAction<S> = S | ((prevState: S) => S);
@@ -274,9 +262,10 @@ export function useEffect(fn: () => any, dependencies?: unknown[]) {
             if (hook.isNew) {
               hook.dispose = hook.effect?.();
               hook.isNew = false;
-            } else if (!hook.isDependenciesEqual) {
+            } else if (!equal(hook.dependencies, hook.newDeps) || hook.dependencies === undefined) {
               hook.dispose?.();
               hook.dispose = hook.effect?.();
+              hook.dependencies = hook.newDeps;
             }
           });
         }
@@ -287,8 +276,9 @@ export function useEffect(fn: () => any, dependencies?: unknown[]) {
 
 export function useMemo<T>(fn: () => T, dependencies: unknown[]): T {
   return currentComponent.getHook(dependencies, (hook: Hook) => {
-    if (hook.isNew || !hook.isDependenciesEqual) {
+    if (hook.isNew || !equal(hook.dependencies, dependencies) || hook.dependencies === undefined) {
       hook.value = fn();
+      hook.dependencies = dependencies;
     }
   });
 }
@@ -296,8 +286,9 @@ export function useMemo<T>(fn: () => T, dependencies: unknown[]): T {
 export function useCallback
   <T extends (...args: never[]) => unknown>(fn: T, dependencies: unknown[]): T {
   return currentComponent.getHook(dependencies, (hook: Hook) => {
-    if (hook.isNew || !hook.isDependenciesEqual) {
+    if (hook.isNew || !equal(hook.dependencies, dependencies) || hook.dependencies === undefined) {
       hook.value = fn;
+      hook.dependencies = dependencies;
     }
   });
 }
