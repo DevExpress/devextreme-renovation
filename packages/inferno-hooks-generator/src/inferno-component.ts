@@ -77,20 +77,6 @@ export class InfernoComponent extends ReactComponent {
     return this.members.some((m) => m.isApiMethod);
   }
 
-  compilePortalComponentCore(): string {
-    return `
-    type PortalProps = {
-      container?: HTMLElement | null;
-      children: React.ReactNode,
-    }
-    const Portal = ({ container, children }: PortalProps): React.ReactPortal | null => {
-      if(container) {
-        return createPortal({container, children});
-      }
-      return null; 
-    }`;
-  }
-
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
     return `

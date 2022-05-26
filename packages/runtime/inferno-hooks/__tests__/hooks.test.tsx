@@ -10,9 +10,8 @@
 /* eslint-disable react/react-in-jsx-scope */
 import * as util from 'inferno-test-utils';
 import React from 'react';
-import { forwardRef } from 'inferno';
 import {
-  useState, useEffect, useMemo, HookContainer, useContext, useImperativeHandle, useRef,
+  useState, useEffect, useMemo, HookContainer, useContext, useImperativeHandle, useRef, forwardRef,
 } from '../hooks';
 import { createContext } from '../create_context';
 
@@ -177,7 +176,7 @@ test('effects co-dependent on state works ', () => {
   });
 });
 
-test('use memo is only called when its watch list changes', () => {
+test('useMemo is only called when its watch list changes', () => {
   const fx = jest.fn((count) => `Count is ${count}`);
 
   const Hello = () => {

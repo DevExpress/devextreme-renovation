@@ -1,7 +1,5 @@
-import {
-  Portal as createPortal,
-  MutableRefObject,
-} from '@devextreme/runtime/inferno-hooks';
+import { createPortal } from 'inferno';
+import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget) {
   return (
     <div>
@@ -38,7 +36,7 @@ const Portal = ({
   children,
 }: PortalProps): React.ReactPortal | null => {
   if (container) {
-    return createPortal({ container, children });
+    return createPortal(children, container);
   }
   return null;
 };

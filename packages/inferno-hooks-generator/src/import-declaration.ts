@@ -9,12 +9,12 @@ export class ImportDeclaration extends BaseImportDeclaration {
       inferno.push('Fragment');
     }
 
-    if (inferno.length) {
-      result.push(`import {${inferno}} from "inferno"`);
+    if (this.has('Portal')) {
+      inferno.push('createPortal');
     }
 
-    if (this.has('Portal')) {
-      common.push('Portal as createPortal');
+    if (inferno.length) {
+      result.push(`import {${inferno}} from "inferno"`);
     }
 
     if (this.has('RefObject') || this.has('Ref') || this.has('ForwardRef')) {

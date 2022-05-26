@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import {
-  Component, SFC, ForwardRef as infernoForwardRef,
+  Component, SFC, ForwardRef as infernoForwardRefType, forwardRef as infernoForwardRef,
 } from 'inferno';
 import { equal } from './shallow-equal';
 import { EffectsHost } from './effects_host';
@@ -16,8 +16,8 @@ export interface RefObject<T> {
 
 export function forwardRef<T = Record<string, unknown>, P = Record<string, unknown>>(
   render: (props: T, ref: RefObject<P>) => InfernoElement<T>,
-): SFC<T> & infernoForwardRef {
-  return forwardRef(render);
+): SFC<{}> & infernoForwardRefType {
+  return infernoForwardRef(render);
 }
 
 let currentComponent: {
@@ -146,12 +146,6 @@ export class HookContainer extends Component
       this.recorder.componentDidMount();
     }
     EffectsHost.decrement();
-  }
-
-  UNSAFE_componentWillReceiveProps({ renderFn }: { renderFn: () => JSX.Element }): void {
-    if (renderFn !== this.props.renderFn) {
-      this.dispose();
-    }
   }
 
   shouldComponentUpdate(
