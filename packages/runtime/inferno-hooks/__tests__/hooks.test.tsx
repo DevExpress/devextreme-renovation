@@ -11,7 +11,15 @@
 import * as util from 'inferno-test-utils';
 import React from 'react';
 import {
-  useState, useEffect, useMemo, HookContainer, useContext, useImperativeHandle, useRef, forwardRef,
+  useState,
+  useEffect,
+  useMemo,
+  HookContainer,
+  useContext,
+  useImperativeHandle,
+  useRef,
+  forwardRef,
+  useCallback,
 } from '../hooks';
 import { createContext } from '../create_context';
 
@@ -199,6 +207,26 @@ test('useMemo is only called when its watch list changes', () => {
   expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 2"');
 
   expect(fx).toHaveBeenCalledTimes(2);
+});
+
+test('useCallback works', () => {
+  const Child = (props: { callback: ()=>number }) => <div>{props.callback()}</div>;
+  const Parent = () => {
+    const [count, setState] = useState(0);
+    const returnState = useCallback(() => count, []);
+    return (
+      <h1 onClick={() => setState(count + 1)}>
+        <Child callback={returnState} />
+      </h1>
+    );
+  };
+
+  const rendered = util.renderIntoContainer(<HookContainer renderFn={Parent} />);
+  const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
+  const [div] = util.scryRenderedDOMElementsWithTag(rendered, 'div');
+  expect(div.innerHTML).toEqual('0');
+  emit('onClick', h1);
+  expect(div.innerHTML).toEqual('0');
 });
 
 test('context from props', () => {
