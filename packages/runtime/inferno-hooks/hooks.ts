@@ -16,8 +16,8 @@ export interface RefObject<T> {
 
 export function forwardRef<T = Record<string, unknown>, P = Record<string, unknown>>(
   render: (props: T, ref: RefObject<P>) => InfernoElement<T>,
-): SFC<{}> & infernoForwardRefType {
-  return infernoForwardRef(render);
+): SFC<T> & infernoForwardRefType {
+  return infernoForwardRef(render) as SFC<T> & infernoForwardRefType;
 }
 
 let currentComponent: {
@@ -288,8 +288,10 @@ export function useCallback
 }
 
 export function useImperativeHandle(ref: any, init: () => any, dependencies?: any): any {
-  return currentComponent.getHook(dependencies, (hook: { isNew: boolean; value: any }) => {
-    if (hook.isNew && ref) {
+  return currentComponent.getHook(dependencies, (hook: Partial<Hook>) => {
+    if ((hook.isNew
+       || !equal(hook.dependencies, dependencies)
+        || hook.dependencies === undefined) && ref) {
       ref.current = init();
     }
   });
