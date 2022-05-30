@@ -1,5 +1,4 @@
-import { createPortal } from 'inferno';
-import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
+import { Portal, MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget) {
   return (
     <div>
@@ -26,20 +25,6 @@ import {
   useEffect,
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
-
-type PortalProps = {
-  container?: HTMLElement | null;
-  children: React.ReactNode;
-};
-const Portal = ({
-  container,
-  children,
-}: PortalProps): React.ReactPortal | null => {
-  if (container) {
-    return createPortal(children, container);
-  }
-  return null;
-};
 
 type RestProps = {
   className?: string;

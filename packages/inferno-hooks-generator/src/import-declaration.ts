@@ -10,7 +10,7 @@ export class ImportDeclaration extends BaseImportDeclaration {
     }
 
     if (this.has('Portal')) {
-      inferno.push('createPortal');
+      common.push('Portal');
     }
 
     if (inferno.length) {

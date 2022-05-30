@@ -213,8 +213,8 @@ export interface Hook {
   newDeps?: number | unknown[],
 }
 
-type SetStateAction<S> = S | ((prevState: S) => S);
-type Dispatch<A> = (value: A) => void;
+export type SetStateAction<S> = S | ((prevState: S) => S);
+export type Dispatch<A> = (value: A) => void;
 
 export function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>] {
   return currentComponent.getHook(
@@ -293,6 +293,7 @@ export function useImperativeHandle(ref: any, init: () => any, dependencies?: an
        || !equal(hook.dependencies, dependencies)
         || hook.dependencies === undefined) && ref) {
       ref.current = init();
+      hook.dependencies = dependencies;
     }
   });
 }

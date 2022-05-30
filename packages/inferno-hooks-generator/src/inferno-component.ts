@@ -81,7 +81,6 @@ export class InfernoComponent extends ReactComponent {
     const getTemplateFunc = this.compileTemplateGetter();
     return `
               ${this.compileImports()}
-              ${this.compilePortalComponent()}
               ${this.compileNestedComponents()}
               ${this.compileComponentRef()}
               ${this.compileRestProps()}
