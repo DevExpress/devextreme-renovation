@@ -61,15 +61,10 @@ function createRecorder(component: HookContainer) {
     if (!hook) {
       hook = {
         id,
-        isNew: true,
-        dependencies,
       };
       hookInstances[id] = hook;
-    } else {
-      hook.isNew = false;
-      hook.newDeps = dependencies;
     }
-
+    hook.isNew = !hook;
     return hook;
   }
 
@@ -255,13 +250,15 @@ export function useEffect(fn: () => any, dependencies?: unknown[]) {
           addEffectHook(() => {
             if (hook.isNew) {
               hook.dispose = hook.effect?.();
-              hook.isNew = false;
-            } else if (!equal(hook.dependencies, hook.newDeps) || hook.dependencies === undefined) {
+              hook.dependencies = dependencies;
+            } else if (hook.dependencies === undefined || !equal(hook.dependencies, hook.newDeps)) {
               hook.dispose?.();
               hook.dispose = hook.effect?.();
               hook.dependencies = hook.newDeps;
             }
           });
+        } else {
+          hook.newDeps = dependencies;
         }
       }
     },
