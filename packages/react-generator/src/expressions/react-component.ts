@@ -44,7 +44,7 @@ import { PropertyAccess } from './property-access';
 import { ComponentInput, getTemplatePropName } from './react-component-input';
 import { compileGettersCompatibleExtend } from './common';
 
-export function getSubscriptions(methods: Method[]) {
+function getSubscriptions(methods: Method[]) {
   return methods
     .map((m) => {
       const [event, parameters] = m.decorators.find(

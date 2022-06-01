@@ -183,16 +183,21 @@ describe('Hooks', () => {
     });
   });
 
-  describe('useMemo, useContext', () => {
-    test('useMemo is only called when its watch list changes', () => {
+  describe('useMemo, useCallback', () => {
+    test('useMemo is not called with empty dependency array', () => {
       const fx = jest.fn((count) => `Count is ${count}`);
 
       let updCounter: Dispatch<SetStateAction<number>> = () => {};
+
       const Hello = () => {
         const [count, setCounter] = useState(0);
         updCounter = setCounter;
-        const name = useMemo(() => fx(count), [Math.floor(count / 2)]);
-        return <h1>{name}</h1>;
+        const expensiveCalc = useMemo(() => fx(count), []);
+        return (
+          <div>
+            <h1>{expensiveCalc}</h1>
+          </div>
+        );
       };
 
       const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
@@ -204,9 +209,40 @@ describe('Hooks', () => {
 
       expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 0"');
 
+      expect(fx).toHaveBeenCalledTimes(1);
+    });
+    test('useMemo callback is only called when its watch list changes', () => {
+      const fx = jest.fn((count) => `Count is ${count}`);
+
+      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      let updBoolean: Dispatch<SetStateAction<boolean>> = () => {};
+
+      const Hello = () => {
+        const [count, setCounter] = useState(0);
+        const [bool, setBool] = useState(false);
+        updCounter = setCounter;
+        updBoolean = setBool;
+        const expensiveCalc = useMemo(() => fx(count), [count]);
+        return (
+          <div>
+            <h1>{expensiveCalc}</h1>
+            {bool}
+          </div>
+        );
+      };
+
+      const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
+      const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
+
+      expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 0"');
+
+      updBoolean(true);
+
+      expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 0"');
+
       updCounter((count) => count + 1);
 
-      expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 2"');
+      expect(h1.innerHTML).toMatchInlineSnapshot('"Count is 1"');
 
       expect(fx).toHaveBeenCalledTimes(2);
     });
@@ -257,65 +293,125 @@ describe('Hooks', () => {
       const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
       expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
     });
+
+    test('useContext changed in children through callback', () => {
+      interface NumberContextType {
+        counter: number,
+        increaseCounter: ()=>void;
+      }
+      const NumberContext = createContext<NumberContextType | undefined>(undefined);
+
+      let incContext = () => {};
+      const Child = () => {
+        const numberContextConsumer = useContext(NumberContext);
+        const increaseContext = useCallback(
+          () => {
+            numberContextConsumer.increaseCounter();
+          },
+          [numberContextConsumer],
+        );
+        incContext = increaseContext;
+
+        const counter = useMemo(
+          () => numberContextConsumer?.counter || 0,
+          [numberContextConsumer],
+        );
+        return <div>{counter}</div>;
+      };
+      const Parent = () => {
+        const [numState, setNumState] = useState<number>(0);
+        const numberContextProvider = useCallback(
+          () => ({
+            counter: numState,
+            increaseCounter: () => {
+              setNumState((__state_numState) => __state_numState + 1);
+            },
+          }),
+          [numState],
+        );
+        return (
+          <NumberContext.Provider value={numberContextProvider()}>
+            <HookContainer renderFn={Child} />
+          </NumberContext.Provider>
+        );
+      };
+      const rendered = util.renderIntoContainer(<HookContainer renderFn={Parent} />);
+      const [div] = util.scryRenderedDOMElementsWithTag(rendered, 'div');
+      expect(div.innerHTML).toEqual('0');
+      incContext();
+      expect(div.innerHTML).toEqual('1');
+    });
+  });
+
+  describe('useImperativeHandle', () => {
+    test('useRef with method call (useImperativeHandle)', () => {
+      const mockFunc = jest.fn();
+
+      const ChildrenComponent = (props: any, ref: any) => {
+        const someMethod = () => { mockFunc(); };
+        useImperativeHandle(ref,
+          () => ({
+            someMethod,
+          }), []);
+        return <div />;
+      };
+      function ChildrenComponentHook(props: any, ref: any) {
+        return (
+          <HookContainer
+            renderFn={ChildrenComponent}
+            renderProps={props}
+            renderRef={ref}
+          />
+        );
+      }
+      const ChildrenFR = forwardRef(ChildrenComponentHook);
+
+      const parentComponent = () => {
+        const childRef = useRef(null);
+        return (
+          <div>
+            <button type="button" onClick={() => { childRef.current.someMethod(); }}>11</button>
+            <ChildrenFR ref={childRef} />
+          </div>
+        );
+      };
+      const rendered = util.renderIntoContainer(<HookContainer renderFn={parentComponent} />);
+      const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+
+      emit('onClick', button);
+      expect(mockFunc).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
-test('ensures that props is not empty', async () => {
-  // eslint-disable-next-line react/require-default-props
-  const Hello = ({ name }: { name?: string }) => (
-    <h1>
-      Hey.
-      {name || 'You are awesome.'}
-    </h1>
-  );
-
-  const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
-  const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
-  expect(h1.innerHTML).toMatchInlineSnapshot('"Hey.You are awesome."');
-});
-
-test('useRef with method call (useImperativeHandle)', () => {
-  const mockFunc = jest.fn();
-
-  const childrenComponent = (props: any, ref: any) => {
-    const someMethod = () => { mockFunc(); };
-    useImperativeHandle(ref,
-      () => ({
-        someMethod,
-      }), []);
-    return <div />;
-  };
-  function ChildrenComponentHook(props: any, ref: any) {
-    return (
-      <HookContainer
-        renderFn={childrenComponent}
-        renderProps={props}
-        renderRef={ref}
-      />
+describe('render', () => {
+  test('ensures that props is not empty', async () => {
+    // eslint-disable-next-line react/require-default-props
+    const Hello = ({ name }: { name?: string }) => (
+      <h1>
+        Hey.
+        {name || 'You are awesome.'}
+      </h1>
     );
-  }
-  const ChildrenFR = forwardRef(ChildrenComponentHook);
 
-  const parentComponent = () => {
-    const childRef = useRef(null);
-    return (
-      <div>
-        <button type="button" onClick={() => { childRef.current.someMethod(); }}>11</button>
-        <ChildrenFR ref={childRef} />
-      </div>
-    );
-  };
-  const rendered = util.renderIntoContainer(<HookContainer renderFn={parentComponent} />);
-  const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+    const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
+    const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
+    expect(h1.innerHTML).toMatchInlineSnapshot('"Hey.You are awesome."');
+  });
 
-  emit('onClick', button);
-  expect(mockFunc).toHaveBeenCalledTimes(1);
-});
+  test('renderFn without hooks work', () => {
+    let updCounter: Dispatch<SetStateAction<number>> = () => {};
 
-test('renderFn without hooks work', () => {
-  const Child = (props: { prop1: number }) => <div>{props.prop1}</div>;
-  const Parent = () => {
-    const [counter, setCounter] = useState(0);
-    return <HookContainer renderFn={Child} renderProps={{ prop1: counter }} />;
-  };
+    const Child = (props: { prop1: number }) => <div>{props.prop1}</div>;
+    const Parent = () => {
+      const [counter, setCounter] = useState(0);
+      updCounter = setCounter;
+      return <HookContainer renderFn={Child} renderProps={{ prop1: counter }} />;
+    };
+    const rendered = util.renderIntoContainer(<HookContainer renderFn={Parent} />);
+    const [div] = util.scryRenderedDOMElementsWithTag(rendered, 'div');
+    expect(div.innerHTML).toEqual('0');
+    updCounter((count) => count + 1);
+    expect(div.innerHTML).toEqual('1');
+  });
 });
