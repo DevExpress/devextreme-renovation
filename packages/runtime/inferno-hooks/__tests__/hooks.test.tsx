@@ -247,7 +247,7 @@ describe('Hooks', () => {
       expect(fx).toHaveBeenCalledTimes(2);
     });
 
-    test('useCallback works', () => {
+    test('useCallback works with empty dep array', () => {
       const Child = (props: { callback: ()=>number }) => <div>{props.callback()}</div>;
       let updCounter: Dispatch<SetStateAction<number>> = () => {};
       const Parent = () => {
@@ -266,13 +266,51 @@ describe('Hooks', () => {
       updCounter((count) => count + 1);
       expect(div.innerHTML).toEqual('0');
     });
+
+    test('useCallback with deps', () => {
+      const mockFn = jest.fn();
+      const recalcTimes = jest.fn();
+      const Child = (props: { onButtonClick: ()=>void }) => (
+        <button
+          type="button"
+          onClick={props.onButtonClick}
+        >
+          <div />
+        </button>
+      );
+      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      let updBool: Dispatch<SetStateAction<boolean>> = () => {};
+      let currentCallback = () => {};
+      const Parent = () => {
+        const [count, setCounter] = useState(0);
+        const [bool, setBool] = useState(false);
+        updCounter = setCounter;
+        updBool = setBool;
+        const onButtonClick = useCallback(() => {}, [count]);
+        currentCallback = onButtonClick;
+        return (
+          <div>
+            {bool && count}
+            <Child onButtonClick={onButtonClick} />
+          </div>
+        );
+      };
+
+      util.renderIntoContainer(<HookContainer renderFn={Parent} />);
+
+      const firstCallback = currentCallback;
+      updBool(true);
+      expect(firstCallback).toBe(currentCallback);
+      updCounter(1);
+      expect(firstCallback).not.toBe(currentCallback);
+    });
   });
 
   describe('useContext', () => {
+    interface ConfigContextValue {
+      rtlEnabled?: boolean;
+    }
     test('context from props', () => {
-      interface ConfigContextValue {
-        rtlEnabled?: boolean;
-      }
       const ConfigContext = createContext<ConfigContextValue | undefined>(
         undefined,
       );
@@ -289,6 +327,28 @@ describe('Hooks', () => {
       );
       const rendered = util.renderIntoContainer(
         <HookContainer renderFn={contextProvider} renderProps={{ rtlEnabled: true }} />,
+      );
+      const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
+      expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
+    });
+
+    test('context from default value', () => {
+      const ConfigContext = createContext<ConfigContextValue | undefined>(
+        { rtlEnabled: true },
+      );
+      const ContextChildren = () => {
+        const config = useContext(ConfigContext);
+        return (<span id="context">{config?.rtlEnabled && 'rtlEnabled'}</span>);
+      };
+      const ContextProvider = () => (
+        <div>
+          <ConfigContext.Provider>
+            <HookContainer renderFn={ContextChildren} />
+          </ConfigContext.Provider>
+        </div>
+      );
+      const rendered = util.renderIntoContainer(
+        <HookContainer renderFn={ContextProvider} />,
       );
       const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
       expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
