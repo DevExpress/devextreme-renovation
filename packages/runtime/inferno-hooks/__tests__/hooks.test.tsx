@@ -85,6 +85,20 @@ describe('Hooks', () => {
 
       expect(h1.innerHTML).toMatchInlineSnapshot('"Hi George Catt 43"');
     });
+
+    test('renders using state initialized as function', async () => {
+      const Hello = () => {
+        const [count] = useState(() => 42);
+        return (
+          <h1>
+            {count}
+          </h1>
+        );
+      };
+      const rendered = util.renderIntoContainer(<HookContainer renderFn={Hello} />);
+      const [h1] = util.scryRenderedDOMElementsWithTag(rendered, 'h1');
+      expect(h1.innerHTML).toEqual('42');
+    });
   });
 
   describe('useEffect', () => {
@@ -404,14 +418,17 @@ describe('Hooks', () => {
   });
 
   describe('useImperativeHandle', () => {
-    test('useRef with method call (useImperativeHandle)', () => {
+    test('useRef with method call (useImperativeHandle with empty dep arr)', () => {
       const mockFunc = jest.fn();
+      let updCount: Dispatch<SetStateAction<number>> = () => {};
 
       const ChildrenComponent = (props: any, ref: any) => {
-        const someMethod = () => { mockFunc(); };
+        const [counter, setCounter] = useState(0);
+        updCount = setCounter;
+        const someMethod = (count:number) => () => { mockFunc(count); };
         useImperativeHandle(ref,
           () => ({
-            someMethod,
+            someMethod: someMethod(counter),
           }), []);
         return <div />;
       };
@@ -440,6 +457,76 @@ describe('Hooks', () => {
 
       emit('onClick', button);
       expect(mockFunc).toHaveBeenCalledTimes(1);
+      expect(mockFunc.mock.calls[0][0]).toEqual(0);
+      updCount(1);
+      emit('onClick', button);
+      expect(mockFunc.mock.calls[0][0]).toBe(mockFunc.mock.calls[1][0]);
+    });
+
+    test('useRef with method call (useImperativeHandle with dependencies)', () => {
+      const mockFunc = jest.fn();
+      let updCount: Dispatch<SetStateAction<number>> = () => {};
+      const ChildrenComponent = (_props: any, ref: any) => {
+        const [counter, setCounter] = useState(0);
+        updCount = setCounter;
+        const someMethod = (count: number) => () => { mockFunc(count); };
+        useImperativeHandle(ref,
+          () => ({
+            someMethod: someMethod(counter),
+          }), [counter]);
+        return <div />;
+      };
+      function ChildrenComponentHook(props: any, ref: any) {
+        return (
+          <HookContainer
+            renderFn={ChildrenComponent}
+            renderProps={props}
+            renderRef={ref}
+          />
+        );
+      }
+      const ChildrenFR = forwardRef(ChildrenComponentHook);
+
+      const parentComponent = () => {
+        const childRef = useRef(null);
+        return (
+          <div>
+            <button type="button" onClick={() => { childRef.current.someMethod(); }}>11</button>
+            <ChildrenFR ref={childRef} />
+          </div>
+        );
+      };
+      const rendered = util.renderIntoContainer(<HookContainer renderFn={parentComponent} />);
+      const [button] = util.scryRenderedDOMElementsWithTag(rendered, 'button');
+
+      emit('onClick', button);
+      expect(mockFunc.mock.calls[0][0]).toEqual(0);
+      updCount(1);
+      emit('onClick', button);
+      expect(mockFunc.mock.calls[1][0]).toEqual(1);
+    });
+  });
+
+  describe('useRef', () => {
+    test('ref doesn\'t change when state changes', () => {
+      let updCount: Dispatch<SetStateAction<number>> = () => {};
+      let currentRef;
+      const Hello = () => {
+        const [count, setCount] = useState(0);
+        updCount = setCount;
+        const divRef = useRef(null);
+        currentRef = divRef;
+        return (
+          <h1>
+            <div ref={divRef}>{count}</div>
+          </h1>
+        );
+      };
+
+      util.renderIntoContainer(<HookContainer renderFn={Hello} />);
+      const firstRef = currentRef;
+      updCount(1);
+      expect(firstRef).toBe(currentRef);
     });
   });
 });
@@ -473,5 +560,15 @@ describe('render', () => {
     expect(div.innerHTML).toEqual('0');
     updCounter((count) => count + 1);
     expect(div.innerHTML).toEqual('1');
+  });
+
+  test('call dispose without hooks', () => {
+    const Child = (props: { prop1: number }) => <div>{props.prop1}</div>;
+    const currentComponent = new HookContainer({ renderFn: Child });
+
+    currentComponent.state = { a: 1 };
+    currentComponent.dispose();
+
+    expect(currentComponent.state).toEqual({});
   });
 });

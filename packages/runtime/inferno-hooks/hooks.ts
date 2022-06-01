@@ -247,22 +247,20 @@ export function useEffect(fn: () => any, dependencies?: unknown[]) {
   return currentComponent.getHook(
     dependencies,
     (hook: Hook, addEffectHook) => {
-      if (hook) {
-        hook.effect = fn;
-        if (hook.isNew) {
-          addEffectHook(() => {
-            if (hook.isNew) {
-              hook.dispose = hook.effect?.();
-              hook.dependencies = dependencies;
-            } else if (hook.dependencies === undefined || !equal(hook.dependencies, hook.newDeps)) {
-              hook.dispose?.();
-              hook.dispose = hook.effect?.();
-              hook.dependencies = hook.newDeps;
-            }
-          });
-        } else {
-          hook.newDeps = dependencies;
-        }
+      hook.effect = fn;
+      if (hook.isNew) {
+        addEffectHook(() => {
+          if (hook.isNew) {
+            hook.dispose = hook.effect?.();
+            hook.dependencies = dependencies;
+          } else if (hook.dependencies === undefined || !equal(hook.dependencies, hook.newDeps)) {
+            hook.dispose?.();
+            hook.dispose = hook.effect?.();
+            hook.dependencies = hook.newDeps;
+          }
+        });
+      } else {
+        hook.newDeps = dependencies;
       }
     },
   );
