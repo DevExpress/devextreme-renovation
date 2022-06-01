@@ -53,7 +53,7 @@ function createRecorder(component: HookContainer) {
 
   component.state = {};
 
-  function nextHook(dependencies: number | unknown[] | undefined) {
+  function nextHook() {
     const id = nextId;
     nextId += 1;
     let hook = hookInstances[id];
@@ -63,8 +63,11 @@ function createRecorder(component: HookContainer) {
         id,
       };
       hookInstances[id] = hook;
+      hook.isNew = true;
+    } else {
+      hook.isNew = false;
     }
-    hook.isNew = !hook;
+
     return hook;
   }
 
@@ -77,9 +80,9 @@ function createRecorder(component: HookContainer) {
   const recorder = {
     renderResult: undefined,
 
-    getHook(dependencies: number | unknown[] | undefined,
+    getHook(_dependencies: number | unknown[] | undefined,
       fn: (hook: Partial<Hook>, addEffectHook: (effect: ()=>void)=>void) => void) {
-      const hook = nextHook(dependencies);
+      const hook = nextHook();
       const value = hook.value;
       fn(hook, addEffectHook);
       shouldUpdate = shouldUpdate || !equal(hook.value, value);
