@@ -368,7 +368,7 @@ describe('Hooks', () => {
       expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
     });
 
-    test('useContext changed in children through callback', () => {
+    test('context changed in children through callback', () => {
       interface NumberContextType {
         counter: number,
         increaseCounter: ()=>void;
@@ -414,6 +414,21 @@ describe('Hooks', () => {
       expect(div.innerHTML).toEqual('0');
       incContext();
       expect(div.innerHTML).toEqual('1');
+    });
+
+    test('context consumer without provider return default value', () => {
+      const ConfigContext = createContext<ConfigContextValue | undefined>(
+        { rtlEnabled: true },
+      );
+      const contextChildren = () => {
+        const config = useContext(ConfigContext);
+        return (<span id="context">{config?.rtlEnabled && 'rtlEnabled'}</span>);
+      };
+      const rendered = util.renderIntoContainer(
+        <HookContainer renderFn={contextChildren} />,
+      );
+      const [contextChildrenValue] = util.scryRenderedDOMElementsWithTag(rendered, 'span');
+      expect(contextChildrenValue.innerHTML).toBe('rtlEnabled');
     });
   });
 
