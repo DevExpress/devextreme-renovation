@@ -29,6 +29,16 @@ gulp.task("compile-inferno-check", function compile() {
     .pipe(tsProject());
 });
 
+gulp.task("compile-inferno-hooks-check", function compile() {
+  const tsProject = ts.createProject(
+    "./unit-tests/test-cases/expected/inferno-hooks/tsconfig.json",
+    ts.reporter.fullReporter
+  );
+  return gulp
+    .src("unit-tests/test-cases/expected/inferno-hooks/**/*.tsx")
+    .pipe(tsProject());
+});
+
 gulp.task("compile-angular-check", function compile() {
   const tsProject = ts.createProject(
     "./unit-tests/test-cases/tsconfig.json",
@@ -45,6 +55,7 @@ gulp.task(
     "compile-declaration-check",
     "compile-react-check",
     "compile-angular-check",
-    "compile-inferno-check"
+    "compile-inferno-check",
+    "compile-inferno-hooks-check"
   )
 );

@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 function view(viewModel: Widget) {
   return (
     <div ref={viewModel.divRef}>
@@ -18,7 +18,7 @@ const WidgetProps: WidgetPropsType = {} as any as WidgetPropsType;
 import {
   useCallback,
   useRef,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -45,7 +45,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+function ReactWidget(props: typeof WidgetProps & RestProps) {
   const __divRef: MutableRefObject<HTMLDivElement | null> =
     useRef<HTMLDivElement>(null);
   const __ref: MutableRefObject<HTMLDivElement | null> =
@@ -138,9 +138,10 @@ export function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetProps;
+HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

@@ -1,11 +1,12 @@
+import { Fragment } from 'inferno';
 import InnerWidget from './dx-inner-widget';
 function view({ attributes, props, restAttributes }: Widget) {
   return (
-    <React.Fragment>
+    <Fragment>
       <InnerWidget {...(props as any)} {...restAttributes} />
 
       <div {...(attributes as any)} />
-    </React.Fragment>
+    </Fragment>
   );
 }
 
@@ -21,7 +22,7 @@ export const WidgetInput: WidgetInputType = {
 import {
   useState,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -38,7 +39,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+function ReactWidget(props: typeof WidgetInput & RestProps) {
   const [__state_value, __state_setValue] = useState<boolean | undefined>(() =>
     props.value !== undefined ? props.value : props.defaultValue
   );
@@ -74,9 +75,10 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetInput;
+HooksWidget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

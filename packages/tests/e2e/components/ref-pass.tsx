@@ -17,11 +17,11 @@ function view({ contentRef }: RefPass) {
 }
 
 @ComponentBindings()
-class Props {}
+class Props { }
 
 @Component({
   view,
-  jQuery: {register: true},
+  jQuery: { register: true },
 })
 export default class RefPass extends JSXComponent(Props) {
   @Ref() contentRef!: RefObject<HTMLDivElement>;

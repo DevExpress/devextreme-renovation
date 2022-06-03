@@ -4,20 +4,6 @@ const path = require("path");
 const { getEntries, getPages } = require("../../helpers/pages");
 
 const infernoPath = path.resolve(__dirname, "./app/src");
-const infernoPages = ["inferno-hooks", "inferno-class"].map(
-  (page) =>
-    new HtmlWebpackPlugin({
-      filename: `${page}.html`,
-      chunks: [page],
-      template: `${infernoPath}/index.html`,
-    }));
-const infernoEntries =
-  ["inferno-hooks", "inferno-class"].reduce((entries, page) => {
-    return {
-      ...entries,
-      [page]: `${infernoPath}/${page}.js`,
-    };
-  }, {});
 
 const babelOptions = {
   "presets": [
@@ -42,7 +28,7 @@ const babelOptions = {
 
 module.exports = {
   mode: "development",
-  entry: {...getEntries((infernoPath), "js"), ...infernoEntries},
+  entry: {...getEntries((infernoPath), "js")},
   module: {
     rules: [
       {
@@ -55,7 +41,7 @@ module.exports = {
           {
             loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
-              platform: "inferno",
+              platform: "inferno-hooks",
               tsConfig: path.resolve(__dirname, "./tsconfig.json"),
               defaultOptionsModule:
                 path.resolve(__dirname, "../../../jquery-helpers/default_options"),
@@ -86,7 +72,7 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: { "@devextreme/runtime/inferno": "@devextreme/runtime/dist/inferno" },
+    alias: { "@devextreme/runtime/inferno-hooks": "@devextreme/runtime/dist/inferno-hooks" },
     extensions: [".js", ".tsx", ".ts"],
   },
   output: {
@@ -97,8 +83,7 @@ module.exports = {
   },
 
   plugins: [
-    ...getPages(path.resolve(__dirname, "./app/src"))
-    .concat(infernoPages),
+    ...getPages(path.resolve(__dirname, "./app/src")),
     new webpack.HotModuleReplacementPlugin(),
   ],
 };

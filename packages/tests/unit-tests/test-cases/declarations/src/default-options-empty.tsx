@@ -9,7 +9,7 @@ function view() {
 }
 
 @ComponentBindings()
-export class WidgetProps {}
+export class WidgetProps { }
 @Component({
   view: view,
   defaultOptionRules: [
@@ -19,4 +19,4 @@ export class WidgetProps {}
     },
   ],
 })
-export default class Widget extends JSXComponent(WidgetProps) {}
+export default class Widget extends JSXComponent(WidgetProps) { }

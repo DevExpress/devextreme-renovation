@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 import BaseWidget from './method';
 function view(viewModel: WidgetWithApiRef) {
   return (
@@ -18,9 +18,10 @@ import {
   useCallback,
   useRef,
   useImperativeHandle,
-  HookComponent,
+  HookContainer,
+  forwardRef,
+  RefObject,
 } from '@devextreme/runtime/inferno-hooks';
-import { forwardRef } from 'inferno';
 
 export type WidgetWithApiRefRef = { getSomething: () => string };
 type RestProps = {
@@ -35,61 +36,53 @@ interface WidgetWithApiRef {
   restAttributes: RestProps;
 }
 
-const WidgetWithApiRef = (ref: any) =>
-  function widgetWithApiRef(props: typeof WidgetWithApiRefInput & RestProps) {
-    const __baseRef: MutableRefObject<BaseWidgetRef | null> =
-      useRef<BaseWidgetRef>(null);
+const ReactWidgetWithApiRef = (
+  props: typeof WidgetWithApiRefInput & RestProps,
+  ref: RefObject<WidgetWithApiRefRef>
+) => {
+  const __baseRef: MutableRefObject<BaseWidgetRef | null> =
+    useRef<BaseWidgetRef>(null);
 
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const { prop1, ...restProps } = props;
-        return restProps;
-      },
-      [props]
-    );
-    const __getSomething = useCallback(
-      function __getSomething(): string {
-        return `${props.prop1} + ${__baseRef?.current?.getHeight(
-          1,
-          undefined
-        )}`;
-      },
-      [props.prop1]
-    );
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const { prop1, ...restProps } = props;
+      return restProps;
+    },
+    [props]
+  );
+  const __getSomething = useCallback(
+    function __getSomething(): string {
+      return `${props.prop1} + ${__baseRef?.current?.getHeight(1, undefined)}`;
+    },
+    [props.prop1]
+  );
 
-    useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [
-      __getSomething,
-    ]);
-    return view({
-      props: { ...props },
-      baseRef: __baseRef,
-      restAttributes: __restAttributes(),
-    });
-  } as React.FC<
-    typeof WidgetWithApiRefInput &
-      RestProps & { ref?: React.Ref<WidgetWithApiRefRef> }
-  > & { defaultProps: typeof WidgetWithApiRefInput };
-
-WidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
-
-let refs = new WeakMap();
-const WidgetWithApiRefFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, WidgetWithApiRef(ref));
-  }
-  return refs.get(ref);
+  useImperativeHandle(ref, () => ({ getSomething: __getSomething }), [
+    __getSomething,
+  ]);
+  return view({
+    props: { ...props },
+    baseRef: __baseRef,
+    restAttributes: __restAttributes(),
+  });
 };
+
+HooksWidgetWithApiRef.defaultProps = WidgetWithApiRefInput;
 
 function HooksWidgetWithApiRef(
   props: typeof WidgetWithApiRefInput & RestProps,
-  ref: any
+  ref: RefObject<WidgetWithApiRefRef>
 ) {
   return (
-    <HookComponent renderFn={WidgetWithApiRefFn(ref)} renderProps={props} />
+    <HookContainer
+      renderFn={ReactWidgetWithApiRef}
+      renderProps={props}
+      renderRef={ref}
+    />
   );
 }
-const HooksWidgetWithApiRefFR = forwardRef(HooksWidgetWithApiRef);
+const WidgetWithApiRef = forwardRef(HooksWidgetWithApiRef);
 
-export { HooksWidgetWithApiRefFR };
+export { WidgetWithApiRef };
 
-export default HooksWidgetWithApiRefFR;
+export default WidgetWithApiRef;

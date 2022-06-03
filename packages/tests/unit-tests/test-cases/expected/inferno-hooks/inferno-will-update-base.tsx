@@ -1,3 +1,4 @@
+
 export type SomePropsType = {};
 const SomeProps: SomePropsType = {};
 function view() {
@@ -7,7 +8,7 @@ function view() {
 import {
   useState,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -23,9 +24,7 @@ interface InheritedFromBaseComponent {
   restAttributes: RestProps;
 }
 
-export function InheritedFromBaseComponent(
-  props: typeof SomeProps & RestProps
-) {
+function ReactInheritedFromBaseComponent(props: typeof SomeProps & RestProps) {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
 
   const __updateState = useCallback(
@@ -45,14 +44,15 @@ export function InheritedFromBaseComponent(
   return view();
 }
 
-InheritedFromBaseComponent.defaultProps = SomeProps;
+HooksInheritedFromBaseComponent.defaultProps = SomeProps;
 
 function HooksInheritedFromBaseComponent(props: typeof SomeProps & RestProps) {
   return (
-    <HookComponent
-      renderFn={InheritedFromBaseComponent}
+    <HookContainer
+      renderFn={ReactInheritedFromBaseComponent}
       renderProps={props}
-    ></HookComponent>
+    />
   );
 }
+export { HooksInheritedFromBaseComponent as InheritedFromBaseComponent };
 export default HooksInheritedFromBaseComponent;

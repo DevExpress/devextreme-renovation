@@ -53,20 +53,21 @@ import UndefPropParent from "./undefined-prop-parent";
 import CachedGetterWithTwoWay from './getter-cached-with-two-way';
 import DefaultTemplateValueWithMap from './default-template/default-template-map';
 import RestAttributesWidget from './rest-attributes/button';
+
 function view(model: App) {
   return (
     <div>
       <SimpleComponent width={25} height={25}></SimpleComponent>
       <PickPropsComponent />
       <ButtonComponent id="button-1" onClick={model.onButtonClick}>
-      DefaultSlot
+        DefaultSlot
       </ButtonComponent>
       <div id="button-1-click-counter">{model.clickCount}</div>
       <div>
         <ButtonComponent />
       </div>
       <ButtonComponent id="empty-button-conditianal-children">
-        {false&&<div>Not visible text</div>}
+        {false && <div>Not visible text</div>}
       </ButtonComponent>
       <ButtonWithState
         id="button-2"
@@ -167,21 +168,22 @@ function view(model: App) {
         <TemplateDefaultValueApp />
       </div>
       <RenderSlotCondition>content</RenderSlotCondition>
-      <DefaultPropsComponent/>
+      <DefaultPropsComponent />
       <InlineArrowFunction />
       <DynamicComponent />
       <StylesWidget />
       <RefParent />
       <GetterCache />
       <div>
-        <UndefPropParent  
-        oneWayProp={model.undefinedProps.oneWayProp} 
-        twoWayProp={model.undefinedProps.twoWayProp} />
+        <UndefPropParent
+          oneWayProp={model.undefinedProps.oneWayProp}
+          twoWayProp={model.undefinedProps.twoWayProp} />
         <ButtonComponent id="undefinedPropsButton" onClick={model.changeUndefProps}>Change Undef Props</ButtonComponent>
       </div>
       <CachedGetterWithTwoWay />
       <DefaultTemplateValueWithMap />
-      <RestAttributesWidget className="myclass" role="button" style={{width: 200, color: 'red'}}/>
+      <RestAttributesWidget className="myclass" role="button" style={{ width: 200, color: 'red' }} />
+
     </div>
   );
 }
@@ -202,11 +204,11 @@ setDefaultOptions({
 setLocale('ja');
 
 @ComponentBindings()
-class AppInput {}
+class AppInput { }
 
 @Component({
   view,
-  jQuery: {register: true},
+  jQuery: { register: true },
 })
 export default class App extends JSXComponent(AppInput) {
   @InternalState() clickCount: number = 0;
@@ -224,7 +226,7 @@ export default class App extends JSXComponent(AppInput) {
 
   @InternalState() synchronizedValue: boolean = false;
 
-  @InternalState() undefinedProps: {oneWayProp?: string, twoWayProp?: string} = {oneWayProp: undefined, twoWayProp: undefined};
+  @InternalState() undefinedProps: { oneWayProp?: string, twoWayProp?: string } = { oneWayProp: undefined, twoWayProp: undefined };
   onSynchronizeValueChange(newValue: boolean) {
     this.synchronizedValue = newValue;
   }
@@ -271,11 +273,11 @@ export default class App extends JSXComponent(AppInput) {
     return [1, 5, 10];
   }
 
-  changeUndefProps(){
-    if (this.undefinedProps.oneWayProp){
-      this.undefinedProps = {oneWayProp: undefined, twoWayProp: undefined}
-      
+  changeUndefProps() {
+    if (this.undefinedProps.oneWayProp) {
+      this.undefinedProps = { oneWayProp: undefined, twoWayProp: undefined }
+
     }
-    else this.undefinedProps = {oneWayProp: "changedOneWay", twoWayProp: "changedTwoWay"}
+    else this.undefinedProps = { oneWayProp: "changedOneWay", twoWayProp: "changedTwoWay" }
   }
 }

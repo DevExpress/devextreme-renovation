@@ -1,3 +1,4 @@
+
 export type WidgetPropsType = {
   someProp: string;
   type?: string;
@@ -21,9 +22,10 @@ import {
   useMemo,
   useEffect,
   useImperativeHandle,
-  HookComponent,
+  HookContainer,
+  forwardRef,
+  RefObject,
 } from '@devextreme/runtime/inferno-hooks';
-import { forwardRef } from 'inferno';
 
 export type WidgetRef = { g3: () => (string | undefined)[] };
 type RestProps = {
@@ -50,148 +52,145 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-const Widget = (ref: any) =>
-  function widget(props: typeof WidgetProps & RestProps) {
-    const [__state_pageIndex, __state_setPageIndex] = useState<number>(() =>
-      props.pageIndex !== undefined ? props.pageIndex : props.defaultPageIndex!
-    );
-    const [__state_someState, __state_setSomeState] = useState<number>(0);
+const ReactWidget = (
+  props: typeof WidgetProps & RestProps,
+  ref: RefObject<WidgetRef>
+) => {
+  const [__state_pageIndex, __state_setPageIndex] = useState<number>(() =>
+    props.pageIndex !== undefined ? props.pageIndex : props.defaultPageIndex!
+  );
+  const [__state_someState, __state_setSomeState] = useState<number>(0);
 
-    const __g1 = useCallback(
-      function __g1(): any {
-        return props.someProp;
-      },
-      [props.someProp]
-    );
-    const __g2 = useCallback(
-      function __g2(): any {
-        return props.type;
-      },
-      [props.type]
-    );
-    const __type = useCallback(
-      function __type(): any {
-        return props.type;
-      },
-      [props.type]
-    );
-    const __pageIndexChange = useCallback(
-      function __pageIndexChange(newPageIndex: number): void {
-        if (props.gridCompatibility) {
-          __state_setPageIndex((__state_pageIndex) => newPageIndex + 1),
-            props.pageIndexChange!(newPageIndex + 1);
-        } else {
-          __state_setPageIndex((__state_pageIndex) => newPageIndex),
-            props.pageIndexChange!(newPageIndex);
-        }
-      },
-      [props.gridCompatibility, props.pageIndexChange]
-    );
-    const __someMethod = useCallback(function __someMethod(): any {
-      return undefined;
-    }, []);
-    const __restAttributes = useCallback(
-      function __restAttributes(): RestProps {
-        const {
-          defaultPageIndex,
-          gridCompatibility,
-          pageIndex,
-          pageIndexChange,
-          someProp,
-          type,
-          ...restProps
-        } = {
-          ...props,
-          pageIndex:
-            props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
-        };
-        return restProps;
-      },
-      [props, __state_pageIndex]
-    );
-    const __g3 = useCallback(
-      function __g3(): (string | undefined)[] {
-        return [__g1(), __g2()];
-      },
-      [__g1, __g2]
-    );
-    const __g5 = useMemo(
-      function __g5(): (string | undefined)[] {
-        return [...__g3(), __g2()];
-      },
-      [__g3, __g2]
-    );
-    const __g4 = useMemo(
-      function __g4(): (string | undefined)[] {
-        return [...__g3(), __g1()];
-      },
-      [__g3, __g1]
-    );
-    const __g6 = useMemo(
-      function __g6(): (string | undefined)[] {
-        return [...__g5, ...__g4];
-      },
-      [__g5, __g4]
-    );
-    const __g7 = useCallback(
-      function __g7(): any {
-        return __g6;
-      },
-      [__g6]
-    );
-    function __factorial(n: number): number {
-      return n > 1 ? __factorial(n - 1) : 1;
-    }
-    function __recursive1(): void {
-      __state_setSomeState((__state_someState) => __recursive2());
-    }
-    function __recursive2(): number {
-      return requestAnimationFrame(__recursive1);
-    }
-    useEffect(() => {
-      return () => __g7();
-    }, [__g7]);
-    useImperativeHandle(ref, () => ({ g3: __g3 }), [__g3]);
-    return view({
-      props: {
+  const __g1 = useCallback(
+    function __g1(): any {
+      return props.someProp;
+    },
+    [props.someProp]
+  );
+  const __g2 = useCallback(
+    function __g2(): any {
+      return props.type;
+    },
+    [props.type]
+  );
+  const __type = useCallback(
+    function __type(): any {
+      return props.type;
+    },
+    [props.type]
+  );
+  const __pageIndexChange = useCallback(
+    function __pageIndexChange(newPageIndex: number): void {
+      if (props.gridCompatibility) {
+        __state_setPageIndex((__state_pageIndex) => newPageIndex + 1),
+          props.pageIndexChange!(newPageIndex + 1);
+      } else {
+        __state_setPageIndex((__state_pageIndex) => newPageIndex),
+          props.pageIndexChange!(newPageIndex);
+      }
+    },
+    [props.gridCompatibility, props.pageIndexChange]
+  );
+  const __someMethod = useCallback(function __someMethod(): any {
+    return undefined;
+  }, []);
+  const __restAttributes = useCallback(
+    function __restAttributes(): RestProps {
+      const {
+        defaultPageIndex,
+        gridCompatibility,
+        pageIndex,
+        pageIndexChange,
+        someProp,
+        type,
+        ...restProps
+      } = {
         ...props,
         pageIndex:
           props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
-      },
-      someState: __state_someState,
-      g7: __g7(),
-      g5: __g5,
-      g1: __g1(),
-      g2: __g2(),
-      factorial: __factorial,
-      g4: __g4,
-      g6: __g6,
-      type: __type(),
-      pageIndexChange: __pageIndexChange,
-      someMethod: __someMethod,
-      recursive1: __recursive1,
-      recursive2: __recursive2,
-      restAttributes: __restAttributes(),
-    });
-  } as React.FC<
-    typeof WidgetProps & RestProps & { ref?: React.Ref<WidgetRef> }
-  > & { defaultProps: typeof WidgetProps };
-
-Widget.defaultProps = WidgetProps;
-
-let refs = new WeakMap();
-const WidgetFn = (ref: any) => {
-  if (!refs.has(ref)) {
-    refs.set(ref, Widget(ref));
+      };
+      return restProps;
+    },
+    [props, __state_pageIndex]
+  );
+  const __g3 = useCallback(
+    function __g3(): (string | undefined)[] {
+      return [__g1(), __g2()];
+    },
+    [__g1, __g2]
+  );
+  const __g5 = useMemo(
+    function __g5(): (string | undefined)[] {
+      return [...__g3(), __g2()];
+    },
+    [__g3, __g2]
+  );
+  const __g4 = useMemo(
+    function __g4(): (string | undefined)[] {
+      return [...__g3(), __g1()];
+    },
+    [__g3, __g1]
+  );
+  const __g6 = useMemo(
+    function __g6(): (string | undefined)[] {
+      return [...__g5, ...__g4];
+    },
+    [__g5, __g4]
+  );
+  const __g7 = useCallback(
+    function __g7(): any {
+      return __g6;
+    },
+    [__g6]
+  );
+  function __factorial(n: number): number {
+    return n > 1 ? __factorial(n - 1) : 1;
   }
-  return refs.get(ref);
+  function __recursive1(): void {
+    __state_setSomeState((__state_someState) => __recursive2());
+  }
+  function __recursive2(): number {
+    return requestAnimationFrame(__recursive1);
+  }
+  useEffect(() => {
+    return () => __g7();
+  }, [__g7]);
+  useImperativeHandle(ref, () => ({ g3: __g3 }), [__g3]);
+  return view({
+    props: {
+      ...props,
+      pageIndex:
+        props.pageIndex !== undefined ? props.pageIndex : __state_pageIndex,
+    },
+    someState: __state_someState,
+    g7: __g7(),
+    g5: __g5,
+    g1: __g1(),
+    g2: __g2(),
+    factorial: __factorial,
+    g4: __g4,
+    g6: __g6,
+    type: __type(),
+    pageIndexChange: __pageIndexChange,
+    someMethod: __someMethod,
+    recursive1: __recursive1,
+    recursive2: __recursive2,
+    restAttributes: __restAttributes(),
+  });
 };
 
-function HooksWidget(props: typeof WidgetProps & RestProps, ref: any) {
-  return <HookComponent renderFn={WidgetFn(ref)} renderProps={props} />;
+HooksWidget.defaultProps = WidgetProps;
+
+function HooksWidget(
+  props: typeof WidgetProps & RestProps,
+  ref: RefObject<WidgetRef>
+) {
+  return (
+    <HookContainer renderFn={ReactWidget} renderProps={props} renderRef={ref} />
+  );
 }
-const HooksWidgetFR = forwardRef(HooksWidget);
+const Widget = forwardRef(HooksWidget);
 
-export { HooksWidgetFR };
+export { Widget };
 
-export default HooksWidgetFR;
+export default Widget;

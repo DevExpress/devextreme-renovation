@@ -17,7 +17,7 @@ const ChildInput: ChildInputType = Object.create(
     })
   )
 );
-import { useCallback, HookComponent } from '@devextreme/runtime/inferno-hooks';
+import { useCallback, HookContainer } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
   className?: string;
@@ -31,7 +31,7 @@ interface Child {
   restAttributes: RestProps;
 }
 
-export function Child(props: typeof ChildInput & RestProps) {
+function ReactChild(props: typeof ChildInput & RestProps) {
   const __getProps = useCallback(
     function __getProps(): typeof WidgetProps {
       return { height: props.height } as typeof WidgetProps;
@@ -53,9 +53,10 @@ export function Child(props: typeof ChildInput & RestProps) {
   });
 }
 
-Child.defaultProps = ChildInput;
+HooksChild.defaultProps = ChildInput;
 
 function HooksChild(props: typeof ChildInput & RestProps) {
-  return <HookComponent renderFn={Child} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactChild} renderProps={props} />;
 }
+export { HooksChild as Child };
 export default HooksChild;

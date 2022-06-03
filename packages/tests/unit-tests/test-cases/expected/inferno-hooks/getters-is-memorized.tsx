@@ -28,7 +28,7 @@ import {
   useState,
   useCallback,
   useMemo,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -47,7 +47,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-function Widget(props: typeof WidgetProps & RestProps) {
+function ReactWidget(props: typeof WidgetProps & RestProps) {
   const [__state_currentDate, __state_setCurrentDate] = useState<
     Date | number | string
   >(() =>
@@ -114,9 +114,10 @@ function Widget(props: typeof WidgetProps & RestProps) {
   return view();
 }
 
-Widget.defaultProps = WidgetProps;
+HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

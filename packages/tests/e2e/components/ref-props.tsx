@@ -8,7 +8,9 @@ import {
 } from "@devextreme-generator/declarations";
 
 function view(model: RefProps) {
-  return <div>{"Ref Props"}</div>;
+  return <div>
+    {"Ref Props"}
+  </div>;
 }
 
 @ComponentBindings()

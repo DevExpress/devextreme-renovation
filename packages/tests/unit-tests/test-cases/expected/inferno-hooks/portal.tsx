@@ -1,5 +1,4 @@
-import { MutableRefObject } from 'react';
-import { createPortal } from 'react-dom';
+import { Portal, MutableRefObject } from '@devextreme/runtime/inferno-hooks';
 function view(model: Widget) {
   return (
     <div>
@@ -24,22 +23,8 @@ import {
   useState,
   useCallback,
   useEffect,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
-
-type PortalProps = {
-  container?: HTMLElement | null;
-  children: React.ReactNode;
-};
-const Portal = ({
-  container,
-  children,
-}: PortalProps): React.ReactPortal | null => {
-  if (container) {
-    return createPortal(children, container);
-  }
-  return null;
-};
 
 type RestProps = {
   className?: string;
@@ -53,7 +38,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetProps & RestProps) {
+function ReactWidget(props: typeof WidgetProps & RestProps) {
   const [__state_rendered, __state_setRendered] = useState<boolean>(false);
 
   const __restAttributes = useCallback(
@@ -74,9 +59,10 @@ export function Widget(props: typeof WidgetProps & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetProps;
+HooksWidget.defaultProps = WidgetProps;
 
 function HooksWidget(props: typeof WidgetProps & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;

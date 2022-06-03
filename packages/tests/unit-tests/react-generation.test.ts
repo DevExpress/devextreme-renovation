@@ -203,7 +203,7 @@ mocha.describe("react-generation", function () {
   mocha.it("component-input", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("component-input-defaults", function () {
     this.testGenerator(this.test!.title);
   });
@@ -287,11 +287,11 @@ mocha.describe("react-generation", function () {
   mocha.it("svg-element", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("dx-public-widget-with-props", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("dx-widget-with-props", function () {
     this.testGenerator(this.test!.title);
   });
@@ -351,7 +351,7 @@ mocha.describe("react-generation", function () {
   mocha.it("nested-default-props", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("nested-pick", function () {
     this.testGenerator(this.test!.title);
   });
@@ -379,10 +379,10 @@ mocha.describe("react-generation", function () {
   mocha.it("getters-ordering", function () {
     this.testGenerator(this.test!.title);
   });
-  
+
   mocha.it("invalid-method-parameters", function () {
     assert.throws(
-       () => { this.testGenerator(this.test!.title) }, Error);
+      () => { this.testGenerator(this.test!.title) }, Error);
   });
 
   mocha.it("getters-destructuring", function () {
@@ -401,7 +401,7 @@ mocha.describe("react-generation", function () {
     this.testGenerator(this.test!.title);
   });
 
-  mocha.it("second-level-component-with-style", function() {
+  mocha.it("second-level-component-with-style", function () {
     this.testGenerator(this.test!.title);
   });
 

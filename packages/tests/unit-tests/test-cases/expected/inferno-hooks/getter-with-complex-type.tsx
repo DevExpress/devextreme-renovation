@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from '@devextreme/runtime/inferno-hooks';
 const SimpleContext = createContext<number>(5);
 function view(viewModel: Widget) {
   return <div></div>;
@@ -17,6 +17,7 @@ import {
   useCallback,
   useMemo,
   useRef,
+  InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -39,7 +40,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof Props & RestProps) {
+function ReactWidget(props: typeof Props & RestProps) {
   const [__state_i, __state_setI] = useState<number>(10);
   const mutableVar = useRef<number>(10);
   const cons = useContext(SimpleContext);
@@ -109,11 +110,12 @@ export function Widget(props: typeof Props & RestProps) {
   );
 }
 
-Widget.defaultProps = Props;
+HooksWidget.defaultProps = Props;
 
 function HooksWidget(props: typeof Props & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <InfernoWrapperComponent renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;
 class SomeClass {
   i: number = 2;

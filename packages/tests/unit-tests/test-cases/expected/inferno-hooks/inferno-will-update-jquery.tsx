@@ -1,3 +1,4 @@
+
 export type SomePropsType = {};
 const SomeProps: SomePropsType = {};
 function view() {
@@ -7,6 +8,7 @@ function view() {
 import {
   useState,
   useCallback,
+  InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -22,7 +24,7 @@ interface InheritedFromInfernoWrapperComponent {
   restAttributes: RestProps;
 }
 
-export function InheritedFromInfernoWrapperComponent(
+function ReactInheritedFromInfernoWrapperComponent(
   props: typeof SomeProps & RestProps
 ) {
   const [__state__hovered, __state_set_hovered] = useState<Boolean>(false);
@@ -44,16 +46,17 @@ export function InheritedFromInfernoWrapperComponent(
   return view();
 }
 
-InheritedFromInfernoWrapperComponent.defaultProps = SomeProps;
+HooksInheritedFromInfernoWrapperComponent.defaultProps = SomeProps;
 
 function HooksInheritedFromInfernoWrapperComponent(
   props: typeof SomeProps & RestProps
 ) {
   return (
-    <HookComponent
-      renderFn={InheritedFromInfernoWrapperComponent}
+    <InfernoWrapperComponent
+      renderFn={ReactInheritedFromInfernoWrapperComponent}
       renderProps={props}
-    ></HookComponent>
+    />
   );
 }
+export { HooksInheritedFromInfernoWrapperComponent as InheritedFromInfernoWrapperComponent };
 export default HooksInheritedFromInfernoWrapperComponent;

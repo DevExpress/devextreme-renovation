@@ -51,7 +51,7 @@ export const WidgetInput: WidgetInputType = {
 import {
   useState,
   useCallback,
-  HookComponent,
+  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 
 type RestProps = {
@@ -67,7 +67,7 @@ interface Widget {
   restAttributes: RestProps;
 }
 
-export function Widget(props: typeof WidgetInput & RestProps) {
+function ReactWidget(props: typeof WidgetInput & RestProps) {
   const [__state_stringValue, __state_setStringValue] = useState<string>(() =>
     props.stringValue !== undefined
       ? props.stringValue
@@ -142,9 +142,10 @@ export function Widget(props: typeof WidgetInput & RestProps) {
   });
 }
 
-Widget.defaultProps = WidgetInput;
+HooksWidget.defaultProps = WidgetInput;
 
 function HooksWidget(props: typeof WidgetInput & RestProps) {
-  return <HookComponent renderFn={Widget} renderProps={props}></HookComponent>;
+  return <HookContainer renderFn={ReactWidget} renderProps={props} />;
 }
+export { HooksWidget as Widget };
 export default HooksWidget;
