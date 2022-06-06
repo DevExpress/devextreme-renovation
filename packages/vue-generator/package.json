@@ -18,11 +18,11 @@
   "dependencies": {
     "@devextreme-generator/angular": "2.3.13",
     "@devextreme-generator/core": "2.3.13",
-    "prettier": "~2.1.0"
+    "prettier": "~2.4.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
-    "@types/prettier": "~2.1.0",
+    "@types/prettier": "~2.4.0",
     "shx": "^0.3.3",
     "typescript": "3.8"
   }
