@@ -25,6 +25,7 @@ export * from './expressions/template';
 export * from './expressions/type-parameter-declaration';
 export * from './expressions/type';
 export * from './expressions/variables';
+export { ExportDeclaration } from './expressions/export';
 export * from './factoryCodeGenerator';
 export * from './generator-api';
 export * from './syntaxKind';
