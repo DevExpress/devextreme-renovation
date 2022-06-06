@@ -17,12 +17,12 @@
   },
   "dependencies": {
     "code-block-writer": "^10.1.0",
-    "prettier": "~2.1.0",
+    "prettier": "^2.1.0",
     "typescript": "3.8"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
-    "@types/prettier": "~2.1.0",
+    "@types/prettier": "^2.1.0",
     "shx": "^0.3.3"
   }
 }
