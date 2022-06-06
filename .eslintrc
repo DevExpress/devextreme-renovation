@@ -47,6 +47,11 @@
     "react/no-deprecated": "warn",
     "react/no-string-refs": "warn",
     "react/prop-types": "warn",
-    "react/sort-comp": "warn"
+    "react/sort-comp": "warn",
+    "import/no-extraneous-dependencies": ["error", {
+      "devDependencies": [
+        "packages/runtime/**/*"
+      ]
+    }]
   }
 }
