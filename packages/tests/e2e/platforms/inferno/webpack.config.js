@@ -51,6 +51,7 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: {"@devextreme/runtime/inferno": "@devextreme/runtime/dist/inferno"},
     extensions: [".js", ".tsx", ".ts"],
   },
   output: {
