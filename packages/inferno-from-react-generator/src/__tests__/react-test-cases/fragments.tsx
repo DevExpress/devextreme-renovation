@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable @typescript-eslint/ban-types */
 import * as React from 'react';
-import { useCallback } from 'react';
 
 export const viewFunction = (viewModel: {
   props: Props }): React.ReactNode => (

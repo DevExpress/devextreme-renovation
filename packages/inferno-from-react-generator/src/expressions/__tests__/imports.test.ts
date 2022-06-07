@@ -33,6 +33,6 @@ describe('ImportDeclaration', () => {
       new StringLiteral('react'),
       {},
     );
-    expect(importExpression.toString()).toBe('import {useCallback,HookContainer,InfernoWrapperComponent} from \"@devextreme/runtime/inferno-hooks\"');
+    expect(importExpression.toString()).toBe('import {useCallback,HookContainer,InfernoWrapperComponent} from "@devextreme/runtime/inferno-hooks"');
   });
 });
