@@ -157,10 +157,10 @@ mocha.describe("react-generation", function () {
     try {
       this.testGenerator("template-with-ref");
     } catch (e) {
-      assert.strictEqual(
-        e,
+      assert.ok(
+        (e as Error).message.includes(
         "Templates do not support refs. See 'headerTemplate' prop usage in view function"
-      );
+      ));
     }
   });
 

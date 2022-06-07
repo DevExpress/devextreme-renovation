@@ -1478,7 +1478,7 @@ export class Generator implements GeneratorAPI {
       });
     } catch (e) {
       throw new Error(`File ${path} format error:
-      ${(e as Error).message}`);
+      ${(e as Error).message || e}`);
     }
     return result;
   }
