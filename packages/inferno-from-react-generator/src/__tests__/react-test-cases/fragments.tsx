@@ -11,10 +11,10 @@ export const viewFunction = (viewModel: {
 
 export type Props = {};
 
-//* Component={"name":"SimpleComponent", "jQueryRegistered":"true"}
-export function SimpleComponent(props: Props): React.ReactNode {
+//* Component={"name":"SimpleComponent" }
+function SimpleComponent(props: Props): React.ReactNode {
   return viewFunction({ props: { ...props } });
 }
 // not pragma Comment
 
-export default SimpleComponent;
+export { SimpleComponent };

@@ -4,11 +4,17 @@ import BaseGenerator, {
   Decorator, Expression, Identifier, ImportClause, ExportDeclaration,
   JsxAttribute, JsxClosingElement, JsxElement, JsxExpression,
   JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, NamedImports,
-  PropertyAccess, SimpleExpression, StringLiteral, VariableDeclarationList, VariableStatement,
+  PropertyAccess, SimpleExpression, StringLiteral, VariableDeclarationList,
+  VariableStatement, GeneratorResult,
 } from '@devextreme-generator/core';
 import { ImportDeclaration } from './expressions/import';
 
-interface ComponentInfo { name: string; jQueryRegistered: boolean; hasApiMethod: boolean; }
+interface ComponentInfo {
+  name: string;
+  jQueryRegistered: boolean;
+  hasApiMethod: boolean;
+  isGenerated: boolean;
+}
 export class ReactInfernoGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
 
@@ -106,6 +112,7 @@ export class ReactInfernoGenerator extends BaseGenerator {
       const componentInfo = Object.entries(this.components)
         .find(([key]) => exportClause.has(key));
       if (componentInfo) {
+        componentInfo[1].isGenerated = true;
         return `
       ${this.compileHooksWrapper(componentInfo[1])}`;
       }
@@ -134,5 +141,19 @@ export class ReactInfernoGenerator extends BaseGenerator {
         .argumentsArray[0];
     }
     return super.createVariableStatement(modifiers, declarationList);
+  }
+
+  postProcessResult(results: GeneratorResult[]): void {
+    const hasNotProcessedComponents = Object.values(this.components)
+      .filter(({ isGenerated }) => (!isGenerated));
+    if (hasNotProcessedComponents.length > 0) {
+      throw new Error(`Not all components were processed: ${hasNotProcessedComponents.map(({ name }) => (name))}`);
+    }
+    const hasAbsentDefaultExport = Object.values(this.components)
+      .filter(({ name, jQueryRegistered }) => jQueryRegistered && results[0].code.indexOf(`export default ${name}`) === -1);
+    if (hasAbsentDefaultExport.length > 0) {
+      throw new Error(`Not all jQuery registred components were default export: ${hasAbsentDefaultExport.map(({ name }) => (name))}`);
+    }
+    this.components = {};
   }
 }

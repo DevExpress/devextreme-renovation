@@ -1,5 +1,5 @@
 import path from 'path';
-import Generator, { GeneratorResult } from '@devextreme-generator/core';
+import Generator, { GeneratorAPI, GeneratorResult } from '@devextreme-generator/core';
 
 export const esLintConfig = {
   //        logLevel: 'trace',
@@ -36,5 +36,6 @@ export async function createTestGenerator(
     `${__dirname}/componentFactory/${fileName}.js`,
   ));
   const code = generator.generate(factory.default);
+  (generator as GeneratorAPI).postProcessResult?.(code);
   return code;
 }

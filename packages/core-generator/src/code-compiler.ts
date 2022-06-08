@@ -32,6 +32,7 @@ export function compileCode(
     eval(codeFactory),
     createFactoryOnly,
   );
+  generator.postProcessResult?.(codeFactoryResult);
   generator.setContext(null);
 
   if (includeExtraComponents) {

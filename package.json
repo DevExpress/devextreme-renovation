@@ -32,7 +32,8 @@
     "publish:minor": "npm run prepare-release-branch && lerna version minor --exact --force-publish",
     "publish:major": "npm run prepare-release-branch && lerna version major --exact --force-publish",
     "prepare-release-branch": "git checkout -b release && git push origin release",
-    "add-generators": "npm run clear && npm run pack && gulp add-generators --path"
+    "add-generators": "npm run clear && npm run pack && gulp add-generators --path",
+    "update:testcases": "cd packages/inferno-from-react-generator && npm run update:testcases"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.4.1",

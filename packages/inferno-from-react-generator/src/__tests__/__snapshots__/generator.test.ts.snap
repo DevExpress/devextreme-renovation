@@ -29,16 +29,33 @@ HooksForwardRef.defaultProps = ForwardRef.defaultProps;
 "
 `;
 
+exports[`generator jQueryRegistered 1`] = `
+"function Component1(props) {
+  return 'content';
+}
+
+function HooksComponent1(props) {
+  return <InfernoWrapperComponent renderFn={Component1} renderProps={props} />;
+}
+export { HooksComponent1 as Component1 };
+export default Component1;
+"
+`;
+
 exports[`generator replace fragments 1`] = `
 "export const viewFunction = (viewModel) => (
   <>
     <div>a</div>
   </>
 );
-export function SimpleComponent(props) {
+function SimpleComponent(props) {
   return viewFunction({ props: { ...props } });
 }
-export default SimpleComponent;
+
+function HooksSimpleComponent(props) {
+  return <HookContainer renderFn={SimpleComponent} renderProps={props} />;
+}
+export { HooksSimpleComponent as SimpleComponent };
 "
 `;
 
