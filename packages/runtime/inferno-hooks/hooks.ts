@@ -17,14 +17,18 @@ export interface RefObject<T> {
 export function forwardRef<T = Record<string, unknown>, P = Record<string, unknown>>(
   render: (props: T, ref: RefObject<P>) => InfernoElement<T>,
 ): SFC<T> & infernoForwardRefType {
-  return infernoForwardRef(render) as SFC<T> & infernoForwardRefType;
+  const result = infernoForwardRef(render) as SFC<T> & infernoForwardRefType;
+  Object.defineProperty(render, 'defaultProps', {
+    get: () => result.defaultProps,
+  });
+  return result;
 }
 
 let currentComponent: {
   getContextValue(consumer: { id: number }): any;
   getHook: (
     dependencies: number | unknown[] | undefined,
-    hookInitialization: (hook: any, addEffectHook: (effect: ()=>void)=>void)=> void,
+    hookInitialization: (hook: any, addEffectHook: (effect: () => void) => void) => void,
   ) => any;
   state: { [x: string]: any } | null;
   context: any;
@@ -47,7 +51,7 @@ function renderChild(component: HookContainer, {
 function createRecorder(component: HookContainer) {
   let nextId = 0;
   const hookInstances: Partial<Hook>[] = [];
-  const effects: (()=>void)[] = [];
+  const effects: (() => void)[] = [];
 
   let shouldUpdate = true;
 
@@ -71,7 +75,7 @@ function createRecorder(component: HookContainer) {
     return hook;
   }
 
-  const addEffectHook = (effect: ()=>void) => { effects.push(effect); };
+  const addEffectHook = (effect: () => void) => { effects.push(effect); };
   const addHooksToQueue = () => {
     effects.forEach((effect) => {
       EffectsHost.addEffectHook(effect);
@@ -81,7 +85,7 @@ function createRecorder(component: HookContainer) {
     renderResult: undefined,
 
     getHook(_dependencies: number | unknown[] | undefined,
-      fn: (hook: Partial<Hook>, addEffectHook: (effect: ()=>void)=>void) => void) {
+      fn: (hook: Partial<Hook>, addEffectHook: (effect: () => void) => void) => void) {
       const hook = nextHook();
       const value = hook.value;
       fn(hook, addEffectHook);
@@ -162,7 +166,7 @@ export class HookContainer extends Component
     return result;
   }
 
-  componentDidUpdate():void {
+  componentDidUpdate(): void {
     if (this.recorder) {
       this.recorder.componentDidUpdate();
     }
@@ -207,7 +211,7 @@ export interface Hook {
   dispose: any,
   didMount: any,
   dependencies?: number | unknown[],
-  effect?: ()=>void,
+  effect?: () => void,
   newDeps?: number | unknown[],
 }
 
@@ -288,8 +292,8 @@ export function useCallback
 export function useImperativeHandle(ref: any, init: () => any, dependencies?: any): any {
   return currentComponent.getHook(dependencies, (hook: Partial<Hook>) => {
     if ((hook.isNew
-       || !equal(hook.dependencies, dependencies)
-        || hook.dependencies === undefined) && ref) {
+      || !equal(hook.dependencies, dependencies)
+      || hook.dependencies === undefined) && ref) {
       ref.current = init();
       hook.dependencies = dependencies;
     }

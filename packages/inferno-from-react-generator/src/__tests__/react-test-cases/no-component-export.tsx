@@ -1,8 +1,8 @@
 export type Props = {};
 
 //* Component={"name":"SimpleComponent", "jQueryRegistered":"true"}
-function SimpleComponent(props: Props): string {
+function SimpleComponent1(props: Props): string {
   return "content";
 }
 
-export default SimpleComponent;
+export default SimpleComponent1;

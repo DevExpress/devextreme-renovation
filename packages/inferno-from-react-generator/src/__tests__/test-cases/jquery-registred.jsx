@@ -1,6 +1,10 @@
-//* Component={"name":"Component1", "jQueryRegistered":"true"}
-function Component1(props) {
-    return "content";
+const JQueryRegistredComponentProps = { prop: 1 };
+//* Component={"name":"JQueryRegisteredComponent", "jQueryRegistered":"true"}
+export function JQueryRegisteredComponent(_props) {
+  return 'content';
 }
-export { Component1 };
-export default Component1;
+JQueryRegisteredComponent.defaultProps = JQueryRegistredComponentProps;
+export default JQueryRegisteredComponent;
+export function defaultOptions() {
+  JQueryRegisteredComponent.defaultProps = Object.create(Object.prototype, Object.assign(Object.getOwnPropertyDescriptors(JQueryRegisteredComponent.defaultProps)));
+}

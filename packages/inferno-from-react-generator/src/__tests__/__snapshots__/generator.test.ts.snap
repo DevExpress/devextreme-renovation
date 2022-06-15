@@ -22,23 +22,68 @@ function HooksForwardRef(props, ref) {
   );
 }
 const ForwardRef = forwardRef(HooksForwardRef);
+
 export { ForwardRef };
 export default ForwardRef;
 ForwardRef.defaultProps = {};
-HooksForwardRef.defaultProps = ForwardRef.defaultProps;
+"
+`;
+
+exports[`generator forward-ref and useImperativeHandler direct export const 1`] = `
+"import {
+  forwardRef,
+  useImperativeHandle,
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = () => <div />;
+const ReactForwardRef = (_, ref) => {
+  useImperativeHandle(ref, () => ({ focus: () => {} }), []);
+  return viewFunction();
+};
+
+function HooksForwardRef(props, ref) {
+  return (
+    <HookContainer
+      renderFn={ReactForwardRef}
+      renderProps={props}
+      renderRef={ref}
+    />
+  );
+}
+const ForwardRef = forwardRef(HooksForwardRef);
+export { ForwardRef };
+export default ForwardRef;
+ForwardRef.defaultProps = {};
 "
 `;
 
 exports[`generator jQueryRegistered 1`] = `
-"function Component1(props) {
+"const JQueryRegistredComponentProps = { prop: 1 };
+function JQueryRegisteredComponent(_props) {
   return 'content';
 }
 
-function HooksComponent1(props) {
-  return <InfernoWrapperComponent renderFn={Component1} renderProps={props} />;
+function HooksJQueryRegisteredComponent(props) {
+  return (
+    <InfernoWrapperComponent
+      renderFn={JQueryRegisteredComponent}
+      renderProps={props}
+    />
+  );
 }
-export { HooksComponent1 as Component1 };
-export default Component1;
+export { HooksJQueryRegisteredComponent as JQueryRegisteredComponent };
+HooksJQueryRegisteredComponent.defaultProps = JQueryRegistredComponentProps;
+export default JQueryRegisteredComponent;
+export function defaultOptions() {
+  HooksJQueryRegisteredComponent.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(
+        HooksJQueryRegisteredComponent.defaultProps
+      )
+    )
+  );
+}
 "
 `;
 
@@ -56,6 +101,7 @@ function HooksSimpleComponent(props) {
   return <HookContainer renderFn={SimpleComponent} renderProps={props} />;
 }
 export { HooksSimpleComponent as SimpleComponent };
+export { SimpleComponent };
 "
 `;
 
@@ -79,6 +125,23 @@ function HooksIcon(props) {
   return <HookContainer renderFn={Icon} renderProps={props} />;
 }
 export { HooksIcon as Icon };
+export { Icon };
 export default Icon;
+"
+`;
+
+exports[`generator simple component only name 1`] = `
+"const simpleComponentProps = { prop: 1 };
+function SimpleComponent(_props) {
+  return 'content';
+}
+
+function HooksSimpleComponent(props) {
+  return (
+    <InfernoWrapperComponent renderFn={SimpleComponent} renderProps={props} />
+  );
+}
+export { HooksSimpleComponent as SimpleComponent };
+HooksSimpleComponent.defaultProps = simpleComponentProps;
 "
 `;

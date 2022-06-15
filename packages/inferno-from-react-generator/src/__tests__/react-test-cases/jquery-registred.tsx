@@ -1,8 +1,17 @@
-export type Props = {};
+const JQueryRegistredComponentProps = { prop: 1 };
 
-//* Component={"name":"Component1", "jQueryRegistered":"true"}
-function Component1(props: Props): string {
+//* Component={"name":"JQueryRegisteredComponent", "jQueryRegistered":"true"}
+export function JQueryRegisteredComponent(_props: typeof JQueryRegistredComponentProps): string {
     return "content";
 }
-export { Component1 }
-export default Component1;
+JQueryRegisteredComponent.defaultProps = JQueryRegistredComponentProps;
+export default JQueryRegisteredComponent;
+
+export function defaultOptions() {
+    JQueryRegisteredComponent.defaultProps = Object.create(
+        Object.prototype,
+        Object.assign(
+            Object.getOwnPropertyDescriptors(JQueryRegisteredComponent.defaultProps),
+        )
+    );
+}

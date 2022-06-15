@@ -38,8 +38,17 @@ describe('generator', () => {
     const generator = await createTestGenerator('fragments', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
+  it('simple component only name', async () => {
+    const generator = await createTestGenerator('simple-component', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
   it('forward-ref and useImperativeHandler', async () => {
     const generator = await createTestGenerator('forward-ref', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+  it('forward-ref and useImperativeHandler direct export const', async () => {
+    const generator = await createTestGenerator('forward-ref-direct-export', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
   it('jQueryRegistered', async () => {
@@ -52,12 +61,7 @@ describe('generator', () => {
       .toEqual(new Error('Not all components were processed: SimpleComponent'));
   });
 
-  it('file contains component content but doesnt have "import default SimpleComponent" statement', async () => {
-    await expect(async () => createTestGenerator('no-component-default-export', createGenerator()))
-      .rejects
-      .toEqual(new Error('Not all jQuery registred components were default export: SimpleComponent'));
-  });
-  it('render several components should raise error', async () => {
+  it('render several components should not raise error', async () => {
     const generator = createGenerator();
     await createTestGenerator('jquery-registred', generator);
     await createTestGenerator('jquery-registred2', generator);

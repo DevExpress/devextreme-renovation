@@ -1,5 +1,5 @@
 //* Component={"name":"SimpleComponent", "jQueryRegistered":"true"}
-function SimpleComponent(props) {
+function SimpleComponent1(props) {
     return "content";
 }
-export default SimpleComponent;
+export default SimpleComponent1;

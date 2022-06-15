@@ -335,7 +335,7 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block | undefined,
-  ) {
+  ): Function {
     const functionDeclaration = this.createFunctionDeclarationCore(
       decorators,
       modifiers,
@@ -1457,27 +1457,27 @@ export class Generator implements GeneratorAPI {
 
   generate(factory: any, createFactoryOnly = false): GeneratorResult[] {
     const result: GeneratorResult[] = [];
-    const codeFactoryResult = factory(this);
     const { path } = this.getContext();
-
-    if (path) {
-      this.cache[path] = codeFactoryResult;
-    }
-    if (path && this.context.length === 1) {
-      const component = codeFactoryResult.find(
-        (e: any) => e instanceof Component,
-      ) as Component;
-      if (component) {
-        this.meta[path] = component.getMeta();
-      }
-    }
+    const codeFactoryResult = factory(this);
     try {
+      if (path) {
+        this.cache[path] = codeFactoryResult;
+      }
+      if (path && this.context.length === 1) {
+        const component = codeFactoryResult.find(
+          (e: any) => e instanceof Component,
+        ) as Component;
+        if (component) {
+          this.meta[path] = component.getMeta();
+        }
+      }
+
       result.push({
         path: path && this.processSourceFileName(path),
         code: this.processCodeFactoryResult(codeFactoryResult, createFactoryOnly),
       });
     } catch (e) {
-      throw new Error(`File ${path} format error:
+      throw new Error(`File ${path} has error:
       ${(e as Error).message || e}`);
     }
     return result;

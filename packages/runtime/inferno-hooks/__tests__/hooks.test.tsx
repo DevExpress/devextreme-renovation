@@ -30,6 +30,17 @@ function emit(eventName: string, node: any, eventArgs?: any) {
   node.$EV[eventName](eventArgs);
 }
 
+describe('forwardRef', () => {
+  it('should render wrapped component with default props', () => {
+    const hooksComp = (props: { prop?: string }) => <>{props.prop}</>;
+    hooksComp.defaultProps = {};
+    const PublicComponent = forwardRef(hooksComp);
+    PublicComponent.defaultProps = { prop: 'content' };
+    const rendered = util.renderIntoContainer(<PublicComponent />);
+    expect(util.renderToSnapshot(rendered)[0]).toBe('content');
+  });
+});
+
 describe('Hooks', () => {
   describe('useState', () => {
     test('renders using state', async () => {
@@ -51,8 +62,8 @@ describe('Hooks', () => {
     });
 
     test('multiple useStates are allowed', async () => {
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
-      let updLastName: Dispatch<SetStateAction<string>> = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
+      let updLastName: Dispatch<SetStateAction<string>> = () => { };
       const Hello = ({ name }: { name: string }) => {
         const [counter, setCounter] = useState<number>(42);
         updCounter = setCounter;
@@ -104,7 +115,7 @@ describe('Hooks', () => {
   describe('useEffect', () => {
     test('effects only run once with empty dep array', () => {
       const fx = jest.fn();
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
 
       const Hello = () => {
         const [count, setCounter] = useState(0);
@@ -131,7 +142,7 @@ describe('Hooks', () => {
     test('effects are disposed when unmounted', () => {
       const dispose = jest.fn();
       const fx = jest.fn(() => dispose);
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
 
       const Child = () => {
         useEffect(fx, []);
@@ -201,7 +212,7 @@ describe('Hooks', () => {
     test('useMemo is not called with empty dependency array', () => {
       const fx = jest.fn((count) => `Count is ${count}`);
 
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
 
       const Hello = () => {
         const [count, setCounter] = useState(0);
@@ -228,8 +239,8 @@ describe('Hooks', () => {
     test('useMemo callback is only called when its watch list changes', () => {
       const fx = jest.fn((count) => `Count is ${count}`);
 
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
-      let updBoolean: Dispatch<SetStateAction<boolean>> = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
+      let updBoolean: Dispatch<SetStateAction<boolean>> = () => { };
 
       const Hello = () => {
         const [count, setCounter] = useState(0);
@@ -262,8 +273,8 @@ describe('Hooks', () => {
     });
 
     test('useCallback works with empty dep array', () => {
-      const Child = (props: { callback: ()=>number }) => <div>{props.callback()}</div>;
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
+      const Child = (props: { callback: () => number }) => <div>{props.callback()}</div>;
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
       const Parent = () => {
         const [count, setCounter] = useState(0);
         updCounter = setCounter;
@@ -284,7 +295,7 @@ describe('Hooks', () => {
     test('useCallback with deps', () => {
       const mockFn = jest.fn();
       const recalcTimes = jest.fn();
-      const Child = (props: { onButtonClick: ()=>void }) => (
+      const Child = (props: { onButtonClick: () => void }) => (
         <button
           type="button"
           onClick={props.onButtonClick}
@@ -292,15 +303,15 @@ describe('Hooks', () => {
           <div />
         </button>
       );
-      let updCounter: Dispatch<SetStateAction<number>> = () => {};
-      let updBool: Dispatch<SetStateAction<boolean>> = () => {};
-      let currentCallback = () => {};
+      let updCounter: Dispatch<SetStateAction<number>> = () => { };
+      let updBool: Dispatch<SetStateAction<boolean>> = () => { };
+      let currentCallback = () => { };
       const Parent = () => {
         const [count, setCounter] = useState(0);
         const [bool, setBool] = useState(false);
         updCounter = setCounter;
         updBool = setBool;
-        const onButtonClick = useCallback(() => {}, [count]);
+        const onButtonClick = useCallback(() => { }, [count]);
         currentCallback = onButtonClick;
         return (
           <div>
@@ -371,11 +382,11 @@ describe('Hooks', () => {
     test('context changed in children through callback', () => {
       interface NumberContextType {
         counter: number,
-        increaseCounter: ()=>void;
+        increaseCounter: () => void;
       }
       const NumberContext = createContext<NumberContextType | undefined>(undefined);
 
-      let incContext = () => {};
+      let incContext = () => { };
       const Child = () => {
         const numberContextConsumer = useContext(NumberContext);
         const increaseContext = useCallback(
@@ -435,12 +446,12 @@ describe('Hooks', () => {
   describe('useImperativeHandle', () => {
     test('useRef with method call (useImperativeHandle with empty dep arr)', () => {
       const mockFunc = jest.fn();
-      let updCount: Dispatch<SetStateAction<number>> = () => {};
+      let updCount: Dispatch<SetStateAction<number>> = () => { };
 
       const ChildrenComponent = (props: any, ref: any) => {
         const [counter, setCounter] = useState(0);
         updCount = setCounter;
-        const someMethod = (count:number) => () => { mockFunc(count); };
+        const someMethod = (count: number) => () => { mockFunc(count); };
         useImperativeHandle(ref,
           () => ({
             someMethod: someMethod(counter),
@@ -480,7 +491,7 @@ describe('Hooks', () => {
 
     test('useRef with method call (useImperativeHandle with dependencies)', () => {
       const mockFunc = jest.fn();
-      let updCount: Dispatch<SetStateAction<number>> = () => {};
+      let updCount: Dispatch<SetStateAction<number>> = () => { };
       const ChildrenComponent = (_props: any, ref: any) => {
         const [counter, setCounter] = useState(0);
         updCount = setCounter;
@@ -524,7 +535,7 @@ describe('Hooks', () => {
 
   describe('useRef', () => {
     test('ref doesn\'t change when state changes', () => {
-      let updCount: Dispatch<SetStateAction<number>> = () => {};
+      let updCount: Dispatch<SetStateAction<number>> = () => { };
       let currentRef;
       const Hello = () => {
         const [count, setCount] = useState(0);
@@ -562,7 +573,7 @@ describe('render', () => {
   });
 
   test('renderFn without hooks work', () => {
-    let updCounter: Dispatch<SetStateAction<number>> = () => {};
+    let updCounter: Dispatch<SetStateAction<number>> = () => { };
 
     const Child = (props: { prop1: number }) => <div>{props.prop1}</div>;
     const Parent = () => {

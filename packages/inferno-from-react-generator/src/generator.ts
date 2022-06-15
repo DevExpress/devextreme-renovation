@@ -1,20 +1,16 @@
 import BaseGenerator, {
-  Binary,
-  Call,
-  Decorator, Expression, Identifier, ImportClause, ExportDeclaration,
+  Function as CoreFunction,
+  Decorator, Expression, Identifier, ImportClause,
   JsxAttribute, JsxClosingElement, JsxElement, JsxExpression,
-  JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute, NamedImports,
+  JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute,
   PropertyAccess, SimpleExpression, StringLiteral, VariableDeclarationList,
-  VariableStatement, GeneratorResult,
+  VariableStatement, Block, TypeExpression, Parameter,
 } from '@devextreme-generator/core';
+import { ComponentInfo } from './component-info';
 import { ImportDeclaration } from './expressions/import';
+import { InfernoHooksFunctionComponentWrapper } from './expressions/inferno-hooks-function-component-wrapper';
+import { InfernoHooksVariableStatementWrapper } from './expressions/inferno-hooks-variable-statement-wrapper';
 
-interface ComponentInfo {
-  name: string;
-  jQueryRegistered: boolean;
-  hasApiMethod: boolean;
-  isGenerated: boolean;
-}
 export class ReactInfernoGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
 
@@ -22,44 +18,11 @@ export class ReactInfernoGenerator extends BaseGenerator {
     return 'inferno';
   }
 
-  compileHooksWrapper({ name, jQueryRegistered, hasApiMethod }: ComponentInfo): string {
-    if (hasApiMethod) {
-      return `
-      function Hooks${name}(props, ref) {
-      return <${jQueryRegistered ? 'InfernoWrapperComponent' : 'HookContainer'} renderFn={
-          React${name}
-        } renderProps={props} renderRef={ref}/>
-      }
-      const ${name} = forwardRef(Hooks${name});
-      export { ${name} };
-    `;
-    }
-    return `
-    function Hooks${name}(props) {
-    return <${jQueryRegistered ? 'InfernoWrapperComponent' : 'HookContainer'} renderFn={
-      ${name}
-      } renderProps={props}/>
-    }
-    export {Hooks${name} as ${name}}
-    `;
-  }
-
-  createExpressionStatement(expression: Expression): Expression {
-    const expresssionStatement = super.createExpressionStatement(expression);
-    if ((expression instanceof Binary)
-      && (expression.left instanceof PropertyAccess)) {
-      const componentName = expression.left.expression.toString();
-      const componentInfo = this.components[componentName];
-      if (componentInfo && componentInfo.hasApiMethod) {
-        const isdefaultProps = expression.left.name.toString() === 'defaultProps';
-        if (isdefaultProps) {
-          const expressionStr = expresssionStatement.toString();
-          expresssionStatement.toString = () => (`${expressionStr};
-            Hooks${componentName}.defaultProps = ${componentName}.defaultProps;`);
-        }
-      }
-    }
-    return expresssionStatement;
+  createPropertyAccess(expression: Expression, name: Identifier): PropertyAccess {
+    const componentName = expression?.toString();
+    const isdefaultProps = name?.toString() === 'defaultProps';
+    const componentInfo = this.components[componentName];
+    return super.createPropertyAccess(componentInfo && !componentInfo.hasApiMethod && isdefaultProps ? new SimpleExpression(`Hooks${componentName}`) : expression, name);
   }
 
   createComponentComments(comments: string[]): void {
@@ -102,33 +65,6 @@ export class ReactInfernoGenerator extends BaseGenerator {
     return new JsxElement(openingElement, children, closingElement);
   }
 
-  createExportDeclaration(
-    decorators: Decorator[] | undefined,
-    modifiers: string[] | undefined,
-    exportClause: NamedImports | undefined,
-    moduleSpecifier?: Expression,
-  ): ExportDeclaration | string {
-    if (exportClause) {
-      const componentInfo = Object.entries(this.components)
-        .find(([key]) => exportClause.has(key));
-      if (componentInfo) {
-        componentInfo[1].isGenerated = true;
-        return `
-      ${this.compileHooksWrapper(componentInfo[1])}`;
-      }
-    }
-    return super.createExportDeclaration(decorators, modifiers, exportClause, moduleSpecifier);
-  }
-
-  createExportAssignment(
-    _decorators: Decorator[] = [],
-    _modifiers: string[] = [],
-    _isExportEquals: any,
-    expression: Expression,
-  ): string {
-    return `export default ${expression}`;
-  }
-
   createVariableStatement(
     modifiers: string[] | undefined,
     declarationList: VariableDeclarationList,
@@ -136,23 +72,65 @@ export class ReactInfernoGenerator extends BaseGenerator {
     const componentDeclaration = declarationList.declarations
       .find(({ name }) => this.components[name.toString()]);
     if (componentDeclaration) {
-      componentDeclaration.name = new Identifier(`React${componentDeclaration.name.toString()}`);
-      componentDeclaration.initializer = (componentDeclaration.initializer as Call)
-        .argumentsArray[0];
+      const componentInfo = this.components[componentDeclaration.name.toString()];
+      componentInfo.isGenerated = true;
+      return new InfernoHooksVariableStatementWrapper(
+        componentInfo,
+        componentDeclaration,
+        modifiers,
+        declarationList,
+      );
     }
     return super.createVariableStatement(modifiers, declarationList);
   }
 
-  postProcessResult(results: GeneratorResult[]): void {
+  createFunctionDeclaration(
+    decorators: Decorator[] | undefined,
+    modifiers: string[] | undefined,
+    asteriskToken: string,
+    name: Identifier,
+    typeParameters: any,
+    parameters: Parameter[],
+    type: TypeExpression | string | undefined,
+    body: Block | undefined,
+  ): CoreFunction {
+    const componentInfo = this.components[name.toString()];
+    if (componentInfo) {
+      componentInfo.isGenerated = true;
+      const functionResult = new InfernoHooksFunctionComponentWrapper(
+        componentInfo,
+        decorators,
+        asteriskToken,
+        name,
+        typeParameters,
+        parameters,
+        type,
+        body,
+        this.getContext(),
+      );
+      return functionResult;
+    }
+    const functionDeclaration = super.createFunctionDeclaration(
+      decorators,
+      modifiers,
+      asteriskToken,
+      name,
+      typeParameters,
+      parameters,
+      type,
+      body,
+    );
+    return functionDeclaration;
+  }
+
+  postProcessResult(): void {
     const hasNotProcessedComponents = Object.values(this.components)
       .filter(({ isGenerated }) => (!isGenerated));
     if (hasNotProcessedComponents.length > 0) {
-      throw new Error(`Not all components were processed: ${hasNotProcessedComponents.map(({ name }) => (name))}`);
-    }
-    const hasAbsentDefaultExport = Object.values(this.components)
-      .filter(({ name, jQueryRegistered }) => jQueryRegistered && results[0].code.indexOf(`export default ${name}`) === -1);
-    if (hasAbsentDefaultExport.length > 0) {
-      throw new Error(`Not all jQuery registred components were default export: ${hasAbsentDefaultExport.map(({ name }) => (name))}`);
+      const componentNames = hasNotProcessedComponents
+        .map(({ name }) => (name))
+        .join(', ');
+      throw new Error(`Not all components were processed: ${componentNames}`);
     }
     this.components = {};
   }

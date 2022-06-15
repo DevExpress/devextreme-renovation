@@ -39,9 +39,9 @@ const { createComponentDecorator, createDecorator } = componentCreator(
   generator
 );
 
-mocha.describe("base-generator: expressions", function () {
-  mocha.describe("Base Expressions", function () {
-    mocha.it("Expression", function () {
+mocha.describe("base-generator: expressions", function() {
+  mocha.describe("Base Expressions", function() {
+    mocha.it("Expression", function() {
       const expression = new Expression();
 
       assert.strictEqual(expression.toString(), "");
@@ -60,8 +60,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("common expressions", function () {
-    mocha.it("Identifier", function () {
+  mocha.describe("common expressions", function() {
+    mocha.it("Identifier", function() {
       const identifier = generator.createIdentifier("a");
       assert.equal(identifier, "a");
       assert.deepEqual(
@@ -72,7 +72,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("Identifier. Get dependency from variable", function () {
+    mocha.it("Identifier. Get dependency from variable", function() {
       const identifier = generator.createIdentifier("a");
       const bProp = generator.createProperty([], [], new Identifier('b'))
       assert.equal(identifier, "a");
@@ -105,7 +105,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createVoid", function () {
+    mocha.it("createVoid", function() {
       const expression = generator.createVoid(
         generator.createNumericLiteral("0")
       );
@@ -113,7 +113,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "void 0");
     });
 
-    mocha.it("createTypeOf", function () {
+    mocha.it("createTypeOf", function() {
       const expression = generator.createTypeOf(
         generator.createIdentifier("b")
       );
@@ -121,7 +121,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "typeof b");
     });
 
-    mocha.it("NonNullExpression", function () {
+    mocha.it("NonNullExpression", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -132,7 +132,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createNew", function () {
+    mocha.it("createNew", function() {
       assert.equal(
         generator
           .createNew(generator.createIdentifier("a"), undefined, [
@@ -144,7 +144,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("Call", function () {
+    mocha.it("Call", function() {
       assert.equal(
         generator
           .createCall(generator.createIdentifier("a"), undefined, [
@@ -156,7 +156,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("Call with typeArguments", function () {
+    mocha.it("Call with typeArguments", function() {
       assert.equal(
         generator
           .createCall(
@@ -173,7 +173,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createCallChain", function () {
+    mocha.it("createCallChain", function() {
       const expression = generator.createCallChain(
         generator.createPropertyAccessChain(
           generator.createIdentifier("model"),
@@ -196,7 +196,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "createCallChain without question mark and parameters",
-      function () {
+      function() {
         const expression = generator.createCallChain(
           generator.createPropertyAccessChain(
             generator.createIdentifier("model"),
@@ -218,14 +218,14 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("Paren", function () {
+    mocha.it("Paren", function() {
       assert.equal(
         generator.createParen(generator.createIdentifier("a")).toString(),
         "(a)"
       );
     });
 
-    mocha.it("createDelete", function () {
+    mocha.it("createDelete", function() {
       assert.equal(
         generator
           .createDelete(
@@ -239,7 +239,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createAsExpression", function () {
+    mocha.it("createAsExpression", function() {
       const expression = generator.createAsExpression(
         generator.createThis(),
         generator.createKeywordTypeNode(generator.SyntaxKind.AnyKeyword)
@@ -248,7 +248,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "this as any");
     });
 
-    mocha.it("Throw", function () {
+    mocha.it("Throw", function() {
       const property = generator.createProperty(
         [createDecorator(Decorators.OneWay)],
         [],
@@ -279,8 +279,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("TryCatch", function () {
-      mocha.it("createTry", function () {
+    mocha.describe("TryCatch", function() {
+      mocha.it("createTry", function() {
         const expression = generator.createTry(
           generator.createBlock(
             [
@@ -299,7 +299,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("createTry with catch", function () {
+      mocha.it("createTry with catch", function() {
         const property1 = generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
@@ -353,7 +353,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("createTry with catch without variable", function () {
+      mocha.it("createTry with catch without variable", function() {
         const expression = generator.createTry(
           generator.createBlock(
             [
@@ -384,7 +384,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("createTry with finally", function () {
+      mocha.it("createTry with finally", function() {
         const property1 = generator.createProperty(
           [createDecorator(Decorators.OneWay)],
           [],
@@ -438,8 +438,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("literal expressions", function () {
-    mocha.it("createStringLiteral", function () {
+  mocha.describe("literal expressions", function() {
+    mocha.it("createStringLiteral", function() {
       assert.strictEqual(generator.createStringLiteral("a").toString(), `"a"`);
       assert.strictEqual(
         generator.createStringLiteral('"a"').toString(),
@@ -453,11 +453,11 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createNumericLiteral", function () {
+    mocha.it("createNumericLiteral", function() {
       assert.strictEqual(generator.createNumericLiteral("10").toString(), "10");
     });
 
-    mocha.it("ArrayLiteral", function () {
+    mocha.it("ArrayLiteral", function() {
       assert.equal(
         generator
           .createArrayLiteral(
@@ -472,7 +472,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createArrayTypeNode", function () {
+    mocha.it("createArrayTypeNode", function() {
       assert.strictEqual(
         generator
           .createArrayTypeNode(
@@ -483,7 +483,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createLiteralTypeNode", function () {
+    mocha.it("createLiteralTypeNode", function() {
       assert.strictEqual(
         generator
           .createLiteralTypeNode(generator.createStringLiteral("2"))
@@ -492,8 +492,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("ObjectLiteral", function () {
-      mocha.it("createObjectLiteral", function () {
+    mocha.describe("ObjectLiteral", function() {
+      mocha.it("createObjectLiteral", function() {
         const objectLiteral = generator.createObjectLiteral(
           [
             generator.createShorthandPropertyAssignment(
@@ -511,7 +511,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(objectLiteral.toString(), "{a,\nk:a,\n...obj}");
       });
 
-      mocha.it("ObjectLiteral: Can remove property", function () {
+      mocha.it("ObjectLiteral: Can remove property", function() {
         const objectLiteral = generator.createObjectLiteral(
           [
             generator.createShorthandPropertyAssignment(
@@ -532,7 +532,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(objectLiteral.toString(), "{a,\n...obj}");
       });
 
-      mocha.it("can use computed property", function () {
+      mocha.it("can use computed property", function() {
         const property = generator.createProperty(
           [],
           [],
@@ -572,15 +572,15 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.it("createRegularExpressionLiteral", function () {
+    mocha.it("createRegularExpressionLiteral", function() {
       const expression = generator.createRegularExpressionLiteral("/d+/");
 
       assert.strictEqual(expression.toString(), "/d+/");
     });
   });
 
-  mocha.describe("Operators", function () {
-    mocha.it("Binary", function () {
+  mocha.describe("Operators", function() {
+    mocha.it("Binary", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -598,7 +598,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("instanceof", function () {
+    mocha.it("instanceof", function() {
       const expression = generator.createBinary(
         generator.createIdentifier("a"),
         generator.SyntaxKind.InstanceOfKeyword,
@@ -608,7 +608,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "a instanceof b");
     });
 
-    mocha.it("Prefix", function () {
+    mocha.it("Prefix", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -621,7 +621,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("Postfix", function () {
+    mocha.it("Postfix", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -635,8 +635,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Type expressions", function () {
-    mocha.it("TypeQueryNode", function () {
+  mocha.describe("Type expressions", function() {
+    mocha.it("TypeQueryNode", function() {
       const expression = generator.createTypeQueryNode(
         generator.createIdentifier("Component")
       );
@@ -644,7 +644,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "typeof Component");
     });
 
-    mocha.it("TypeReferenceNode", function () {
+    mocha.it("TypeReferenceNode", function() {
       const expression = generator.createTypeReferenceNode(
         generator.createIdentifier("Node"),
         []
@@ -653,7 +653,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "Node");
     });
 
-    mocha.it("TypeReferenceNode with typeArguments", function () {
+    mocha.it("TypeReferenceNode with typeArguments", function() {
       const expression = generator.createTypeReferenceNode(
         generator.createIdentifier("Node"),
         [
@@ -669,7 +669,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "Node<string[],number[]>");
     });
 
-    mocha.it("createTypeLiteralNode", function () {
+    mocha.it("createTypeLiteralNode", function() {
       const propertySignatureWithQuestionToken = generator.createPropertySignature(
         [],
         generator.createIdentifier("a"),
@@ -693,7 +693,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createTypeAliasDeclaration", function () {
+    mocha.it("createTypeAliasDeclaration", function() {
       const literalNode = generator.createTypeLiteralNode([
         generator.createPropertySignature(
           [],
@@ -716,7 +716,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createTypeAliasDeclaration with TypeParameters", function () {
+    mocha.it("createTypeAliasDeclaration with TypeParameters", function() {
       const expression = generator.createTypeAliasDeclaration(
         undefined,
         undefined,
@@ -732,7 +732,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), " type Name<T> = T");
     });
 
-    mocha.it("createTypeAliasDeclaration without modifiers", function () {
+    mocha.it("createTypeAliasDeclaration without modifiers", function() {
       const literalNode = generator.createTypeLiteralNode([
         generator.createPropertySignature(
           [],
@@ -752,7 +752,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), " type Name = {b:string}");
     });
 
-    mocha.it("createIndexedAccessTypeNode", function () {
+    mocha.it("createIndexedAccessTypeNode", function() {
       const expression = generator.createIndexedAccessTypeNode(
         generator.createTypeReferenceNode(
           generator.createIdentifier("PageIndex"),
@@ -764,7 +764,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), `PageIndex["1"]`);
     });
 
-    mocha.it("createIntersectionTypeNode", function () {
+    mocha.it("createIntersectionTypeNode", function() {
       assert.equal(
         generator.createIntersectionTypeNode([
           generator.createKeywordTypeNode("string"),
@@ -774,7 +774,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createOptionalTypeNode", function () {
+    mocha.it("createOptionalTypeNode", function() {
       assert.equal(
         generator.createOptionalTypeNode(
           generator.createKeywordTypeNode("string")
@@ -783,7 +783,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createUnionTypeNode", function () {
+    mocha.it("createUnionTypeNode", function() {
       assert.equal(
         generator.createUnionTypeNode([
           generator.createKeywordTypeNode("string"),
@@ -793,7 +793,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createTypeOperatorNode", function () {
+    mocha.it("createTypeOperatorNode", function() {
       assert.equal(
         generator.createTypeOperatorNode(
           generator.createKeywordTypeNode("number")
@@ -802,7 +802,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createParenthesizedType", function () {
+    mocha.it("createParenthesizedType", function() {
       assert.equal(
         generator.createParenthesizedType(
           generator.createKeywordTypeNode("string")
@@ -811,8 +811,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("createPropertySignature", function () {
-      mocha.it("Only name is defined", function () {
+    mocha.describe("createPropertySignature", function() {
+      mocha.it("Only name is defined", function() {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -825,7 +825,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with type", function () {
+      mocha.it("with type", function() {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -839,7 +839,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with question token", function () {
+      mocha.it("with question token", function() {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -853,7 +853,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with initializer", function () {
+      mocha.it("with initializer", function() {
         assert.strictEqual(
           generator
             .createPropertySignature(
@@ -868,7 +868,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("ExpressionWithTypeArguments with type arguments", function () {
+      mocha.it("ExpressionWithTypeArguments with type arguments", function() {
         const expression = generator.createExpressionWithTypeArguments(
           [
             generator.createTypeReferenceNode(
@@ -885,7 +885,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "ExpressionWithTypeArguments without type arguments",
-        function () {
+        function() {
           const expression = generator.createExpressionWithTypeArguments(
             [],
             generator.createIdentifier("Component")
@@ -897,7 +897,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createIndexSignature", function () {
+    mocha.it("createIndexSignature", function() {
       const expression = generator.createIndexSignature(
         undefined,
         undefined,
@@ -918,7 +918,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "[name:string]:number");
     });
 
-    mocha.it("createQualifiedName", function () {
+    mocha.it("createQualifiedName", function() {
       const expression = generator.createQualifiedName(
         generator.createIdentifier("left"),
         generator.createIdentifier("right")
@@ -927,7 +927,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "left.right");
     });
 
-    mocha.it("createMethodSignature", function () {
+    mocha.it("createMethodSignature", function() {
       assert.strictEqual(
         generator
           .createMethodSignature(
@@ -985,8 +985,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("TypeParameterDeclaration", function () {
-      mocha.it("only name is defined", function () {
+    mocha.describe("TypeParameterDeclaration", function() {
+      mocha.it("only name is defined", function() {
         const expression = generator.createTypeParameterDeclaration(
           generator.createIdentifier("T")
         );
@@ -994,7 +994,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.toString(), "T");
       });
 
-      mocha.it("with constraint", function () {
+      mocha.it("with constraint", function() {
         const expression = generator.createTypeParameterDeclaration(
           generator.createIdentifier("T"),
           generator.createTypeReferenceNode(
@@ -1006,7 +1006,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.toString(), "T extends I");
       });
 
-      mocha.it("with default", function () {
+      mocha.it("with default", function() {
         const expression = generator.createTypeParameterDeclaration(
           generator.createIdentifier("T"),
           undefined,
@@ -1020,7 +1020,7 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.it("TypePredicateNodeWithModifier", function () {
+    mocha.it("TypePredicateNodeWithModifier", function() {
       assert.strictEqual(
         generator
           .createTypePredicateNodeWithModifier(
@@ -1035,7 +1035,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("TupleTypeNode", function () {
+    mocha.it("TupleTypeNode", function() {
       assert.strictEqual(
         generator
           .createTupleTypeNode([
@@ -1047,7 +1047,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("InferTypeNode", function () {
+    mocha.it("InferTypeNode", function() {
       assert.strictEqual(
         generator
           .createInferTypeNode(generator.createKeywordTypeNode("string"))
@@ -1056,7 +1056,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("ConditionalTypeNode", function () {
+    mocha.it("ConditionalTypeNode", function() {
       assert.strictEqual(
         generator
           .createConditionalTypeNode(
@@ -1070,8 +1070,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("getImports", function () {
-      this.beforeEach(function () {
+    mocha.describe("getImports", function() {
+      this.beforeEach(function() {
         generator.setContext({
           dirname: __dirname,
           path: path.resolve(__dirname, "module1.tsx"),
@@ -1124,14 +1124,14 @@ mocha.describe("base-generator: expressions", function () {
         });
       });
 
-      this.afterEach(function () {
+      this.afterEach(function() {
         generator.setContext(null);
         generator.setContext(null);
       });
 
       mocha.it(
         "TypeReferenceNode should return import if it is created in other module",
-        function () {
+        function() {
           const imports = (this.testType as TypeReferenceNode).getImports(
             generator.getContext()
           );
@@ -1145,7 +1145,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "TypeReferenceNode on interface should return import if it is created in other module",
-        function () {
+        function() {
           const imports = (this.interfaceType as TypeReferenceNode).getImports(
             generator.getContext()
           );
@@ -1159,7 +1159,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "TypeReferenceNode should not return import if it is created in this module",
-        function () {
+        function() {
           const type = generator.createTypeReferenceNode(
             generator.createIdentifier("TestType")
           );
@@ -1169,7 +1169,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("Do not add import if module has such import", function () {
+      mocha.it("Do not add import if module has such import", function() {
         generator.createImportDeclaration(
           [],
           [],
@@ -1197,7 +1197,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "TypeReferenceNode should not add import for global type",
-        function () {
+        function() {
           const imports = (this.globalType as TypeReferenceNode).getImports(
             generator.getContext()
           );
@@ -1208,7 +1208,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "TypeReferenceNode should return from typeArguments",
-        function () {
+        function() {
           const type = generator.createTypeReferenceNode(
             generator.createIdentifier("MyType"),
             [this.testType]
@@ -1222,7 +1222,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("imports should have duplicates", function () {
+      mocha.it("imports should have duplicates", function() {
         const type = generator.createTypeReferenceNode(
           generator.createIdentifier("MyType"),
           [this.testType, this.testType, this.testType2]
@@ -1235,7 +1235,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("LiteralTypeNode", function () {
+      mocha.it("LiteralTypeNode", function() {
         const type = generator.createLiteralTypeNode(
           generator.createStringLiteral("TestType")
         );
@@ -1243,7 +1243,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.deepEqual(type.getImports(generator.getContext()), []);
       });
 
-      mocha.it("UnionTypeNode", function () {
+      mocha.it("UnionTypeNode", function() {
         const type = generator.createUnionTypeNode([
           generator.createKeywordTypeNode("number"),
           this.testType,
@@ -1255,7 +1255,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("ArrayTypeNode", function () {
+      mocha.it("ArrayTypeNode", function() {
         const type = generator.createArrayTypeNode(this.testType);
 
         assert.deepEqual(
@@ -1264,7 +1264,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("ParenthesizedType", function () {
+      mocha.it("ParenthesizedType", function() {
         const type = generator.createParenthesizedType(this.testType);
 
         assert.deepEqual(
@@ -1273,7 +1273,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("OptionalTypeNode", function () {
+      mocha.it("OptionalTypeNode", function() {
         const type = generator.createOptionalTypeNode(this.testType);
 
         assert.deepEqual(
@@ -1282,7 +1282,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("FunctionalTypeNode", function () {
+      mocha.it("FunctionalTypeNode", function() {
         const type = generator.createFunctionTypeNode(
           undefined,
           [
@@ -1320,7 +1320,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("FunctionalTypeNode with token type", function () {
+      mocha.it("FunctionalTypeNode with token type", function() {
         const type = generator.createFunctionTypeNode(
           undefined,
           [
@@ -1344,8 +1344,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Statements", function () {
-    mocha.it("ReturnStatement", function () {
+  mocha.describe("Statements", function() {
+    mocha.it("ReturnStatement", function() {
       assert.strictEqual(
         generator.createReturn(generator.createNumericLiteral("10")).toString(),
         "return 10;"
@@ -1353,18 +1353,18 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(generator.createReturn().toString(), "return ;");
     });
 
-    mocha.it("createEmptyStatement", function () {
+    mocha.it("createEmptyStatement", function() {
       assert.strictEqual(generator.createEmptyStatement().toString(), "");
     });
 
-    mocha.it("createDebuggerStatement", function () {
+    mocha.it("createDebuggerStatement", function() {
       assert.strictEqual(
         generator.createDebuggerStatement().toString(),
         "debugger"
       );
     });
 
-    mocha.it("Block", function () {
+    mocha.it("Block", function() {
       assert.strictEqual(
         generator.createBlock([], true).toString().replace(/\s+/g, ""),
         "{}"
@@ -1381,18 +1381,18 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(getAst(actualString), getAst("{i(); return i;}"));
     });
 
-    mocha.it("CreateBreak", function () {
+    mocha.it("CreateBreak", function() {
       assert.strictEqual(generator.createBreak().toString(), "break");
     });
 
-    mocha.it("CreateSuper", function () {
+    mocha.it("CreateSuper", function() {
       assert.strictEqual(generator.createSuper().toString(), "super");
     });
   });
 
-  mocha.describe("Conditions", function () {
-    mocha.describe("If", function () {
-      mocha.it("w/o else statement", function () {
+  mocha.describe("Conditions", function() {
+    mocha.describe("If", function() {
+      mocha.it("w/o else statement", function() {
         const expression = generator.createPropertyAccess(
           generator.createThis(),
           generator.createIdentifier("field")
@@ -1405,7 +1405,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("with else statement", function () {
+      mocha.it("with else statement", function() {
         const expression = generator.createPropertyAccess(
           generator.createThis(),
           generator.createIdentifier("field")
@@ -1421,7 +1421,7 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.it("createConditional", function () {
+    mocha.it("createConditional", function() {
       const expression = generator.createConditional(
         generator.createIdentifier("a"),
         generator.createFalse(),
@@ -1431,7 +1431,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "a?false:true");
     });
 
-    mocha.it("createSwitch", function () {
+    mocha.it("createSwitch", function() {
       const clause1 = generator.createCaseClause(
         generator.createNumericLiteral("1"),
         [
@@ -1479,8 +1479,8 @@ mocha.describe("base-generator: expressions", function () {
             }
             `)
       );
-      const expressionProp = generator.createProperty([],[],new Identifier('expr'))
-      const nameProp = generator.createProperty([],[],new Identifier('name'))
+      const expressionProp = generator.createProperty([], [], new Identifier('expr'))
+      const nameProp = generator.createProperty([], [], new Identifier('name'))
       assert.deepEqual(
         expression.getDependency({
           members: [expressionProp, nameProp],
@@ -1490,8 +1490,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Property Assignment", function () {
-    mocha.it("PropertyAssignment", function () {
+  mocha.describe("Property Assignment", function() {
+    mocha.it("PropertyAssignment", function() {
       assert.equal(
         generator
           .createPropertyAssignment(
@@ -1503,7 +1503,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("ShorthandPropertyAssignment", function () {
+    mocha.it("ShorthandPropertyAssignment", function() {
       const propertyAssignment = generator.createShorthandPropertyAssignment(
         generator.createIdentifier("k"),
         undefined
@@ -1513,7 +1513,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(propertyAssignment.value, "k");
     });
 
-    mocha.it("ShorthandPropertyAssignment with expression", function () {
+    mocha.it("ShorthandPropertyAssignment with expression", function() {
       const propertyAssignment = generator.createShorthandPropertyAssignment(
         generator.createIdentifier("k"),
         generator.createIdentifier("v")
@@ -1523,7 +1523,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(propertyAssignment.value, "v");
     });
 
-    mocha.it("SpreadAssignment", function () {
+    mocha.it("SpreadAssignment", function() {
       const propertyAssignment = generator.createSpreadAssignment(
         generator.createIdentifier("obj")
       );
@@ -1531,13 +1531,13 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Property Access", function () {
-    mocha.it("PropertyAccess", function () {
+  mocha.describe("Property Access", function() {
+    mocha.it("PropertyAccess", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
       );
-      const fieldProp = generator.createProperty([],[],new Identifier('field'));
+      const fieldProp = generator.createProperty([], [], new Identifier('field'));
       assert.equal(expression.toString(), "this.field");
       assert.deepEqual(
         expression.getDependency({
@@ -1555,7 +1555,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("PropertyAccess compileStateSetting", function () {
+    mocha.it("PropertyAccess compileStateSetting", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -1575,7 +1575,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("PropertyAccess process props", function () {
+    mocha.it("PropertyAccess process props", function() {
       const expression = generator.createPropertyAccess(
         generator.createPropertyAccess(
           generator.createThis(),
@@ -1592,7 +1592,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(options), "viewModel.props.field");
     });
 
-    mocha.it("ElementAccess", function () {
+    mocha.it("ElementAccess", function() {
       const expression = generator.createElementAccess(
         generator.createPropertyAccess(
           generator.createThis(),
@@ -1601,7 +1601,7 @@ mocha.describe("base-generator: expressions", function () {
         generator.createNumericLiteral("10")
       );
       assert.equal(expression.toString(), "this.field[10]");
-      
+
       const fieldProp = generator.createProperty([], [], new Identifier('field'))
       assert.deepEqual(
         expression.getDependency({
@@ -1611,14 +1611,14 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createSpread", function () {
+    mocha.it("createSpread", function() {
       const expression = generator.createSpread(
         generator.createIdentifier("v")
       );
       assert.equal(expression.toString(), "...v");
     });
 
-    mocha.it("createPropertyAccessChain", function () {
+    mocha.it("createPropertyAccessChain", function() {
       const expression = generator.createPropertyAccessChain(
         generator.createIdentifier("a"),
         generator.createToken(generator.SyntaxKind.QuestionDotToken),
@@ -1628,7 +1628,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "a?.b");
     });
 
-    mocha.it("createPropertyAccessChain without QuestionDotToken", function () {
+    mocha.it("createPropertyAccessChain without QuestionDotToken", function() {
       const expression = generator.createPropertyAccessChain(
         generator.createThis(),
         undefined,
@@ -1638,7 +1638,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "this.click");
     });
 
-    mocha.it("createElementAccessChain", function () {
+    mocha.it("createElementAccessChain", function() {
       assert.equal(
         generator
           .createElementAccessChain(
@@ -1662,7 +1662,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createComputedPropertyName", function () {
+    mocha.it("createComputedPropertyName", function() {
       assert.equal(
         generator
           .createComputedPropertyName(generator.createIdentifier("name"))
@@ -1673,7 +1673,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "ElementAccess: getDependency should take into account index expression",
-      function () {
+      function() {
         const expression = generator.createElementAccess(
           generator.createPropertyAccess(
             generator.createThis(),
@@ -1685,7 +1685,7 @@ mocha.describe("base-generator: expressions", function () {
           )
         );
         assert.equal(expression.toString(), "this.field[this.field1]");
-        
+
         const fieldProp = generator.createProperty([], [], new Identifier('field'))
         const fieldProp1 = generator.createProperty([], [], new Identifier('field1'))
         assert.deepEqual(
@@ -1697,7 +1697,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("Rename property in binding element", function () {
+    mocha.it("Rename property in binding element", function() {
       const expression = generator.createObjectBindingPattern([
         generator.createBindingElement(
           undefined,
@@ -1714,9 +1714,9 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Function", function () {
-    mocha.describe("Parameter", function () {
-      mocha.it("Parameter w type and initializer", function () {
+  mocha.describe("Function", function() {
+    mocha.describe("Parameter", function() {
+      mocha.it("Parameter w type and initializer", function() {
         const parameter = generator.createParameter(
           [],
           [generator.SyntaxKind.ExportKeyword],
@@ -1731,7 +1731,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a?:string");
       });
 
-      mocha.it("Simple Parameter", function () {
+      mocha.it("Simple Parameter", function() {
         const parameter = generator.createParameter(
           [],
           [],
@@ -1746,7 +1746,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a:any", "typeDeclaration");
       });
 
-      mocha.it("Parameter w type", function () {
+      mocha.it("Parameter w type", function() {
         const parameter = generator.createParameter(
           [],
           [generator.SyntaxKind.ExportKeyword],
@@ -1761,7 +1761,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a?:string");
       });
 
-      mocha.it("Parameter w initializer", function () {
+      mocha.it("Parameter w initializer", function() {
         const parameter = generator.createParameter(
           [],
           [generator.SyntaxKind.ExportKeyword],
@@ -1776,7 +1776,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.equal(parameter.typeDeclaration(), "a?:string");
       });
 
-      mocha.it("Parameter with spread", function () {
+      mocha.it("Parameter with spread", function() {
         const parameter = generator.createParameter(
           [],
           [],
@@ -1793,8 +1793,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Template string", function () {
-    mocha.it("createTemplateExpression", function () {
+  mocha.describe("Template string", function() {
+    mocha.it("createTemplateExpression", function() {
       const expression = generator.createTemplateExpression(
         generator.createTemplateHead("a"),
         [
@@ -1814,7 +1814,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "createTemplateExpression - convert to string concatenation",
-      function () {
+      function() {
         const expression = generator.createTemplateExpression(
           generator.createTemplateHead("a"),
           [
@@ -1839,16 +1839,16 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("createNoSubstitutionTemplateLiteral", function () {
+    mocha.it("createNoSubstitutionTemplateLiteral", function() {
       const expression = generator.createNoSubstitutionTemplateLiteral("10");
 
       assert.equal(expression.toString(), "`10`");
     });
   });
 
-  mocha.describe("Cycle Expressions", function () {
-    mocha.describe("For", function () {
-      mocha.it("createFor", function () {
+  mocha.describe("Cycle Expressions", function() {
+    mocha.describe("For", function() {
+      mocha.it("createFor", function() {
         const expression = generator.createFor(
           generator.createIdentifier("i"),
           generator.createTrue(),
@@ -1871,7 +1871,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("For without initializer, condition, incrementor", function () {
+      mocha.it("For without initializer, condition, incrementor", function() {
         const expression = generator.createFor(
           undefined,
           undefined,
@@ -1901,7 +1901,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "For: get dependency from initializer, condition, incrementor",
-        function () {
+        function() {
           const expression = generator.createFor(
             generator.createPropertyAccess(
               generator.createThis(),
@@ -1917,7 +1917,7 @@ mocha.describe("base-generator: expressions", function () {
             ),
             generator.createBlock([generator.createContinue()], true)
           );
-          const props = ["i", "c", "ii"].map(name=>generator.createProperty([], [], new Identifier(name)))
+          const props = ["i", "c", "ii"].map(name => generator.createProperty([], [], new Identifier(name)))
 
           assert.deepEqual(
             expression.getDependency({
@@ -1928,7 +1928,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
     });
-    mocha.it("While", function () {
+    mocha.it("While", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -1941,7 +1941,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("DoWhile", function () {
+    mocha.it("DoWhile", function() {
       const expression = generator.createPropertyAccess(
         generator.createThis(),
         generator.createIdentifier("field")
@@ -1954,7 +1954,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("ForIn", function () {
+    mocha.it("ForIn", function() {
       const expression = generator.createForIn(
         generator.createVariableDeclarationList(
           [
@@ -1998,8 +1998,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Variables", function () {
-    mocha.it("VariableDeclaration", function () {
+  mocha.describe("Variables", function() {
+    mocha.it("VariableDeclaration", function() {
       const identifier = generator.createIdentifier("a");
       assert.equal(
         generator
@@ -2042,7 +2042,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("VariableStatement", function () {
+    mocha.it("VariableStatement", function() {
       const identifier = generator.createIdentifier("a");
       const declarationList = generator.createVariableDeclarationList(
         [
@@ -2068,8 +2068,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("VariableDeclarationList", function () {
-      mocha.it("toString", function () {
+    mocha.describe("VariableDeclarationList", function() {
+      mocha.it("toString", function() {
         const expression = generator.createVariableDeclarationList(
           [
             generator.createVariableDeclaration(
@@ -2091,7 +2091,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "createVariableDeclaration - getVariableExpression",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createIdentifier("a"),
             undefined,
@@ -2106,7 +2106,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "createVariableDeclaration without initializer - getVariableExpression should return empty object",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createIdentifier("a")
           );
@@ -2117,7 +2117,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "createVariableDeclaration - wrap expression in paren complex",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createIdentifier("a"),
             undefined,
@@ -2134,7 +2134,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("getVariableExpression from VariableDeclaration", function () {
+      mocha.it("getVariableExpression from VariableDeclaration", function() {
         const expression = generator.createVariableDeclarationList(
           [
             generator.createVariableDeclaration(
@@ -2161,7 +2161,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "VariableDeclaration with object binding pattern - getVariableDeclaration",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createObjectBindingPattern([
               generator.createBindingElement(
@@ -2199,7 +2199,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "VariableDeclaration with object binding pattern with string name - getVariableDeclaration",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createObjectBindingPattern([
               generator.createBindingElement(
@@ -2223,7 +2223,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "VariableDeclaration with array binding pattern - getVariableDeclaration",
-        function () {
+        function() {
           const expression = generator.createVariableDeclaration(
             generator.createArrayBindingPattern([
               generator.createBindingElement(
@@ -2248,7 +2248,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("can replace Identifer with expression", function () {
+      mocha.it("can replace Identifer with expression", function() {
         const identifer = generator.createIdentifier("name");
         const expression = generator.createNumericLiteral("10");
 
@@ -2263,7 +2263,7 @@ mocha.describe("base-generator: expressions", function () {
         );
       });
 
-      mocha.it("variable has value the same as name", function () {
+      mocha.it("variable has value the same as name", function() {
         const identifer = generator.createIdentifier("name");
         const expression = generator.createIdentifier("name");
 
@@ -2280,7 +2280,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "can replace Identifer with expression in JSX self-closing element",
-        function () {
+        function() {
           const identifer = generator.createIdentifier("render");
           const element = generator.createJsxSelfClosingElement(
             identifer,
@@ -2304,7 +2304,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "can replace Identifer with expression in JSX element",
-        function () {
+        function() {
           const identifer = generator.createIdentifier("render");
           const element = generator.createJsxElement(
             generator.createJsxOpeningElement(identifer, [], []),
@@ -2332,7 +2332,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("PropertyAccess", function () {
+      mocha.it("PropertyAccess", function() {
         const propertyAccess = generator.createPropertyAccess(
           generator.createIdentifier("name"),
           generator.createIdentifier("name")
@@ -2351,7 +2351,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "Can replace identifer in shorthand property assignment",
-        function () {
+        function() {
           const expression = generator.createObjectLiteral(
             [
               generator.createShorthandPropertyAssignment(
@@ -2375,8 +2375,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("JSX", function () {
-    mocha.it("createJsxText", function () {
+  mocha.describe("JSX", function() {
+    mocha.it("createJsxText", function() {
       assert.strictEqual(
         generator.createJsxText("test string", "false"),
         "test string"
@@ -2385,7 +2385,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(generator.createJsxText("   \n", "true"), "");
     });
 
-    mocha.it("createJsxSpreadAttribute", function () {
+    mocha.it("createJsxSpreadAttribute", function() {
       const expression = generator.createJsxSpreadAttribute(
         generator.createIdentifier("field")
       );
@@ -2394,7 +2394,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.isJsx(), true);
     });
 
-    mocha.it("createJsxExpression", function () {
+    mocha.it("createJsxExpression", function() {
       const expression = generator.createJsxExpression(
         undefined,
         generator.createIdentifier("field")
@@ -2404,7 +2404,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.isJsx(), true);
     });
 
-    mocha.it("JsxElement", function () {
+    mocha.it("JsxElement", function() {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(
           generator.createIdentifier("div"),
@@ -2426,7 +2426,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "<div name={value}></div>");
     });
 
-    mocha.it("getJsxOptions", function () {
+    mocha.it("getJsxOptions", function() {
       const element = generator.createJsxOpeningElement(
         generator.createIdentifier("text"),
         [],
@@ -2497,7 +2497,7 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.it("JsxElement - trim string children", function () {
+    mocha.it("JsxElement - trim string children", function() {
       const expression = generator.createJsxElement(
         generator.createJsxOpeningElement(
           generator.createIdentifier("div"),
@@ -2511,7 +2511,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "<div >content</div>");
     });
 
-    mocha.it("booleanAttribute", function () {
+    mocha.it("booleanAttribute", function() {
       const expression = generator.createJsxAttribute(
         generator.createIdentifier("selected")
       );
@@ -2519,7 +2519,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "selected={true}");
     });
 
-    mocha.it("JsxAttribute.getTemplateContext()", function () {
+    mocha.it("JsxAttribute.getTemplateContext()", function() {
       const expression = generator.createJsxAttribute(
         generator.createIdentifier("selected")
       );
@@ -2528,8 +2528,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("BindingElement", function () {
-    mocha.it("only name is set (decomposite object)", function () {
+  mocha.describe("BindingElement", function() {
+    mocha.it("only name is set (decomposite object)", function() {
       const expression = generator.createBindingElement(
         undefined,
         undefined,
@@ -2547,7 +2547,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "property name and name are set (decomposite object and rename)",
-      function () {
+      function() {
         const expression = generator.createBindingElement(
           undefined,
           generator.createIdentifier("a"),
@@ -2565,7 +2565,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("rest properties", function () {
+    mocha.it("rest properties", function() {
       assert.strictEqual(
         generator
           .createBindingElement(
@@ -2578,7 +2578,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("decomposite object with BindingPattern", function () {
+    mocha.it("decomposite object with BindingPattern", function() {
       assert.strictEqual(
         generator
           .createBindingElement(
@@ -2597,7 +2597,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("can remove all elements in binding pattern", function () {
+    mocha.it("can remove all elements in binding pattern", function() {
       const expression = generator.createBindingElement(
         undefined,
         generator.createIdentifier("v"),
@@ -2613,7 +2613,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "v");
     });
 
-    mocha.it("Object Binding pattern should sort items", function () {
+    mocha.it("Object Binding pattern should sort items", function() {
       const expression = generator.createObjectBindingPattern([
         generator.createBindingElement(
           undefined,
@@ -2657,7 +2657,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.toString(), "{b:{c},c,d,z,...e}");
     });
 
-    mocha.it("Do not sort array Binding Pattern", function () {
+    mocha.it("Do not sort array Binding Pattern", function() {
       const expression = generator.createArrayBindingPattern([
         generator.createBindingElement(
           undefined,
@@ -2677,8 +2677,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Class members", function () {
-    mocha.it("Property", function () {
+  mocha.describe("Class members", function() {
+    mocha.it("Property", function() {
       const expression = generator.createProperty(
         [],
         [],
@@ -2696,7 +2696,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.getter(), "p");
     });
 
-    mocha.it("Property.isReadOnly", function () {
+    mocha.it("Property.isReadOnly", function() {
       const props: { [name: string]: boolean } = {
         [Decorators.OneWay]: true,
         [Decorators.TwoWay]: false,
@@ -2730,8 +2730,8 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.describe("isSvgSlot", function () {
-      mocha.it("@Slot({isSvg:true})", function () {
+    mocha.describe("isSvgSlot", function() {
+      mocha.it("@Slot({isSvg:true})", function() {
         const expression = generator.createProperty(
           [
             createDecorator(Decorators.Slot, {
@@ -2745,7 +2745,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.isSvgSlot, true);
       });
 
-      mocha.it("@Slot()", function () {
+      mocha.it("@Slot()", function() {
         const expression = generator.createProperty(
           [createDecorator(Decorators.Slot)],
           [],
@@ -2755,7 +2755,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.isSvgSlot, false);
       });
 
-      mocha.it("@OneWay({isSvg: true})", function () {
+      mocha.it("@OneWay({isSvg: true})", function() {
         const expression = generator.createProperty(
           [createDecorator(Decorators.Slot)],
           [],
@@ -2766,7 +2766,7 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.it("Method", function () {
+    mocha.it("Method", function() {
       const expression = generator.createMethod(
         undefined,
         undefined,
@@ -2784,7 +2784,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.isInternalState, false);
     });
 
-    mocha.it("Method with decorators, modifiers, type", function () {
+    mocha.it("Method with decorators, modifiers, type", function() {
       const expression = generator.createMethod(
         [createDecorator("d1"), createDecorator("d2")],
         ["public"],
@@ -2804,7 +2804,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("Method with TypeParameters", function () {
+    mocha.it("Method with TypeParameters", function() {
       const method = generator.createMethod(
         [],
         [],
@@ -2838,7 +2838,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("GetAccessor", function () {
+    mocha.it("GetAccessor", function() {
       const expression = generator.createGetAccessor(
         undefined,
         undefined,
@@ -2854,7 +2854,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.isInternalState, false);
     });
 
-    mocha.it("GetAccessor with decorators and modifiers", function () {
+    mocha.it("GetAccessor with decorators and modifiers", function() {
       const expression = generator.createGetAccessor(
         [],
         ["public"],
@@ -2872,10 +2872,10 @@ mocha.describe("base-generator: expressions", function () {
       assert.strictEqual(expression.isInternalState, false);
     });
 
-    mocha.describe("Method.getDependency()", function () {
+    mocha.describe("Method.getDependency()", function() {
       mocha.it(
         "should return dependency from other method if it used",
-        function () {
+        function() {
           const p1 = generator.createProperty(
             [createDecorator("OneWay")],
             undefined,
@@ -2944,7 +2944,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("should correctly resolve recursive dependency", function () {
+      mocha.it("should correctly resolve recursive dependency", function() {
         const p1 = generator.createProperty(
           [createDecorator("OneWay")],
           undefined,
@@ -2991,8 +2991,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("class expressions", function () {
-    mocha.it("createHeritageClause", function () {
+  mocha.describe("class expressions", function() {
+    mocha.it("createHeritageClause", function() {
       const expression = generator.createHeritageClause(
         generator.SyntaxKind.ExtendsKeyword,
         [
@@ -3008,7 +3008,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "createClassDeclaration without decorators and modifiers",
-      function () {
+      function() {
         const expression = generator.createClassDeclaration(
           undefined,
           undefined,
@@ -3031,7 +3031,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "createClassDeclaration with modifiers and decorators",
-      function () {
+      function() {
         const expression = generator.createClassDeclaration(
           [createDecorator("d1"), createDecorator("d2")],
           ["export", "default"],
@@ -3055,7 +3055,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("createClassDeclaration with heritage clause", function () {
+    mocha.it("createClassDeclaration with heritage clause", function() {
       const heritageClause = generator.createHeritageClause(
         generator.SyntaxKind.ExtendsKeyword,
         [
@@ -3084,7 +3084,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("createClassDeclaration with members", function () {
+    mocha.it("createClassDeclaration with members", function() {
       const expression = generator.createClassDeclaration(
         undefined,
         undefined,
@@ -3118,8 +3118,8 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.describe("generic", function () {
-      mocha.it("createClassDeclaration generic class", function () {
+    mocha.describe("generic", function() {
+      mocha.it("createClassDeclaration generic class", function() {
         const genericClass = generator.createClassDeclaration(
           undefined,
           undefined,
@@ -3137,7 +3137,7 @@ mocha.describe("base-generator: expressions", function () {
 
       mocha.it(
         "createClassDeclaration generic class with heritable",
-        function () {
+        function() {
           const genericClass = generator.createClassDeclaration(
             undefined,
             undefined,
@@ -3170,7 +3170,7 @@ mocha.describe("base-generator: expressions", function () {
         }
       );
 
-      mocha.it("create generic function with generic return", function () {
+      mocha.it("create generic function with generic return", function() {
         const genericFunction = generator.createFunctionDeclaration(
           undefined,
           [generator.createModifier(generator.SyntaxKind.ExportKeyword)],
@@ -3230,20 +3230,20 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("import", function () {
-    this.beforeEach(function () {
+  mocha.describe("import", function() {
+    this.beforeEach(function() {
       generator.setContext({
         path: __filename,
         dirname: __dirname,
       });
     });
 
-    this.afterEach(function () {
+    this.afterEach(function() {
       generator.setContext(null);
       generator.resetCache();
     });
 
-    mocha.it("createImportDeclaration", function () {
+    mocha.it("createImportDeclaration", function() {
       assert.equal(
         generator.createImportDeclaration(
           undefined,
@@ -3323,7 +3323,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("ImportDeclaration: can remove named import", function () {
+    mocha.it("ImportDeclaration: can remove named import", function() {
       const expression = generator.createImportDeclaration(
         undefined,
         undefined,
@@ -3346,7 +3346,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "ImportDeclaration: remove named import if no named bindings",
-      function () {
+      function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3362,7 +3362,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "@devextreme-generator/declaration module should be an empty string",
-      function () {
+      function() {
         assert.equal(
           generator.createImportDeclaration(
             undefined,
@@ -3378,7 +3378,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("createNamespaceImport", function () {
+    mocha.it("createNamespaceImport", function() {
       const expression = generator.createNamespaceImport(
         generator.createIdentifier("module")
       );
@@ -3386,7 +3386,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(expression.toString(), "* as module");
     });
 
-    mocha.it("import global variable should fill context global", function () {
+    mocha.it("import global variable should fill context global", function() {
       generator.createImportDeclaration(
         undefined,
         undefined,
@@ -3416,7 +3416,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "import module declaration with component shouldn't fill component if it is not imported",
-      function () {
+      function() {
         generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3438,7 +3438,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("Add named imported component in context", function () {
+    mocha.it("Add named imported component in context", function() {
       generator.createImportDeclaration(
         undefined,
         undefined,
@@ -3464,7 +3464,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "Import component in different folder with current module",
-      function () {
+      function() {
         generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3487,7 +3487,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "import module declaration with component should fill component if it is imported",
-      function () {
+      function() {
         generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3516,8 +3516,8 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.describe("has", function () {
-      mocha.it("without default and named imports", function () {
+    mocha.describe("has", function() {
+      mocha.it("without default and named imports", function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3528,7 +3528,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.has("typescript"), false);
       });
 
-      mocha.it("with default import and named imports", function () {
+      mocha.it("with default import and named imports", function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3555,7 +3555,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(expression.has("any"), false);
       });
 
-      mocha.it("with namespace import", function () {
+      mocha.it("with namespace import", function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3573,8 +3573,8 @@ mocha.describe("base-generator: expressions", function () {
       });
     });
 
-    mocha.describe("getVariableExpressions", function () {
-      mocha.it("empty for @devextreme-generator/declaration", function () {
+    mocha.describe("getVariableExpressions", function() {
+      mocha.it("empty for @devextreme-generator/declaration", function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3592,7 +3592,7 @@ mocha.describe("base-generator: expressions", function () {
         assert.deepEqual(expression.getVariableExpressions(), {});
       });
 
-      mocha.it("get Identifiers for imports", function () {
+      mocha.it("get Identifiers for imports", function() {
         const expression = generator.createImportDeclaration(
           undefined,
           undefined,
@@ -3619,8 +3619,8 @@ mocha.describe("base-generator: expressions", function () {
         assert.strictEqual(result["myE"].toString(), "myE");
       });
 
-      mocha.describe("ImportClause: resolveImport", function () {
-        mocha.it("Named import", function () {
+      mocha.describe("ImportClause: resolveImport", function() {
+        mocha.it("Named import", function() {
           const importClause = generator.createImportClause(
             undefined,
             generator.createNamedImports([
@@ -3643,7 +3643,7 @@ mocha.describe("base-generator: expressions", function () {
           assert.strictEqual(importClause.resolveImport("unknown"), undefined);
         });
 
-        mocha.it("Namespace import", function () {
+        mocha.it("Namespace import", function() {
           const importClause = generator.createImportClause(
             undefined,
             generator.createNamespaceImport(generator.createIdentifier("name"))
@@ -3655,8 +3655,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("export", function () {
-    mocha.it("named exports", function () {
+  mocha.describe("export", function() {
+    mocha.it("named exports", function() {
       const expression = generator.createExportDeclaration(
         undefined,
         undefined,
@@ -3676,7 +3676,18 @@ mocha.describe("base-generator: expressions", function () {
       assertCode(expression.toString(), "export {named1, named2 as _named2}");
     });
 
-    mocha.it("named exports with module specifier", function () {
+    mocha.it("empty named exports", function() {
+      const expression = generator.createExportDeclaration(
+        undefined,
+        undefined,
+        generator.createNamedExports([]),
+        undefined
+      );
+
+      assertCode(expression.toString(), "");
+    });
+
+    mocha.it("named exports with module specifier", function() {
       const expression = generator.createExportDeclaration(
         [],
         [],
@@ -3692,7 +3703,7 @@ mocha.describe("base-generator: expressions", function () {
       assertCode(expression.toString(), `export {named} from "./module`);
     });
 
-    mocha.it("export all from module", function () {
+    mocha.it("export all from module", function() {
       const expression = generator.createExportDeclaration(
         undefined,
         undefined,
@@ -3704,8 +3715,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Interface", function () {
-    mocha.it("empty interface", function () {
+  mocha.describe("Interface", function() {
+    mocha.it("empty interface", function() {
       const expression = generator.createInterfaceDeclaration(
         undefined,
         undefined,
@@ -3725,7 +3736,7 @@ mocha.describe("base-generator: expressions", function () {
 
     mocha.it(
       "interface with decorators, modifiers, and heritage clauses",
-      function () {
+      function() {
         const expression = generator.createInterfaceDeclaration(
           [createDecorator("d1"), createDecorator("d2")],
           ["export", "default"],
@@ -3758,7 +3769,7 @@ mocha.describe("base-generator: expressions", function () {
       }
     );
 
-    mocha.it("with members", function () {
+    mocha.it("with members", function() {
       const expression = generator.createInterfaceDeclaration(
         undefined,
         undefined,
@@ -3793,7 +3804,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("generic interface", function () {
+    mocha.it("generic interface", function() {
       const expression = generator.createInterfaceDeclaration(
         [],
         [],
@@ -3822,8 +3833,8 @@ mocha.describe("base-generator: expressions", function () {
     });
   });
 
-  mocha.describe("Enum", function () {
-    mocha.it("member", function () {
+  mocha.describe("Enum", function() {
+    mocha.it("member", function() {
       const result = generator.createEnumMember(
         generator.createIdentifier("E1"),
         generator.createStringLiteral("test")
@@ -3832,7 +3843,7 @@ mocha.describe("base-generator: expressions", function () {
       assert.equal(result.toString(), 'E1="test"');
     });
 
-    mocha.it("declaration", function () {
+    mocha.it("declaration", function() {
       const result = generator.createEnumDeclaration(
         [],
         ["export", "default"],
@@ -3869,7 +3880,7 @@ mocha.describe("base-generator: expressions", function () {
       );
     });
 
-    mocha.it("empty declaration", function () {
+    mocha.it("empty declaration", function() {
       const result = generator.createEnumDeclaration(
         undefined,
         undefined,
@@ -3906,8 +3917,8 @@ mocha.describe("base-generator: expressions", function () {
   });
 });
 
-mocha.describe("common", function () {
-  mocha.it.skip("SyntaxKind", function () {
+mocha.describe("common", function() {
+  mocha.it.skip("SyntaxKind", function() {
     const expected = Object.keys(ts.SyntaxKind)
       .map((key) => ts.SyntaxKind[Number(key)])
       .filter((value) => typeof value === "string") as string[];
@@ -3918,7 +3929,7 @@ mocha.describe("common", function () {
     assert.deepEqual(actual, expected);
   });
 
-  mocha.it("SyntaxKind Keywords", function () {
+  mocha.it("SyntaxKind Keywords", function() {
     const expected = Object.keys(ts.SyntaxKind)
       .map((key) => ts.SyntaxKind[Number(key)])
       .filter(
@@ -3934,7 +3945,7 @@ mocha.describe("common", function () {
     });
   });
 
-  mocha.it("SyntaxKind Tokens", function () {
+  mocha.it("SyntaxKind Tokens", function() {
     const expected = Object.keys(ts.SyntaxKind)
       .map((key) => ts.SyntaxKind[Number(key)])
       .filter(
@@ -3947,7 +3958,7 @@ mocha.describe("common", function () {
     });
   });
 
-  mocha.it.skip("NodeFlags", function () {
+  mocha.it.skip("NodeFlags", function() {
     const expected = Object.keys(ts.NodeFlags)
       .map((key) => ts.SyntaxKind[Number(key)])
       .filter((value) => typeof value === "string") as string[];
@@ -3957,12 +3968,12 @@ mocha.describe("common", function () {
     assert.deepEqual(Object.keys(generator.NodeFlags), expected);
   });
 
-  mocha.it("processSourceFileName", function () {
+  mocha.it("processSourceFileName", function() {
     assert.strictEqual(generator.processSourceFileName("someName"), "someName");
   });
 });
 
-mocha.describe("Component", function () {
+mocha.describe("Component", function() {
   this.beforeEach(() => {
     generator.setContext({});
   });
@@ -3970,7 +3981,7 @@ mocha.describe("Component", function () {
     generator.setContext(null);
   });
 
-  mocha.it("class with Component decorator is Component instance", function () {
+  mocha.it("class with Component decorator is Component instance", function() {
     const expression = generator.createClassDeclaration(
       [createComponentDecorator({})],
       [],
@@ -3988,7 +3999,7 @@ mocha.describe("Component", function () {
 
   mocha.it(
     "should throw an error if more than one prop marked as isModel",
-    function () {
+    function() {
       let error;
       try {
         generator.createClassDeclaration(
@@ -4035,7 +4046,7 @@ mocha.describe("Component", function () {
     }
   );
 
-  mocha.it("should generate empty block and spreadAccessor", function () {
+  mocha.it("should generate empty block and spreadAccessor", function() {
     const comp = generator.createComponent(
       new Decorator(new Call(new Identifier("OneWay")), generator.getContext()),
       undefined,
@@ -4069,7 +4080,7 @@ mocha.describe("Component", function () {
     );
   });
 
-  mocha.it("extractGlobalsFromTemplate", function () {
+  mocha.it("extractGlobalsFromTemplate", function() {
     const component = generator.createComponent(
       createDecorator(Decorators.Component),
       undefined,
@@ -4108,8 +4119,8 @@ mocha.describe("Component", function () {
   });
 });
 
-mocha.describe("ComponentInput", function () {
-  this.beforeEach(function () {
+mocha.describe("ComponentInput", function() {
+  this.beforeEach(function() {
     generator.setContext({});
     this.decorators = [
       generator.createDecorator(
@@ -4122,11 +4133,11 @@ mocha.describe("ComponentInput", function () {
     ];
   });
 
-  this.afterEach(function () {
+  this.afterEach(function() {
     generator.setContext(null);
   });
 
-  mocha.it("Add Component input to cache", function () {
+  mocha.it("Add Component input to cache", function() {
     const expression = generator.createClassDeclaration(
       this.decorators,
       ["export"],
@@ -4144,7 +4155,7 @@ mocha.describe("ComponentInput", function () {
     );
   });
 
-  mocha.it("Component input has heritage properties", function () {
+  mocha.it("Component input has heritage properties", function() {
     generator.createClassDeclaration(
       this.decorators,
       ["export"],
@@ -4178,14 +4189,14 @@ mocha.describe("ComponentInput", function () {
     );
   });
 
-  mocha.describe("Warnings", function () {
-    this.beforeEach(function () {
+  mocha.describe("Warnings", function() {
+    this.beforeEach(function() {
       const warn = sinon.stub(console, "warn");
       this.warn = warn;
       this.getWarnings = () => warn.getCalls().map((c) => c.args[2]);
     });
 
-    this.afterEach(function () {
+    this.afterEach(function() {
       this.warn.restore();
     });
 
@@ -4208,7 +4219,7 @@ mocha.describe("ComponentInput", function () {
       );
     }
 
-    mocha.it("method", function () {
+    mocha.it("method", function() {
       createComponentInput([
         generator.createMethod(
           [],
@@ -4228,7 +4239,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("property without decorator", function () {
+    mocha.it("property without decorator", function() {
       createComponentInput([
         generator.createProperty([], [], generator.createIdentifier("prop")),
       ]);
@@ -4238,7 +4249,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("property with two decorators", function () {
+    mocha.it("property with two decorators", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator("OneWay"), createDecorator("TwoWay")],
@@ -4252,7 +4263,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("Ref and ForwardRef props should not throw warnings", function () {
+    mocha.it("Ref and ForwardRef props should not throw warnings", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator(Decorators.Ref)],
@@ -4269,7 +4280,7 @@ mocha.describe("ComponentInput", function () {
       assert.deepEqual(this.getWarnings(), []);
     });
 
-    mocha.it("internal state", function () {
+    mocha.it("internal state", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator("InternalState")],
@@ -4283,7 +4294,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("reserved names", function () {
+    mocha.it("reserved names", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator("OneWay")],
@@ -4315,7 +4326,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("Prop and Api Method has same names - warning", function () {
+    mocha.it("Prop and Api Method has same names - warning", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator("OneWay")],
@@ -4367,7 +4378,7 @@ mocha.describe("ComponentInput", function () {
       ]);
     });
 
-    mocha.it("Prop and Method has same names - no warning", function () {
+    mocha.it("Prop and Method has same names - no warning", function() {
       createComponentInput([
         generator.createProperty(
           [createDecorator("OneWay")],
@@ -4417,7 +4428,7 @@ mocha.describe("ComponentInput", function () {
 
     mocha.it(
       "Nested component should not throw warn if one of types is TypeReferenceNode",
-      function () {
+      function() {
         createComponentInput([
           generator.createProperty(
             [createDecorator("Nested")],
@@ -4470,7 +4481,7 @@ mocha.describe("ComponentInput", function () {
 
     mocha.it(
       "Nested component should throw error with not TypeReferenceNode",
-      function () {
+      function() {
         assert.throws(
           () => createComponentInput([
             generator.createProperty(
@@ -4490,14 +4501,14 @@ mocha.describe("ComponentInput", function () {
       }
     );
 
-    mocha.describe("Required props", function () {
-      this.beforeEach(function () {
+    mocha.describe("Required props", function() {
+      this.beforeEach(function() {
         generator.setContext({
           path: "component.tsx",
         });
       });
 
-      this.afterEach(function () {
+      this.afterEach(function() {
         generator.setContext(null);
       });
 
@@ -4551,7 +4562,7 @@ mocha.describe("ComponentInput", function () {
 
       mocha.it(
         "Component has one Required props - throw exception if they not included to component declaration",
-        function () {
+        function() {
           createComponent([
             generator.createProperty(
               [createDecorator(Decorators.OneWay)],
@@ -4583,7 +4594,7 @@ mocha.describe("ComponentInput", function () {
         }
       );
 
-      mocha.it("Component has one Required props", function () {
+      mocha.it("Component has one Required props", function() {
         const component = createComponent(
           [
             generator.createProperty(
@@ -4621,8 +4632,8 @@ mocha.describe("ComponentInput", function () {
   });
 });
 
-mocha.describe("ComponentInput from type", function () {
-  this.beforeEach(function () {
+mocha.describe("ComponentInput from type", function() {
+  this.beforeEach(function() {
     generator.setContext({});
 
     generator.createClassDeclaration(
@@ -4657,11 +4668,11 @@ mocha.describe("ComponentInput from type", function () {
     );
   });
 
-  this.afterEach(function () {
+  this.afterEach(function() {
     generator.setContext(null);
   });
 
-  mocha.it("Omit<BaseProps, 'p1'>", function () {
+  mocha.it("Omit<BaseProps, 'p1'>", function() {
     const expression = generator.createTypeAliasDeclaration(
       [],
       ["export"],
@@ -4691,7 +4702,7 @@ mocha.describe("ComponentInput from type", function () {
     assert.deepEqual(expression.modifiers, ["export"]);
   });
 
-  mocha.it("Omit<BaseProps, 'p1' | 'p3'>", function () {
+  mocha.it("Omit<BaseProps, 'p1' | 'p3'>", function() {
     const expression = generator.createTypeAliasDeclaration(
       [],
       [],
@@ -4716,7 +4727,7 @@ mocha.describe("ComponentInput from type", function () {
     );
   });
 
-  mocha.it("Pick<BaseProps, 'p1'>", function () {
+  mocha.it("Pick<BaseProps, 'p1'>", function() {
     const expression = generator.createTypeAliasDeclaration(
       [],
       [],
@@ -4740,7 +4751,7 @@ mocha.describe("ComponentInput from type", function () {
 
   mocha.it(
     "Pick<BaseProps, 10> - do not convert to component input",
-    function () {
+    function() {
       const expression = generator.createTypeAliasDeclaration(
         [],
         [],
@@ -4759,7 +4770,7 @@ mocha.describe("ComponentInput from type", function () {
     }
   );
 
-  mocha.it("Pick<BaseProps, keyof BaseProps>", function () {
+  mocha.it("Pick<BaseProps, keyof BaseProps>", function() {
     const expression = generator.createTypeAliasDeclaration(
       [],
       [],
@@ -4785,7 +4796,7 @@ mocha.describe("ComponentInput from type", function () {
     );
   });
 
-  mocha.it("Pick & Omit", function () {
+  mocha.it("Pick & Omit", function() {
     const expression = generator.createTypeAliasDeclaration(
       [],
       [],
@@ -4823,7 +4834,7 @@ mocha.describe("ComponentInput from type", function () {
     );
   });
 
-  mocha.it("Props1 & Props2", function () {
+  mocha.it("Props1 & Props2", function() {
     generator.createClassDeclaration(
       [createDecorator(Decorators.ComponentBindings)],
       [],
@@ -4885,16 +4896,16 @@ mocha.describe("ComponentInput from type", function () {
   });
 });
 
-mocha.describe("import Components", function () {
-  this.beforeEach(function () {
+mocha.describe("import Components", function() {
+  this.beforeEach(function() {
     generator.setContext({ dirname: path.resolve(__dirname) });
   });
 
-  this.afterEach(function () {
+  this.afterEach(function() {
     generator.setContext(null);
   });
 
-  mocha.it("Parse imported component", function () {
+  mocha.it("Parse imported component", function() {
     const identifier = generator.createIdentifier("Base");
     generator.createImportDeclaration(
       undefined,
@@ -4919,7 +4930,7 @@ mocha.describe("import Components", function () {
 
   mocha.it(
     "Parse imported component. module specifier has extension",
-    function () {
+    function() {
       const identifier = generator.createIdentifier("Base");
       generator.createImportDeclaration(
         undefined,
@@ -4943,7 +4954,7 @@ mocha.describe("import Components", function () {
     }
   );
 
-  mocha.it("Get properties from heritageClause", function () {
+  mocha.it("Get properties from heritageClause", function() {
     generator.createImportDeclaration(
       undefined,
       undefined,
@@ -4972,7 +4983,7 @@ mocha.describe("import Components", function () {
     );
   });
 
-  mocha.it("Get properties from heritageClause without import", function () {
+  mocha.it("Get properties from heritageClause without import", function() {
     const heritageClause = generator.createHeritageClause(
       generator.SyntaxKind.ExtendsKeyword,
       [
@@ -4989,7 +5000,7 @@ mocha.describe("import Components", function () {
     );
   });
 
-  mocha.it("Parse imported component input", function () {
+  mocha.it("Parse imported component input", function() {
     const expression = generator.createImportDeclaration(
       undefined,
       undefined,
@@ -5020,11 +5031,11 @@ mocha.describe("import Components", function () {
     );
     assert.ok(
       generator.getContext().components!["WidgetProps"] instanceof
-        ComponentInput
+      ComponentInput
     );
   });
 
-  mocha.it("ComponentInput gets all members from heritage clause", function () {
+  mocha.it("ComponentInput gets all members from heritage clause", function() {
     generator.createImportDeclaration(
       undefined,
       undefined,
@@ -5071,7 +5082,7 @@ mocha.describe("import Components", function () {
 
 mocha.describe(
   "Expressions with toStringOptions should pass it in internal expressions",
-  function () {
+  function() {
     const property = generator.createProperty(
       [createDecorator("OneWay")],
       undefined,
@@ -5092,13 +5103,13 @@ mocha.describe(
       newComponentContext: "",
     });
 
-    mocha.it("Array literal", function () {
+    mocha.it("Array literal", function() {
       const expression = generator.createArrayLiteral([propertyAccess], true);
 
       assert.strictEqual(expression.toString(getToStringOptions()), "[p]");
     });
 
-    mocha.it("Object literal", function () {
+    mocha.it("Object literal", function() {
       const expression = generator.createObjectLiteral(
         [
           generator.createPropertyAssignment(
@@ -5112,7 +5123,7 @@ mocha.describe(
       assert.strictEqual(expression.toString(getToStringOptions()), "{p:p}");
     });
 
-    mocha.it("Spread Assignment", function () {
+    mocha.it("Spread Assignment", function() {
       const expression = generator.createSpreadAssignment(propertyAccess);
 
       assert.strictEqual(expression.toString(getToStringOptions()), "...p");
