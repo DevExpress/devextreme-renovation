@@ -33,7 +33,6 @@ function emit(eventName: string, node: any, eventArgs?: any) {
 describe('forwardRef', () => {
   it('should render wrapped component with default props', () => {
     const hooksComp = (props: { prop?: string }) => <>{props.prop}</>;
-    hooksComp.defaultProps = {};
     const PublicComponent = forwardRef(hooksComp);
     PublicComponent.defaultProps = { prop: 'content' };
     const rendered = util.renderIntoContainer(<PublicComponent />);

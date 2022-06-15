@@ -28,17 +28,10 @@ const prepareInstallTask = (installTo, relativePath) => {
 
 prepareInstallTask(installTo, relativePath);
 
-// gulp.task('pack', () => {
-//     return run('npm run pack').exec('', (...args) => {
-//       console.log(args)
-//     });
-// });
-
 gulp.task('install', gulp.series(
   packages.map((package) => `install:${package}`),
 ));
 
 gulp.task('add-generators', gulp.series(
-//    'pack',
     'install')
 );
