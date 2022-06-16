@@ -135,6 +135,11 @@ export class Generator implements GeneratorAPI {
     return name;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  createComponentComments(_: string[]): Expression | void {
+    return new SimpleExpression('');
+  }
+
   createIdentifier(name: string): Identifier {
     return new Identifier(name);
   }
@@ -330,7 +335,7 @@ export class Generator implements GeneratorAPI {
     parameters: Parameter[],
     type: TypeExpression | string | undefined,
     body: Block | undefined,
-  ) {
+  ): Function {
     const functionDeclaration = this.createFunctionDeclarationCore(
       decorators,
       modifiers,
@@ -654,7 +659,7 @@ export class Generator implements GeneratorAPI {
     modifiers: string[] | undefined,
     exportClause: NamedImports | undefined,
     moduleSpecifier?: Expression,
-  ) {
+  ): ExportDeclaration | string {
     return new ExportDeclaration(
       decorators,
       modifiers,
@@ -895,7 +900,7 @@ export class Generator implements GeneratorAPI {
     return new OptionalTypeNode(type);
   }
 
-  createExpressionStatement(expression: Expression) {
+  createExpressionStatement(expression: Expression): Expression {
     return expression;
   }
 
@@ -1452,26 +1457,29 @@ export class Generator implements GeneratorAPI {
 
   generate(factory: any, createFactoryOnly = false): GeneratorResult[] {
     const result: GeneratorResult[] = [];
-    const codeFactoryResult = factory(this);
     const { path } = this.getContext();
-
-    if (path) {
-      this.cache[path] = codeFactoryResult;
-    }
-    if (path && this.context.length === 1) {
-      const component = codeFactoryResult.find(
-        (e: any) => e instanceof Component,
-      ) as Component;
-      if (component) {
-        this.meta[path] = component.getMeta();
+    const codeFactoryResult = factory(this);
+    try {
+      if (path) {
+        this.cache[path] = codeFactoryResult;
       }
+      if (path && this.context.length === 1) {
+        const component = codeFactoryResult.find(
+          (e: any) => e instanceof Component,
+        ) as Component;
+        if (component) {
+          this.meta[path] = component.getMeta();
+        }
+      }
+
+      result.push({
+        path: path && this.processSourceFileName(path),
+        code: this.processCodeFactoryResult(codeFactoryResult, createFactoryOnly),
+      });
+    } catch (e) {
+      throw new Error(`File ${path} has error:
+      ${(e as Error).message || e}`);
     }
-
-    result.push({
-      path: path && this.processSourceFileName(path),
-      code: this.processCodeFactoryResult(codeFactoryResult, createFactoryOnly),
-    });
-
     return result;
   }
 

@@ -14,7 +14,10 @@ export class ExportDeclaration {
     public moduleSpecifier?: Expression,
   ) {}
 
-  toString() {
+  toString(): string {
+    if (this.exportClause?.node.length === 0 && !this.moduleSpecifier) {
+      return '';
+    }
     return `export ${this.exportClause ? this.exportClause : '*'}${
       this.moduleSpecifier ? ` from ${this.moduleSpecifier}` : ''
     }`;

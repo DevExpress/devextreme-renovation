@@ -52,18 +52,19 @@ export function generateComponents(generator: GeneratorAPI) {
 
   return stream;
 }
-
-export function compile(dir: string, outDir: string, platform: 'vue' | 'react' | 'inferno' | 'angular'| 'inferno-hooks') {
+export function compile(dir: string, outDir: string,
+  platform: 'vue' | 'react' | 'inferno' | 'angular'| 'inferno-hooks', extention = /.ts(x?)$/): void {
   if (fs.existsSync(outDir)) {
     deleteFolderRecursive(outDir);
   }
   fs.mkdirSync(outDir, { recursive: true });
   fs.readdirSync(dir, { withFileTypes: true })
-    .filter(({ name }) => name.search(/.ts(x?)$/) >= 0)
+    .filter(({ name }) => name.search(extention) >= 0)
     .forEach(({ name }) => {
+      const code = fs.readFileSync(`${dir}/${name}`).toString();
       const source = ts.createSourceFile(
-        name,
-        fs.readFileSync(`${dir}/${name}`).toString(),
+        name.replace(path.extname(name), '.tsx'),
+        code,
         ts.ScriptTarget.ES2016,
         true,
       );

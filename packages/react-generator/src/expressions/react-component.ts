@@ -835,8 +835,20 @@ export class ReactComponent extends Component {
       .join('\n');
   }
 
+  get jQueryRegistered(): boolean {
+    const jqueryProp = this.decorators[0].getParameter('jQuery') as
+      | ObjectLiteral
+      | undefined;
+    return jqueryProp?.getProperty('register')?.toString() === 'true';
+  }
+
+  compileComponentComment(hasApiMethod: boolean): string {
+    return `//* Component={"name":"${this.name}","jQueryRegistered":${this.jQueryRegistered},"hasApiMethod":${hasApiMethod}}`;
+  }
+
   toString(): string {
     const getTemplateFunc = this.compileTemplateGetter();
+    const hasApiMethod = (this.members.filter((m) => m.isApiMethod).length > 0);
     return `
               ${this.compileImports()}
               ${this.compilePortalComponent()}
@@ -845,7 +857,8 @@ export class ReactComponent extends Component {
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
-              ${this.members.filter((m) => m.isApiMethod).length === 0
+              ${this.compileComponentComment(hasApiMethod)}
+              ${!hasApiMethod
     ? `${this.modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
     : `const ${this.name} = forwardRef<${this.name

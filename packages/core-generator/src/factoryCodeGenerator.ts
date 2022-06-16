@@ -1,6 +1,22 @@
 import CodeBlockWriter from 'code-block-writer';
 import { replaceDeclarationPath } from './utils/dependency';
 
+function getAllComments(ts: typeof import('typescript'), code: string, sourceFile: import('typescript').Node): string[] {
+  const comments: string[] = [];
+  ts.forEachChild(sourceFile, (node: import('typescript').Node) => {
+    const commentRanges = ts.getLeadingCommentRanges(
+      code,
+      node.getFullStart(),
+    );
+    if (commentRanges?.length) {
+      commentRanges
+        .map((r) => code.slice(r.pos, r.end))
+        .forEach((c) => comments.push(c));
+    }
+  });
+  return comments;
+}
+
 export function generateFactoryCode(
   ts: typeof import('typescript'),
   initialNode: import('typescript').Node,
@@ -14,6 +30,10 @@ export function generateFactoryCode(
 
   if (ts.isSourceFile(initialNode)) {
     writer.write('module.exports = (ts) => [');
+    const comments = getAllComments(ts, initialNode.getFullText(), initialNode);
+    if (comments.length > 0) {
+      writer.write(`ts.createComponentComments(${JSON.stringify(comments)}),`).newLine();
+    }
     if (initialNode.statements.length > 0) {
       writer
         .indent(() => {
@@ -4023,7 +4043,7 @@ export function generateFactoryCode(
   }
 
   function createJsxJsxClosingFragment() {
-    writer.write('ts.createJsxJsxClosingFragment(');
+    writer.write('ts.createJsxClosingFragment(');
     writer.write(')');
   }
 

@@ -1,0 +1,10 @@
+{
+  "include": ["src/__tests__/react-test-cases/*.tsx"],
+  "compilerOptions": {
+    "strict": false,
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "target": "ESNext",
+    "outDir": "./src/__tests__/test-cases"
+  }
+}

@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generator forward-ref and useImperativeHandler 1`] = `
+"import {
+  forwardRef,
+  useImperativeHandle,
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = () => <div />;
+const ReactForwardRef = (_, ref) => {
+  useImperativeHandle(ref, () => ({ focus: () => {} }), []);
+  return viewFunction();
+};
+
+function HooksForwardRef(props, ref) {
+  return (
+    <HookContainer
+      renderFn={ReactForwardRef}
+      renderProps={props}
+      renderRef={ref}
+    />
+  );
+}
+const ForwardRef = forwardRef(HooksForwardRef);
+
+export { ForwardRef };
+export default ForwardRef;
+ForwardRef.defaultProps = {};
+"
+`;
+
+exports[`generator forward-ref and useImperativeHandler direct export const 1`] = `
+"import {
+  forwardRef,
+  useImperativeHandle,
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = () => <div />;
+const ReactForwardRef = (_, ref) => {
+  useImperativeHandle(ref, () => ({ focus: () => {} }), []);
+  return viewFunction();
+};
+
+function HooksForwardRef(props, ref) {
+  return (
+    <HookContainer
+      renderFn={ReactForwardRef}
+      renderProps={props}
+      renderRef={ref}
+    />
+  );
+}
+const ForwardRef = forwardRef(HooksForwardRef);
+export { ForwardRef };
+export default ForwardRef;
+ForwardRef.defaultProps = {};
+"
+`;
+
+exports[`generator jQueryRegistered 1`] = `
+"const JQueryRegistredComponentProps = { prop: 1 };
+function JQueryRegisteredComponent(_props) {
+  return 'content';
+}
+
+function HooksJQueryRegisteredComponent(props) {
+  return (
+    <InfernoWrapperComponent
+      renderFn={JQueryRegisteredComponent}
+      renderProps={props}
+    />
+  );
+}
+export { HooksJQueryRegisteredComponent as JQueryRegisteredComponent };
+HooksJQueryRegisteredComponent.defaultProps = JQueryRegistredComponentProps;
+export default JQueryRegisteredComponent;
+export function defaultOptions() {
+  HooksJQueryRegisteredComponent.defaultProps = Object.create(
+    Object.prototype,
+    Object.assign(
+      Object.getOwnPropertyDescriptors(
+        HooksJQueryRegisteredComponent.defaultProps
+      )
+    )
+  );
+}
+"
+`;
+
+exports[`generator replace fragments 1`] = `
+"export const viewFunction = (viewModel) => (
+  <>
+    <div>a</div>
+  </>
+);
+function SimpleComponent(props) {
+  return viewFunction({ props: { ...props } });
+}
+
+function HooksSimpleComponent(props) {
+  return <HookContainer renderFn={SimpleComponent} renderProps={props} />;
+}
+export { HooksSimpleComponent as SimpleComponent };
+export { SimpleComponent };
+"
+`;
+
+exports[`generator replace imports 1`] = `
+"import { getTemplate } from '@devextreme/runtime/inferno-hooks';
+import {
+  useCallback,
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = (m) => (
+  <>
+    <div>{getTemplate('test')}</div>
+  </>
+);
+function Icon(props) {
+  const __sourceType = useCallback(() => '', []);
+  return viewFunction({});
+}
+
+function HooksIcon(props) {
+  return <HookContainer renderFn={Icon} renderProps={props} />;
+}
+export { HooksIcon as Icon };
+export { Icon };
+export default Icon;
+"
+`;
+
+exports[`generator simple component only name 1`] = `
+"const simpleComponentProps = { prop: 1 };
+function SimpleComponent(_props) {
+  return 'content';
+}
+
+function HooksSimpleComponent(props) {
+  return (
+    <InfernoWrapperComponent renderFn={SimpleComponent} renderProps={props} />
+  );
+}
+export { HooksSimpleComponent as SimpleComponent };
+HooksSimpleComponent.defaultProps = simpleComponentProps;
+"
+`;

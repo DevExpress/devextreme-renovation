@@ -4,3 +4,6 @@ export * from './base-hooks-component';
 export * from './re_render';
 export * from './ref-object';
 export * from './portal';
+export * from './utils/get-template';
+export * from './utils/collect-nested';
+export * from './utils/equal-by-value';

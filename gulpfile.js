@@ -14,6 +14,7 @@ const packages = [
   'preact-generator',
   'inferno-generator',
   'inferno-hooks-generator',
+  'inferno-from-react-generator',
   'declarations',
   'build-helpers',
   'runtime'
@@ -27,15 +28,10 @@ const prepareInstallTask = (installTo, relativePath) => {
 
 prepareInstallTask(installTo, relativePath);
 
-gulp.task('pack', () => {
-    return run('npm run pack').exec();
-});
-
 gulp.task('install', gulp.series(
   packages.map((package) => `install:${package}`),
 ));
 
 gulp.task('add-generators', gulp.series(
-    'pack',
     'install')
 );
