@@ -1,7 +1,6 @@
 import { AngularGenerator } from '@devextreme-generator/angular';
 import { compileCode, GeneratorOptions } from '@devextreme-generator/core';
 import { InfernoGenerator } from '@devextreme-generator/inferno';
-import { InfernoGenerator as InfernoHooksGenerator } from '@devextreme-generator/inferno-hooks';
 import { PreactGenerator } from '@devextreme-generator/preact';
 import { ReactGenerator } from '@devextreme-generator/react';
 import { getOptions } from 'loader-utils';
@@ -43,9 +42,6 @@ export default function (this: LoaderContext<{}>, source: string) {
         jqueryComponentRegistratorModule,
         jqueryBaseComponentModule,
       };
-      break;
-    case 'inferno-hooks':
-      generator = new InfernoHooksGenerator();
       break;
     default:
       throw new Error('Invalid platform');

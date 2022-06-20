@@ -84,6 +84,7 @@ jobs:
           vue-generator,
           react-generator,
           preact-generator,
+          inferno-from-react-generator,
           inferno-generator,
           build-helpers,
           declarations,
