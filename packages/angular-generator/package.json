@@ -19,7 +19,7 @@
     "@devextreme-generator/core": "3.1.0-next"
   },
   "devDependencies": {
-    "shx": "^0.3.3",
-    "typescript": "3.8"
+    "shx": "0.3.4",
+    "typescript": "3.8.3"
   }
 }

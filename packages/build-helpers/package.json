@@ -27,8 +27,8 @@
     "webpack": "^5.64.1"
   },
   "devDependencies": {
-    "@types/loader-utils": "^2.0.1",
-    "@types/vinyl": "^2.0.4",
-    "shx": "^0.3.3"
+    "@types/loader-utils": "2.0.3",
+    "@types/vinyl": "2.0.6",
+    "shx": "0.3.4"
   }
 }
