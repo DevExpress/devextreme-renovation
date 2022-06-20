@@ -19,7 +19,6 @@
     "@devextreme-generator/angular": "3.1.0-next",
     "@devextreme-generator/core": "3.1.0-next",
     "@devextreme-generator/inferno": "3.1.0-next",
-    "@devextreme-generator/inferno-hooks": "3.1.0-next",
     "@devextreme-generator/preact": "3.1.0-next",
     "@devextreme-generator/react": "3.1.0-next",
     "loader-utils": "^2.0.0",
