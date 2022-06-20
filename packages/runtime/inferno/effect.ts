@@ -1,10 +1,16 @@
 export class InfernoEffect {
   private destroy?: (() => void) | void;
 
+  private effect: () => (() => void) | void;
+
+  private dependency: Array<unknown>;
+
   constructor(
-    private effect: () => (() => void) | void,
-    private dependency: Array<unknown>,
+    effect: () => (() => void) | void,
+    dependency: Array<unknown>,
   ) {
+    this.dependency = dependency;
+    this.effect = effect;
     this.destroy = effect();
   }
 
