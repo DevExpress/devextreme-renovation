@@ -1,3 +1,1 @@
-import { ReactInfernoGenerator } from './generator';
-
-export { ReactInfernoGenerator };
+export { InfernoFromReactGenerator } from './generator';

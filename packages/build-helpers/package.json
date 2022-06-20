@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/build-helpers",
-  "version": "3.1.0-next",
+  "version": "3.0.8",
   "description": "DevExtreme development utils",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -16,12 +16,12 @@
     "clear": "shx rm -rf dist && shx rm -f *.tgz"
   },
   "dependencies": {
-    "@devextreme-generator/angular": "3.1.0-next",
-    "@devextreme-generator/core": "3.1.0-next",
-    "@devextreme-generator/inferno": "3.1.0-next",
-    "@devextreme-generator/inferno-hooks": "3.1.0-next",
-    "@devextreme-generator/preact": "3.1.0-next",
-    "@devextreme-generator/react": "3.1.0-next",
+    "@devextreme-generator/angular": "3.0.8",
+    "@devextreme-generator/core": "3.0.8",
+    "@devextreme-generator/inferno": "3.0.8",
+    "@devextreme-generator/inferno-hooks": "3.0.8",
+    "@devextreme-generator/preact": "3.0.8",
+    "@devextreme-generator/react": "3.0.8",
     "loader-utils": "^2.0.0",
     "typescript": "3.8",
     "vinyl": "^2.2.1",
