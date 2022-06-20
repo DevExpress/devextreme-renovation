@@ -92,7 +92,7 @@ jobs:
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
-          npm i ../inferno-hooks-generator/package.tgz
+          npm i ../inferno-from-react-generator/package.tgz
           npm i ../build-helpers/package.tgz
 
       - name: Check - ${{ matrix.TASK }}
@@ -197,7 +197,7 @@ jobs:
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
-          npm i ../inferno-hooks-generator/package.tgz
+          npm i ../inferno-from-react-generator/package.tgz
           npm i ../build-helpers/package.tgz
 
       - name: Build DevExtreme
@@ -266,7 +266,7 @@ jobs:
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
-          npm i ../inferno-hooks-generator/package.tgz
+          npm i ../inferno-from-react-generator/package.tgz
           npm i ../build-helpers/package.tgz
 
       - name: Build DevExtreme
