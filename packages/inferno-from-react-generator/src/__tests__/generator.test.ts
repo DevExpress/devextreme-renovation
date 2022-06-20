@@ -2,7 +2,7 @@
 import { compile } from '@devextreme-generator/build-helpers';
 import { resolve } from 'path';
 import * as fs from 'fs';
-import { ReactInfernoGenerator } from '../generator';
+import { InfernoFromReactGenerator } from '../generator';
 import { createTestGenerator } from './common';
 
 describe('generator', () => {
@@ -18,9 +18,9 @@ describe('generator', () => {
     );
   });
 
-  function createGenerator(): ReactInfernoGenerator {
+  function createGenerator(): InfernoFromReactGenerator {
     const root = './test-cases/';
-    const generator = new ReactInfernoGenerator();
+    const generator = new InfernoFromReactGenerator();
     generator.setContext(
       {
         dirname: resolve(root),

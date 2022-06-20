@@ -568,7 +568,7 @@ export function generateFactoryCode(
         createJsxOpeningFragment();
         return;
       case ts.SyntaxKind.JsxClosingFragment:
-        createJsxJsxClosingFragment();
+        createJsxClosingFragment();
         return;
       case ts.SyntaxKind.JsxAttribute:
         createJsxAttribute(node as import('typescript').JsxAttribute);
@@ -4042,7 +4042,7 @@ export function generateFactoryCode(
     writer.write(')');
   }
 
-  function createJsxJsxClosingFragment() {
+  function createJsxClosingFragment() {
     writer.write('ts.createJsxClosingFragment(');
     writer.write(')');
   }
