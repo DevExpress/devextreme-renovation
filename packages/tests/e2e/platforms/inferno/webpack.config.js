@@ -41,7 +41,7 @@ module.exports = {
           {
             loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
             options: {
-              platform: "inferno-hooks",
+              platform: "inferno",
               tsConfig: path.resolve(__dirname, "./tsconfig.json"),
               defaultOptionsModule:
                 path.resolve(__dirname, "../../../jquery-helpers/default_options"),
