@@ -12,7 +12,7 @@ mocha.describe("inferno-hooks-generation", function () {
     compile(
       `${__dirname}/test-cases/declarations/src`,
       `${__dirname}/test-cases/componentFactory/inferno-hooks`,
-      'inferno-hooks'
+      'inferno'
     );
     this.testGenerator = function (componentName: string) {
       generator.setContext({
