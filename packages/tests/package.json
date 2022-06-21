@@ -44,7 +44,7 @@
     "babel-loader": "^8.1.0",
     "babel-preset-react-app": "^9.1.2",
     "babel-plugin-inferno": "^6.3.0",
-    "core-js": "^3.6.4",
+    "core-js": "3.23.2",
     "cross-env": "^7.0.2",
     "gulp": "^4.0.2",
     "gulp-plumber": "^1.2.1",
