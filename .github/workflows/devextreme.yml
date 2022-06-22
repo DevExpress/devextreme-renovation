@@ -55,7 +55,7 @@ jobs:
 
     strategy:
       matrix:
-        TASK: [generate-components, react-compilation-check, angular-compilation-check]
+        TASK: [generate-components, react-compilation-check]
 
     steps:
 
@@ -88,7 +88,6 @@ jobs:
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz
@@ -231,7 +230,6 @@ jobs:
           { componentFolder: "renovation", name: "renovation (jquery) (1/2)", platform: "jquery", quarantineMode: false, inProgressRenovation: true, indices: "1/2" },
           { componentFolder: "renovation", name: "renovation (jquery) (2/2)", platform: "jquery", quarantineMode: false, inProgressRenovation: true, indices: "2/2" },
           { componentFolder: "renovation", name: "renovation (react)", platform: "react", quarantineMode: false, inProgressRenovation: true },
-          { componentFolder: "renovation", name: "renovation (angular)", platform: "angular", quarantineMode: false, inProgressRenovation: true }
         ]
     steps:
       - name: Setup utils
@@ -291,7 +289,6 @@ jobs:
           pushd testing/renovation
           npm install --no-audit --no-fund --legacy-peer-deps
           popd
-          npm run build:angular
           npm run build:react
           npx gulp build-renovation-testing
 
