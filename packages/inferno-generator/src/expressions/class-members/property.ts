@@ -96,10 +96,10 @@ export class Property extends BaseProperty {
       return `${this.modifiers.join(' ')} get ${this.name}()${compileType(
         this.type.toString(),
       )}{
-        if("${this.context}" in this.context){
-          return this.context.${this.context};
+        if(this.context[${this.context}.id]){
+          return this.context[${this.context}.id];
         }
-        return ${this.context};
+        return ${this.context}.defaultValue as any;
       }`;
     }
 

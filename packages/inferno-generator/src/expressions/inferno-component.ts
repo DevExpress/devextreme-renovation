@@ -167,7 +167,7 @@ export class InfernoComponent extends PreactComponent {
             const dependencyContext = contextConsumers.find(
               (consumer) => consumer.name === dep,
             )?.contextName;
-            return dependencyContext ? `this.context["${dependencyContext}"] !== context["${dependencyContext}"]` : 'false';
+            return dependencyContext ? `this.context[${dependencyContext}.id] !== context[${dependencyContext}.id]` : 'false';
           });
           componentWillUpdate_Statements.push(`if (${conditions.join(' || ')}) {
             ${deleteCacheStatement}
@@ -270,7 +270,7 @@ export class InfernoComponent extends PreactComponent {
 
     if (providers.length) {
       const providersString = providers
-        .map((p) => `${p.context}: this.${p.name}`)
+        .map((p) => `[${p.context}.id]: this.${p.name} || ${p.context}.defaultValue`)
         .join(',\n');
       return this.compileLifeCycle('getChildContext', [
         `return {

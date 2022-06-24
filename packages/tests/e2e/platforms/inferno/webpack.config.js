@@ -72,7 +72,7 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: { "@devextreme/runtime/inferno-hooks": "@devextreme/runtime/dist/inferno-hooks" },
+    alias: { "@devextreme/runtime/inferno": "@devextreme/runtime/dist/inferno" },
     extensions: [".js", ".tsx", ".ts"],
   },
   output: {
