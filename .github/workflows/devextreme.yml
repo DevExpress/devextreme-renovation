@@ -88,6 +88,7 @@ jobs:
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
+          npm i ../angular-generator/package.tgz
           npm i ../react-generator/package.tgz
           npm i ../preact-generator/package.tgz
           npm i ../inferno-generator/package.tgz

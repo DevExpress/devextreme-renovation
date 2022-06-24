@@ -1,3 +1,4 @@
+import { AngularGenerator } from '@devextreme-generator/angular';
 import { compileCode, GeneratorOptions } from '@devextreme-generator/core';
 import { InfernoGenerator } from '@devextreme-generator/inferno';
 import { PreactGenerator } from '@devextreme-generator/preact';
@@ -24,6 +25,9 @@ export default function (this: LoaderContext<{}>, source: string) {
   switch (platform) {
     case 'react':
       generator = new ReactGenerator();
+      break;
+    case 'angular':
+      generator = new AngularGenerator();
       break;
     case 'preact':
       generator = new PreactGenerator();
