@@ -1,6 +1,6 @@
 {
   "name": "@devextreme-generator/inferno-from-react",
-  "version": "3.1.0-next",
+  "version": "3.0.11",
   "description": "DevExtreme inferno from react component generator",
   "author": "Developer Express Inc.",
   "license": "UNLICENSED",
@@ -17,12 +17,12 @@
     "update:testcases": "tsc --project ./tsconfig.react.json" 
   },
   "dependencies": {
-    "@devextreme-generator/core": "3.1.0-next"
+    "@devextreme-generator/core": "3.0.11"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "shx": "^0.3.3",
     "typescript": "3.8",
-    "@devextreme-generator/build-helpers": "3.1.0-next"
+    "@devextreme-generator/build-helpers": "3.0.11"
   }
 }
