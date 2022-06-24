@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import * as util from 'inferno-test-utils';
 import React from 'react';
 import { forwardRef } from '../forward_ref';
