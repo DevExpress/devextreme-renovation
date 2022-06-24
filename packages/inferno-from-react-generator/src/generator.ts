@@ -11,7 +11,7 @@ import { ImportDeclaration } from './expressions/import';
 import { InfernoHooksFunctionComponentWrapper } from './expressions/inferno-hooks-function-component-wrapper';
 import { InfernoHooksVariableStatementWrapper } from './expressions/inferno-hooks-variable-statement-wrapper';
 
-export class ReactInfernoGenerator extends BaseGenerator {
+export class InfernoFromReactGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
 
   getPlatform(): string {
