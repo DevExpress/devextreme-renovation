@@ -26,17 +26,17 @@ export default class Widget extends BaseInfernoComponent<any> {
   state = {};
   refs: any;
   get contextConsumer(): number {
-    if ('P1Context' in this.context) {
-      return this.context.P1Context;
+    if (this.context[P1Context.id]) {
+      return this.context[P1Context.id];
     }
-    return P1Context;
+    return P1Context.defaultValue as any;
   }
   provider: number = 10;
   get consumer(): any {
-    if ('ContextForConsumer' in this.context) {
-      return this.context.ContextForConsumer;
+    if (this.context[ContextForConsumer.id]) {
+      return this.context[ContextForConsumer.id];
     }
-    return ContextForConsumer;
+    return ContextForConsumer.defaultValue as any;
   }
 
   constructor(props: any) {
@@ -46,8 +46,8 @@ export default class Widget extends BaseInfernoComponent<any> {
   getChildContext() {
     return {
       ...this.context,
-      P1Context: this.provider,
-      GetterContext: this.contextProvider,
+      [P1Context.id]: this.provider || P1Context.defaultValue,
+      [GetterContext.id]: this.contextProvider || GetterContext.defaultValue,
     };
   }
 

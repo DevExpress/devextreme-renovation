@@ -1,5 +1,5 @@
 import { findDOMfromVNode } from 'inferno';
-import { HookContainer } from './hooks';
+import { HookContainer } from './container';
 
 interface VDomCustomClassesData {
   previous: string[];

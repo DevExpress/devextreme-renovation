@@ -28,10 +28,10 @@ export default class Widget extends InfernoWrapperComponent<any> {
   refs: any;
   mutableVar: number = 10;
   get cons(): number {
-    if ('SimpleContext' in this.context) {
-      return this.context.SimpleContext;
+    if (this.context[SimpleContext.id]) {
+      return this.context[SimpleContext.id];
     }
-    return SimpleContext;
+    return SimpleContext.defaultValue as any;
   }
 
   constructor(props: any) {
@@ -50,7 +50,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
   getChildContext() {
     return {
       ...this.context,
-      SimpleContext: this.provide,
+      [SimpleContext.id]: this.provide || SimpleContext.defaultValue,
     };
   }
 
@@ -110,7 +110,7 @@ export default class Widget extends InfernoWrapperComponent<any> {
     ) {
       this.__getterCache['g1'] = undefined;
     }
-    if (this.context['SimpleContext'] !== context['SimpleContext']) {
+    if (this.context[SimpleContext.id] !== context[SimpleContext.id]) {
       this.__getterCache['g4'] = undefined;
     }
   }
