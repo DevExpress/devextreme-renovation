@@ -420,7 +420,6 @@ export class JsxChildExpression extends JsxExpression {
       }
       if (template) {
         return `{{${expression.toString({
-          members: [],
           disableTemplates: true,
           ...options,
         })}}}`;
