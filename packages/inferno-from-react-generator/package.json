@@ -14,15 +14,15 @@
     "build:watch": "tsc --project ./tsconfig.build.json --watch",
     "pack": "npm run build && npm pack && shx cp *.tgz package.tgz",
     "clear": "shx rm -rf dist && shx rm -f *.tgz",
-    "update:testcases": "tsc --project ./tsconfig.react.json" 
+    "update:testcases": "tsc --project ./tsconfig.react.json"
   },
   "dependencies": {
     "@devextreme-generator/core": "3.1.0-next"
   },
   "devDependencies": {
+    "@devextreme-generator/build-helpers": "3.1.0-next",
     "@types/node": "^12.12.14",
     "shx": "^0.3.3",
-    "typescript": "3.8",
-    "@devextreme-generator/build-helpers": "3.1.0-next"
+    "typescript": "4.3"
   }
 }

@@ -21,7 +21,9 @@
     "lint": "eslint --ext .tsx,.ts .",
     "lint:fix": "eslint --fix --ext .tsx,.ts .",
     "test": "cd packages/tests && npm run test",
-    "test:runtime": "cd packages/runtime && npm run test",
+    "test:jest": "jest",
+    "test:runtime": "jest -c=jest.config.js --selectProjects runtime/react runtime/inferno-hooks",
+    "test:inferno-from-react": "jest -c=jest.config.js --selectProjects inferno-from-react",
     "test:with-reporters": "cd packages/tests && npm run test:with-reporters",
     "test:with-replace": "cd packages/tests && npm run test:with-replace",
     "test:testcafe": "cd packages/tests && npm run test:testcafe",
@@ -36,8 +38,13 @@
     "update:testcases": "cd packages/inferno-from-react-generator && npm run update:testcases"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-jsx": "^7.18.6",
+    "@babel/plugin-transform-runtime": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/jest": "^27.5.2",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
+    "babel-plugin-inferno": "^6.5.0",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
@@ -53,7 +60,10 @@
     "eslint-plugin-unused-imports": "^1.1.5",
     "gulp": "^4.0.2",
     "gulp-run": "^1.7.1",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
     "lerna": "^4.0.0",
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "ts-jest": "^28.0.5"
   }
 }

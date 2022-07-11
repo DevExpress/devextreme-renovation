@@ -2,7 +2,7 @@ import * as React from 'react';
 import { __collectChildren } from '../collect-nested';
 
 export const ColumnProps: {
-  column: string;
+  column?: string;
 } = {
   column: 'Default ColumnField',
 };
@@ -14,7 +14,7 @@ Column.propName = 'columns';
 Column.defaultProps = ColumnProps;
 
 export const RowProps: {
-  row: string;
+  row?: string;
 } = {
   row: 'Default RowField',
 };
