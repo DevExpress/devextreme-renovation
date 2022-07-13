@@ -6,7 +6,7 @@ on:
     paths:
       - 'packages/*/package.json'
 env:
-  nodeVersion: 15
+  nodeVersion: 16
 
 jobs:
 

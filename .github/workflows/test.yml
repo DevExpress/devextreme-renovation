@@ -11,7 +11,7 @@ on:
     branches:
       - '**'
 env:
-  nodeVersion: 15
+  nodeVersion: 16
 
 jobs:
   tests:
