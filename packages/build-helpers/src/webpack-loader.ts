@@ -7,6 +7,8 @@ import { getOptions } from 'loader-utils';
 import path from 'path';
 import ts from 'typescript';
 import { LoaderContext } from 'webpack';
+import { InfernoFromReactGenerator } from '../../inferno-from-react-generator';
+// change to package or delete
 
 import { getTsConfig } from './typescript-utils';
 
@@ -42,6 +44,9 @@ export default function (this: LoaderContext<{}>, source: string) {
         jqueryComponentRegistratorModule,
         jqueryBaseComponentModule,
       };
+      break;
+    case 'inferno-from-react':
+      generator = new InfernoFromReactGenerator();
       break;
     default:
       throw new Error('Invalid platform');

@@ -15,7 +15,7 @@ export class InfernoFromReactGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
 
   getPlatform(): string {
-    return 'inferno';
+    return 'inferno-from-react';
   }
 
   createPropertyAccess(expression: Expression, name: Identifier): PropertyAccess {

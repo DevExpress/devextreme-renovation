@@ -16,22 +16,18 @@ module.exports = {
               presets: ["@babel/preset-env", "@babel/preset-react"],
             },
           },
-          {
-            loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
-            options: {
-              // Попробуй переписать на platform: "inferno-from-react", на generator: new InfernoFromReactGenerator(),
-              // Тогда не надо будет в build-helper знать о всех генераторах и в DevExtreme будет меньше зависимостей.
-              platform: "inferno-from-react",
-              tsConfig: path.resolve(__dirname, "./tsconfig.json"),
-            },
-          },
-          {
-            loader: "ts-loader",
-            options: {
-              ignoreDiagnostics: [ 2769],
-              configFile: path.resolve(__dirname, "./tsconfig.json"),
-            },
-          },
+          // {
+          //   loader: "@devextreme-generator/build-helpers/dist/webpack-loader",
+          //   options: {
+          //     // Попробуй переписать на platform: "inferno-from-react", на generator: new InfernoFromReactGenerator(),
+          //     // Тогда не надо будет в build-helper знать о всех генераторах и в DevExtreme будет меньше зависимостей.
+          //     platform: "inferno-from-react",
+          //     tsConfig: path.resolve(__dirname, "./tsconfig.json"),
+          //   },
+          // },
+          // {
+          //   loader: "ts-loader",
+          // },
           // Это кастомный лоадер, который позволяет переименовать js-ts Возможно есть стандартный.
           // {
           //   loader: "rename-all-js*-to-ts*",
