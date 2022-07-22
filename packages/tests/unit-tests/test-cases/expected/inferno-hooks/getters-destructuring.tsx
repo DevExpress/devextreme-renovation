@@ -1,4 +1,3 @@
-
 export type WidgetPropsType = {
   someProp: string;
   type?: string;
@@ -36,6 +35,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface Widget {
   props: typeof WidgetProps & RestProps;

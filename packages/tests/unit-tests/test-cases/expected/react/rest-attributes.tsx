@@ -14,6 +14,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface ComponentWithRest {
   props: typeof WidgetInput & RestProps;

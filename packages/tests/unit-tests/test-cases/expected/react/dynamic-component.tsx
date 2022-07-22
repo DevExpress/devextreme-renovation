@@ -45,6 +45,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface DynamicComponentCreator {
   props: typeof Props & RestProps;
