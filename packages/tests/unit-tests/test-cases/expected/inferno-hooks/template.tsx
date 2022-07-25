@@ -72,6 +72,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface WidgetWithTemplate {
   props: typeof WidgetInput & RestProps;

@@ -1,4 +1,3 @@
-
 export type SomePropsType = {};
 const SomeProps: SomePropsType = {};
 function view() {
@@ -16,6 +15,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface InheritedFromBaseComponent {
   props: typeof SomeProps & RestProps;
