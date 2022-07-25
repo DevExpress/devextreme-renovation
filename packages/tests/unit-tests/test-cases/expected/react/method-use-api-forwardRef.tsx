@@ -17,6 +17,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface Child1Component {
   props: typeof Child1ComponentProps & RestProps;
