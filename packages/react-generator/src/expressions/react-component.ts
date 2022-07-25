@@ -858,6 +858,7 @@ export class ReactComponent extends Component {
               ${this.compileRestProps()}
               ${this.compileComponentInterface()}
               ${getTemplateFunc}
+              ${this.compileComponentComment(hasApiMethod)}
               ${!hasApiMethod
     ? `${this.modifiers.join(' ')} function ${this.name
     }(props: ${this.compilePropsType()}){`
