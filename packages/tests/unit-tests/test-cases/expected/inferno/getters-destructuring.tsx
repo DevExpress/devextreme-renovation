@@ -28,7 +28,6 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
-  children?: any;
 };
 
 class Widget extends BaseInfernoComponent<any> {
