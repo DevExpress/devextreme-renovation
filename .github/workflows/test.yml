@@ -33,6 +33,9 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap:ci
 
+      - name: Print TypeScript version
+        run: npm ls typescript
+
       - name: Lint
         run: npm run lint
 
