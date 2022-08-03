@@ -40,6 +40,12 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap:ci
 
+      - name: Print TypeScript version
+        run: |
+          npm ls typescript
+          cd ./packages/core-generator
+          npm ls typescript
+
       - name: Pack
         run: npm run pack
 
