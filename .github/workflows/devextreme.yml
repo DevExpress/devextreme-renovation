@@ -40,6 +40,8 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap:ci
 
+      - name: Check TS version
+        run: npm ls typescript
       - name: Pack
         run: npm run pack
 
