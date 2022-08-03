@@ -22,7 +22,6 @@
   "devDependencies": {
     "@types/node": "^12.12.14",
     "shx": "^0.3.3",
-    "typescript": "4.3.5",
     "@devextreme-generator/build-helpers": "3.1.0-next"
   }
 }
