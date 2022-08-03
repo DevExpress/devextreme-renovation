@@ -34,7 +34,7 @@ jobs:
         run: npm run bootstrap:ci
 
       - name: Print TypeScript version
-        run: npm ls -g typescript
+        run: npm ls --location=global
 
       - name: Lint
         run: npm run lint
