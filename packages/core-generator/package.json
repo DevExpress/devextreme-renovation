@@ -19,12 +19,13 @@
     "code-block-writer": "^10.1.0",
     "eslint-config-devextreme": "^0.1.40",
     "prettier": "^2.1.0",
-    "prettier-eslint": "^14.1.0"
+    "prettier-eslint": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "@types/prettier": "^2.1.0",
     "eslint-plugin-unused-imports": "^1.1.5",
-    "shx": "^0.3.3"
+    "shx": "^0.3.3",
+    "typescript": "4.3.5"
   }
 }

@@ -20,6 +20,7 @@
     "@devextreme-generator/react": "3.1.0-next"
   },
   "devDependencies": {
-    "shx": "^0.3.3"
+    "shx": "^0.3.3",
+    "typescript": "4.3.5"
   }
 }
