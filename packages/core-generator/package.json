@@ -19,7 +19,7 @@
     "code-block-writer": "^10.1.0",
     "eslint-config-devextreme": "^0.1.40",
     "prettier": "^2.1.0",
-    "prettier-eslint": "^13.0.0",
+    "prettier-eslint": "^14.1.0",
     "typescript": "4.3.5"
   },
   "devDependencies": {
