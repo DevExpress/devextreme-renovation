@@ -55,6 +55,6 @@
     "gulp-run": "^1.7.1",
     "lerna": "^5.1.8",
     "minimist": "^1.2.5",
-    "typescript": "4.3.5"
+    "typescript": "^4.7.4"
   }
 }
