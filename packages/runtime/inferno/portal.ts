@@ -1,6 +1,7 @@
 import { createPortal } from 'inferno';
 
 type PortalProps = {
+  // eslint-disable-next-line react/require-default-props
   container?: HTMLElement | null;
   children: any;
 };
