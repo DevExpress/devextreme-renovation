@@ -65,7 +65,6 @@ export const esLintConfig = {
   //        logLevel: 'trace',
   plugins: [
     '@typescript-eslint',
-    'unused-imports'
   ],
   parser: require.resolve('@typescript-eslint/parser'),
   parserOptions: {
@@ -77,14 +76,6 @@ export const esLintConfig = {
   },
   rules: {
     'no-unused-vars': 'off', 
-    'unused-imports/no-unused-imports': 'error',
-    'unused-imports/no-unused-vars': [
-      'warn',
-      {
-        vars: 'all', varsIgnorePattern: '^_', args: 'after-used', argsIgnorePattern: '^_',
-      },
-    ],
-
   },
 };
 export function createTestGenerator(
