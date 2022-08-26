@@ -27,6 +27,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 const getTemplate = (TemplateProp: any) =>
   TemplateProp &&
