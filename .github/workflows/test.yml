@@ -35,6 +35,9 @@ jobs:
 
       - name: Print TypeScript version
         run: npm ls --location=global
+      
+      - name: Print all packages version
+        run: npm list
 
       - name: Lint
         run: npm run lint
