@@ -1,7 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "importHelpers": true
-  },
   "include": ["**/*.ts", "**/*.tsx"]
 }

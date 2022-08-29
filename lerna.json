@@ -3,6 +3,9 @@
     "packages/*"
   ],
   "version": "3.1.0-next",
+  "nohoist": [
+    "typescript"
+  ],
   "npmClient": "npm",
   "stream": true,
   "command": {
