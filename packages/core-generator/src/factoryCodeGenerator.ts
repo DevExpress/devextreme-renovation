@@ -1655,13 +1655,13 @@ export function generateFactoryCode(
   function createTupleTypeNode(node: import('typescript').TupleTypeNode) {
     writer.write('ts.createTupleTypeNode(');
     writer.write('[');
-    if (node.elementTypes.length === 1) {
-      const item = node.elementTypes![0];
+    if (node.elements.length === 1) {
+      const item = node.elements![0];
       writeNodeText(item);
-    } else if (node.elementTypes.length > 1) {
+    } else if (node.elements.length > 1) {
       writer.indent(() => {
-        for (let i = 0; i < node.elementTypes!.length; i++) {
-          const item = node.elementTypes![i];
+        for (let i = 0; i < node.elements!.length; i++) {
+          const item = node.elements![i];
           if (i > 0) writer.write(',').newLine();
           writeNodeText(item);
         }

@@ -22,7 +22,7 @@
     "@devextreme-generator/preact": "3.1.0-next",
     "@devextreme-generator/react": "3.1.0-next",
     "loader-utils": "^2.0.0",
-    "typescript": "3.8",
+    "typescript": "4.3.5",
     "vinyl": "^2.2.1",
     "webpack": "^5.64.1"
   },
