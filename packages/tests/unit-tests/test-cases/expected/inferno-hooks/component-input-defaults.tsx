@@ -104,7 +104,6 @@ import {
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 import { getTemplate } from '@devextreme/runtime/react';
-
 export const Texts2: React.FunctionComponent<typeof TextsProps> & {
   propName: string;
 } = () => null;
@@ -116,6 +115,7 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
+  children?: any;
 };
 interface Widget {
   props: typeof WidgetPropsType & RestProps;
