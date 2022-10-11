@@ -2,3 +2,4 @@ name: "DevExtreme-renovation CodeQL config"
 
 paths-ignore:
   - "packages/angular-generator/src/expressions/jsx/**"
+  - "packages/core-generator/src/expressions/**"
