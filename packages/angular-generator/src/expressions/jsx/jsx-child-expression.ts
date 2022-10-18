@@ -419,6 +419,8 @@ export class JsxChildExpression extends JsxExpression {
         return templateExpression;
       }
       if (template) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return `{{${expression.toString({
           disableTemplates: true,
           ...options,
