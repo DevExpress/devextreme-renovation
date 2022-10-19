@@ -1,0 +1,8 @@
+name: "DevExtreme-renovation CodeQL config"
+
+paths-ignore:
+  # Ignored because CodeQL fails to check these paths:
+  #   Error: Code Scanning could not process the submitted SARIF file:
+  #   rejecting SARIF, as there are more threadflow steps per result than allowed (27184 > 10000)
+  - "packages/angular-generator/src/expressions/jsx/**"
+  - "packages/core-generator/src/expressions/**"
