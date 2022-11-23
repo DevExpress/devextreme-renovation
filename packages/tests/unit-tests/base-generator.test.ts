@@ -3684,7 +3684,7 @@ mocha.describe("base-generator: expressions", function() {
         undefined
       );
 
-      assertCode(expression.toString(), "");
+      assertCode(expression.toString(), "export {}");
     });
 
     mocha.it("named exports with module specifier", function() {
