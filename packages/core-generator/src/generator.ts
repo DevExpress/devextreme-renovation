@@ -651,6 +651,7 @@ export class Generator implements GeneratorAPI {
   }
 
   createNamedExports(elements: ExportSpecifier[]) {
+    debugger;
     return new NamedExports(elements);
   }
 

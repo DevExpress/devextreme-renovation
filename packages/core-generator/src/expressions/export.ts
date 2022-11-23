@@ -16,7 +16,7 @@ export class ExportDeclaration {
 
   toString(): string {
     if (this.exportClause?.node.length === 0 && !this.moduleSpecifier) {
-      return '';
+      return 'export {}';
     }
     return `export ${this.exportClause ? this.exportClause : '*'}${
       this.moduleSpecifier ? ` from ${this.moduleSpecifier}` : ''

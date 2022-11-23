@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generator dont change "export {}" 1`] = `
+"export {};
+"
+`;
+
 exports[`generator forward-ref and useImperativeHandler 1`] = `
 "import {
   forwardRef,
