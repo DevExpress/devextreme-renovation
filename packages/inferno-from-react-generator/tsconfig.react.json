@@ -1,5 +1,8 @@
 {
-  "include": ["src/__tests__/react-test-cases/*.tsx"],
+  "include": [
+    "src/__tests__/react-test-cases/*.tsx", 
+    "src/__tests__/react-test-cases/*.ts"
+  ],
   "compilerOptions": {
     "strict": false,
     "skipLibCheck": true,
