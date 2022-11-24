@@ -66,4 +66,8 @@ describe('generator', () => {
     await createTestGenerator('jquery-registred', generator);
     await createTestGenerator('jquery-registred2', generator);
   });
+  it('dont change "export {}"', async () => {
+    const generator = await createTestGenerator('types', createGenerator());
+    expect(`${generator[0].code}`).toMatchSnapshot();
+  });
 });
