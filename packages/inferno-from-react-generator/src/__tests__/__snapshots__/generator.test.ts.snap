@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generator React.memo 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+const PureComponent1 = (_props) => <div />;
+
+function HooksPureComponent1(props) {
+  return <HookContainer renderFn={PureComponent1} renderProps={props} pure />;
+}
+export { HooksPureComponent1 as PureComponent1 };
+const PureComponent2 = (_props) => <div />;
+
+function HooksPureComponent2(props) {
+  return <HookContainer renderFn={PureComponent2} renderProps={props} pure />;
+}
+export { HooksPureComponent2 as PureComponent2 };
+"
+`;
+
 exports[`generator dont change "export {}" 1`] = `
 "export {};
 "
@@ -147,6 +166,19 @@ function HooksSimpleComponent(props) {
   );
 }
 export { HooksSimpleComponent as SimpleComponent };
+const SimpleComponentConst = (_props) => {
+  return 'content';
+};
+
+function HooksSimpleComponentConst(props) {
+  return (
+    <InfernoWrapperComponent
+      renderFn={SimpleComponentConst}
+      renderProps={props}
+    />
+  );
+}
+export { HooksSimpleComponentConst as SimpleComponentConst };
 HooksSimpleComponent.defaultProps = simpleComponentProps;
 "
 `;

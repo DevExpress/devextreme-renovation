@@ -70,4 +70,9 @@ describe('generator', () => {
     const generator = await createTestGenerator('types', createGenerator());
     expect(`${generator[0].code}`).toMatchSnapshot();
   });
+  it('React.memo', async () => {
+    debugger;
+    const generator = await createTestGenerator('react-memo', createGenerator());
+    expect(`${generator[0].code}`).toMatchSnapshot();
+  });
 });

@@ -12,6 +12,8 @@ export class InfernoHooksVariableStatementWrapper extends VariableStatement {
 
   hasExport = false;
 
+  pureComponent = false;
+
   constructor(
     componentInfo: ComponentInfo,
     componentDeclaration: VariableDeclaration,
@@ -21,13 +23,21 @@ export class InfernoHooksVariableStatementWrapper extends VariableStatement {
     super([], declarationList);
     this.hasExport = modifiers.indexOf(SyntaxKind.ExportKeyword) !== -1;
     this.componentInfo = componentInfo;
-    componentDeclaration.name = new Identifier(`React${componentDeclaration.name.toString()}`);
-    componentDeclaration.initializer = (componentDeclaration.initializer as Call)
-      .argumentsArray[0];
+    if (componentDeclaration.initializer instanceof Call) {
+      const call = componentDeclaration.initializer;
+      if (call.expression.toString() === 'forwardRef') {
+        componentDeclaration.name = new Identifier(`React${componentDeclaration.name.toString()}`);
+      }
+      if (call.expression.toString() === 'memo' || call.expression.toString() === 'React.memo') {
+        this.pureComponent = true;
+      }
+      componentDeclaration.initializer = (componentDeclaration.initializer as Call)
+        .argumentsArray[0];
+    }
   }
 
   toString(options?: toStringOptions | undefined): string {
     return `${super.toString(options)}
-    ${getInfernoHooksWrapper(this.componentInfo, this.hasExport)}`;
+    ${getInfernoHooksWrapper(this.componentInfo, this.hasExport, this.pureComponent)}`;
   }
 }
