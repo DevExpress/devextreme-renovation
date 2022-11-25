@@ -10,6 +10,7 @@ export class HookContainer extends Component
     renderFn: (props: any, ref?: any) => JSX.Element,
     renderProps?: Record<string, unknown>,
     renderRef?: RefObject<Record<string, unknown>>,
+    pure?: boolean
   },
   Record<string, unknown>
   > {

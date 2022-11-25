@@ -4,7 +4,7 @@ import { equal } from './shallow-equal';
 import type { HookContainer } from './container';
 
 export const currentComponent: {
-  current : {
+  current: {
     getContextValue(consumer: { id: number }): any;
     getHook: (
       dependencies: number | unknown[] | undefined,
@@ -29,7 +29,16 @@ export function renderChild(component: HookContainer, {
   }
 }
 
-export function createRecorder(component: HookContainer) {
+export function createRecorder(component: HookContainer): {
+  renderResult: undefined;
+  getHook(
+    _dependencies: number | unknown[] | undefined,
+    fn: (hook: Partial<Hook>, addEffectHook: (effect: () => void) => void) => void): any;
+  shouldComponentUpdate(
+    nextProps: { renderProps?: any; renderFn?: any; },
+    nextState: any, context: any): boolean;
+  componentDidMount: () => void; componentDidUpdate: () => void; dispose(): void;
+} {
   let nextId = 0;
   const hookInstances: Partial<Hook>[] = [];
   const effects: (() => void)[] = [];
@@ -79,14 +88,16 @@ export function createRecorder(component: HookContainer) {
       nextState: any,
       context: any,
     ) {
-      shouldUpdate = !equal(component.props.renderProps, nextProps.renderProps);
+      shouldUpdate = component.props.pure
+        ? (!equal(component.props.renderProps, nextProps.renderProps)
+        || !equal(component.state, nextState)) : true;
+
       component.state = nextState;
 
       nextId = 0;
 
-      const renderResult = renderChild(component, nextProps, context);
-
       if (shouldUpdate) {
+        const renderResult = renderChild(component, nextProps, context);
         recorder.renderResult = renderResult;
       }
 
