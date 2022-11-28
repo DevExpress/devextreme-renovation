@@ -29,16 +29,27 @@ export function renderChild(component: HookContainer, {
   }
 }
 
-export function createRecorder(component: HookContainer): {
+type AddEffectFunc = (effect: () => void) => void;
+export type Recorder = {
   renderResult: undefined;
   getHook(
     _dependencies: number | unknown[] | undefined,
-    fn: (hook: Partial<Hook>, addEffectHook: (effect: () => void) => void) => void): any;
+    fn: (hook: Partial<Hook>, addEffectHook: AddEffectFunc) => void
+  ): any;
   shouldComponentUpdate(
-    nextProps: { renderProps?: any; renderFn?: any; },
-    nextState: any, context: any): boolean;
-  componentDidMount: () => void; componentDidUpdate: () => void; dispose(): void;
-} {
+    nextProps: {
+      renderProps?: any;
+      renderFn?: any;
+    },
+    nextState: any,
+    context: any
+  ): boolean;
+  componentDidMount: () => void;
+  componentDidUpdate: () => void;
+  dispose(): void;
+};
+
+export function createRecorder(component: HookContainer): Recorder {
   let nextId = 0;
   const hookInstances: Partial<Hook>[] = [];
   const effects: (() => void)[] = [];
