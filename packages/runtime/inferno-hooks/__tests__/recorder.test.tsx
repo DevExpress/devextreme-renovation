@@ -14,7 +14,7 @@ describe('Recorder', () => {
       const recorder = createRecorder(component);
       expect(recorder.shouldComponentUpdate(props, component.state, {})).toBe(true);
     });
-    test('pure component should not updated if props and satet is same', () => {
+    test('a pure component should not be updated if the props and the state are the same', () => {
       const props = {
         renderProps: {},
         pure: true,
