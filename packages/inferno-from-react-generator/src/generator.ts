@@ -4,15 +4,18 @@ import BaseGenerator, {
   JsxAttribute, JsxClosingElement, JsxElement, JsxExpression,
   JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute,
   PropertyAccess, SimpleExpression, StringLiteral, VariableDeclarationList,
-  VariableStatement, Block, TypeExpression, Parameter,
+  VariableStatement, Block, TypeExpression, Parameter
 } from '@devextreme-generator/core';
 import { ComponentInfo } from './component-info';
 import { ImportDeclaration } from './expressions/import';
+import { ImportsAggregation } from './expressions/imports-aggregation';
 import { InfernoHooksFunctionComponentWrapper } from './expressions/inferno-hooks-function-component-wrapper';
+import { buildHooksImportDeclaration } from './expressions/inferno-hooks-imports';
 import { InfernoHooksVariableStatementWrapper } from './expressions/inferno-hooks-variable-statement-wrapper';
 
 export class InfernoFromReactGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
+  private hooksImportAdded = false;
 
   getPlatform(): string {
     return 'inferno';
@@ -41,8 +44,15 @@ export class InfernoFromReactGenerator extends BaseGenerator {
     importClause: ImportClause = new ImportClause(),
     moduleSpecifier: StringLiteral,
   ): ImportDeclaration {
-    return new ImportDeclaration(decorators, modifiers, importClause,
+    const importDeclaration = new ImportDeclaration(decorators, modifiers, importClause,
       moduleSpecifier, this.getContext());
+
+    if(Object.keys(this.components).length > 0 && !this.hooksImportAdded) {
+        this.hooksImportAdded = true;
+        return new ImportsAggregation(buildHooksImportDeclaration(), importDeclaration);
+    }
+
+    return importDeclaration;
   }
 
   createJsxOpeningFragment(
@@ -133,5 +143,6 @@ export class InfernoFromReactGenerator extends BaseGenerator {
       throw new Error(`Not all components were processed: ${componentNames}`);
     }
     this.components = {};
+    this.hooksImportAdded = false;
   }
 }

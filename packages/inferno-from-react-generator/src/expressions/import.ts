@@ -1,9 +1,9 @@
 import * as Core from '@devextreme-generator/core';
 import {
-  Decorator, GeneratorContext, NamedImports, StringLiteral,
+  Decorator, GeneratorContext, StringLiteral,
 } from '@devextreme-generator/core';
+import { INFERNO_HOOKS_MODULE } from './inferno-hooks-imports';
 
-const infernoHookModuleName = '@devextreme/runtime/inferno-hooks';
 export class ImportDeclaration extends Core.ImportDeclaration {
   constructor(
     decorators: Decorator[] = [],
@@ -12,17 +12,12 @@ export class ImportDeclaration extends Core.ImportDeclaration {
     moduleSpecifier: StringLiteral,
     context: GeneratorContext,
   ) {
-    if (moduleSpecifier.expression.toString() === '@devextreme/runtime/react') {
-      super(decorators, modifiers, importClause, new StringLiteral(infernoHookModuleName), context);
-    } else if (moduleSpecifier.expression.toString() === 'react') {
-      if (importClause.namedBindings instanceof (NamedImports)) {
-        importClause.namedBindings.add('HookContainer');
-        importClause.namedBindings.add('InfernoWrapperComponent');
-      }
-      super(decorators, modifiers, importClause, new StringLiteral(infernoHookModuleName), context);
-    } else {
-      super(decorators, modifiers, importClause, moduleSpecifier, context);
-    }
+    const moduleName = moduleSpecifier.expression.toString();
+    const actualModule = moduleName === '@devextreme/runtime/react' || moduleName === 'react'
+      ? new StringLiteral(INFERNO_HOOKS_MODULE)
+      : moduleSpecifier;
+
+    super(decorators, modifiers, importClause, actualModule, context);
   }
 
   toString(): string {

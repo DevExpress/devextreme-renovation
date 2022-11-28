@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`generator adds import for HookContainer 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  return <div />;
+}
+
+function HooksDxComponent(props) {
+  return <HookContainer renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
+"
+`;
+
+exports[`generator adds import for InfernoWrapperComponent 1`] = `
+"import {
+  InfernoWrapperComponent,
+} from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  return <div />;
+}
+
+function HooksDxComponent(props) {
+  return <InfernoWrapperComponent renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
+"
+`;
+
 exports[`generator React.memo 1`] = `
 "import {
   HookContainer,
@@ -26,9 +58,11 @@ exports[`generator dont change "export {}" 1`] = `
 
 exports[`generator forward-ref and useImperativeHandler 1`] = `
 "import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+import {
   forwardRef,
   useImperativeHandle,
-  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 export const viewFunction = () => <div />;
 const ReactForwardRef = (_, ref) => {
@@ -55,9 +89,11 @@ ForwardRef.defaultProps = {};
 
 exports[`generator forward-ref and useImperativeHandler direct export const 1`] = `
 "import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+import {
   forwardRef,
   useImperativeHandle,
-  HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
 export const viewFunction = () => <div />;
 const ReactForwardRef = (_, ref) => {
@@ -112,7 +148,10 @@ export function defaultOptions() {
 `;
 
 exports[`generator replace fragments 1`] = `
-"export const viewFunction = (viewModel) => (
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = (viewModel) => (
   <>
     <div>a</div>
   </>
@@ -130,11 +169,11 @@ export { SimpleComponent };
 `;
 
 exports[`generator replace imports 1`] = `
-"import { getTemplate } from '@devextreme/runtime/inferno-hooks';
-import {
-  useCallback,
+"import {
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
+import { getTemplate } from '@devextreme/runtime/inferno-hooks';
+import { useCallback } from '@devextreme/runtime/inferno-hooks';
 export const viewFunction = (m) => (
   <>
     <div>{getTemplate('test')}</div>

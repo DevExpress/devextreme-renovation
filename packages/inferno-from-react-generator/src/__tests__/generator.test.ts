@@ -30,6 +30,16 @@ describe('generator', () => {
     return generator;
   }
 
+  it('adds import for HookContainer', async () => {
+    const generator = await createTestGenerator('import-for-hook-container', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('adds import for InfernoWrapperComponent', async () => {
+    const generator = await createTestGenerator('import-for-inferno-wrapper-component', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
   it('replace imports', async () => {
     const generator = await createTestGenerator('imports', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
