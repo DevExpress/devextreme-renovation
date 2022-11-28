@@ -34,6 +34,7 @@ describe('generator', () => {
     const generator = await createTestGenerator('imports', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
   it('replace fragments', async () => {
     const generator = await createTestGenerator('fragments', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
@@ -43,18 +44,22 @@ describe('generator', () => {
     const generator = await createTestGenerator('simple-component', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
   it('forward-ref and useImperativeHandler', async () => {
     const generator = await createTestGenerator('forward-ref', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
   it('forward-ref and useImperativeHandler direct export const', async () => {
     const generator = await createTestGenerator('forward-ref-direct-export', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
   it('jQueryRegistered', async () => {
     const generator = await createTestGenerator('jquery-registred', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
+
   it('file contains component content but doesnt have "import {SimpleComponent}" statement', async () => {
     await expect(async () => createTestGenerator('no-component-export', createGenerator()))
       .rejects
@@ -66,11 +71,12 @@ describe('generator', () => {
     await createTestGenerator('jquery-registred', generator);
     await createTestGenerator('jquery-registred2', generator);
   });
+
   it('dont change "export {}"', async () => {
     const generator = await createTestGenerator('types', createGenerator());
     expect(`${generator[0].code}`).toMatchSnapshot();
   });
-  
+
   it('React.memo', async () => {
     const generator = await createTestGenerator('react-memo', createGenerator());
     expect(`${generator[0].code}`).toMatchSnapshot();
