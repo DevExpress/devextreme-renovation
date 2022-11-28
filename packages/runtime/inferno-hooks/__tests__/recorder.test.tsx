@@ -33,7 +33,7 @@ describe('Recorder', () => {
       const component = { props } as any;
       const recorder = createRecorder(component as any);
       expect(
-        recorder.shouldComponentUpdate({ ...props, renderProps: { a: 2 } }, component.state, {}),
+        recorder.shouldComponentUpdate({ ...props, renderProps: { newProp: true } }, component.state, {}),
       )
         .toBe(true);
     });
