@@ -24,7 +24,7 @@ describe('Recorder', () => {
       const recorder = createRecorder(component as any);
       expect(recorder.shouldComponentUpdate(props, component.state, {})).toBe(false);
     });
-    test('pure component should updated if props changed', () => {
+    test('a pure component should be updated if the props are changed', () => {
       const renderProps = { a: 1 };
       const props = {
         renderProps,
