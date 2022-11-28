@@ -4,7 +4,7 @@ import BaseGenerator, {
   JsxAttribute, JsxClosingElement, JsxElement, JsxExpression,
   JsxOpeningElement, JsxSelfClosingElement, JsxSpreadAttribute,
   PropertyAccess, SimpleExpression, StringLiteral, VariableDeclarationList,
-  VariableStatement, Block, TypeExpression, Parameter
+  VariableStatement, Block, TypeExpression, Parameter,
 } from '@devextreme-generator/core';
 import { ComponentInfo } from './component-info';
 import { ImportDeclaration } from './expressions/import';
@@ -15,6 +15,7 @@ import { InfernoHooksVariableStatementWrapper } from './expressions/inferno-hook
 
 export class InfernoFromReactGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
+
   private hooksImportAdded = false;
 
   getPlatform(): string {
@@ -47,9 +48,9 @@ export class InfernoFromReactGenerator extends BaseGenerator {
     const importDeclaration = new ImportDeclaration(decorators, modifiers, importClause,
       moduleSpecifier, this.getContext());
 
-    if(Object.keys(this.components).length > 0 && !this.hooksImportAdded) {
-        this.hooksImportAdded = true;
-        return new ImportsAggregation(buildHooksImportDeclaration(), importDeclaration);
+    if (Object.keys(this.components).length > 0 && !this.hooksImportAdded) {
+      this.hooksImportAdded = true;
+      return new ImportsAggregation(buildHooksImportDeclaration(), importDeclaration);
     }
 
     return importDeclaration;

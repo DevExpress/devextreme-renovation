@@ -4,6 +4,6 @@ export function buildHooksImportDeclaration() {
   return {
     toString() {
       return `import { HookContainer, InfernoWrapperComponent } from '${INFERNO_HOOKS_MODULE}'`;
-    } 
-  }
+    },
+  };
 }

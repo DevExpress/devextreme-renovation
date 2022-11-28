@@ -5,7 +5,7 @@ import {
   ImportDeclaration,
   StringLiteral,
   VariableExpression,
-} from "@devextreme-generator/core";
+} from '@devextreme-generator/core';
 
 type AgregateableImportDeclaration = Pick<ImportDeclaration, 'toString'>;
 
@@ -13,9 +13,13 @@ export class ImportsAggregation {
   private declarations: AgregateableImportDeclaration[];
 
   public decorators!: Decorator[];
+
   public modifiers!: string[];
+
   public importClause!: ImportClause;
+
   public moduleSpecifier!: StringLiteral;
+
   public context!: GeneratorContext;
 
   constructor(...declarations: AgregateableImportDeclaration[]) {
@@ -23,7 +27,7 @@ export class ImportsAggregation {
   }
 
   toString(): string {
-    return this.declarations.map(d => d.toString()).join('\n');
+    return this.declarations.map((d) => d.toString()).join('\n');
   }
 
   replaceSpecifier() {
