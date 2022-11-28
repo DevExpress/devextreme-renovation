@@ -25,10 +25,11 @@ export class InfernoHooksVariableStatementWrapper extends VariableStatement {
     this.componentInfo = componentInfo;
     if (componentDeclaration.initializer instanceof Call) {
       const call = componentDeclaration.initializer;
-      if (call.expression.toString() === 'forwardRef') {
+      const expressionStr = call.expression.toString();
+      if (expressionStr === 'forwardRef') {
         componentDeclaration.name = new Identifier(`React${componentDeclaration.name.toString()}`);
       }
-      if (call.expression.toString() === 'memo' || call.expression.toString() === 'React.memo') {
+      if (expressionStr === 'memo' || expressionStr === 'React.memo') {
         this.pureComponent = true;
       }
       componentDeclaration.initializer = (componentDeclaration.initializer as Call)
