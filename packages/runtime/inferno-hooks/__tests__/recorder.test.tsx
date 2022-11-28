@@ -45,7 +45,7 @@ describe('Recorder', () => {
       };
       const component = { props } as any;
       const recorder = createRecorder(component as any);
-      expect(recorder.shouldComponentUpdate(props, { a: 1 }, {})).toBe(true);
+      expect(recorder.shouldComponentUpdate(props, { newStateProp: true }, {})).toBe(true);
     });
   });
 });
