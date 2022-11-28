@@ -32,6 +32,24 @@ export { DxComponent };
 "
 `;
 
+exports[`generator does not remove other imports from react 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+import { useEffect, useMemo } from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  const x = useEffect.toString() + useMemo.toString();
+  return <div className={x} />;
+}
+
+function HooksDxComponent(props) {
+  return <HookContainer renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
+"
+`;
+
 exports[`generator React.memo 1`] = `
 "import {
   HookContainer,
@@ -168,7 +186,32 @@ export { SimpleComponent };
 "
 `;
 
-exports[`generator replace imports 1`] = `
+exports[`generator removes React namespace import 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+import { getTemplate } from '@devextreme/runtime/inferno-hooks';
+import { useCallback } from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = (m) => (
+  <>
+    <div>{getTemplate('test')}</div>
+  </>
+);
+function Icon(props) {
+  const __sourceType = useCallback(() => '', []);
+  return viewFunction({});
+}
+
+function HooksIcon(props) {
+  return <HookContainer renderFn={Icon} renderProps={props} />;
+}
+export { HooksIcon as Icon };
+export { Icon };
+export default Icon;
+"
+`;
+
+exports[`generator removes React default import 1`] = `
 "import {
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';

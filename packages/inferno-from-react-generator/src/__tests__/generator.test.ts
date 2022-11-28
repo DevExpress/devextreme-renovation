@@ -40,8 +40,18 @@ describe('generator', () => {
     expect(generator[0].code).toMatchSnapshot();
   });
 
-  it('replace imports', async () => {
-    const generator = await createTestGenerator('imports', createGenerator());
+  it('does not remove other imports from react', async () => {
+    const generator = await createTestGenerator('import-without-react', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('removes React namespace import', async () => {
+    const generator = await createTestGenerator('import-react-namespace', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('removes React default import', async () => {
+    const generator = await createTestGenerator('import-react-default', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
 

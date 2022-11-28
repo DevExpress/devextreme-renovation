@@ -53,6 +53,7 @@ export class ImportSpecifier {
 export type NamedImportBindings = NamespaceImport | NamedImports;
 
 export const isNamedImports = (node: any): node is NamedImports => node instanceof NamedImports;
+export const isNamespaceImport = (node: any): node is NamespaceImport => node instanceof NamespaceImport;
 export class ImportClause {
   name?: Identifier;
 

@@ -1,3 +1,4 @@
+import * as Core from '@devextreme-generator/core';
 import BaseGenerator, {
   Function as CoreFunction,
   Decorator, Expression, Identifier, ImportClause,
@@ -44,7 +45,7 @@ export class InfernoFromReactGenerator extends BaseGenerator {
     modifiers: string[] | undefined,
     importClause: ImportClause = new ImportClause(),
     moduleSpecifier: StringLiteral,
-  ): ImportDeclaration {
+  ): Core.ImportDeclaration {
     const importDeclaration = new ImportDeclaration(decorators, modifiers, importClause,
       moduleSpecifier, this.getContext());
 
