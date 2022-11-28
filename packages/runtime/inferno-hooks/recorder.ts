@@ -111,8 +111,7 @@ export function createRecorder(component: HookContainer): Recorder {
       nextId = 0;
 
       if (shouldUpdate) {
-        const renderResult = renderChild(component, nextProps, context);
-        recorder.renderResult = renderResult;
+        recorder.renderResult = renderChild(component, nextProps, context);
       }
 
       return shouldUpdate;
