@@ -37,7 +37,7 @@ describe('Recorder', () => {
       )
         .toBe(true);
     });
-    test('pure component should updated if state changed', () => {
+    test('a pure component should be updated if the state is changed', () => {
       const props = {
         renderProps: {},
         renderFn: jest.fn(),
