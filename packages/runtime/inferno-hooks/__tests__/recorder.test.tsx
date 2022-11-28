@@ -4,7 +4,7 @@ jest.mock('../container');
 
 describe('Recorder', () => {
   describe('shouldComponentUpdate', () => {
-    test('not pure component should always render', () => {
+    test('an impure component should be updated if the props and the state are the same.', () => {
       const props = {
         renderProps: {},
         renderFn: jest.fn(),
