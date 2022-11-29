@@ -95,9 +95,10 @@ export function createRecorder(component: HookContainer): Recorder {
       nextState: any,
       context: any,
     ) {
-      const shouldUpdate = !(component.props.pure &&
-        equal(component.props.renderProps, nextProps.renderProps) &&
-        equal(component.state, nextState)
+      const shouldUpdate = !(
+        component.props.pure
+        && equal(component.props.renderProps, nextProps.renderProps)
+        && equal(component.state, nextState)
       );
       component.state = nextState;
 
