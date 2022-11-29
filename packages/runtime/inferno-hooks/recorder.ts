@@ -54,8 +54,6 @@ export function createRecorder(component: HookContainer): Recorder {
   const hookInstances: Partial<Hook>[] = [];
   const effects: (() => void)[] = [];
 
-  let shouldUpdate = true;
-
   component.state = {};
 
   function nextHook() {
@@ -88,9 +86,7 @@ export function createRecorder(component: HookContainer): Recorder {
     getHook(_dependencies: number | unknown[] | undefined,
       fn: (hook: Partial<Hook>, addEffectHook: (effect: () => void) => void) => void) {
       const hook = nextHook();
-      const value = hook.value;
       fn(hook, addEffectHook);
-      shouldUpdate = shouldUpdate || !equal(hook.value, value);
       return hook.value;
     },
 
@@ -99,12 +95,12 @@ export function createRecorder(component: HookContainer): Recorder {
       nextState: any,
       context: any,
     ) {
+      let shouldUpdate = true;
       if (component.props.pure) {
         const propsEqual = equal(component.props.renderProps, nextProps.renderProps);
-        const stateEqual = equal(component.state, nextState);
-        shouldUpdate = !(propsEqual && stateEqual);
-      } else {
-        shouldUpdate = true;
+        if (propsEqual) {
+          shouldUpdate = !equal(component.state, nextState);
+        }
       }
       component.state = nextState;
 
