@@ -2,7 +2,8 @@ import * as Core from '@devextreme-generator/core';
 import {
   Decorator, GeneratorContext, ImportClause, isNamespaceImport, StringLiteral,
 } from '@devextreme-generator/core';
-import { INFERNO_HOOKS_MODULE } from './inferno-hooks-imports';
+
+export const INFERNO_HOOKS_MODULE = '@devextreme/runtime/inferno-hooks';
 
 function removeDefaultImport(clause: ImportClause): ImportClause {
   return new ImportClause(undefined, clause.namedBindings, clause.isTypeOnly);
@@ -38,5 +39,18 @@ export class ImportDeclaration extends Core.ImportDeclaration {
 
   toString(): string {
     return this.hidden ? '' : super.toString();
+  }
+}
+
+export class PatchedImportDeclaration extends ImportDeclaration {
+  private patch: string;
+
+  constructor(patch: string, ...parameters: ConstructorParameters<typeof ImportDeclaration>) {
+    super(...parameters);
+    this.patch = patch;
+  }
+
+  toString(): string {
+    return `${this.patch}\n${super.toString()}`;
   }
 }

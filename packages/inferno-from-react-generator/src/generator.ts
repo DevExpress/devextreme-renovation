@@ -8,11 +8,11 @@ import BaseGenerator, {
   VariableStatement, Block, TypeExpression, Parameter,
 } from '@devextreme-generator/core';
 import { ComponentInfo } from './component-info';
-import { ImportDeclaration } from './expressions/import';
-import { ImportsAggregation } from './expressions/imports-aggregation';
+import { ImportDeclaration, INFERNO_HOOKS_MODULE, PatchedImportDeclaration } from './expressions/import';
 import { InfernoHooksFunctionComponentWrapper } from './expressions/inferno-hooks-function-component-wrapper';
-import { buildHooksImportDeclaration } from './expressions/inferno-hooks-imports';
 import { InfernoHooksVariableStatementWrapper } from './expressions/inferno-hooks-variable-statement-wrapper';
+
+const INFERNO_HOOKS_IMPORT = `import { HookContainer, InfernoWrapperComponent } from '${INFERNO_HOOKS_MODULE}'`;
 
 export class InfernoFromReactGenerator extends BaseGenerator {
   private components: { [key: string]: ComponentInfo } = {};
@@ -46,15 +46,14 @@ export class InfernoFromReactGenerator extends BaseGenerator {
     importClause: ImportClause = new ImportClause(),
     moduleSpecifier: StringLiteral,
   ): Core.ImportDeclaration {
-    const importDeclaration = new ImportDeclaration(decorators, modifiers, importClause,
-      moduleSpecifier, this.getContext());
-
     if (Object.keys(this.components).length > 0 && !this.hooksImportAdded) {
       this.hooksImportAdded = true;
-      return new ImportsAggregation(buildHooksImportDeclaration(), importDeclaration);
+      return new PatchedImportDeclaration(INFERNO_HOOKS_IMPORT, decorators, modifiers, importClause,
+        moduleSpecifier, this.getContext());
     }
 
-    return importDeclaration;
+    return new ImportDeclaration(decorators, modifiers, importClause,
+      moduleSpecifier, this.getContext());
   }
 
   createJsxOpeningFragment(
