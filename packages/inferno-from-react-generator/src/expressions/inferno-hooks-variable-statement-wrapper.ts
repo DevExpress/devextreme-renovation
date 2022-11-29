@@ -32,8 +32,7 @@ export class InfernoHooksVariableStatementWrapper extends VariableStatement {
       if (expressionStr === 'memo' || expressionStr === 'React.memo') {
         this.pureComponent = true;
       }
-      componentDeclaration.initializer = (componentDeclaration.initializer as Call)
-        .argumentsArray[0];
+      componentDeclaration.initializer = call.argumentsArray[0];
     }
   }
 
