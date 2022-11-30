@@ -4,7 +4,7 @@ import { equal } from './shallow-equal';
 import type { HookContainer } from './container';
 
 export const currentComponent: {
-  current : {
+  current: {
     getContextValue(consumer: { id: number }): any;
     getHook: (
       dependencies: number | unknown[] | undefined,
@@ -29,12 +29,30 @@ export function renderChild(component: HookContainer, {
   }
 }
 
-export function createRecorder(component: HookContainer) {
+type AddEffectFunc = (effect: () => void) => void;
+export type Recorder = {
+  renderResult: undefined;
+  getHook(
+    _dependencies: number | unknown[] | undefined,
+    fn: (hook: Partial<Hook>, addEffectHook: AddEffectFunc) => void
+  ): any;
+  shouldComponentUpdate(
+    nextProps: {
+      renderProps?: any;
+      renderFn?: any;
+    },
+    nextState: any,
+    context: any
+  ): boolean;
+  componentDidMount: () => void;
+  componentDidUpdate: () => void;
+  dispose(): void;
+};
+
+export function createRecorder(component: HookContainer): Recorder {
   let nextId = 0;
   const hookInstances: Partial<Hook>[] = [];
   const effects: (() => void)[] = [];
-
-  let shouldUpdate = true;
 
   component.state = {};
 
@@ -68,9 +86,7 @@ export function createRecorder(component: HookContainer) {
     getHook(_dependencies: number | unknown[] | undefined,
       fn: (hook: Partial<Hook>, addEffectHook: (effect: () => void) => void) => void) {
       const hook = nextHook();
-      const value = hook.value;
       fn(hook, addEffectHook);
-      shouldUpdate = shouldUpdate || !equal(hook.value, value);
       return hook.value;
     },
 
@@ -79,15 +95,17 @@ export function createRecorder(component: HookContainer) {
       nextState: any,
       context: any,
     ) {
-      shouldUpdate = !equal(component.props.renderProps, nextProps.renderProps);
+      const shouldUpdate = !(
+        component.props.pure
+        && equal(component.props.renderProps, nextProps.renderProps)
+        && equal(component.state, nextState)
+      );
       component.state = nextState;
 
       nextId = 0;
 
-      const renderResult = renderChild(component, nextProps, context);
-
       if (shouldUpdate) {
-        recorder.renderResult = renderResult;
+        recorder.renderResult = renderChild(component, nextProps, context);
       }
 
       return shouldUpdate;
