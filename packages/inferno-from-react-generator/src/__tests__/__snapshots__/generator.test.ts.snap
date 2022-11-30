@@ -38,8 +38,8 @@ exports[`generator does not remove other imports from react 1`] = `
 } from '@devextreme/runtime/inferno-hooks';
 import { useEffect, useMemo } from '@devextreme/runtime/inferno-hooks';
 function DxComponent() {
-  const x = useEffect.toString() + useMemo.toString();
-  return <div className={x} />;
+  const className = useEffect.toString() + useMemo.toString();
+  return <div className={className} />;
 }
 
 function HooksDxComponent(props) {
