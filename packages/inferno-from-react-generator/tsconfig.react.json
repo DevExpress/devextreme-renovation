@@ -4,6 +4,7 @@
     "src/__tests__/react-test-cases/*.ts"
   ],
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "strict": false,
     "skipLibCheck": true,
     "jsx": "preserve",

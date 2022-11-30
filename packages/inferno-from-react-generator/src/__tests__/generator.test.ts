@@ -30,8 +30,28 @@ describe('generator', () => {
     return generator;
   }
 
-  it('replace imports', async () => {
-    const generator = await createTestGenerator('imports', createGenerator());
+  it('adds import for HookContainer', async () => {
+    const generator = await createTestGenerator('import-for-hook-container', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('adds import for InfernoWrapperComponent', async () => {
+    const generator = await createTestGenerator('import-for-inferno-wrapper-component', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('does not remove other imports from react', async () => {
+    const generator = await createTestGenerator('import-without-react', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('removes React namespace import', async () => {
+    const generator = await createTestGenerator('import-react-namespace', createGenerator());
+    expect(generator[0].code).toMatchSnapshot();
+  });
+
+  it('removes React default import', async () => {
+    const generator = await createTestGenerator('import-react-default', createGenerator());
     expect(generator[0].code).toMatchSnapshot();
   });
 

@@ -1,10 +1,17 @@
 import * as Core from '@devextreme-generator/core';
 import {
-  Decorator, GeneratorContext, NamedImports, StringLiteral,
+  Decorator, GeneratorContext, ImportClause, isNamespaceImport, StringLiteral,
 } from '@devextreme-generator/core';
 
-const infernoHookModuleName = '@devextreme/runtime/inferno-hooks';
+export const INFERNO_HOOKS_MODULE = '@devextreme/runtime/inferno-hooks';
+
+function removeDefaultImport(clause: ImportClause): ImportClause {
+  return new ImportClause(undefined, clause.namedBindings, clause.isTypeOnly);
+}
+
 export class ImportDeclaration extends Core.ImportDeclaration {
+  hidden: boolean;
+
   constructor(
     decorators: Decorator[] = [],
     modifiers: string[] = [],
@@ -12,23 +19,38 @@ export class ImportDeclaration extends Core.ImportDeclaration {
     moduleSpecifier: StringLiteral,
     context: GeneratorContext,
   ) {
-    if (moduleSpecifier.expression.toString() === '@devextreme/runtime/react') {
-      super(decorators, modifiers, importClause, new StringLiteral(infernoHookModuleName), context);
-    } else if (moduleSpecifier.expression.toString() === 'react') {
-      if (importClause.namedBindings instanceof (NamedImports)) {
-        importClause.namedBindings.add('HookContainer');
-        importClause.namedBindings.add('InfernoWrapperComponent');
-      }
-      super(decorators, modifiers, importClause, new StringLiteral(infernoHookModuleName), context);
-    } else {
-      super(decorators, modifiers, importClause, moduleSpecifier, context);
-    }
+    const moduleName = moduleSpecifier.expression.toString();
+    const isReactModule = moduleName === '@devextreme/runtime/react' || moduleName === 'react';
+
+    const actualModule = isReactModule
+      ? new StringLiteral(INFERNO_HOOKS_MODULE)
+      : moduleSpecifier;
+
+    const actualImportClause = isReactModule && !!importClause.default
+      ? removeDefaultImport(importClause)
+      : importClause;
+
+    super(decorators, modifiers, actualImportClause, actualModule, context);
+
+    this.hidden = isReactModule && (
+      !importClause.namedBindings || isNamespaceImport(importClause.namedBindings)
+    );
   }
 
   toString(): string {
-    if (this.importClause.toString().indexOf('React') !== -1) {
-      return '';
-    }
-    return super.toString();
+    return this.hidden ? '' : super.toString();
+  }
+}
+
+export class PatchedImportDeclaration extends ImportDeclaration {
+  private patch: string;
+
+  constructor(patch: string, ...parameters: ConstructorParameters<typeof ImportDeclaration>) {
+    super(...parameters);
+    this.patch = patch;
+  }
+
+  toString(): string {
+    return `${this.patch}\n${super.toString()}`;
   }
 }
