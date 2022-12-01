@@ -7,6 +7,15 @@ import {
 import { ComponentInfo } from '../component-info';
 import { getInfernoHooksWrapper } from './common/get-inferno-hooks-wrapper';
 
+function getPossibleMemoCall(call: Call) {
+  return (call.arguments[0] instanceof Call) ? call.arguments[0] : call;
+}
+
+function isMemoCall(call: Call): boolean {
+  const expressionStr = call.expression.toString();
+  return (expressionStr === 'memo' || expressionStr === 'React.memo');
+}
+
 export class InfernoHooksVariableStatementWrapper extends VariableStatement {
   componentInfo: ComponentInfo;
 
@@ -23,16 +32,17 @@ export class InfernoHooksVariableStatementWrapper extends VariableStatement {
     super([], declarationList);
     this.hasExport = modifiers.indexOf(SyntaxKind.ExportKeyword) !== -1;
     this.componentInfo = componentInfo;
+
     if (componentDeclaration.initializer instanceof Call) {
       const call = componentDeclaration.initializer;
       const expressionStr = call.expression.toString();
+      let componentWrappedCall = call;
       if (expressionStr === 'forwardRef') {
         componentDeclaration.name = new Identifier(`React${componentDeclaration.name.toString()}`);
+        componentWrappedCall = getPossibleMemoCall(call);
       }
-      if (expressionStr === 'memo' || expressionStr === 'React.memo') {
-        this.pureComponent = true;
-      }
-      componentDeclaration.initializer = call.argumentsArray[0];
+      this.pureComponent = isMemoCall(componentWrappedCall);
+      componentDeclaration.initializer = componentWrappedCall.argumentsArray[0];
     }
   }
 

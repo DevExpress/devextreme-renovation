@@ -53,7 +53,9 @@ export { DxComponent };
 exports[`generator React.memo 1`] = `
 "import {
   HookContainer,
+  InfernoWrapperComponent,
 } from '@devextreme/runtime/inferno-hooks';
+import { forwardRef } from '@devextreme/runtime/inferno-hooks';
 const PureComponent1 = (_props) => <div />;
 
 function HooksPureComponent1(props) {
@@ -66,6 +68,20 @@ function HooksPureComponent2(props) {
   return <HookContainer renderFn={PureComponent2} renderProps={props} pure />;
 }
 export { HooksPureComponent2 as PureComponent2 };
+const ReactPureComponent3 = (_props) => <div />;
+
+function HooksPureComponent3(props, ref) {
+  return (
+    <InfernoWrapperComponent
+      renderFn={ReactPureComponent3}
+      renderProps={props}
+      renderRef={ref}
+      pure
+    />
+  );
+}
+const PureComponent3 = forwardRef(HooksPureComponent3);
+export { PureComponent3 };
 "
 `;
 
