@@ -326,6 +326,10 @@ export class Generator implements GeneratorAPI {
     return new Block(statements, multiLine);
   }
 
+  createOmittedExpression() {
+    return new BindingElement('', undefined, '');
+  }
+
   createFunctionDeclaration(
     decorators: Decorator[] | undefined,
     modifiers: string[] | undefined,
