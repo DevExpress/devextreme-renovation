@@ -1,55 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`generator adds import for HookContainer 1`] = `
-"import {
-  HookContainer,
-} from '@devextreme/runtime/inferno-hooks';
-function DxComponent() {
-  return <div />;
-}
-
-function HooksDxComponent(props) {
-  return <HookContainer renderFn={DxComponent} renderProps={props} />;
-}
-export { HooksDxComponent as DxComponent };
-export { DxComponent };
-"
-`;
-
-exports[`generator adds import for InfernoWrapperComponent 1`] = `
-"import {
-  InfernoWrapperComponent,
-} from '@devextreme/runtime/inferno-hooks';
-function DxComponent() {
-  return <div />;
-}
-
-function HooksDxComponent(props) {
-  return <InfernoWrapperComponent renderFn={DxComponent} renderProps={props} />;
-}
-export { HooksDxComponent as DxComponent };
-export { DxComponent };
-"
-`;
-
-exports[`generator does not remove other imports from react 1`] = `
-"import {
-  HookContainer,
-} from '@devextreme/runtime/inferno-hooks';
-import { useEffect, useMemo } from '@devextreme/runtime/inferno-hooks';
-function DxComponent() {
-  const className = useEffect.toString() + useMemo.toString();
-  return <div className={className} />;
-}
-
-function HooksDxComponent(props) {
-  return <HookContainer renderFn={DxComponent} renderProps={props} />;
-}
-export { HooksDxComponent as DxComponent };
-export { DxComponent };
-"
-`;
-
 exports[`generator React.memo 1`] = `
 "import {
   HookContainer,
@@ -82,6 +32,63 @@ function HooksPureComponent3(props, ref) {
 }
 const PureComponent3 = forwardRef(HooksPureComponent3);
 export { PureComponent3 };
+"
+`;
+
+exports[`generator adds import for HookContainer 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  return <div />;
+}
+
+function HooksDxComponent(props) {
+  return <HookContainer renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
+"
+`;
+
+exports[`generator adds import for InfernoWrapperComponent 1`] = `
+"import {
+  InfernoWrapperComponent,
+} from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  return <div />;
+}
+
+function HooksDxComponent(props) {
+  return <InfernoWrapperComponent renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
+"
+`;
+
+exports[`generator array-destruction 1`] = `
+"import { useState } from '@devextreme/runtime/inferno-hooks';
+const [, setState] = useState(1);
+setState(2);
+"
+`;
+
+exports[`generator does not remove other imports from react 1`] = `
+"import {
+  HookContainer,
+} from '@devextreme/runtime/inferno-hooks';
+import { useEffect, useMemo } from '@devextreme/runtime/inferno-hooks';
+function DxComponent() {
+  const className = useEffect.toString() + useMemo.toString();
+  return <div className={className} />;
+}
+
+function HooksDxComponent(props) {
+  return <HookContainer renderFn={DxComponent} renderProps={props} />;
+}
+export { HooksDxComponent as DxComponent };
+export { DxComponent };
 "
 `;
 
@@ -181,24 +188,28 @@ export function defaultOptions() {
 "
 `;
 
-exports[`generator replace fragments 1`] = `
+exports[`generator removes React default import 1`] = `
 "import {
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
-export const viewFunction = (viewModel) => (
+import { getTemplate } from '@devextreme/runtime/inferno-hooks';
+import { useCallback } from '@devextreme/runtime/inferno-hooks';
+export const viewFunction = (m) => (
   <>
-    <div>a</div>
+    <div>{getTemplate('test')}</div>
   </>
 );
-function SimpleComponent(props) {
-  return viewFunction({ props: { ...props } });
+function Icon(props) {
+  const __sourceType = useCallback(() => '', []);
+  return viewFunction({});
 }
 
-function HooksSimpleComponent(props) {
-  return <HookContainer renderFn={SimpleComponent} renderProps={props} />;
+function HooksIcon(props) {
+  return <HookContainer renderFn={Icon} renderProps={props} />;
 }
-export { HooksSimpleComponent as SimpleComponent };
-export { SimpleComponent };
+export { HooksIcon as Icon };
+export { Icon };
+export default Icon;
 "
 `;
 
@@ -227,28 +238,24 @@ export default Icon;
 "
 `;
 
-exports[`generator removes React default import 1`] = `
+exports[`generator replace fragments 1`] = `
 "import {
   HookContainer,
 } from '@devextreme/runtime/inferno-hooks';
-import { getTemplate } from '@devextreme/runtime/inferno-hooks';
-import { useCallback } from '@devextreme/runtime/inferno-hooks';
-export const viewFunction = (m) => (
+export const viewFunction = (viewModel) => (
   <>
-    <div>{getTemplate('test')}</div>
+    <div>a</div>
   </>
 );
-function Icon(props) {
-  const __sourceType = useCallback(() => '', []);
-  return viewFunction({});
+function SimpleComponent(props) {
+  return viewFunction({ props: { ...props } });
 }
 
-function HooksIcon(props) {
-  return <HookContainer renderFn={Icon} renderProps={props} />;
+function HooksSimpleComponent(props) {
+  return <HookContainer renderFn={SimpleComponent} renderProps={props} />;
 }
-export { HooksIcon as Icon };
-export { Icon };
-export default Icon;
+export { HooksSimpleComponent as SimpleComponent };
+export { SimpleComponent };
 "
 `;
 

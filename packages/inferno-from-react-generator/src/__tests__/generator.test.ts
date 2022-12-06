@@ -101,4 +101,8 @@ describe('generator', () => {
     const generator = await createTestGenerator('react-memo', createGenerator());
     expect(`${generator[0].code}`).toMatchSnapshot();
   });
+  it('array-destruction', async () => {
+    const generator = await createTestGenerator('array-destruction', createGenerator());
+    expect(`${generator[0].code}`).toMatchSnapshot();
+  });
 });
