@@ -25,12 +25,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
 
@@ -60,12 +60,12 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
 
@@ -109,12 +109,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
           registry-url: https://registry.npmjs.org/
@@ -163,7 +163,7 @@ jobs:
           sudo apt-get install -y dbus-x11 httping x11vnc xvfb
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
             2.1.x
@@ -171,12 +171,12 @@ jobs:
             6.0.x
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
 
@@ -239,12 +239,12 @@ jobs:
           sudo apt-get install -y dbus-x11 httping x11vnc xvfb
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.nodeVersion }}
 
@@ -306,14 +306,14 @@ jobs:
 
       - name: Copy compared screenshot artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: compared-screenshots
           path: ${{ github.workspace }}/DevExtreme/testing/testcafe/artifacts/compared-screenshots/**/*
           if-no-files-found: ignore
       - name: Copy failed test artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: failed-tests
           path: ${{ github.workspace }}/DevExtreme/testing/testcafe/artifacts/failedtests/**/*
