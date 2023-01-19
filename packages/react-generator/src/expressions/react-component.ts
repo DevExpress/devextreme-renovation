@@ -574,7 +574,6 @@ export class ReactComponent extends Component {
       style?: { [name: string]: any },
       key?: any,
       ref?: any,
-      children?: any,
       ${isComponentWrapper(this.context.imports) ? 'isReactComponentWrapper?: boolean' : ''}
     }`;
   }

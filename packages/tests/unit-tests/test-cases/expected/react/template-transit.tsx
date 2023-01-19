@@ -18,7 +18,6 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
-  children?: any;
 };
 interface TemplateTransitWidget {
   props: typeof TemplateTransitWidgetInput & RestProps;

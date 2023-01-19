@@ -21,7 +21,6 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
-  children?: any;
 };
 
 export class PublicWidgetWithProps extends InfernoWrapperComponent<any> {

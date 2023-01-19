@@ -21,7 +21,6 @@ type RestProps = {
   style?: { [name: string]: any };
   key?: any;
   ref?: any;
-  children?: any;
 };
 interface RefOnChildrenParent {
   props: typeof Props & RestProps;
