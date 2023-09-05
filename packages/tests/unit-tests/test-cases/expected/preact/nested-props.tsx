@@ -2,7 +2,7 @@ export type GridColumnPropsType = {
   name: string;
   index: number;
   editing?: typeof ColumnEditingProps;
-  custom?: typeof CustomProps[];
+  custom?: (typeof CustomProps)[];
   defaultIndex: number;
   indexChange?: (index: number) => void;
 };
@@ -17,7 +17,7 @@ export type AnotherCustomPropsType = {};
 export const AnotherCustomProps: AnotherCustomPropsType = {};
 export type EditingPropsType = {
   editEnabled?: boolean;
-  custom?: typeof CustomProps[];
+  custom?: (typeof CustomProps)[];
   anotherCustom?: typeof AnotherCustomProps;
 };
 export const EditingProps: EditingPropsType = {

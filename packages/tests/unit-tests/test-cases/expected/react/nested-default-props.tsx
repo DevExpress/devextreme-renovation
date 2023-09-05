@@ -13,7 +13,7 @@ export const GridRow: GridRowType = {
   __defaultNestedValues: Object.freeze({ cells: [GridCell] }) as any,
 };
 export type WithNestedInputType = {
-  rows?: typeof GridRow[];
+  rows?: (typeof GridRow)[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
@@ -27,7 +27,7 @@ export const WithNestedInput: WithNestedInputType = {
 export type EmptyClassType = {};
 export const EmptyClass: EmptyClassType = {};
 export type FakeNestedType = {
-  value?: typeof EmptyClass[];
+  value?: (typeof EmptyClass)[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };

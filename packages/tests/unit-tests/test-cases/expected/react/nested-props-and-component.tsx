@@ -17,8 +17,8 @@ export type WidgetPropsType = {
   someForwardRef?: MutableRefObject<any>;
   slotProp?: React.ReactNode;
   templateProp?: React.FunctionComponent<any>;
-  nestedProp?: typeof FakeNested[];
-  anotherNestedPropInit?: typeof FakeNested[];
+  nestedProp?: (typeof FakeNested)[];
+  anotherNestedPropInit?: (typeof FakeNested)[];
   __defaultNestedValues?: any;
   defaultTwoWayProp?: number;
   twoWayPropChange?: (twoWayProp?: number) => void;
@@ -52,8 +52,8 @@ type RestProps = {
 };
 interface UndefWidget {
   props: typeof WidgetProps & RestProps;
-  __getNestedAnotherNestedPropInit: typeof FakeNested[];
-  __getNestedNestedProp: typeof FakeNested[] | undefined;
+  __getNestedAnotherNestedPropInit: (typeof FakeNested)[];
+  __getNestedNestedProp: (typeof FakeNested)[] | undefined;
   oneway: any;
   twoway: any;
   someevent: any;
@@ -75,7 +75,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedAnotherNestedPropInit = useMemo(
-    function __getNestedAnotherNestedPropInit(): typeof FakeNested[] {
+    function __getNestedAnotherNestedPropInit(): (typeof FakeNested)[] {
       const nested = __collectChildren(props.children);
       if (!equalByValue(cachedNested.current, nested))
         cachedNested.current = nested;
@@ -88,7 +88,7 @@ export default function UndefWidget(props: typeof WidgetProps & RestProps) {
     [props.anotherNestedPropInit, props.children]
   );
   const __getNestedNestedProp = useMemo(
-    function __getNestedNestedProp(): typeof FakeNested[] | undefined {
+    function __getNestedNestedProp(): (typeof FakeNested)[] | undefined {
       const nested = __collectChildren(props.children);
       if (!equalByValue(cachedNested.current, nested))
         cachedNested.current = nested;

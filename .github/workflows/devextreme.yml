@@ -16,7 +16,7 @@ on:
       - '**'
 env:
   nodeVersion: 16
-  devextremeBranch: 22_1
+  devextremeBranch: 23_2
 
 jobs:
   build-generators:
@@ -48,60 +48,6 @@ jobs:
           name: devextreme-generator-artifacts
           path: ./packages/*/package.tgz
 
-  devextreme-compilation:
-    name: DevExtreme Compilation
-    runs-on: ubuntu-latest
-    needs: [ build-generators ]
-
-    strategy:
-      matrix:
-        TASK: [generate-components, react-compilation-check]
-
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.nodeVersion }}
-
-      - name: Get DevExtreme
-        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
-
-      - name: Build DevExtreme
-        run: |
-          cd ./DevExtreme
-          npm install --no-package-lock --no-audit --no-fund
-          npx gulp localization
-
-      - uses: actions/download-artifact@master
-        with:
-          name: devextreme-generator-artifacts
-
-      - name: Install Generators
-        run: |
-          cd ./DevExtreme
-          npm i ../runtime/package.tgz
-          npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../inferno-from-react-generator/package.tgz
-          npm i ../build-helpers/package.tgz
-
-      - name: Check - ${{ matrix.TASK }}
-        env:
-          TASK: ${{ matrix.TASK }}
-        run: |
-          cd ./DevExtreme
-          npx gulp $TASK
-
   devextreme-jest-tests:
     name: DevExtreme Jest Tests
     runs-on: ubuntu-latest
@@ -127,9 +73,10 @@ jobs:
           DEVEXTREME_TEST_CI: "true"
           DOTNET_CLI_TELEMETRY_OPTOUT: "true"
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+        working-directory: ./DevExtreme
         run: |
-          cd ./DevExtreme
           npm install --no-audit --no-fund
+          cd ./packages/devextreme
           npm run build:dev
 
       - uses: actions/download-artifact@master
@@ -137,14 +84,14 @@ jobs:
           name: devextreme-generator-artifacts
 
       - name: Install Generators
+        working-directory: ./DevExtreme
         run: |
-          cd ./DevExtreme
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
 
       - name: Run Jest tests
+        working-directory: ./DevExtreme/packages/devextreme
         run: |
-          cd ./DevExtreme
           npm run test-jest
 
   devextreme-qunit-tests:
@@ -188,8 +135,8 @@ jobs:
           name: devextreme-generator-artifacts
 
       - name: Install Generators
+        working-directory: ./DevExtreme
         run: |
-          cd ./DevExtreme
           npm i ../runtime/package.tgz
           npm i ../declarations/package.tgz
           npm i ../core-generator/package.tgz
@@ -206,9 +153,10 @@ jobs:
           DEVEXTREME_TEST_CI: "true"
           DOTNET_CLI_TELEMETRY_OPTOUT: "true"
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
+        working-directory: ./DevExtreme
         run: |
-          cd ./DevExtreme
           npm install --no-audit --no-fund
+          cd ./packages/devextreme
           npm run build:dev
 
       - name: Run QUnit tests
@@ -221,100 +169,3 @@ jobs:
         run: |
           chmod +x ./docker-ci.sh
           ./docker-ci.sh
-
-  devextreme-testcafe-tests:
-    name: TestCafe
-    runs-on: ubuntu-latest
-    needs: [ build-generators ]
-    strategy:
-      matrix:
-        ARGS: [
-          { componentFolder: "renovation", name: "renovation (jquery) (1/2)", platform: "jquery", quarantineMode: false, inProgressRenovation: true, indices: "1/2" },
-          { componentFolder: "renovation", name: "renovation (jquery) (2/2)", platform: "jquery", quarantineMode: false, inProgressRenovation: true, indices: "2/2" },
-          { componentFolder: "renovation", name: "renovation (react)", platform: "react", quarantineMode: false, inProgressRenovation: true },
-        ]
-    steps:
-      - name: Setup utils
-        run: |
-          sudo apt-get install -y dbus-x11 httping x11vnc xvfb
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.nodeVersion }}
-
-      - name: Get DevExtreme
-        run: git clone -b ${{ env.devextremeBranch }} --single-branch https://github.com/DevExpress/DevExtreme
-
-      - uses: actions/download-artifact@master
-        with:
-          name: devextreme-generator-artifacts
-
-      - name: Install Generators
-        run: |
-          cd ./DevExtreme
-          npm i ../runtime/package.tgz
-          npm i ../declarations/package.tgz
-          npm i ../core-generator/package.tgz
-          npm i ../angular-generator/package.tgz
-          npm i ../vue-generator/package.tgz
-          npm i ../react-generator/package.tgz
-          npm i ../preact-generator/package.tgz
-          npm i ../inferno-generator/package.tgz
-          npm i ../inferno-from-react-generator/package.tgz
-          npm i ../build-helpers/package.tgz
-
-      - name: Build DevExtreme
-        env:
-          DEVEXTREME_TEST_CI: "true"
-          DOTNET_CLI_TELEMETRY_OPTOUT: "true"
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
-        run: |
-          cd ./DevExtreme
-          npm install --no-audit --no-fund
-          BUILD_INPROGRESS_RENOVATION="true" npm run build:dev
-
-      - name: Prepare localization
-        run: |
-          cd ./DevExtreme
-          npx gulp localization
-
-      - name: Prepare renovation playground
-        if: matrix.ARGS.componentFolder == 'renovation'
-        run: |
-          cd ./DevExtreme
-          pushd testing/renovation
-          npm install --no-audit --no-fund --legacy-peer-deps
-          popd
-          npm run build:react
-          npx gulp build-renovation-testing
-
-      - name: Run TestCafe tests
-        run: |
-          [ "${{ matrix.ARGS.inProgressRenovation }}" == "true" ] && META_RENOVATION="--meta renovation"
-          [ "${{ matrix.ARGS.indices }}" != "" ] && INDICES="--indices ${{ matrix.ARGS.indices }}"
-          [ "${{ matrix.ARGS.platform }}" != "" ] && PLATFORM="--platform ${{ matrix.ARGS.platform }}"
-          all_args="--concurrency 2 --browsers=chrome:headless --componentFolder ${{ matrix.ARGS.componentFolder }} --quarantineMode ${{ matrix.ARGS.quarantineMode}} $META_RENOVATION $INDICES $PLATFORM"
-          echo "$all_args"
-          cd ./DevExtreme
-          npm run test-testcafe -- $all_args
-
-      - name: Copy compared screenshot artifacts
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: compared-screenshots
-          path: ${{ github.workspace }}/DevExtreme/testing/testcafe/artifacts/compared-screenshots/**/*
-          if-no-files-found: ignore
-      - name: Copy failed test artifacts
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: failed-tests
-          path: ${{ github.workspace }}/DevExtreme/testing/testcafe/artifacts/failedtests/**/*
-          if-no-files-found: ignore
