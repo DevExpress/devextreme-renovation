@@ -13,7 +13,7 @@ function run_lint {
 }
 
 function run_ts {
-    target=./DevExtreme/ts/dx.all.d.ts
+    target=./DevExtreme/packages/devextreme/ts/dx.all.d.ts
     cp $target $target.current
 
     npm i
@@ -37,8 +37,8 @@ function run_ts {
 function run_test {
     export DEVEXTREME_TEST_CI=true
 
-    local port=`node -e "console.log(require('./DevExtreme/ports.json').qunit)"`
-    local url="http://localhost:$port/run?notimers=true"
+    local port=`node -e "console.log(require('./DevExtreme/packages/devextreme/ports.json').qunit)"`
+    local url="http://localhost:$port/run?notimers=true&nocsp=true"
     local runner_pid
     local runner_result=0
 
@@ -60,10 +60,12 @@ function run_test {
 
     if [ "$GITHUBACTION" != "true" ]; then
     npm i
+    cd ./DevExtreme/packages/devextreme
     npm run build
+    cd ../../..
     fi
 
-    dotnet ./DevExtreme/testing/runner/bin/runner.dll --single-run & runner_pid=$!
+    dotnet ./DevExtreme/packages/devextreme/testing/runner/bin/runner.dll --single-run & runner_pid=$!
 
     for i in {15..0}; do
         if [ -n "$runner_pid" ] && [ ! -e "/proc/$runner_pid" ]; then
@@ -180,11 +182,11 @@ function run_test_jest {
 
 function run_test_styles {
     npm i
-    npm run test-jest -- --config=./DevExtreme/testing/styles/jest.config.json --coverage=false
+    npm run test-jest -- --config=./DevExtreme/packages/devextreme/testing/styles/jest.config.json --coverage=false
 }
 
 function start_runner_watchdog {
-    local last_suite_time_file="$PWD/DevExtreme/testing/LastSuiteTime.txt"
+    local last_suite_time_file="$PWD/DevExtreme/packages/devextreme/testing/LastSuiteTime.txt"
     local last_suite_time=unknown
 
     while true; do

@@ -46,7 +46,7 @@ type RestProps = {
 };
 interface WithNested {
   props: typeof WithNestedInput & RestProps;
-  __getNestedRows: typeof GridRow[];
+  __getNestedRows: (typeof GridRow)[];
   getRowCells: (index: number) => any;
   restAttributes: RestProps;
 }
@@ -55,7 +55,7 @@ export default function WithNested(props: typeof WithNestedInput & RestProps) {
   const cachedNested = useRef<any>(__collectChildren(props.children));
 
   const __getNestedRows = useMemo(
-    function __getNestedRows(): typeof GridRow[] {
+    function __getNestedRows(): (typeof GridRow)[] {
       const nested = __collectChildren(props.children);
       if (!equalByValue(cachedNested.current, nested))
         cachedNested.current = nested;

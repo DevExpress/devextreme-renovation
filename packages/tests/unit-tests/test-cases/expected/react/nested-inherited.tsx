@@ -16,7 +16,7 @@ export const WidgetProps: WidgetPropsType = {
 };
 export type TooltipPropsType = {
   tooltipValue: number;
-  tooltipNested?: typeof WidgetProps[];
+  tooltipNested?: (typeof WidgetProps)[];
   __defaultNestedValues?: any;
   children?: React.ReactNode;
 };
@@ -51,7 +51,7 @@ export const BulletProps: BulletPropsType = Object.create(
   )
 );
 export type BulletProps2Type = typeof BulletProps & {
-  fakeNestedArr?: typeof FakeNested[];
+  fakeNestedArr?: (typeof FakeNested)[];
   __defaultNestedValues?: any;
 };
 export const BulletProps2: BulletProps2Type = Object.create(
@@ -68,7 +68,7 @@ export const BulletProps2: BulletProps2Type = Object.create(
   )
 );
 export type BulletProps3Type = typeof BulletProps2 & {
-  fakeNestedArr2?: typeof FakeNested[];
+  fakeNestedArr2?: (typeof FakeNested)[];
   __defaultNestedValues?: any;
 };
 export const BulletProps3: BulletProps3Type = Object.create(
