@@ -574,8 +574,13 @@ export class Generator implements GeneratorAPI {
 
       const importedModules = context.importedModules || [];
       const hasModule = importedModules.some((m) => m === modulePath);
+      const isExcludedModule = modulePath && context.excludePathPatterns
+        ? context.excludePathPatterns.some((pattern) => modulePath.includes(pattern))
+        : false;
 
-      if (modulePath && !hasModule) {
+      // NOTE: We skip TS modules that migrated from JS
+      // because in these modules some code exists that generator cannot handle properly (and fails)
+      if (modulePath && !hasModule && !isExcludedModule) {
         compileCode(
           this,
           fs.readFileSync(modulePath).toString(),
@@ -584,8 +589,10 @@ export class Generator implements GeneratorAPI {
             path: modulePath,
             importedModules: [...importedModules, modulePath],
           },
-          false,
-          true,
+          {
+            createFactoryOnly: true,
+            excludePathPatterns: context.excludePathPatterns,
+          },
         );
 
         if (importClause.default) {

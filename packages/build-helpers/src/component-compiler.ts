@@ -7,6 +7,10 @@ import Stream from 'stream';
 import ts from 'typescript';
 import File from 'vinyl';
 
+export interface GenerateComponentOptions {
+  excludePathPatterns: string[],
+}
+
 export function deleteFolderRecursive(path: string) {
   if (fs.existsSync(path)) {
     fs.readdirSync(path).forEach((fileName) => {
@@ -21,7 +25,10 @@ export function deleteFolderRecursive(path: string) {
   }
 }
 
-export function generateComponents(generator: GeneratorAPI) {
+export function generateComponents(
+  generator: GeneratorAPI,
+  options?: Partial<GenerateComponentOptions>,
+) {
   const stream = new Stream.Transform({
     objectMode: true,
     transform(originalFile: File, _, callback) {
@@ -31,7 +38,10 @@ export function generateComponents(generator: GeneratorAPI) {
           generator,
           code,
           originalFile,
-          true,
+          {
+            includeExtraComponents: true,
+            excludePathPatterns: options?.excludePathPatterns ?? [],
+          },
         ) as GeneratorResult[];
 
         components

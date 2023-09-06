@@ -17,6 +17,7 @@ export default function (this: LoaderContext<{}>, source: string) {
     jqueryComponentRegistratorModule,
     jqueryBaseComponentModule,
     tsConfig,
+    excludePathPatterns,
   } = getOptions(this) as any;
   let generator = null;
 
@@ -59,7 +60,7 @@ export default function (this: LoaderContext<{}>, source: string) {
       path: this.resourcePath,
       dirname: path.dirname(this.resourcePath),
     },
-    false,
+    { excludePathPatterns: excludePathPatterns ?? [] },
   );
 
   if (tsConfig) {

@@ -60,4 +60,5 @@ export type GeneratorContext = {
   };
   externalTypes?: { [name: string]: TypeExpression };
   externalInterfaces?: { [name: string]: Interface };
+  excludePathPatterns?: string[];
 } & GeneratorOptions;

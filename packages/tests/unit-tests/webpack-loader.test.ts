@@ -59,7 +59,9 @@ mocha.describe("webpack-loader", function () {
         path: path.resolve(fixtureFileName),
         dirname: path.resolve(__dirname, "test-cases/declarations/src"),
       });
-      assert.strictEqual(args[3], false);
+      assert.deepEqual(args[3], {
+        excludePathPatterns: [],
+      });
       assert.strictEqual(output, this.codeCompilerStub());
 
       assert.deepEqual(generator.options, {
