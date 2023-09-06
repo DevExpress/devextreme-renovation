@@ -59,7 +59,6 @@ jobs:
           path: ${{ github.workspace }}/packages/tests/report/test-result.xml
           if-no-files-found: ignore
 
-
       - name: Copy screenshots artifacts
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
