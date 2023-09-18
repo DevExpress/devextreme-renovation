@@ -21,5 +21,5 @@ runs:
         fi
         newVersion=$(echo $versionDiff | grep -oP "\+ *\"version\":.+," | grep -oP "\d+\.\d+.\d+")
         echo "Version changed to $newVersion"
-        echo "changed=true" >> >> $GITHUB_OUTPUT
+        echo "changed=true" >> $GITHUB_OUTPUT
         echo "version=$newVersion" >> $GITHUB_OUTPUT
