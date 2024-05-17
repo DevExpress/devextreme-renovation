@@ -113,7 +113,9 @@ export class InfernoWrapperComponent<
       if (indexInRemoved > -1) {
         el.dxClasses.removed.splice(indexInRemoved, 1);
       } else {
-        el.dxClasses.added.push(value);
+        if (!el.dxClasses.added.includes(value)) {
+          el.dxClasses.added.push(value);
+        }
       }
     });
 
@@ -122,7 +124,9 @@ export class InfernoWrapperComponent<
       if (indexInAdded > -1) {
         el.dxClasses.added.splice(indexInAdded, 1);
       } else {
-        el.dxClasses.removed.push(value);
+        if (!el.dxClasses.removed.includes(value)) {
+          el.dxClasses.removed.push(value);
+        }
       }
     });
   }
