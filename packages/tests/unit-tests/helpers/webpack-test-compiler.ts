@@ -34,7 +34,7 @@ export default (
   });
 
   compiler.outputFileSystem = createFsFromVolume(new Volume()) as any;
-  compiler.outputFileSystem.join = path.join.bind(path);
+  compiler.outputFileSystem!.join = path.join.bind(path);
 
   return new Promise<webpack.Stats>((resolve, reject) => {
     compiler.run((err, stats) => {
