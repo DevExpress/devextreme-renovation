@@ -52,7 +52,7 @@ jobs:
           restore-keys: ${{ runner.os }}-node-modules
 
       - name: Install packages
-        run: npm install --no-audit --no-fund --ignore-scripts
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Bootstrap
         run: npm run bootstrap:ci
