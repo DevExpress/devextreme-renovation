@@ -53,7 +53,7 @@ jobs:
 
       - name: Copy test-result artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-result
           path: ${{ github.workspace }}/packages/tests/report/test-result.xml
@@ -61,7 +61,7 @@ jobs:
 
       - name: Copy screenshots artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: ${{ github.workspace }}/packages/tests/e2e/tests/temp/**/*
