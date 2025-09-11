@@ -35,7 +35,7 @@ jobs:
           node-version: ${{ env.nodeVersion }}
 
       - name: Install packages
-        run: npm install --no-audit --no-fund --ignore-scripts
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Bootstrap
         run: npm run bootstrap:ci
@@ -75,7 +75,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
         working-directory: ./DevExtreme
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           cd ./packages/devextreme
           npm run build:dev
 
@@ -155,7 +155,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
         working-directory: ./DevExtreme
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           cd ./packages/devextreme
           npm run build:dev
 
